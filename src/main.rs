@@ -40,6 +40,7 @@ fn show_info(color: bool) {
     let terminal_key = String::from("term");
     let uptime_key = String::from("up");
     let cpu_model_name_key = String::from("cpu");
+    let battery_key = String::from("bat");
 
     match color {
         true => {
@@ -49,6 +50,7 @@ fn show_info(color: bool) {
             println!("  {}{} {}", terminal_key.yellow().bold(), separator, read_terminal());
             println!("  {}{}   {}", uptime_key.red().bold(), separator, format_uptime());
             println!("  {}{}  {}", cpu_model_name_key.purple().bold(), separator, read_cpu_model_name());
+            println!("  {}{}  {}", battery_key.blue().bold(), separator, read_battery());
         },
         false => {
             println!("  {}{} {}", hostname_key, separator, read_hostname());
@@ -57,6 +59,7 @@ fn show_info(color: bool) {
             println!("  {}{} {}", terminal_key, separator, read_terminal());
             println!("  {}{}   {}", uptime_key, separator, format_uptime());
             println!("  {}{}  {}", cpu_model_name_key, separator, read_cpu_model_name());
+            println!("  {}{}  {}", battery_key.blue(), separator, read_battery());
         }
     };
 }
@@ -114,6 +117,22 @@ let uptime_f32:
     f32 = up.parse().unwrap();
 
     return uptime_f32;
+}
+
+fn read_battery() -> String {
+    let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
+    .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/capacity");
+    if percentage.ends_with('\n') {
+        percentage.pop();
+    }
+    
+    let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
+    .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/status");
+    if status.ends_with('\n') {
+        status.pop();
+    }
+    
+    return String::from(percentage + "% - " + &status);
 }
 
 fn read_terminal() -> String
