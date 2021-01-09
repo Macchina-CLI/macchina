@@ -48,7 +48,7 @@ Here's how _you_ can do that:
 
 1. Place `macchina/target/debug/macchina` somewhere in your $PATH, like _~/.local/bin_ or _/usr/bin_.
 
-:heavy_exclamation_mark: Any changes you make to the source code will apply to the macchina binary file but you'll need to place the newly built binary file on your $PATH __again__ to run it from anywhere with your new changes.
+:heavy_exclamation_mark: Any changes you make to the source code will apply to the macchina binary file but you'll need to place the newly built binary file on your $PATH __again__ to run it from _anywhere on your system_ with your new changes.
 
 2. Create a new symlink:
 
