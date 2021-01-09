@@ -59,7 +59,7 @@ fn show_info(color: bool) {
             println!("  {}{} {}", terminal_key, separator, read_terminal());
             println!("  {}{}   {}", uptime_key, separator, format_uptime());
             println!("  {}{}  {}", cpu_model_name_key, separator, read_cpu_model_name());
-            println!("  {}{}  {}", battery_key.blue(), separator, read_battery());
+            println!("  {}{}  {}", battery_key, separator, read_battery());
         }
     };
 }
