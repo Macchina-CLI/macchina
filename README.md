@@ -1,7 +1,7 @@
 # Macchina
 
 <p align="center">
-    <img src="macchina-demo.svg"/>
+    <img src="demo.svg"/>
 </p>
 
 ## Table of Contents:
