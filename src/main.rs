@@ -8,31 +8,81 @@ use std::io::Error;
 use std::path::Path;
 
 fn main() {
-let mut args:
-    Vec<String> = env::args().collect();
+let args: Vec<String> = env::args().collect();
 
     match args.len() {
         1 => {
-            show_info(true);
+            show_info(true, false);
         },
         2 => {
             if args.contains(&"--no-color".to_string()) {
-                show_info(false);
+                show_info(false, false);
             }
-            else if args.contains(&"-h".to_string()) | args.contains(&"--help".to_string()) {
+            else if args.contains(&"--help".to_string()) {
                 help();
             }
+            else if args.contains(&"--palette".to_string()) {
+                show_info(true, true);
+            }
             else {
-                error(&mut args);
+                error(args);
             }
         },
         _ => {
-            error(&mut args);
+            error(args);
         }
     }
 }
 
-fn show_info(color: bool) {
+fn error(vector: Vec<String>) {
+    let args: [String; 4] = [
+    "macchina".to_string(), 
+    "--help".to_string(), 
+    "--palette".to_string(), 
+    "--no-color".to_string()
+    ];
+
+    let mut incorrect_args: Vec<String> = Vec::new();
+    for i in 0 .. vector.len() {
+        if !args.contains(&vector[i]) {
+            incorrect_args.push(vector[i].clone());
+        }
+    }
+
+    println!("  {}: bad option {:?}","error".red().bold(),incorrect_args);
+    println!("  usage: rustfetch [option]");
+    println!("  options: --help");
+    println!("           --palette");
+    println!("           --no-color");
+}
+
+fn help() {
+    println!("  {}:","rustfetch".blue().bold());
+    println!("  usage: rustfetch [option]");
+    println!("  options: --help");
+    println!("           --palette");
+    println!("           --no-color");
+}
+
+fn palette(left_padding: usize) {
+    let padding = " ".repeat(left_padding);
+    println!();
+    println!("{}{}{}{}{}{}{}{}{}", 
+            padding,
+            "   ".on_bright_black(),
+            "   ".on_bright_red(),
+            "   ".on_bright_green(),
+            "   ".on_bright_yellow(),
+            "   ".on_bright_blue(),
+            "   ".on_bright_purple(),
+            "   ".on_bright_cyan(),
+            "   ".on_bright_white());
+}
+
+fn show_info(color: bool, palette_status: bool) {
+    //  left_padding: change value to however many spaces you want
+    let left_padding = 6;
+    let padding = " ".repeat(left_padding);
     let separator = ':';
     let hostname_key = String::from("host");
     let os_key = String::from("os");
@@ -44,39 +94,27 @@ fn show_info(color: bool) {
 
     match color {
         true => {
-            println!("  {}{} {}", hostname_key.purple().bold(), separator, read_hostname());
-            println!("  {}{}   {}", os_key.blue().bold(), separator, read_operating_system());
-            println!("  {}{} {}", osrelease_key.green().bold(), separator, read_osrelease());
-            println!("  {}{} {}", terminal_key.yellow().bold(), separator, read_terminal());
-            println!("  {}{}   {}", uptime_key.red().bold(), separator, format_uptime());
-            println!("  {}{}  {}", cpu_model_name_key.purple().bold(), separator, read_cpu_model_name());
-            println!("  {}{}  {}", battery_key.blue().bold(), separator, read_battery());
+            println!("{}{}{} {}", padding, hostname_key.purple().bold(), separator, read_hostname());
+            println!("{}{}{}   {}", padding, os_key.blue().bold(), separator, read_operating_system());
+            println!("{}{}{} {}", padding, osrelease_key.green().bold(), separator, read_osrelease());
+            println!("{}{}{} {}", padding, terminal_key.cyan().bold(), separator, read_terminal());
+            println!("{}{}{}   {}", padding, uptime_key.yellow().bold(), separator, format_uptime());
+            println!("{}{}{}  {}{}", padding, cpu_model_name_key.red().bold(), separator, read_cpu_model_name(), read_cpu_threads());
+            println!("{}{}{}  {}", padding, battery_key.purple().bold(), separator, read_battery());
         },
         false => {
-            println!("  {}{} {}", hostname_key, separator, read_hostname());
-            println!("  {}{}   {}", os_key, separator, read_operating_system());
-            println!("  {}{} {}", osrelease_key, separator, read_osrelease());
-            println!("  {}{} {}", terminal_key, separator, read_terminal());
-            println!("  {}{}   {}", uptime_key, separator, format_uptime());
-            println!("  {}{}  {}", cpu_model_name_key, separator, read_cpu_model_name());
-            println!("  {}{}  {}", battery_key, separator, read_battery());
+            println!("{}{}{} {}", padding, hostname_key, separator, read_hostname());
+            println!("{}{}{}   {}", padding, os_key, separator, read_operating_system());
+            println!("{}{}{} {}", padding, osrelease_key, separator, read_osrelease());
+            println!("{}{}{} {}", padding, terminal_key, separator, read_terminal());
+            println!("{}{}{}   {}", padding, uptime_key, separator, format_uptime());
+            println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read_cpu_model_name(), read_cpu_threads());
+            println!("{}{}{}  {}", padding, battery_key, separator, read_battery());
         }
     };
-}
-
-fn error(vector: &mut Vec<String>) {
-    vector.remove(0);
-    println!("  {}: bad option {:?}","error".red().bold(),vector);
-    println!("  usage: rustfetch [option]");
-    println!("  options: --no-color");
-    println!("           --help / -h");
-}
-
-fn help() {
-    println!("  {}:","rustfetch".blue().bold());
-    println!("  usage: rustfetch [option]");
-    println!("  options: --no-color");
-    println!("           --help / -h");
+    if palette_status == true {
+        palette(left_padding);
+    }
 }
 
 fn format_uptime() -> String
@@ -168,8 +206,8 @@ fn read_hostname() -> String
 
 fn read_operating_system() -> String
 {
-    let line_num = 1usize;
-    let mut os = String::from(get_line_at(Path::new("/etc/os-release"), line_num - 1).unwrap());
+    let line_num = 0;
+    let mut os = String::from(get_line_at(Path::new("/etc/os-release"), line_num).unwrap());
     os = os.replace("NAME=\"","");
     os = os.replace("\"","");
     return os;
@@ -177,10 +215,19 @@ fn read_operating_system() -> String
 
 fn read_cpu_model_name() -> String
 {
-    let line_num = 5usize;
-    let mut cpu = String::from(get_line_at(Path::new("/proc/cpuinfo"), line_num - 1).unwrap());
+    let line_num = 4;
+    let mut cpu = String::from(get_line_at(Path::new("/proc/cpuinfo"), line_num).unwrap());
     cpu = cpu.replace("model name","").replace(":","").trim().to_string();
     return cpu;
+}
+
+fn read_cpu_threads() -> String
+{
+    let line_num = 10;
+    let mut threads = String::from(get_line_at(Path::new("/proc/cpuinfo"), line_num).unwrap());
+    threads = threads.replace("siblings","").replace(":","").trim().to_string();
+    let threads_text = String::from(" (".to_owned() + &threads + ")");
+    return threads_text;
 }
 
 fn get_line_at(path: &Path, line_num: usize) -> Result<String, Error> {
