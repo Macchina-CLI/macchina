@@ -1,10 +1,7 @@
 use colored::*;
-use std::env;
-use std::fs;
+use std:: {env, fs};
 use std::fs::File;
-use std::io::BufRead;
-use std::io::BufReader;
-use std::io::Error;
+use std::io:: {BufRead, BufReader, Error};
 use std::path::Path;
 
 fn main() {
@@ -35,14 +32,14 @@ let args: Vec<String> = env::args().collect();
 }
 
 fn error(vector: Vec<String>) {
-    let args: [String; 4] = [
-    "macchina".to_string(), 
-    "--help".to_string(), 
-    "--palette".to_string(), 
-    "--no-color".to_string()
-    ];
+let args: [String; 4] = [
+                      "macchina".to_string(),
+                      "--help".to_string(),
+                      "--palette".to_string(),
+                      "--no-color".to_string()
+                  ];
 
-    let mut incorrect_args: Vec<String> = Vec::new();
+let mut incorrect_args: Vec<String> = Vec::new();
     for i in 0 .. vector.len() {
         if !args.contains(&vector[i]) {
             incorrect_args.push(vector[i].clone());
@@ -67,16 +64,16 @@ fn help() {
 fn palette(left_padding: usize) {
     let padding = " ".repeat(left_padding);
     println!();
-    println!("{}{}{}{}{}{}{}{}{}", 
-            padding,
-            "   ".on_bright_black(),
-            "   ".on_bright_red(),
-            "   ".on_bright_green(),
-            "   ".on_bright_yellow(),
-            "   ".on_bright_blue(),
-            "   ".on_bright_purple(),
-            "   ".on_bright_cyan(),
-            "   ".on_bright_white());
+    println!("{}{}{}{}{}{}{}{}{}",
+             padding,
+             "   ".on_bright_black(),
+             "   ".on_bright_red(),
+             "   ".on_bright_green(),
+             "   ".on_bright_yellow(),
+             "   ".on_bright_blue(),
+             "   ".on_bright_purple(),
+             "   ".on_bright_cyan(),
+             "   ".on_bright_white());
 }
 
 fn show_info(color: bool, palette_status: bool) {
@@ -113,7 +110,7 @@ fn show_info(color: bool, palette_status: bool) {
         }
     };
     if palette_status == true {
-        palette(left_padding);
+    palette(left_padding);
     }
 }
 
@@ -163,14 +160,18 @@ fn read_battery() -> String {
     if percentage.ends_with('\n') {
         percentage.pop();
     }
-    
+
     let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
     .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/status");
     if status.ends_with('\n') {
         status.pop();
     }
-    
+
+    if percentage != "100" {
     return String::from(percentage + "% - " + &status);
+    }
+
+    return String::from(&status);
 }
 
 fn read_terminal() -> String
