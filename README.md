@@ -68,9 +68,9 @@ __Bonus__: To run macchina from anywhere on your system, you have two options:
 ## Will Macchina Work on Your Macchina? <a name="platform-support"></a>
 
 |  Platform     |      Support       |
-|:-:            |        :-:         |
+| :-:           |        :-:         |
 | Linux         | :heavy_check_mark: |
-| OpenBSD       |     :question:     |
+| BSD           |     :question:     |
 | MacOS         |                    |
 | Windows       |                    |
 
