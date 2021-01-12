@@ -46,13 +46,13 @@ let mut incorrect_args: Vec<String> = Vec::new();
         }
     }
 
-    println!("  {}: bad option {:?}","error".red().bold(),incorrect_args);
-    println!("  Usage: macchina [option]\n  Options: --help\n         --palette\n         --no-color\n\n  Options are case-sensitive");
+    println!("  {}: bad option {:?}","Error".red().bold(),incorrect_args);
+    println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive");
 }
 
 fn help() {
     println!("  {}:","Macchina".blue().bold());
-    println!("  Usage: macchina [option]\n  Options: --help\n         --palette\n         --no-color\n\n  Options are case-sensitive");
+    println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive");
 }
 
 fn palette(left_padding: usize) {
