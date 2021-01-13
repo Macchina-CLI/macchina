@@ -2,16 +2,24 @@ use colored::Colorize;
 use crate::read;
 
 pub fn show_info(color: bool, palette_status: bool, hide: &[u32]) {
-    //  left_padding: change value to however many spaces you want
+    
+    //  ----------------- CUSTOMIZABLE ------------------ \\
+    //  
+    //  left_padding:
+    //  Change value to however many spaces you 
+    //  want Macchina to display to the left of text
     let left_padding = 6;
-    let padding = " ".repeat(left_padding);
+    //  shell_shorthand:
+    //  If set to "true", Macchina will display full path to shell binary, e.g: /usr/bin/zsh
+    //  If set to "false", Macchina will display shell name, e.g: zsh
+    let shell_shorthand: bool = true;
 
     // This set of variables are the labels displayed
     // to the left of each system information Macchina reports
     // Change any x_key value to whatever your want
     // Example:
     //      Changing uptime_key value from "up" to "uptime"
-    //      will tell machina to print uptime instead of up
+    //      will tell Macchina to print uptime instead of up
     //      when displaying system information
     let separator = ':';
     let hostname_key = String::from("host");
@@ -22,8 +30,12 @@ pub fn show_info(color: bool, palette_status: bool, hide: &[u32]) {
     let cpu_model_name_key = String::from("cpu");
     let battery_key = String::from("bat");
     let shell_key = String::from("sh");
-    // You may override this
-    let shell_shorthand: bool = true;
+    //  ------------------------------------------------- \\
+    
+    //  This line does the padding calculation 
+    //  based on the value of left_padding
+    let padding = " ".repeat(left_padding);
+    
 
     match color {
         true => {
@@ -62,15 +74,16 @@ pub fn error(color: bool, vector: Vec<String>) {
         }
     
         if color {
-            eprintln!("  {}: bad option {:?} {}","Error".red().bold(),incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive.");
+            eprintln!("  {}: bad option {:?} {}","Error".red().bold(),incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
         }
         else {
-            eprintln!("  {}: bad option {:?} {}","Error",incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive.");
+            eprintln!("  {}: bad option {:?} {}","Error",incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
         }
 }
     
 pub fn hide(color: bool, palette_status: bool, vector: Vec<String>) -> [u32; 9] {
         let mut elements: [u32; 9] = [1;9];
+        //  labels contains all hideable elements
         let labels: [String; 9] = [
             "host".to_string(),
             "os".to_string(),
@@ -82,7 +95,7 @@ pub fn hide(color: bool, palette_status: bool, vector: Vec<String>) -> [u32; 9] 
             "bat".to_string(),
             "palette".to_string()
         ];
-        
+
         for i in 0 .. 9 {
             if vector.contains(&labels[i]) {
                 elements[i] = 0;
@@ -96,12 +109,12 @@ pub fn hide(color: bool, palette_status: bool, vector: Vec<String>) -> [u32; 9] 
 pub fn help(color: bool) {
         if color {
             println!("  {}:","Macchina".blue().bold());
-            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive");
+            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
         }
         else
         {
-            println!("  {}:","Macchina");
-            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n\n  Options are case-sensitive");
+            println!("  Macchina");
+            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
         }
 }
 
