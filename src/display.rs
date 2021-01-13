@@ -12,7 +12,7 @@ pub fn show_info(color: bool, palette_status: bool, hide: &[u32]) {
     //  shell_shorthand:
     //  If set to "true", Macchina will display full path to shell binary, e.g: /usr/bin/zsh
     //  If set to "false", Macchina will display shell name, e.g: zsh
-    let shell_shorthand: bool = true;
+    let shell_shorthand: bool = false;
 
     // This set of variables are the labels displayed
     // to the left of each system information Macchina reports

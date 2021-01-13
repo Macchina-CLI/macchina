@@ -39,7 +39,7 @@ pub fn read_battery() -> String {
 
 pub fn read_terminal() -> String
 {
-    if env!("TERM").to_string() != "" { return env!("TERM").to_string(); }
+    if option_env!("TERM").unwrap().to_string() != "" { return option_env!("TERM").unwrap().to_string(); }
     return String::from("is $TERM set?")
 }
 
