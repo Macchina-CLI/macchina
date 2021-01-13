@@ -41,6 +41,12 @@ Macchina, in its current state, displays basic system information such as:
 - Battery _percentage_ and _status_
 - Package count __(coming)__
 
+Macchina supports the following arguments:
+- --no-color for disabling color
+- --palette for displaying the palette
+- --hide for hiding elements
+- --help
+
 ---
 
 ## Installation <a name="install"></a>
