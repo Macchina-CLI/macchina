@@ -1,4 +1,4 @@
-# Macchina
+<h1 align="center"> Macchina </h1>
 
 <p align="center">
   <img src="demo.svg"/>
