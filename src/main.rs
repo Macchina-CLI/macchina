@@ -1,38 +1,37 @@
-use std::env;
+use std::{env, process::exit};
 mod display;
 mod read;
 
 fn main() {
-let args: Vec<String> = env::args().collect();
-let elements: [u32; 9] = [1;9];
+    let mut args: Vec<String> = env::args().collect();
+    let elements: [u32; 9] = [1; 9];
+    let (mut color, mut palette_status, mut icons): (bool, bool, bool) = (true, false, false);
 
-    if args.len() == 1 { 
-        display::show_info(true, false, &elements) 
-    }
-    else if args.len() == 2 { 
-        if args.contains(&"--help".to_string()) {
+    if args.len() == 1 {
+        display::show_info(true, false, false, true, &elements);
+    } else {
+        args.remove(0);
+        if args.len() == 1 && (args[0] == "--help".to_string() || args[0] == "-h".to_string()) {
             display::help(true);
+            exit(0);
         }
-        else if args.contains(&"--no-color".to_string()) {
-            display::show_info(false, false, &elements); 
+        if args.contains(&ts("--no-color")) {
+            color = false;
         }
-        else if args.contains(&"--palette".to_string()) {
-            display::show_info(true, true, &elements);
+        if args.contains(&ts("--icons")) {
+            icons = true;
         }
-        else
-        {
-            display::error(true, args); 
+        if args.contains(&ts("--palette")) {
+            palette_status = true;
         }
+        if args.contains(&ts("--hide")) {
+            display::hide(color, palette_status, icons, args);
+            exit(0);
+        }
+        display::show_info(color, palette_status, icons, true, &elements);
     }
-    else {
-        if args.contains(&"--help".to_string()) && args.contains(&"--no-color".to_string()) {
-                display::help(false);
-        }
-        if args.contains(&"--hide".to_string()) {
-            display::hide(true, true, args);
-        }
-        else {
-            display::error(true, args);
-        }
-    }
+}
+
+fn ts(argname: &str) -> String {
+    return argname.to_string();
 }

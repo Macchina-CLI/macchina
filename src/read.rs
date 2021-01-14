@@ -72,10 +72,18 @@ pub fn read_operating_system() -> String {
     // /etc/os-release and do some operations 
     // to return only the operating system name
     let mut os = String::from(get_line_at(Path::new("/etc/os-release"), 0, "Could not extract OS name!").unwrap());
-    // Remove NAME=" from the line
-    os = os.replace("NAME=\"","");
-    // Remove the quote located at the end of line
-    os.pop();
+    // Keep only the Operating System name
+    // Some Linux distributions write their
+    // Operating System name inside quotes and
+    // some do not, so we will account for both conditions
+    if os.contains("NAME=") && !os.contains("\"") {
+        os = os.replace("NAME=",""); 
+    }
+    else {
+        os = os.replace("NAME=\"","");
+        os.pop();
+    }
+    
     return os;
 }
 
@@ -115,8 +123,7 @@ pub fn format_uptime(uptime: f32) -> String {
         let up_seconds  = (uptime % 60.0).floor();
         if up_seconds != 0.0 { _uptime = up_seconds.to_string() + "s"; } 
     }
-
-    return _uptime;
+    return _uptime.trim().to_string();
 }
 
 pub fn get_line_at(path: &Path, line_num: usize, msg: &str) -> Result<String, Error> {
