@@ -86,13 +86,14 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                         shell_icon,
                         battery_icon): (char, char, char, char, char, char, char, char);
                     hostname_icon = '';
-                    os_icon = '';
                     terminal_icon = '';
                     uptime_icon = '神';
                     shell_icon = '';
                     cpu_icon = '';
-                    osrelease_icon = pick_icon_for_os();
+                    osrelease_icon = '';
+                    os_icon = pick_icon_for_os();
                     battery_icon = pick_icon_for_battery();
+                    
                     if hide[0] != 0 { println!("{}{}  {}", padding, hostname_icon, read::read_hostname()); }
                     if hide[1] != 0 { println!("{}{}  {}", padding, os_icon, read::read_operating_system()); }
                     if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_osrelease()); }
