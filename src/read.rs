@@ -12,26 +12,35 @@ pub fn read_uptime() -> f32 {
     return up.parse().unwrap();
 }
 
-pub fn read_battery() -> String {
+pub fn read_battery_percentage() -> String {
     let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
     .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/capacity");
     if percentage.ends_with('\n') {
         percentage.pop();
     }
 
+    return String::from(&percentage);
+}
+
+pub fn read_battery_status() -> String {
     let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
     .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/status");
     if status.ends_with('\n') {
         status.pop();
     }
+    return status;
+}
 
+pub fn format_battery() -> String {
+    let percentage = read_battery_percentage();
+    let status = read_battery_status();
     // Some computers stop charging before they reach 100%
     // so we will consider the battery to be full when
     // the battery percentage is within bat_full_range
     // This range is inclusive
     let bat_full_range: std::ops::RangeInclusive<i32> = 98 ..=100;
     if !bat_full_range.contains(&percentage.parse().unwrap()) {
-    return String::from(percentage + "% - " + &status);
+        return String::from(percentage + "% - " + &status);
     }
 
     return String::from(&status);

@@ -48,10 +48,10 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     terminal_icon = '';
                     uptime_icon = '神';
                     osrelease_icon = '';
-                    os_icon = pick_icon_for_os();
                     cpu_icon = '';
-                    battery_icon = '';
                     shell_icon = '';
+                    os_icon = pick_icon_for_os();
+                    battery_icon = pick_icon_for_battery();
                     if hide[0] != 0 { println!("{}{}  {}", padding, hostname_icon, read::read_hostname().purple().bold()); }
                     if hide[1] != 0 { println!("{}{}  {}", padding, os_icon, read::read_operating_system().blue().bold()); }
                     if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_osrelease().green().bold()); }
@@ -59,7 +59,7 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand).yellow().bold()); }
                     if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name().red().bold(), read::read_cpu_threads().red().bold()); }
                     if hide[6] != 0 { println!("{}{} {}", padding, uptime_icon, read::format_uptime(read::read_uptime()).purple().bold()); }
-                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::read_battery().blue().bold()); }
+                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::format_battery().blue().bold()); }
                 },
                 _ => {
                     if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key.purple().bold(), separator, read::read_hostname()); }
@@ -69,7 +69,7 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key.yellow().bold(), separator, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key.red().bold(), separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
                     if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key.purple().bold(), separator, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key.blue().bold(), separator, read::read_battery()); }
+                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key.blue().bold(), separator, read::format_battery()); }
                 }
             }
             
@@ -89,10 +89,10 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     os_icon = '';
                     terminal_icon = '';
                     uptime_icon = '神';
-                    osrelease_icon = '';
-                    cpu_icon = '';
-                    battery_icon = '';
                     shell_icon = '';
+                    cpu_icon = '';
+                    osrelease_icon = pick_icon_for_os();
+                    battery_icon = pick_icon_for_battery();
                     if hide[0] != 0 { println!("{}{}  {}", padding, hostname_icon, read::read_hostname()); }
                     if hide[1] != 0 { println!("{}{}  {}", padding, os_icon, read::read_operating_system()); }
                     if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_osrelease()); }
@@ -100,7 +100,7 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name(), read::read_cpu_threads()); }
                     if hide[6] != 0 { println!("{}{}  {}", padding, uptime_icon, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::read_battery()); }
+                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::format_battery()); }
                 },
                 _ => {
                     if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key, separator, read::read_hostname()); }
@@ -110,7 +110,7 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key, separator, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
                     if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key, separator, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, read::read_battery()); }
+                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, read::format_battery()); }
                 }
             }
             
@@ -212,4 +212,38 @@ pub fn pick_icon_for_os() -> char {
         return '';
     }
     return '';
+}
+
+pub fn pick_icon_for_battery() -> char {
+    let bat_perc: i32 = read::read_battery_percentage().parse::<i32>().unwrap();
+    //  Macchina will pick an icon to display next to your
+    //  battery stats based on the battery percentage
+    if bat_perc <= 10 { 
+        return '';
+    }
+    else if bat_perc >= 10 && bat_perc <= 20 { 
+        return ''; 
+    }
+    else if bat_perc >= 20 && bat_perc <= 30 {
+        return '';
+    }
+    else if bat_perc >= 30 && bat_perc <= 40 {
+        return '';
+    }
+    else if bat_perc >= 40 && bat_perc <= 50 {
+        return '';
+    }
+    else if bat_perc >= 50 && bat_perc <= 60 {
+        return '';
+    }
+    else if bat_perc >= 60 && bat_perc <= 70 {
+        return '';
+    }
+    else if bat_perc >= 70 && bat_perc <= 80 {
+        return '';
+    }
+    else if bat_perc >= 80 && bat_perc <= 90 {
+        return '';
+    }
+    return '';
 }
