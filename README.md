@@ -1,7 +1,7 @@
 # Macchina
 
 <p align="center">
-    <img src="demo.svg"/>
+  [![asciicast](https://asciinema.org/a/384570.svg)](https://asciinema.org/a/384570)
 </p>
 
 ## Table of Contents:
