@@ -44,7 +44,8 @@ Macchina, in its current state, displays basic system information such as:
 Macchina supports the following arguments:
 - --no-color for disabling color
 - --palette for displaying the palette
-- --hide for hiding elements
+- --icons for displaying icons
+- --hide for hiding elements such as host, os, kern, term, et cetera.
 - --help
 
 ---
