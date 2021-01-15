@@ -1,6 +1,8 @@
 use std::{env, process::exit};
 mod display;
 mod read;
+mod extra;
+mod format;
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
@@ -11,6 +13,7 @@ fn main() {
         display::show_info(true, false, false, true, &elements);
     } else {
         args.remove(0);
+        args.sort();
         if args.len() == 1 && (args[0] == "--help".to_string() || args[0] == "-h".to_string()) {
             display::help(true);
             exit(0);
@@ -32,6 +35,6 @@ fn main() {
     }
 }
 
-fn ts(argname: &str) -> String {
-    return argname.to_string();
+fn ts(s: &str) -> String {
+    return s.to_string();
 }

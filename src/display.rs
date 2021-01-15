@@ -1,5 +1,6 @@
 use colored::Colorize;
 use crate::read;
+use crate::format;
 
 pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, hide: &[u32]) {
     if signal {
@@ -12,7 +13,7 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
     //  shell_shorthand:
     //  If set to "true", Macchina will display full path to shell binary, e.g: /usr/bin/zsh
     //  If set to "false", Macchina will display shell name, e.g: zsh
-    let shell_shorthand: bool = false;
+    let shell_shorthand: bool = true;
 
     // This set of variables are the labels displayed
     // to the left of each system information Macchina reports
@@ -58,8 +59,8 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[3] != 0 { println!("{}{}  {}", padding, terminal_icon, read::read_terminal().cyan().bold()); }
                     if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand).yellow().bold()); }
                     if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name().red().bold(), read::read_cpu_threads().red().bold()); }
-                    if hide[6] != 0 { println!("{}{} {}", padding, uptime_icon, read::format_uptime(read::read_uptime()).purple().bold()); }
-                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::format_battery().blue().bold()); }
+                    if hide[6] != 0 { println!("{}{} {}", padding, uptime_icon, format::format_uptime(read::read_uptime()).purple().bold()); }
+                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, format::format_battery().blue().bold()); }
                 },
                 _ => {
                     if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key.purple().bold(), separator, read::read_hostname()); }
@@ -68,8 +69,8 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[3] != 0 { println!("{}{}{} {}", padding, terminal_key.cyan().bold(), separator, read::read_terminal()); }
                     if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key.yellow().bold(), separator, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key.red().bold(), separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
-                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key.purple().bold(), separator, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key.blue().bold(), separator, read::format_battery()); }
+                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key.purple().bold(), separator, format::format_uptime(read::read_uptime())); }
+                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key.blue().bold(), separator, format::format_battery()); }
                 }
             }
             
@@ -100,8 +101,8 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[3] != 0 { println!("{}{}  {}", padding, terminal_icon, read::read_terminal()); }
                     if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name(), read::read_cpu_threads()); }
-                    if hide[6] != 0 { println!("{}{}  {}", padding, uptime_icon, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, read::format_battery()); }
+                    if hide[6] != 0 { println!("{}{}  {}", padding, uptime_icon, format::format_uptime(read::read_uptime())); }
+                    if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, format::format_battery()); }
                 },
                 _ => {
                     if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key, separator, read::read_hostname()); }
@@ -110,8 +111,8 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     if hide[3] != 0 { println!("{}{}{} {}", padding, terminal_key, separator, read::read_terminal()); }
                     if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key, separator, read::read_shell(shell_shorthand)); }
                     if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
-                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key, separator, read::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, read::format_battery()); }
+                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key, separator, format::format_uptime(read::read_uptime())); }
+                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, format::format_battery()); }
                 }
             }
             
