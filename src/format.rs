@@ -5,14 +5,14 @@ pub fn format_uptime(uptime: f32) -> String {
     // Uptime is formatted to dd:hh:mm if the system has been up for longer than 60 seconds
     if uptime > 60.0 {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
+        let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
+        let up_minutes = (uptime / 60.0 % 60.0).floor();
         if up_days != 0.0 {
             _uptime = _uptime + &up_days.to_string() + "d ";
-        }
-        let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
+        }  
         if up_hours != 0.0 {
             _uptime = _uptime + &up_hours.to_string() + "h ";
         }
-        let up_minutes = (uptime / 60.0 % 60.0).floor();
         if up_minutes != 0.0 {
             _uptime = _uptime + &up_minutes.to_string() + "m";
         }

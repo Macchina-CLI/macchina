@@ -1,7 +1,7 @@
 <h1 align="center"> Macchina </h1>
 
 <p align="center">
-  <img src="demo.svg"/>
+  <img src="preview.png"/>
 </p>
 
 ## Table of Contents:

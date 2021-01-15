@@ -38,7 +38,8 @@ pub fn read_shell(shorthand: bool) -> String {
 }
 
 pub fn read_kernel_version() -> String {
-    let osrelease = fs::read_to_string("/proc/sys/kernel/osrelease").expect("Could not read osrelease from /proc/sys/kernel/osrelease");
+    let osrelease = fs::read_to_string("/proc/sys/kernel/osrelease")
+        .expect("Could not read osrelease from /proc/sys/kernel/osrelease");
     let mut osrelease_str = String::from(osrelease);
     osrelease_str.pop();
     return osrelease_str;
@@ -47,27 +48,23 @@ pub fn read_kernel_version() -> String {
 pub fn read_hostname() -> String {
     let hostname = fs::read_to_string("/etc/hostname").expect("Could not read hostname from /etc/hostname");
     let mut hostname_str = String::from(hostname);
-    hostname_str.pop();
+    if hostname_str.ends_with('\n') {
+        hostname_str.pop();
+    }
     return hostname_str;
 }
 
 pub fn read_operating_system() -> String {
-    // To extract the operating system name
-    // we will feed os, the first line from
-    // /etc/os-release and do some operations
-    // to return only the operating system name
     let mut os = String::from(extra::get_line_at("/etc/os-release", 0, "Could not extract OS name!").unwrap());
     // Keep only the Operating System name
     // Some Linux distributions write their
     // Operating System name inside quotes and
     // some do not, so we will account for both conditions
-    if os.contains("NAME=") && !os.contains("\"") {
-        os = os.replace("NAME=", "");
-    } else {
-        os = os.replace("NAME=\"", "");
-        os.pop();
+    if !os.contains("NAME=\"") {
+        return os.replace("NAME=", "");
     }
-    return os;
+    os.pop();
+    return os.replace("NAME=\"", "");
 }
 
 pub fn read_cpu_model_name(shorthand: bool) -> String {
@@ -75,15 +72,14 @@ pub fn read_cpu_model_name(shorthand: bool) -> String {
     // we will feed cpu, the fourth line from
     // /proc/cpuinfo and do some operations
     // to return only the cpu model name
-    let mut cpu = String::from(
-        extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap());
-    cpu = cpu.replace("model name", "")
+    let mut cpu = String::from(extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap());
+    cpu = cpu
+        .replace("model name", "")
         .replace(":", "")
         .trim()
         .to_string();
     if shorthand && cpu.contains("Intel(R) Core(TM)") {
-        cpu = cpu.replace("Intel(R) Core(TM)","");
-        cpu = cpu.replace("CPU ","");
+        cpu = cpu.replace("Intel(R) Core(TM)", "").replace("CPU ", "");
         return cpu.trim().to_string();
     }
     return cpu;
@@ -96,8 +92,7 @@ pub fn read_cpu_threads() -> String {
         .replace(":", "")
         .trim()
         .to_string();
-    let threads_text = String::from(" (".to_owned() + &threads + ")");
-    return threads_text;
+    return String::from(" (".to_owned() + &threads + ")");
 }
 
 pub fn read_uptime() -> f32 {
