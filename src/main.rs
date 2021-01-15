@@ -1,5 +1,6 @@
 use std::{env, process::exit};
 mod display;
+use display::Options;
 mod read;
 mod extra;
 mod format;
@@ -7,10 +8,9 @@ mod format;
 fn main() {
     let mut args: Vec<String> = env::args().collect();
     let elements: [u32; 9] = [1; 9];
-    let (mut color, mut palette_status, mut icons): (bool, bool, bool) = (true, false, false);
-
+    let mut options= Options::new(true, false, false, true, false, false);
     if args.len() == 1 {
-        display::show_info(true, false, false, true, &elements);
+        display::print(options, &elements);
     } else {
         args.remove(0);
         args.sort();
@@ -18,23 +18,25 @@ fn main() {
             display::help(true);
             exit(0);
         }
-        if args.contains(&ts("--no-color")) {
-            color = false;
+        if args.contains(&"--no-color".to_string()) {
+            options.color = false;
         }
-        if args.contains(&ts("--icons")) {
-            icons = true;
+        if args.contains(&"--icons".to_string()) {
+            options.icons = true;
         }
-        if args.contains(&ts("--palette")) {
-            palette_status = true;
+        if args.contains(&"--palette".to_string()) {
+            options.palette_status = true;
         }
-        if args.contains(&ts("--hide")) {
-            display::hide(color, palette_status, icons, args);
+        if args.contains(&"--short-cpu".to_string()) {
+            options.cpu_shorthand = true;
+        }
+        if args.contains(&"--short-sh".to_string()) {
+            options.shell_shorthand = true;
+        }
+        if args.contains(&"--hide".to_string()) {
+            display::hide(options, args);
             exit(0);
         }
-        display::show_info(color, palette_status, icons, true, &elements);
+        display::print(options, &elements);
     }
-}
-
-fn ts(s: &str) -> String {
-    return s.to_string();
 }

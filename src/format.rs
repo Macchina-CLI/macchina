@@ -6,11 +6,11 @@ pub fn format_uptime(uptime: f32) -> String {
     if uptime > 60.0 {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
         if up_days != 0.0 {
-            _uptime = _uptime + &up_days.to_string() + "d, ";
+            _uptime = _uptime + &up_days.to_string() + "d ";
         }
         let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
         if up_hours != 0.0 {
-            _uptime = _uptime + &up_hours.to_string() + "h, ";
+            _uptime = _uptime + &up_hours.to_string() + "h ";
         }
         let up_minutes = (uptime / 60.0 % 60.0).floor();
         if up_minutes != 0.0 {

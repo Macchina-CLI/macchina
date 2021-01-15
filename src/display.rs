@@ -2,8 +2,23 @@ use colored::Colorize;
 use crate::read;
 use crate::format;
 
-pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, hide: &[u32]) {
-    if signal {
+pub struct Options {
+    pub color: bool,
+    pub palette_status: bool,
+    pub icons: bool,
+    pub signal: bool,
+    pub cpu_shorthand: bool,
+    pub shell_shorthand: bool
+}
+
+impl Options {
+    pub fn new(col: bool, pal: bool, ico: bool, sig: bool, cpu_short: bool, shell_short: bool) -> Options {
+        Options { color: col, palette_status: pal, icons: ico, signal: sig, cpu_shorthand: cpu_short, shell_shorthand: shell_short }
+    }
+}
+
+pub fn print(options: Options, hide: &[u32]) {
+    if options.signal {
     //  ----------------- CUSTOMIZABLE ------------------ \\
     //  
     //  left_padding:
@@ -13,24 +28,25 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
     //  shell_shorthand:
     //  If set to "true", Macchina will display full path to shell binary, e.g: /usr/bin/zsh
     //  If set to "false", Macchina will display shell name, e.g: zsh
-    let shell_shorthand: bool = true;
 
     // This set of variables are the labels displayed
     // to the left of each system information Macchina reports
     // Change any x_key value to whatever your want
+    // Change the colors to whatever you want
     // Example:
     //      Changing uptime_key value from "up" to "uptime"
     //      will tell Macchina to print uptime instead of up
     //      when displaying system information
-        let separator = if icons { ' ' } else { ':' };
-        let hostname_key = String::from("host");
-        let os_key = String::from("os");
-        let osrelease_key = String::from("kern");
-        let terminal_key = String::from("term");
-        let uptime_key = String::from("up");
-        let cpu_model_name_key = String::from("cpu");
-        let battery_key = String::from("bat");
-        let shell_key = String::from("sh");
+        let separator = if options.icons { ' ' } else { ':' };
+        let hostname_key = String::from("host").purple().bold();
+        let os_key = String::from("os").blue().bold();
+        let osrelease_key = String::from("kern").cyan().bold();
+        let terminal_key = String::from("term").green().bold();
+        let shell_key = String::from("sh").yellow().bold();
+        let cpu_model_name_key = String::from("cpu").red().bold();
+        let uptime_key = String::from("up").purple().bold();
+        let battery_key = String::from("bat").blue().bold();
+        
         
     //  ------------------------------------------------- \\
     
@@ -39,9 +55,9 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
     let padding = " ".repeat(left_padding);
     
 
-    match color {
+    match options.color {
         true => {
-            match icons {
+            match options.icons {
                 true => {
                     let (hostname_icon, os_icon, terminal_icon, uptime_icon, osrelease_icon, cpu_icon, shell_icon, battery_icon): 
                     (char, char, char, char, char, char, char, char);
@@ -55,28 +71,27 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     battery_icon = pick_icon_for_battery();
                     if hide[0] != 0 { println!("{}{}  {}", padding, hostname_icon, read::read_hostname().purple().bold()); }
                     if hide[1] != 0 { println!("{}{}  {}", padding, os_icon, read::read_operating_system().blue().bold()); }
-                    if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_osrelease().green().bold()); }
+                    if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_kernel_version().green().bold()); }
                     if hide[3] != 0 { println!("{}{}  {}", padding, terminal_icon, read::read_terminal().cyan().bold()); }
-                    if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand).yellow().bold()); }
-                    if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name().red().bold(), read::read_cpu_threads().red().bold()); }
+                    if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(options.shell_shorthand).yellow().bold()); }
+                    if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name(options.cpu_shorthand).red().bold(), read::read_cpu_threads().red().bold()); }
                     if hide[6] != 0 { println!("{}{} {}", padding, uptime_icon, format::format_uptime(read::read_uptime()).purple().bold()); }
                     if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, format::format_battery().blue().bold()); }
                 },
                 _ => {
-                    if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key.purple().bold(), separator, read::read_hostname()); }
-                    if hide[1] != 0 { println!("{}{}{}   {}", padding, os_key.blue().bold(), separator, read::read_operating_system()); }
-                    if hide[2] != 0 { println!("{}{}{} {}", padding, osrelease_key.green().bold(), separator, read::read_osrelease()); }
-                    if hide[3] != 0 { println!("{}{}{} {}", padding, terminal_key.cyan().bold(), separator, read::read_terminal()); }
-                    if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key.yellow().bold(), separator, read::read_shell(shell_shorthand)); }
-                    if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key.red().bold(), separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
-                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key.purple().bold(), separator, format::format_uptime(read::read_uptime())); }
-                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key.blue().bold(), separator, format::format_battery()); }
+                    if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key, separator, read::read_hostname()); }
+                    if hide[1] != 0 { println!("{}{}{}   {}", padding, os_key, separator, read::read_operating_system()); }
+                    if hide[2] != 0 { println!("{}{}{} {}", padding, osrelease_key, separator, read::read_kernel_version()); }
+                    if hide[3] != 0 { println!("{}{}{} {}", padding, terminal_key, separator, read::read_terminal()); }
+                    if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key, separator, read::read_shell(options.shell_shorthand)); }
+                    if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read::read_cpu_model_name(options.cpu_shorthand), read::read_cpu_threads()); }
+                    if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key, separator, format::format_uptime(read::read_uptime())); }
+                    if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, format::format_battery()); }
                 }
-            }
-            
+            }   
         },
         false => {
-            match icons {
+            match options.icons {
                 true => {
                     let (hostname_icon,
                         os_icon, 
@@ -97,46 +112,35 @@ pub fn show_info(color: bool, palette_status: bool, icons: bool, signal: bool, h
                     
                     if hide[0] != 0 { println!("{}{}  {}", padding, hostname_icon, read::read_hostname()); }
                     if hide[1] != 0 { println!("{}{}  {}", padding, os_icon, read::read_operating_system()); }
-                    if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_osrelease()); }
+                    if hide[2] != 0 { println!("{}{}  {}", padding, osrelease_icon, read::read_kernel_version()); }
                     if hide[3] != 0 { println!("{}{}  {}", padding, terminal_icon, read::read_terminal()); }
-                    if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(shell_shorthand)); }
-                    if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name(), read::read_cpu_threads()); }
+                    if hide[4] != 0 { println!("{}{}  {}", padding, shell_icon, read::read_shell(options.shell_shorthand)); }
+                    if hide[5] != 0 { println!("{}{}  {}{}", padding, cpu_icon, read::read_cpu_model_name(options.cpu_shorthand), read::read_cpu_threads()); }
                     if hide[6] != 0 { println!("{}{}  {}", padding, uptime_icon, format::format_uptime(read::read_uptime())); }
                     if hide[7] != 0 { println!("{}{}  {}", padding, battery_icon, format::format_battery()); }
                 },
                 _ => {
                     if hide[0] != 0 { println!("{}{}{} {}", padding, hostname_key, separator, read::read_hostname()); }
                     if hide[1] != 0 { println!("{}{}{}   {}", padding, os_key, separator, read::read_operating_system()); }
-                    if hide[2] != 0 { println!("{}{}{} {}", padding, osrelease_key, separator, read::read_osrelease()); }
+                    if hide[2] != 0 { println!("{}{}{} {}", padding, osrelease_key, separator, read::read_kernel_version()); }
                     if hide[3] != 0 { println!("{}{}{} {}", padding, terminal_key, separator, read::read_terminal()); }
-                    if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key, separator, read::read_shell(shell_shorthand)); }
-                    if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read::read_cpu_model_name(), read::read_cpu_threads()); }
+                    if hide[4] != 0 { println!("{}{}{}   {}", padding, shell_key, separator, read::read_shell(options.shell_shorthand)); }
+                    if hide[5] != 0 { println!("{}{}{}  {}{}", padding, cpu_model_name_key, separator, read::read_cpu_model_name(options.cpu_shorthand), read::read_cpu_threads()); }
                     if hide[6] != 0 { println!("{}{}{}   {}", padding, uptime_key, separator, format::format_uptime(read::read_uptime())); }
                     if hide[7] != 0 { println!("{}{}{}  {}", padding, battery_key, separator, format::format_battery()); }
                 }
             }
-            
         }
     };
 
-    if palette_status && hide[8] != 0 {
+    if options.palette_status && hide[8] != 0 {
         palette(left_padding);
+        println!();
     }
 }
 }
-
-pub fn error(vector: Vec<String>) {
-    let args: [String; 4] = [ "--help".to_string(), "--palette".to_string(), "--no-color".to_string(), "--hide".to_string()];
-    let mut incorrect_args: Vec<String> = Vec::new();
-        for i in 0 .. vector.len() {
-            if !args.contains(&vector[i]) {
-                incorrect_args.push(vector[i].clone());
-            }
-        }
-    eprintln!("  {}: bad option {:?} {}","Error".red().bold(),incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
-}
     
-pub fn hide(color: bool, palette_status: bool, icons: bool, vector: Vec<String>) -> [u32; 9] {
+pub fn hide(options: Options, vector: Vec<String>) -> [u32; 9] {
         let mut elements: [u32; 9] = [1;9];
         //  labels contains all hideable elements
         let labels: [String; 9] = [
@@ -157,19 +161,35 @@ pub fn hide(color: bool, palette_status: bool, icons: bool, vector: Vec<String>)
             }
         }
 
-        show_info( color, palette_status, icons, true, &elements);
+        print(options, &elements);
         return elements;
 }
     
 pub fn help(color: bool) {
         if color {
             println!("  {}:","Macchina".blue().bold());
-            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
+            println!("  Usage: macchina [options]\n
+            Options:
+            --help
+            --palette
+            --no-color
+            --hide (host, os, kern, ...)
+            --short-sh : shorten shell value
+            --short-cpu : shorten cpu value\n
+            Options are case-sensitive.");
         }
         else
         {
             println!("  Macchina");
-            println!("  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
+            println!("  Usage: macchina [option]
+            Options:
+            --help
+            --palette
+            --no-color
+            --hide (host, os, kern, ...)
+            --short-sh : shorten shell value
+            --short-cpu : shorten cpu value\n
+            Options are case-sensitive.");
         }
 }
 
@@ -248,4 +268,16 @@ pub fn pick_icon_for_battery() -> char {
         return '';
     }
     return '';
+}
+
+#[allow(dead_code)]
+pub fn error(vector: Vec<String>) {
+    let args: [String; 4] = [ "--help".to_string(), "--palette".to_string(), "--no-color".to_string(), "--hide".to_string()];
+    let mut incorrect_args: Vec<String> = Vec::new();
+        for i in 0 .. vector.len() {
+            if !args.contains(&vector[i]) {
+                incorrect_args.push(vector[i].clone());
+            }
+        }
+    eprintln!("  {}: bad option {:?} {}","Error".red().bold(),incorrect_args, "\n  Usage: macchina [option]\n  Options: --help\n           --palette\n           --no-color\n           --hide\n\n  Options are case-sensitive.");
 }

@@ -37,7 +37,7 @@ pub fn read_shell(shorthand: bool) -> String {
     return String::from("is $SHELL set?");
 }
 
-pub fn read_osrelease() -> String {
+pub fn read_kernel_version() -> String {
     let osrelease = fs::read_to_string("/proc/sys/kernel/osrelease").expect("Could not read osrelease from /proc/sys/kernel/osrelease");
     let mut osrelease_str = String::from(osrelease);
     osrelease_str.pop();
@@ -70,18 +70,22 @@ pub fn read_operating_system() -> String {
     return os;
 }
 
-pub fn read_cpu_model_name() -> String {
+pub fn read_cpu_model_name(shorthand: bool) -> String {
     // To extract the cpu model name
     // we will feed cpu, the fourth line from
     // /proc/cpuinfo and do some operations
     // to return only the cpu model name
     let mut cpu = String::from(
         extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap());
-    cpu = cpu
-        .replace("model name", "")
+    cpu = cpu.replace("model name", "")
         .replace(":", "")
         .trim()
         .to_string();
+    if shorthand && cpu.contains("Intel(R) Core(TM)") {
+        cpu = cpu.replace("Intel(R) Core(TM)","");
+        cpu = cpu.replace("CPU ","");
+        return cpu.trim().to_string();
+    }
     return cpu;
 }
 

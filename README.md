@@ -42,10 +42,12 @@ Macchina, in its current state, displays basic system information such as:
 - Package count __(coming)__
 
 Macchina supports the following arguments:
-- --no-color for disabling color
-- --palette for displaying the palette
-- --icons for displaying icons
-- --hide for hiding elements such as host, os, kern, term, et cetera.
+- --no-color: disable colors
+- --palette: display palette
+- --icons: display icons
+- --hide: for hiding elements such as host, os, kern, term, et cetera.
+- --short-cpu: shorten processor output
+- --short-sh: shorten shell output
 - --help
 
 ---
