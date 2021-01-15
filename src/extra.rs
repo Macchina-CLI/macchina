@@ -1,6 +1,6 @@
-use std::path::Path;
 use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
+use std::path::Path;
 
 pub fn get_line_at(path: &str, line_num: usize, msg: &str) -> Result<String, Error> {
     let path = Path::new(path);
