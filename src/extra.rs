@@ -2,10 +2,10 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, Error};
 use std::path::Path;
 
-pub fn get_line_at(path: &str, line_num: usize, msg: &str) -> Result<String, Error> {
-    let path = Path::new(path);
-    let file = File::open(path).expect(&msg);
+pub fn get_line_at(path_to_file: &str, line_number: usize, error_message: &str) -> Result<String, Error> {
+    let _path = Path::new(path_to_file);
+    let file = File::open(path_to_file).expect(&error_message);
     let content = BufReader::new(&file);
     let mut lines = content.lines();
-    lines.nth(line_num).expect("Line out-of-bounds")
+    lines.nth(line_number).expect("Line out-of-bounds")
 }

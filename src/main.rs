@@ -11,10 +11,12 @@ fn main() {
     let mut supplied_wrong_arg: bool = false;
     let mut opts = Options::new(true, false, true, false, false);
     // let elements: [u32; 9] = [1; 9];
-    let allowed_args: [String; 4] = [
+    let allowed_args: [String; 6] = [
         "--help".to_string(),
         "--palette".to_string(),
         "--no-color".to_string(),
+        "--short-cpu".to_string(),
+        "--short-sh".to_string(),
         "--hide".to_string(),
     ];
 
@@ -39,6 +41,8 @@ fn main() {
                 opts.shell_shorthand = true;
             }
             if args.contains(&"--hide".to_string()) {
+                let hide_arg_pos = args.iter().position(|s| s == "--hide").unwrap();
+                args.remove(hide_arg_pos);
                 display::hide(opts, args);
                 exit(0);
             }

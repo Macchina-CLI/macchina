@@ -18,7 +18,7 @@ pub fn format_uptime(up: String) -> String {
         }
         if up_minutes != 0.0 {
             formatted_uptime.push_str(&up_minutes.to_string());
-            formatted_uptime.push_str("m ");
+            formatted_uptime.push_str("m");
         }
     }
     // Uptime is formatted to seconds only if the system has been up for fewer than 60 seconds
