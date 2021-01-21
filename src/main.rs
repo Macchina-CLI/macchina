@@ -1,42 +1,56 @@
 use std::{env, process::exit};
 mod display;
 use display::Options;
-mod read;
 mod extra;
 mod format;
+mod read;
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
-    let elements: [u32; 9] = [1; 9];
-    let mut options= Options::new(true, false, false, true, false, false);
-    if args.len() == 1 {
-        display::print(options, &elements);
+    let mut inc_args: Vec<String> = Vec::new();
+    let mut supplied_wrong_arg: bool = false;
+    let mut opts = Options::new(true, false, true, false, false);
+    // let elements: [u32; 9] = [1; 9];
+    let allowed_args: [String; 4] = [
+        "--help".to_string(),
+        "--palette".to_string(),
+        "--no-color".to_string(),
+        "--hide".to_string(),
+    ];
+
+    args.remove(0);
+    args.sort();
+    for z in 0..args.len() {
+        if allowed_args.contains(&args[z]) {
+            if args.len() == 1 && args[0] == "--help".to_string() {
+                display::help(opts);
+                exit(0);
+            }
+            if args.contains(&"--no-color".to_string()) {
+                opts.color = false;
+            }
+            if args.contains(&"--palette".to_string()) {
+                opts.palette_status = true;
+            }
+            if args.contains(&"--short-cpu".to_string()) {
+                opts.cpu_shorthand = true;
+            }
+            if args.contains(&"--short-sh".to_string()) {
+                opts.shell_shorthand = true;
+            }
+            if args.contains(&"--hide".to_string()) {
+                display::hide(opts, args);
+                exit(0);
+            }
+        } else {
+            inc_args.push(args[z].clone());
+            supplied_wrong_arg = true;
+        }
+    }
+    if supplied_wrong_arg {
+        display::error(&inc_args);
+        exit(0);
     } else {
-        args.remove(0);
-        args.sort();
-        if args.len() == 1 && (args[0] == "--help".to_string() || args[0] == "-h".to_string()) {
-            display::help(true);
-            exit(0);
-        }
-        if args.contains(&"--no-color".to_string()) {
-            options.color = false;
-        }
-        if args.contains(&"--icons".to_string()) {
-            options.icons = true;
-        }
-        if args.contains(&"--palette".to_string()) {
-            options.palette_status = true;
-        }
-        if args.contains(&"--short-cpu".to_string()) {
-            options.cpu_shorthand = true;
-        }
-        if args.contains(&"--short-sh".to_string()) {
-            options.shell_shorthand = true;
-        }
-        if args.contains(&"--hide".to_string()) {
-            display::hide(options, args);
-            exit(0);
-        }
-        display::print(options, &elements);
+        display::print_info(opts);
     }
 }

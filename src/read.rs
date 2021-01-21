@@ -1,5 +1,5 @@
 use crate::extra;
-use std::{env, fs};
+use std::{env, fs, io};
 
 pub fn read_battery_percentage() -> String {
     let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
@@ -37,41 +37,32 @@ pub fn read_shell(shorthand: bool) -> String {
     return String::from("is $SHELL set?");
 }
 
-pub fn read_kernel_version() -> String {
-    let osrelease = fs::read_to_string("/proc/sys/kernel/osrelease")
-        .expect("Could not read osrelease from /proc/sys/kernel/osrelease");
-    let mut osrelease_str = String::from(osrelease);
-    osrelease_str.pop();
-    return osrelease_str;
+pub fn read_kernel_version() -> Result<String, io::Error> {
+    let kernel_version = fs::read_to_string("/proc/sys/kernel/osrelease")?;
+    let mut kernel_version_str = String::from(kernel_version);
+    kernel_version_str.pop();
+    Ok(kernel_version_str)
 }
 
-pub fn read_hostname() -> String {
-    let hostname = fs::read_to_string("/etc/hostname").expect("Could not read hostname from /etc/hostname");
+pub fn read_hostname() -> Result<String, io::Error> {
+    let hostname = fs::read_to_string("/etc/hostname")?;
     let mut hostname_str = String::from(hostname);
     if hostname_str.ends_with('\n') {
         hostname_str.pop();
     }
-    return hostname_str;
+    Ok(hostname_str)
 }
 
 pub fn read_operating_system() -> String {
     let mut os = String::from(extra::get_line_at("/etc/os-release", 0, "Could not extract OS name!").unwrap());
-    // Keep only the Operating System name
-    // Some Linux distributions write their
-    // Operating System name inside quotes and
-    // some do not, so we will account for both conditions
     if !os.contains("NAME=\"") {
         return os.replace("NAME=", "");
     }
     os.pop();
-    return os.replace("NAME=\"", "");
+    os.replace("NAME=\"", "")
 }
 
 pub fn read_cpu_model_name(shorthand: bool) -> String {
-    // To extract the cpu model name
-    // we will feed cpu, the fourth line from
-    // /proc/cpuinfo and do some operations
-    // to return only the cpu model name
     let mut cpu = String::from(extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap());
     cpu = cpu
         .replace("model name", "")
@@ -82,7 +73,7 @@ pub fn read_cpu_model_name(shorthand: bool) -> String {
         cpu = cpu.replace("Intel(R) Core(TM)", "").replace("CPU ", "");
         return cpu.trim().to_string();
     }
-    return cpu;
+    cpu
 }
 
 pub fn read_cpu_threads() -> String {
@@ -92,13 +83,12 @@ pub fn read_cpu_threads() -> String {
         .replace(":", "")
         .trim()
         .to_string();
-    return String::from(" (".to_owned() + &threads + ")");
+    String::from(" (".to_owned() + &threads + ")")
 }
 
-pub fn read_uptime() -> f32 {
-    let uptime = fs::read_to_string("/proc/uptime").expect("Could not read uptime from /proc/uptime");
+pub fn read_uptime() -> Result <String, io::Error> {
+    let uptime = fs::read_to_string("/proc/uptime")?;
     //  Read first float from uptime
     let up = uptime.split_whitespace().next().unwrap_or("");
-    //  up is now returned as f32 so we can properly format it using format_uptime()
-    return up.parse().unwrap();
+    Ok(up.to_string())
 }
