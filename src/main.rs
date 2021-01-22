@@ -4,11 +4,13 @@ use display::Options;
 mod extra;
 mod format;
 mod read;
+use display::Elements;
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
     let mut inc_args: Vec<String> = Vec::new();
     let mut supplied_wrong_arg: bool = false;
+    let elems = Elements::new();
     let mut opts = Options::new(true, false, true, false, false);
     // let elements: [u32; 9] = [1; 9];
     let allowed_args: [String; 6] = [
@@ -41,9 +43,11 @@ fn main() {
                 opts.shell_shorthand = true;
             }
             if args.contains(&"--hide".to_string()) {
-                let hide_arg_pos = args.iter().position(|s| s == "--hide").unwrap();
-                args.remove(hide_arg_pos);
-                display::hide(opts, args);
+                let mut params: Vec<String> = Vec::new();
+                for i in 0 .. args.len() {
+                    if !args[i].starts_with('-') { params.push(args[i].clone()) }
+                }
+                display::hide(elems,opts, params);
                 exit(0);
             }
         } else {
@@ -55,6 +59,6 @@ fn main() {
         display::error(&inc_args);
         exit(0);
     } else {
-        display::print_info(opts);
+        display::print_info(elems, opts);
     }
 }

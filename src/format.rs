@@ -1,5 +1,3 @@
-use crate::read;
-
 pub fn format_uptime(up: String) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = up.parse().unwrap();
@@ -32,9 +30,7 @@ pub fn format_uptime(up: String) -> String {
     return formatted_uptime.trim().to_string();
 }
 
-pub fn format_battery() -> String {
-    let percentage = read::read_battery_percentage();
-    let status = read::read_battery_status();
+pub fn format_battery(percentage: String, status: String) -> String {
     // Some computers stop charging before they reach 100%
     // so we will consider the battery to be full when
     // the battery percentage is within bat_full_range
