@@ -12,7 +12,6 @@ fn main() {
     let mut supplied_wrong_arg: bool = false;
     let elems = Elements::new();
     let mut opts = Options::new(true, false, true, false, false);
-    // let elements: [u32; 9] = [1; 9];
     let allowed_args: [String; 6] = [
         "--help".to_string(),
         "--palette".to_string(),
@@ -27,7 +26,7 @@ fn main() {
     for z in 0..args.len() {
         if allowed_args.contains(&args[z]) {
             if args.len() == 1 && args[0] == "--help".to_string() {
-                display::help(opts);
+                display::help();
                 exit(0);
             }
             if args.contains(&"--no-color".to_string()) {

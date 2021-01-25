@@ -1,4 +1,5 @@
 use colored::Colorize;
+use read::read_total_memory;
 use crate::read;
 use crate::format;
 use std::process::exit;
@@ -28,7 +29,9 @@ pub struct Elements {
     pub cpu_key: String,
     pub uptime_key: String,
     pub battery_key: String,
-    pub num_elements: [bool; 9]
+    pub package_count_key: String,
+    pub memory_key: String,
+    pub num_elements: [bool; 10]
 }
 
 impl Elements {
@@ -44,7 +47,9 @@ impl Elements {
             cpu_key: "cpu".to_string(),
             uptime_key: "up".to_string(),
             battery_key: "bat".to_string(),
-            num_elements: [true; 9],
+            package_count_key: "pkgs".to_string(),
+            memory_key: "mem".to_string(),
+            num_elements: [true; 10],
         }
     }
 }
@@ -54,24 +59,28 @@ pub fn print_info(elems: Elements, opts: Options) {
     if opts.signal {
         match opts.color {
             true => {
-                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key.purple().bold(), elems.separator, read::read_hostname().expect("Couldn't retrive hostname!")); }
+                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key.purple().bold(), elems.separator, read::read_hostname()); }
                 if elems.num_elements[1] { println!("{}{}{} {}", padding, elems.os_key.blue().bold(), elems.separator, read::read_operating_system()); }
-                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key.cyan().bold(), elems.separator, read::read_kernel_version().expect("Couldn't retrieve kernel version!")); }
-                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.terminal_key.green().bold(), elems.separator, read::read_terminal()); }
-                if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key.yellow().bold(), elems.separator, read::read_shell(opts.shell_shorthand)); }
-                if elems.num_elements[5] { println!("{}{}{} {}{}", padding, elems.cpu_key.red().bold(), elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), read::read_cpu_threads()); }
-                if elems.num_elements[6] { println!("{}{}{} {}", padding, elems.uptime_key.purple().bold(), elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
-                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.battery_key.blue().bold(), elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
+                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key.cyan().bold(), elems.separator, read::read_kernel_version()); }
+                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.package_count_key.green().bold(), elems.separator, read::read_package_count()); }
+                if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key.red().bold(), elems.separator, read::read_shell(opts.shell_shorthand)); }
+                if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key.yellow().bold(), elems.separator, read::read_terminal()); }
+                if elems.num_elements[6] { println!("{}{}{} {}{}", padding, elems.cpu_key.purple().bold(), elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), read::read_cpu_threads()); }
+                if elems.num_elements[7] { println!("{}{}{} {}/{}", padding, elems.memory_key.blue().bold(), elems.separator, read::read_used_memory(), read_total_memory()); }
+                if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key.cyan().bold(), elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
+                if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key.green().bold(), elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
             },
             false => {
-                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key, elems.separator, read::read_hostname().expect("Couldn't retrieve hostname!")); }
+                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key, elems.separator, read::read_hostname()); }
                 if elems.num_elements[1] { println!("{}{}{} {}", padding, elems.os_key, elems.separator, read::read_operating_system()); }
-                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key, elems.separator, read::read_kernel_version().expect("Couldn't retrieve kernel version!")); }
-                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.terminal_key, elems.separator, read::read_terminal()); }
+                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key, elems.separator, read::read_kernel_version()); }
+                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.package_count_key, elems.separator, read::read_package_count()); }
                 if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key, elems.separator, read::read_shell(opts.shell_shorthand)); }
-                if elems.num_elements[5] { println!("{}{}{} {}{}", padding, elems.cpu_key, elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), read::read_cpu_threads()); }
-                if elems.num_elements[6] { println!("{}{}{} {}", padding, elems.uptime_key, elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
-                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.battery_key, elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
+                if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key, elems.separator, read::read_terminal()); }
+                if elems.num_elements[6] { println!("{}{}{} {}{}", padding, elems.cpu_key, elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), read::read_cpu_threads()); }
+                if elems.num_elements[7] { println!("{}{}{} {}/{}", padding, elems.memory_key, elems.separator, read::read_used_memory(), read_total_memory()); }
+                if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key, elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
+                if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key, elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
             }
         }
         if opts.palette_status {
@@ -99,17 +108,21 @@ pub fn palette(elems: Elements) {
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<String>) {
     let mut supplied_wrong_parameter: bool = false;
     let mut inc_params: Vec<String> = Vec::new();
-    //  labels contains all hideable elements
-    let labels: [String; 9] = [
+    //  Labels contains all hideable elements.
+    //  The order of each element in the array
+    //  is important for the hide functionality
+    //  to work properly
+    let labels: [String; 10] = [
         "host".to_string(),
         "os".to_string(),
         "kern".to_string(),
-        "term".to_string(),
+        "pkgs".to_string(),
         "sh".to_string(),
+        "term".to_string(),
         "cpu".to_string(),
+        "mem".to_string(),
         "up".to_string(),
-        "bat".to_string(),
-        "palette".to_string()
+        "bat".to_string()
     ];
     if hide_parameters.len() > 0 {
         for z in 0 .. hide_parameters.len() {
@@ -141,43 +154,37 @@ pub fn hide_error(inc_params: &Vec<String>) {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
     eprintln!("{}{}: {} {:?}", padding, "Error".red().bold(), "bad option", inc_params);
-    println!("{}{} [{}]", padding, "Usage: macchina --hide", "elements".yellow().bold());
-    println!("{}{}:", padding, "Elements".yellow().bold());
-    println!("{}{}", padding, "host");
-    println!("{}{}", padding, "os");
-    println!("{}{}", padding, "kern");
-    println!("{}{}", padding, "term");
-    println!("{}{}", padding, "sh");
-    println!("{}{}", padding, "cpu");
-    println!("{}{}", padding, "up");
-    println!("{}{}", padding, "bat");
+    println!("{}{} [{}]", padding, "Usage: macchina --hide", "element".cyan().bold());
+    println!("{}{}:", padding, "Elements".cyan().bold());
+    println!("{} -  {}", padding, "host");
+    println!("{} -  {}", padding, "os");
+    println!("{} -  {}", padding, "kern");
+    println!("{} -  {}", padding, "pkgs");
+    println!("{} -  {}", padding, "term");
+    println!("{} -  {}", padding, "sh");
+    println!("{} -  {}", padding, "cpu");
+    println!("{} -  {}", padding, "mem");
+    println!("{} -  {}", padding, "up");
+    println!("{} -  {}", padding, "bat");
 }
 
 fn usage(elems: Elements) {
     let padding: String = " ".repeat(elems.left_padding);
-    println!("{}{} [{}]", padding, "Usage: macchina", "options".yellow().bold());
-    println!("{}{}:", padding, "Options".yellow().bold());
-    println!("{}{}", padding, "--help");
-    println!("{}{}", padding, "--palette");
-    println!("{}{}", padding, "--no-color");
-    println!("{}{}", padding, "--hide (host, os, kern, etc.)");
-    println!("{}{}", padding, "--short-sh");
-    println!("{}{}", padding, "--short-cpu");
+    println!("{}{} [{}]", padding, "Usage: macchina", "option".cyan().bold());
+    println!("{}{}:", padding, "Options".cyan().bold());
+    println!("{} {}", padding, "--help");
+    println!("{} {}", padding, "--palette");
+    println!("{} {}", padding, "--no-color");
+    println!("{} {}", padding, "--hide (host, os, kern, etc.)");
+    println!("{} {}", padding, "--short-sh");
+    println!("{} {}", padding, "--short-cpu");
 }
     
-pub fn help(opts: Options) {
+pub fn help() {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
-    match opts.color {
-        true => {
-            println!("{}{}:", padding, "Macchina".blue().bold());
-            usage(elems);
-        },
-        false => {
-            println!("{}{}", padding, "Macchina");
-            usage(elems);
-        }
-    }
+    println!("{}{}:", padding, "Macchina".blue().bold());
+    usage(elems);
 }
 
 pub fn error(inc_args: &Vec<String>) {

@@ -31,11 +31,7 @@ pub fn format_uptime(up: String) -> String {
 }
 
 pub fn format_battery(percentage: String, status: String) -> String {
-    // Some computers stop charging before they reach 100%
-    // so we will consider the battery to be full when
-    // the battery percentage is within bat_full_range
-    let bat_full_range: std::ops::RangeInclusive<i32> = 98..=100;
-    if !bat_full_range.contains(&percentage.parse().unwrap()) {
+    if percentage != "100" {
         return String::from(percentage + "% - " + &status);
     }
     return String::from(&status);

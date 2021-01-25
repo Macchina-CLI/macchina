@@ -25,7 +25,7 @@ Macchina is pretty fast, see for yourself:
 
 |                   | Macchina      | Neofetch   |
 | ----------------- | -----------   | ---------- |
-| Execution Time    | ~0.024s       | ~0.286s    |
+| Execution Time    | ~0.047s       | ~0.286s    |
 
 ---
 
