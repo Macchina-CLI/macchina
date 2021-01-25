@@ -17,7 +17,7 @@
 Macchina lets you flex... I mean view system information.
 It also doesn't depend on too many libraries, just [colored](https://crates.io/crates/colored).
 
-## Benchmarks <a name="features"></a>
+## Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
