@@ -6,26 +6,29 @@
 
 ## Table of Contents:
 - [About](#about)
+- [Benchmarks](#bench)
 - [Features](#features)
 - [Installation](#install)
-- [Platform support](#platform-support)
+- [Platform Support](#platform-support)
 
 ---
 
 ## About Macchina <a name="about"></a>
 Macchina lets you flex... I mean view system information.
+It also doesn't depend on too many libraries, just [colored](https://crates.io/crates/colored).
 
-#### Macchina's Dependencies (included in Cargo.toml):
-- [colored](https://crates.io/crates/colored)
-
+## Benchmarks <a name="features"></a>
 Macchina is pretty fast, see for yourself:
 
-- Execution time is measured using [time](https://www.gnu.org/software/time/)
-- Execution time might differ on your machine
+- Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
-|                   | Macchina      | Neofetch   |
-| ----------------- | -----------   | ---------- |
-| Execution Time    | ~0.047s       | ~0.286s    |
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `neofetch` | 242.9 ± 2.7 | 239.7 | 247.7 | 21.36 ± 0.80 |
+| `macchina --palette` | 11.4 ± 0.4 | 10.9 | 12.7 | 1.00 |
+
+__Summary:__
+'macchina --palette' ran __21.36 ± 0.80__ times __faster__ than 'neofetch'
 
 ---
 
@@ -34,18 +37,18 @@ Macchina, in its current state, displays basic system information such as:
 - Hostname
 - Operating system
 - Kernel version
-- Default terminal
+- Package count (Arch Linux Only)
 - Default shell
+- Default terminal
+- Processor _model name_, _frequency_ and _thread count_
+- Memory usage
 - Uptime
-- CPU _model name_, _frequency_ and _thread count_
 - Battery _percentage_ and _status_
-- Package count __(coming)__
 
 Macchina supports the following arguments:
 - --no-color: disable colors
 - --palette: display palette
-- --icons: display icons
-- --hide: for hiding elements such as host, os, kern, term, et cetera.
+- --hide: for hiding elements such as host, os, kern, et cetera.
 - --short-cpu: shorten processor output
 - --short-sh: shorten shell output
 - --help

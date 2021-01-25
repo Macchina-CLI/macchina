@@ -43,8 +43,11 @@ fn main() {
             }
             if args.contains(&"--hide".to_string()) {
                 let mut params: Vec<String> = Vec::new();
-                for i in 0 .. args.len() {
-                    if !args[i].starts_with('-') { params.push(args[i].clone()) }
+                let args_copy = args;
+                for i in 0 .. args_copy.len() {
+                    if !args_copy[i].starts_with('-') { 
+                        params.push(args_copy[i].clone());
+                    }
                 }
                 display::hide(elems,opts, params);
                 exit(0);
