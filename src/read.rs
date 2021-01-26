@@ -1,6 +1,8 @@
 use crate::extra;
 use std::process::{Command, Stdio};
-use std::{env, fs, io};
+use std::{fs, io};
+extern crate nix;
+use nix::unistd::getppid;
 
 /// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
 pub fn read_battery_percentage() -> String {
@@ -18,12 +20,66 @@ pub fn read_battery_status() -> String {
     return status;
 }
 
-/// Read terminal from __TERM__ environment variable
+/// Read current terminal instance using __ps__ command
 pub fn read_terminal() -> String {
-    if option_env!("TERM").expect("Is $TERM set?").to_string() != "" {
-        return option_env!("TERM").unwrap().to_string();
+    //  ps -p $$ -o ppid=
+    //  $$ doesn't work natively in rust but its value can be
+    //  accessed through nix::unistd::getppid()
+
+    let ppid = Command::new("ps")
+        .arg("-p")
+        .arg(getppid().to_string())
+        .arg("-o")
+        .arg("ppid=")
+        .output()
+        .expect("Failed to get current terminal instance PPID using 'ps -p <PID> o ppid='");
+
+    let terminal_ppid = String::from_utf8(ppid.stdout).expect("read_terminal: stdout to string conversion failed (1)").trim().to_string();
+    
+    let name = Command::new("ps")
+        .arg("-p")
+        .arg(terminal_ppid)
+        .arg("o")
+        .arg("comm=")
+        .output()
+        .expect("Failed to get current terminal instance name using 'ps -p <PID> o comm='");
+
+    let terminal_name =  String::from_utf8(name.stdout).expect("read_terminal: stdout to string conversion failed (1)");
+    return terminal_name.trim().to_string();
+}
+
+/// Read current shell instance name using __ps__ command
+pub fn read_shell(shorthand: bool) -> String {
+    //  ps -p $$ -o comm=
+    //  $$ doesn't work natively in rust but its value can be
+    //  accessed through nix::unistd::getppid()
+    if shorthand {
+        let output = Command::new("ps")
+            .arg("-p")
+            .arg(getppid().to_string())
+            .arg("o")
+            .arg("comm=")
+            .output()
+            .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
+
+        let shell_name = String::from_utf8(output.stdout)
+            .expect("read_terminal: stdout to string conversion failed");
+        return shell_name.trim().to_string();
     }
-    return String::from("is $TERM set?");
+
+    // If shell shorthand is false, we use "args=" instead of "comm="
+    // to print the full path of the current shell instance name
+    let output = Command::new("ps")
+        .arg("-p")
+        .arg(getppid().to_string())
+        .arg("o")
+        .arg("args=")
+        .output()
+        .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
+
+    let shell_name = String::from_utf8(output.stdout)
+        .expect("read_terminal: stdout to string conversion failed");
+    shell_name.trim().to_string()
 }
 
 pub fn read_package_count() -> String {
@@ -48,18 +104,6 @@ pub fn read_package_count() -> String {
         .expect("read_package_count: stdout to string conversion failed")
         .trim()
         .to_string();
-}
-
-/// Read shell from __SHELL__ environment variable
-pub fn read_shell(shorthand: bool) -> String {
-    if env!("SHELL").to_string() != "" {
-        if shorthand {
-            return env!("SHELL").to_string().replace("/usr/bin/", "");
-        } else {
-            return env!("SHELL").to_string();
-        }
-    }
-    return String::from("is $SHELL set?");
 }
 
 /// Read kernel version by calling "uname -r"
