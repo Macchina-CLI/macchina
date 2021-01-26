@@ -2,7 +2,7 @@ use crate::extra;
 use std::process::{Command, Stdio};
 use std::{fs, io};
 extern crate nix;
-use nix::unistd::getppid;
+use nix::unistd;
 
 /// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
 pub fn read_battery_percentage() -> String {
@@ -28,7 +28,7 @@ pub fn read_terminal() -> String {
 
     let ppid = Command::new("ps")
         .arg("-p")
-        .arg(getppid().to_string())
+        .arg(unistd::getppid().to_string())
         .arg("-o")
         .arg("ppid=")
         .output()
@@ -56,7 +56,7 @@ pub fn read_shell(shorthand: bool) -> String {
     if shorthand {
         let output = Command::new("ps")
             .arg("-p")
-            .arg(getppid().to_string())
+            .arg(unistd::getppid().to_string())
             .arg("o")
             .arg("comm=")
             .output()
@@ -71,7 +71,7 @@ pub fn read_shell(shorthand: bool) -> String {
     // to print the full path of the current shell instance name
     let output = Command::new("ps")
         .arg("-p")
-        .arg(getppid().to_string())
+        .arg(unistd::getppid().to_string())
         .arg("o")
         .arg("args=")
         .output()
@@ -120,14 +120,10 @@ pub fn read_kernel_version() -> String {
 
 /// Read hostname by calling "uname -n"
 pub fn read_hostname() -> String {
-    let output = Command::new("uname")
-        .arg("-n")
-        .output()
-        .expect("Failed to get hostname using 'uname -n'");
-
-    let hostname = String::from_utf8(output.stdout)
-        .expect("read_hostname: stdout to string conversion failed");
-    hostname.trim().to_string()
+    let mut buf = [0u8; 64];
+    let hostname_cstr = unistd::gethostname(&mut buf).expect("Failed getting hostname");
+    let hostname = hostname_cstr.to_str().expect("Hostname wasn't valid UTF-8");
+    hostname.to_string()
 }
 
 /// Read operating system name from __/etc/os-release__
