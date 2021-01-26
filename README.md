@@ -18,6 +18,8 @@ Macchina lets you flex... I mean view system information.
 It's an alternative to slower BASH fetchers but isn't as featureful,
 so if you're willing to sacrifice features for speed, then Macchina is the right tool for you.
 
+---
+
 ## Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
@@ -40,8 +42,8 @@ Macchina displays basic system information such as:
 - Operating system
 - Kernel version
 - Package count (Arch Linux Only)
-- Default shell
-- Default terminal
+- Current SHELL name/SHELL path
+- Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_
 - Memory usage
 - Uptime
