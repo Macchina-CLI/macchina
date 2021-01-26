@@ -25,11 +25,12 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `neofetch` | 242.9 ± 2.7 | 239.7 | 247.7 | 21.36 ± 0.80 |
-| `macchina --palette` | 11.4 ± 0.4 | 10.9 | 12.7 | 1.00 |
+| `macchina` | 28.8 ± 0.8 | 27.7 | 30.3 | 1.00 |
+| `neofetch` | 247.0 ± 1.8 | 244.5 | 249.8 | 8.57 ± 0.24 |
 
-__Summary:__
-'macchina --palette' ran __21.36 ± 0.80__ times __faster__ than 'neofetch'
+__Summary__: 'macchina --palette' ran __8.57 ± 0.24__ times __faster__ than 'neofetch'
+
+- Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
 
 ---
 
