@@ -1,7 +1,7 @@
+extern crate nix;
 use crate::extra;
 use std::process::{Command, Stdio};
 use std::{fs, io};
-extern crate nix;
 use nix::unistd;
 
 /// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
@@ -9,7 +9,7 @@ pub fn read_battery_percentage() -> String {
     let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
         .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/capacity");
     percentage = extra::pop_newline(percentage);
-    return String::from(&percentage);
+    String::from(&percentage)
 }
 
 /// Read battery status from __/sys/class/power_supply/BAT0/status__
@@ -17,7 +17,7 @@ pub fn read_battery_status() -> String {
     let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
         .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/status");
     status = extra::pop_newline(status);
-    return status;
+    status
 }
 
 /// Read current terminal instance using __ps__ command
@@ -34,8 +34,11 @@ pub fn read_terminal() -> String {
         .output()
         .expect("Failed to get current terminal instance PPID using 'ps -p <PID> o ppid='");
 
-    let terminal_ppid = String::from_utf8(ppid.stdout).expect("read_terminal: stdout to string conversion failed (1)").trim().to_string();
-    
+    let terminal_ppid = String::from_utf8(ppid.stdout)
+        .expect("'ps' process stdout wasn't valid UTF-8")
+        .trim()
+        .to_string();
+
     let name = Command::new("ps")
         .arg("-p")
         .arg(terminal_ppid)
@@ -44,8 +47,9 @@ pub fn read_terminal() -> String {
         .output()
         .expect("Failed to get current terminal instance name using 'ps -p <PID> o comm='");
 
-    let terminal_name =  String::from_utf8(name.stdout).expect("read_terminal: stdout to string conversion failed (1)");
-    return terminal_name.trim().to_string();
+    let terminal_name =
+        String::from_utf8(name.stdout).expect("'ps' process stdout wasn't valid UTF-8");
+    terminal_name.trim().to_string()
 }
 
 /// Read current shell instance name using __ps__ command
@@ -82,28 +86,19 @@ pub fn read_shell(shorthand: bool) -> String {
     shell_name.trim().to_string()
 }
 
-pub fn read_package_count() -> String {
+pub fn read_package_count() -> usize {
     let pacman = Command::new("pacman")
         .arg("-Q")
         .arg("-q")
         .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start pacman process");
+        .output()
+        .expect("Failed to start 'pacman' process");
 
-    let pac_out = pacman.stdout.expect("Failed to open pacman stdout");
+    let pac_out =
+        String::from_utf8(pacman.stdout).expect("'pacman' process stdout wasn't valid UTF-8");
+    let packages: Vec<&str> = pac_out.split('\n').collect();
 
-    let count = Command::new("wc")
-        .arg("-l")
-        .stdin(Stdio::from(pac_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start wc process");
-
-    let output = count.wait_with_output().expect("Failed to wait on wc");
-    return String::from_utf8(output.stdout)
-        .expect("read_package_count: stdout to string conversion failed")
-        .trim()
-        .to_string();
+    packages.len() - 1
 }
 
 /// Read kernel version by calling "uname -r"
@@ -161,50 +156,4 @@ pub fn read_uptime() -> Result<String, io::Error> {
     //  Read first float from uptime
     let up = uptime.split_whitespace().next().unwrap_or("").to_string();
     Ok(up)
-}
-
-pub fn read_used_memory() -> String {
-    let free = Command::new("free")
-        .arg("-h")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start 'free' process");
-
-    let free_out = free.stdout.expect("Failed to open 'free' stdout");
-
-    let awk = Command::new("awk")
-        .arg("FNR == 2 {print $3}")
-        .stdin(Stdio::from(free_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start 'awk' process");
-
-    let output = awk.wait_with_output().expect("Failed to wait on awk");
-    return String::from_utf8(output.stdout)
-        .expect("read_used_memory: stdout to string conversion failed")
-        .trim()
-        .to_string();
-}
-
-pub fn read_total_memory() -> String {
-    let free = Command::new("free")
-        .arg("-h")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start 'free' process");
-
-    let free_out = free.stdout.expect("Failed to open 'free' stdout");
-
-    let awk = Command::new("awk")
-        .arg("FNR == 2 {print $2}")
-        .stdin(Stdio::from(free_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to start 'awk' process");
-
-    let output = awk.wait_with_output().expect("Failed to wait on awk");
-    return String::from_utf8(output.stdout)
-        .expect("read_total_memory: stdout to string conversion failed")
-        .trim()
-        .to_string();
 }

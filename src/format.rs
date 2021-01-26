@@ -1,3 +1,6 @@
+extern crate bytesize;
+use bytesize::ByteSize;
+
 pub fn format_uptime(up: String) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = up.parse().unwrap();
@@ -27,12 +30,19 @@ pub fn format_uptime(up: String) -> String {
             formatted_uptime.push_str("s");
         }
     }
-    return formatted_uptime.trim().to_string();
+    formatted_uptime.trim().to_string()
 }
 
 pub fn format_battery(percentage: String, status: String) -> String {
     if percentage != "100" {
         return String::from(percentage + "% - " + &status);
     }
-    return String::from(&status);
+    String::from(&status)
+}
+
+pub fn format_memory(used: u64, total: u64) -> String {
+    let total = ByteSize::kb(total);
+    let used = ByteSize::kb(used);
+
+    String::from(used.to_string() + "/" + &total.to_string())
 }

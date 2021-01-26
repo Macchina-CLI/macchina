@@ -1,10 +1,11 @@
-use std::{env, process::exit};
 mod display;
-use display::Options;
 mod extra;
 mod format;
 mod read;
+mod memory;
+use std::{env, process::exit};
 use display::Elements;
+use display::Options;
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();

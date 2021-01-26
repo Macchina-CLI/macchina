@@ -1,7 +1,8 @@
+extern crate num_cpus;
 use colored::Colorize;
 use crate::read;
 use crate::format;
-extern crate num_cpus;
+use crate::memory;
 use std::process::exit;
 
 pub struct Options {
@@ -66,7 +67,7 @@ pub fn print_info(elems: Elements, opts: Options) {
                 if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key.red().bold(), elems.separator, read::read_shell(opts.shell_shorthand)); }
                 if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key.yellow().bold(), elems.separator, read::read_terminal()); }
                 if elems.num_elements[6] { println!("{}{}{} {} ({})", padding, elems.cpu_key.purple().bold(), elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), num_cpus::get()); }
-                if elems.num_elements[7] { println!("{}{}{} {}/{}", padding, elems.memory_key.blue().bold(), elems.separator, read::read_used_memory(), read::read_total_memory()); }
+                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.memory_key.blue().bold(), elems.separator, format::format_memory(memory::used(), memory::memtotal())); }
                 if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key.cyan().bold(), elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
                 if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key.green().bold(), elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
             },
@@ -78,7 +79,7 @@ pub fn print_info(elems: Elements, opts: Options) {
                 if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key, elems.separator, read::read_shell(opts.shell_shorthand)); }
                 if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key, elems.separator, read::read_terminal()); }
                 if elems.num_elements[6] { println!("{}{}{} {} ({})", padding, elems.cpu_key, elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), num_cpus::get()); }
-                if elems.num_elements[7] { println!("{}{}{} {}/{}", padding, elems.memory_key, elems.separator, read::read_used_memory(), read::read_total_memory()); }
+                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.memory_key, elems.separator, format::format_memory(memory::used(), memory::memtotal())); }
                 if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key, elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
                 if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key, elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
             }

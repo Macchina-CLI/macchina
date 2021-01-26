@@ -7,6 +7,7 @@
 ## Table of Contents:
 - [About](#about)
 - [Benchmarks](#bench)
+- [Changelog](#change)
 - [Features](#features)
 - [Installation](#install)
 - [Platform Support](#platform-support)
@@ -17,6 +18,14 @@
 Macchina lets you flex... I mean view system information.
 It's an alternative to slower BASH fetchers but isn't as featureful,
 so if you're willing to sacrifice features for speed, then Macchina is the right tool for you.
+
+---
+
+## Changelog <a name="change"></a>
+
+- Faster implementation for printing memory usage: read from /proc/memory instead of running commands and relying on awk.
+- Faster implementation for printing package count: newer implementation only relies on the output of one command (pacman -Qq) instead of two commands (pacman -Qq | wc -l)
+> New implementations are __~5.4 ms faster__!
 
 ---
 
