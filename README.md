@@ -15,7 +15,9 @@
 
 ## About Macchina <a name="about"></a>
 Macchina lets you flex... I mean view system information.
-It also doesn't depend on too many libraries, just [colored](https://crates.io/crates/colored) and [num_cpus](https://github.com/seanmonstar/num_cpus).
+It's an alternative to slower BASH fetchers but isn't as featureful,
+so if you're willing to sacrifice features for speed, then Macchina is the right tool for you.
+
 ## Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
