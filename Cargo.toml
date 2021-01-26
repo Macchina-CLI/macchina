@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 colored = "2"
+num_cpus = "1.13.0"

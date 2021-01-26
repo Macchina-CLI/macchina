@@ -15,8 +15,7 @@
 
 ## About Macchina <a name="about"></a>
 Macchina lets you flex... I mean view system information.
-It also doesn't depend on too many libraries, just [colored](https://crates.io/crates/colored).
-
+It also doesn't depend on too many libraries, just [colored](https://crates.io/crates/colored) and [num_cpus](https://github.com/seanmonstar/num_cpus).
 ## Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
@@ -33,7 +32,7 @@ __Summary:__
 ---
 
 ## Features <a name="features"></a>
-Macchina, in its current state, displays basic system information such as:
+Macchina displays basic system information such as:
 - Hostname
 - Operating system
 - Kernel version

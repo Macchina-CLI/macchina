@@ -6,9 +6,7 @@ use std::{env, fs, io};
 pub fn read_battery_percentage() -> String {
     let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
         .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/capacity");
-    if percentage.ends_with('\n') {
-        percentage.pop();
-    }
+    percentage = extra::pop_newline(percentage);
     return String::from(&percentage);
 }
 
@@ -16,9 +14,7 @@ pub fn read_battery_percentage() -> String {
 pub fn read_battery_status() -> String {
     let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
         .expect("Could not read battery percentage from /sys/class/power_supply/BAT0/status");
-    if status.ends_with('\n') {
-        status.pop();
-    }
+    status = extra::pop_newline(status);
     return status;
 }
 
@@ -31,11 +27,6 @@ pub fn read_terminal() -> String {
 }
 
 pub fn read_package_count() -> String {
-    /*if option_env!("TERM").expect("Is $TERM set?").to_string() != "" {
-        return option_env!("TERM").unwrap().to_string();
-    }
-    return String::from("is $TERM set?");*/
-
     let pacman = Command::new("pacman")
         .arg("-Q")
         .arg("-q")
@@ -71,19 +62,19 @@ pub fn read_shell(shorthand: bool) -> String {
     return String::from("is $SHELL set?");
 }
 
-/// Read kernel version from __/proc/sys/kernel/osrelease__
+/// Read kernel version by calling "uname -r"
 pub fn read_kernel_version() -> String {
     let output = Command::new("uname")
         .arg("-r")
         .output()
-        .expect("Failed to get hostname using 'uname -n'");
+        .expect("Failed to get kernel release using 'uname -r'");
 
     let kern_vers = String::from_utf8(output.stdout)
         .expect("read_kernel_version: stdout to string conversion failed");
     kern_vers.trim().to_string()
 }
 
-/// Read hostname from __/etc/hostname__
+/// Read hostname by calling "uname -n"
 pub fn read_hostname() -> String {
     let output = Command::new("uname")
         .arg("-n")
@@ -122,19 +113,6 @@ pub fn read_cpu_model_name(shorthand: bool) -> String {
         return cpu.trim().to_string();
     }
     cpu
-}
-
-/// Read processor thread count from __/proc/cpuinfo__
-pub fn read_cpu_threads() -> String {
-    let mut threads = String::from(
-        extra::get_line_at("/proc/cpuinfo", 10, "Could not extract CPU thread count!").unwrap(),
-    );
-    threads = threads
-        .replace("siblings", "")
-        .replace(":", "")
-        .trim()
-        .to_string();
-    String::from(" (".to_owned() + &threads + ")")
 }
 
 /// Read first float (uptime) from __/proc/uptime
