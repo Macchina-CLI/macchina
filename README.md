@@ -36,10 +36,10 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 28.8 ± 0.8 | 27.7 | 30.3 | 1.00 |
-| `neofetch` | 247.0 ± 1.8 | 244.5 | 249.8 | 8.57 ± 0.24 |
+| `macchina` | 24.1 ± 1.5 | 22.4 | 27.4 | 1.00 |
+| `neofetch` | 247.6 ± 3.6 | 243.0 | 256.6 | 10.29 ± 0.66 |
 
-__Summary__: 'macchina --palette' ran __8.57 ± 0.24__ times __faster__ than 'neofetch'
+__Summary__: 'macchina' ran __10.29 ± 0.66__ times __faster__ than 'neofetch'
 
 - Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
 
