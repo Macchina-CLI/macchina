@@ -23,8 +23,8 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 
 ## Changelog <a name="change"></a>
 
-- Faster implementation for printing memory usage: read from /proc/memory instead of running commands and relying on awk.
-- Faster implementation for printing package count: newer implementation only relies on the output of one command (pacman -Qq) instead of two commands (pacman -Qq | wc -l)
+- Faster implementation for printing memory usage: read from `/proc/meminfo` instead of running commands and relying on awk.
+- Faster implementation for printing package count: newer implementation only relies on the output of one `pacman -Qq` instead of `pacman -Qq | wc -l`
 > New implementations are __~5.4 ms faster__!
 - Under the hood improvements
 
@@ -51,7 +51,7 @@ Macchina displays basic system information such as:
 - Hostname
 - Operating system
 - Kernel version
-- Package count (Arch Linux Only)
+- Package count (Arch Linux Only, will print __0__ on any other distribution)
 - Current SHELL name/SHELL path
 - Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_
