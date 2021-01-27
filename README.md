@@ -26,6 +26,7 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 - Faster implementation for printing memory usage: read from /proc/memory instead of running commands and relying on awk.
 - Faster implementation for printing package count: newer implementation only relies on the output of one command (pacman -Qq) instead of two commands (pacman -Qq | wc -l)
 > New implementations are __~5.4 ms faster__!
+- Under the hood improvements
 
 ---
 
@@ -36,10 +37,10 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 24.1 ± 1.5 | 22.4 | 27.4 | 1.00 |
-| `neofetch` | 247.6 ± 3.6 | 243.0 | 256.6 | 10.29 ± 0.66 |
+| `macchina` | 23.6 ± 1.4 | 21.7 | 28.6 | 1.00 |
+| `neofetch` | 245.3 ± 4.1 | 241.8 | 257.1 | 10.41 ± 0.66 |
 
-__Summary__: 'macchina' ran __10.29 ± 0.66__ times __faster__ than 'neofetch'
+__Summary__: `macchina` runs __10.41 ± 0.66__ times __faster__ than `neofetch`
 
 - Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
 

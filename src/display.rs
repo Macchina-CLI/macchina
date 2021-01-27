@@ -55,33 +55,56 @@ impl Elements {
     }
 }
 
+macro_rules! usage {
+    ($i: ident) => {
+        let padding: String = " ".repeat($i.left_padding);
+        println!("{}{} [{}]", padding, "Usage: macchina", "option".cyan().bold());
+        println!("{}{}:", padding, "Options".cyan().bold());
+        println!("{} {}", padding, "--help");
+        println!("{} {}", padding, "--palette");
+        println!("{} {}", padding, "--no-color");
+        println!("{} {}", padding, "--hide (host, os, kern, etc.)");
+        println!("{} {}", padding, "--short-sh");
+        println!("{} {}", padding, "--short-cpu");
+    };
+}
+
+/// dsp: display element
+macro_rules! dsp {
+    ($elem: expr, $pad: ident, $key: expr, $sep: expr, $val: expr) => {
+        if $elem {
+            println!("{}{}{} {}", $pad, $key, $sep, $val);
+        }
+    };
+}
+
 pub fn print_info(elems: Elements, opts: Options) {
     let padding: String = " ".repeat(elems.left_padding);
     if opts.signal {
         match opts.color {
             true => {
-                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key.purple().bold(), elems.separator, read::read_hostname()); }
-                if elems.num_elements[1] { println!("{}{}{} {}", padding, elems.os_key.blue().bold(), elems.separator, read::read_operating_system()); }
-                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key.cyan().bold(), elems.separator, read::read_kernel_version()); }
-                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.package_count_key.green().bold(), elems.separator, read::read_package_count()); }
-                if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key.red().bold(), elems.separator, read::read_shell(opts.shell_shorthand)); }
-                if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key.yellow().bold(), elems.separator, read::read_terminal()); }
-                if elems.num_elements[6] { println!("{}{}{} {} ({})", padding, elems.cpu_key.purple().bold(), elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), num_cpus::get()); }
-                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.memory_key.blue().bold(), elems.separator, format::format_memory(memory::used(), memory::memtotal())); }
-                if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key.cyan().bold(), elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
-                if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key.green().bold(), elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
+                dsp!(elems.num_elements[0], padding, elems.hostname_key.purple().bold(), elems.separator, read::hostname());
+                dsp!(elems.num_elements[1], padding, elems.os_key.blue().bold(), elems.separator, read::operating_system());
+                dsp!(elems.num_elements[2], padding, elems.kernel_version_key.cyan().bold(), elems.separator, read::kernel_version());
+                dsp!(elems.num_elements[3], padding, elems.package_count_key.green().bold(), elems.separator, read::package_count());
+                dsp!(elems.num_elements[4], padding, elems.shell_key.yellow().bold(), elems.separator, read::shell(opts.shell_shorthand));
+                dsp!(elems.num_elements[5], padding, elems.terminal_key.red().bold(), elems.separator, read::terminal());
+                dsp!(elems.num_elements[6], padding, elems.cpu_key.purple().bold(), elems.separator, format::cpu(read::cpu_model_name(opts.cpu_shorthand), num_cpus::get()));
+                dsp!(elems.num_elements[7], padding, elems.memory_key.blue().bold(), elems.separator, format::memory(memory::used(), memory::memtotal()));
+                dsp!(elems.num_elements[8], padding, elems.uptime_key.cyan().bold(), elems.separator, format::uptime(read::uptime()));
+                dsp!(elems.num_elements[9], padding, elems.battery_key.green().bold(), elems.separator, format::battery(read::battery_percentage(), read::battery_status()));
             },
             false => {
-                if elems.num_elements[0] { println!("{}{}{} {}", padding, elems.hostname_key, elems.separator, read::read_hostname()); }
-                if elems.num_elements[1] { println!("{}{}{} {}", padding, elems.os_key, elems.separator, read::read_operating_system()); }
-                if elems.num_elements[2] { println!("{}{}{} {}", padding, elems.kernel_version_key, elems.separator, read::read_kernel_version()); }
-                if elems.num_elements[3] { println!("{}{}{} {}", padding, elems.package_count_key, elems.separator, read::read_package_count()); }
-                if elems.num_elements[4] { println!("{}{}{} {}", padding, elems.shell_key, elems.separator, read::read_shell(opts.shell_shorthand)); }
-                if elems.num_elements[5] { println!("{}{}{} {}", padding, elems.terminal_key, elems.separator, read::read_terminal()); }
-                if elems.num_elements[6] { println!("{}{}{} {} ({})", padding, elems.cpu_key, elems.separator, read::read_cpu_model_name(opts.cpu_shorthand), num_cpus::get()); }
-                if elems.num_elements[7] { println!("{}{}{} {}", padding, elems.memory_key, elems.separator, format::format_memory(memory::used(), memory::memtotal())); }
-                if elems.num_elements[8] { println!("{}{}{} {}", padding, elems.uptime_key, elems.separator, format::format_uptime(read::read_uptime().expect("Couldn't retrieve system uptime!"))); }
-                if elems.num_elements[9] { println!("{}{}{} {}", padding, elems.battery_key, elems.separator, format::format_battery(read::read_battery_percentage(), read::read_battery_status())); }
+                dsp!(elems.num_elements[0], padding, elems.hostname_key, elems.separator, read::hostname());
+                dsp!(elems.num_elements[1], padding, elems.os_key, elems.separator, read::operating_system());
+                dsp!(elems.num_elements[2], padding, elems.kernel_version_key, elems.separator, read::kernel_version());
+                dsp!(elems.num_elements[3], padding, elems.package_count_key, elems.separator, read::package_count());
+                dsp!(elems.num_elements[4], padding, elems.shell_key, elems.separator, read::shell(opts.shell_shorthand));
+                dsp!(elems.num_elements[5], padding, elems.terminal_key, elems.separator, read::terminal());
+                dsp!(elems.num_elements[6], padding, elems.cpu_key, elems.separator, format::cpu(read::cpu_model_name(opts.cpu_shorthand), num_cpus::get()));
+                dsp!(elems.num_elements[7], padding, elems.memory_key, elems.separator, format::memory(memory::used(), memory::memtotal()));
+                dsp!(elems.num_elements[8], padding, elems.uptime_key, elems.separator, format::uptime(read::uptime()));
+                dsp!(elems.num_elements[9], padding, elems.battery_key, elems.separator, format::battery(read::battery_percentage(), read::battery_status()));
             }
         }
         if opts.palette_status {
@@ -168,29 +191,17 @@ pub fn hide_error(inc_params: &Vec<String>) {
     println!("{} -  {}", padding, "up");
     println!("{} -  {}", padding, "bat");
 }
-
-fn usage(elems: Elements) {
-    let padding: String = " ".repeat(elems.left_padding);
-    println!("{}{} [{}]", padding, "Usage: macchina", "option".cyan().bold());
-    println!("{}{}:", padding, "Options".cyan().bold());
-    println!("{} {}", padding, "--help");
-    println!("{} {}", padding, "--palette");
-    println!("{} {}", padding, "--no-color");
-    println!("{} {}", padding, "--hide (host, os, kern, etc.)");
-    println!("{} {}", padding, "--short-sh");
-    println!("{} {}", padding, "--short-cpu");
-}
     
 pub fn help() {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
     println!("{}{}:", padding, "Macchina".blue().bold());
-    usage(elems);
+    usage!(elems);
 }
 
 pub fn error(inc_args: &Vec<String>) {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
     eprintln!("{}{}: {} {:?}", padding, "Error".red().bold(), "bad option", inc_args);
-    usage(elems);
+    usage!(elems);
 }
