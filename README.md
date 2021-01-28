@@ -4,9 +4,7 @@
   <img src="preview.png"/>
 </p>
 
-<p align="center">
-  [![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
-</p>
+[![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
 
 ## Table of Contents:
 - [About](#about)
