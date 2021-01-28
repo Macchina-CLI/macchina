@@ -26,10 +26,10 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 
 ## Changelog <a name="change"></a>
 
-- Faster implementation for printing memory usage: read from `/proc/meminfo` instead of running commands and relying on awk.
-- Faster implementation for printing package count: newer implementation only relies on the output of one `pacman -Qq` instead of `pacman -Qq | wc -l`
-> New implementations are __~5.4 ms faster__!
-- Under the hood improvements
+- __main.rs rework__: utilize clap for parsing command line arguments to optimize and automate the process
+- __Drop --short-cpu argument__: this argument has been removed due to the fact that there are thousands of processor model names
+and previous implementation only worked on Intel Core CPUs
+- Miscellaneous changes
 
 ---
 
@@ -65,9 +65,8 @@ Macchina displays basic system information such as:
 Macchina supports the following arguments:
 - --no-color: disable colors
 - --palette: display palette
+- --short-sh: shorten shell output (/bin/zsh --> zsh)
 - --hide: for hiding elements such as host, os, kern, et cetera.
-- --short-cpu: shorten processor output _(Intel Core CPUs Only)_
-- --short-sh: shorten shell output
 - --help
 
 ---

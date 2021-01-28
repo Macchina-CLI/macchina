@@ -1,70 +1,95 @@
+extern crate clap;
 mod display;
 mod extra;
 mod format;
 mod memory;
 mod read;
+use clap::{App, Arg, SubCommand};
 use display::Elements;
 use display::Options;
-use std::{env, process::exit};
-
-//  main.rs will soon be reworked to use clap because the current
-//  method of parsing is not optimal whatsoever
+use std::process::exit;
 
 fn main() {
-    let mut args: Vec<String> = env::args().collect();
-    let mut inc_args: Vec<String> = Vec::new();
-    let mut supplied_wrong_arg: bool = false;
-    let elems = Elements::new();
-    let mut opts = Options::new(true, false, true, false, false);
-    let allowed_args: [String; 6] = [
-        "--help".to_string(),
-        "--palette".to_string(),
-        "--no-color".to_string(),
-        "--short-cpu".to_string(),
-        "--short-sh".to_string(),
-        "--hide".to_string(),
-    ];
+    let matches = App::new("Macchina")
+        .version("1.0.0")
+        .author("grtcdr <ba.tahaaziz@gmail.com>")
+        .about("System information fetcher")
+        .arg(
+            Arg::with_name("palette")
+                .short("p")
+                .long("palette")
+                .takes_value(false)
+                .multiple(false)
+                .help("Display palette"),
+        )
+        .arg(
+            Arg::with_name("no-color")
+                .short("n")
+                .long("no-color")
+                .takes_value(false)
+                .multiple(false)
+                .help("Disable colors"),
+        )
+        .arg(
+            Arg::with_name("hide")
+                .short("H")
+                .long("hide")
+                .takes_value(true)
+                .max_values(10)
+                .min_values(1)
+                .help("Hide elements such as (host, kern, os, etc.)"),
+        )
+        .arg(
+            Arg::with_name("short-sh")
+                .short("s")
+                .long("short-sh")
+                .takes_value(false)
+                .multiple(false)
+                .help("Shorten shell value, for example: /usr/bin/zsh -> zsh"),
+        )
+        .arg(
+            Arg::with_name("help")
+                .short("h")
+                .long("help")
+                .takes_value(false)
+                .multiple(false)
+                .help("Print out helpful information"),
+        )
+        .arg(
+            Arg::with_name("version")
+                .short("v")
+                .long("version")
+                .takes_value(false)
+                .multiple(false)
+                .help("Print out Macchina's version"),
+        )
+        .get_matches();
 
-    args.remove(0);
-    args.sort();
-    for z in 0..args.len() {
-        if allowed_args.contains(&args[z]) {
-            if args.len() == 1 && args[0] == "--help".to_string() {
-                display::help();
-                exit(0);
-            }
-            if args.contains(&"--no-color".to_string()) {
-                opts.color = false;
-            }
-            if args.contains(&"--palette".to_string()) {
-                opts.palette_status = true;
-            }
-            if args.contains(&"--short-cpu".to_string()) {
-                opts.cpu_shorthand = true;
-            }
-            if args.contains(&"--short-sh".to_string()) {
-                opts.shell_shorthand = true;
-            }
-            if args.contains(&"--hide".to_string()) {
-                let mut params: Vec<String> = Vec::new();
-                let args_copy = args;
-                for i in 0..args_copy.len() {
-                    if !args_copy[i].starts_with('-') {
-                        params.push(args_copy[i].clone());
-                    }
-                }
-                display::hide(elems, opts, params);
-                exit(0);
-            }
-        } else {
-            inc_args.push(args[z].clone());
-            supplied_wrong_arg = true;
-        }
-    }
-    if supplied_wrong_arg {
-        display::error(&inc_args);
+    // Instanties Macchina's elements.
+    // Contains the key strings to be displayed
+    // as well as the separator character and
+    // num_elements that allows hiding elements
+    let elems = Elements::new();
+
+    // Instantiates Macchina's behavior
+    // when no arguments are provided.
+    let mut opts = Options::new();
+
+    if matches.is_present("help") {
+        display::help();
         exit(0);
-    } else {
-        display::print_info(elems, opts);
     }
+    if matches.is_present("palette") {
+        opts.palette_status = true;
+    }
+    if matches.is_present("no-color") {
+        opts.color = false;
+    }
+    if matches.is_present("short-sh") {
+        opts.shell_shorthand = true;
+    }
+
+    display::print_info(elems, opts);
 }
+
+pub const VERSION: &str = "1.0.0";

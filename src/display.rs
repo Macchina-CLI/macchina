@@ -1,26 +1,22 @@
 extern crate num_cpus;
-use crate::format;
 use crate::memory;
 use crate::read;
+use crate::{format, VERSION};
 use colored::Colorize;
 use std::process::exit;
 
 pub struct Options {
     pub color: bool,
     pub palette_status: bool,
-    pub signal: bool,
-    pub cpu_shorthand: bool,
     pub shell_shorthand: bool,
 }
 
 impl Options {
-    pub fn new(col: bool, pal: bool, sig: bool, cpu_short: bool, shell_short: bool) -> Options {
+    pub fn new() -> Options {
         Options {
-            color: col,
-            palette_status: pal,
-            signal: sig,
-            cpu_shorthand: cpu_short,
-            shell_shorthand: shell_short,
+            color: true,
+            palette_status: false,
+            shell_shorthand: false,
         }
     }
 }
@@ -65,18 +61,17 @@ macro_rules! usage {
     ($i: ident) => {
         let padding: String = " ".repeat($i.left_padding);
         println!(
-            "{}{} [{}]",
+            "{}{} <{}>",
             padding,
-            "Usage: macchina",
-            "option".cyan().bold()
+            "USAGE: macchina",
+            "OPTIONS".cyan().bold()
         );
-        println!("{}{}:", padding, "Options".cyan().bold());
-        println!("{} {}", padding, "--help");
-        println!("{} {}", padding, "--palette");
-        println!("{} {}", padding, "--no-color");
-        println!("{} {}", padding, "--hide (host, os, kern, etc.)");
-        println!("{} {}", padding, "--short-sh");
-        println!("{} {}", padding, "--short-cpu");
+        println!("{}{}:", padding, "OPTIONS".cyan().bold());
+        println!("{} {}", padding, "-h, --help");
+        println!("{} {}", padding, "-p, --palette");
+        println!("{} {}", padding, "-n, --no-color");
+        println!("{} {}", padding, "-H, --hide (host, os, kern, etc.)");
+        println!("{} {}", padding, "-s, --short-sh");
     };
 }
 
@@ -91,157 +86,155 @@ macro_rules! dsp {
 
 pub fn print_info(elems: Elements, opts: Options) {
     let padding: String = " ".repeat(elems.left_padding);
-    if opts.signal {
-        match opts.color {
-            true => {
-                dsp!(
-                    elems.num_elements[0],
-                    padding,
-                    elems.hostname_key.purple().bold(),
-                    elems.separator,
-                    read::hostname()
-                );
-                dsp!(
-                    elems.num_elements[1],
-                    padding,
-                    elems.os_key.blue().bold(),
-                    elems.separator,
-                    read::operating_system()
-                );
-                dsp!(
-                    elems.num_elements[2],
-                    padding,
-                    elems.kernel_version_key.cyan().bold(),
-                    elems.separator,
-                    read::kernel_version()
-                );
-                dsp!(
-                    elems.num_elements[3],
-                    padding,
-                    elems.package_count_key.green().bold(),
-                    elems.separator,
-                    read::package_count()
-                );
-                dsp!(
-                    elems.num_elements[4],
-                    padding,
-                    elems.shell_key.yellow().bold(),
-                    elems.separator,
-                    read::shell(opts.shell_shorthand)
-                );
-                dsp!(
-                    elems.num_elements[5],
-                    padding,
-                    elems.terminal_key.red().bold(),
-                    elems.separator,
-                    read::terminal()
-                );
-                dsp!(
-                    elems.num_elements[6],
-                    padding,
-                    elems.cpu_key.purple().bold(),
-                    elems.separator,
-                    format::cpu(read::cpu_model_name(opts.cpu_shorthand), num_cpus::get())
-                );
-                dsp!(
-                    elems.num_elements[7],
-                    padding,
-                    elems.memory_key.blue().bold(),
-                    elems.separator,
-                    format::memory(memory::used(), memory::memtotal())
-                );
-                dsp!(
-                    elems.num_elements[8],
-                    padding,
-                    elems.uptime_key.cyan().bold(),
-                    elems.separator,
-                    format::uptime(read::uptime())
-                );
-                dsp!(
-                    elems.num_elements[9],
-                    padding,
-                    elems.battery_key.green().bold(),
-                    elems.separator,
-                    format::battery(read::battery_percentage(), read::battery_status())
-                );
-            }
-            false => {
-                dsp!(
-                    elems.num_elements[0],
-                    padding,
-                    elems.hostname_key,
-                    elems.separator,
-                    read::hostname()
-                );
-                dsp!(
-                    elems.num_elements[1],
-                    padding,
-                    elems.os_key,
-                    elems.separator,
-                    read::operating_system()
-                );
-                dsp!(
-                    elems.num_elements[2],
-                    padding,
-                    elems.kernel_version_key,
-                    elems.separator,
-                    read::kernel_version()
-                );
-                dsp!(
-                    elems.num_elements[3],
-                    padding,
-                    elems.package_count_key,
-                    elems.separator,
-                    read::package_count()
-                );
-                dsp!(
-                    elems.num_elements[4],
-                    padding,
-                    elems.shell_key,
-                    elems.separator,
-                    read::shell(opts.shell_shorthand)
-                );
-                dsp!(
-                    elems.num_elements[5],
-                    padding,
-                    elems.terminal_key,
-                    elems.separator,
-                    read::terminal()
-                );
-                dsp!(
-                    elems.num_elements[6],
-                    padding,
-                    elems.cpu_key,
-                    elems.separator,
-                    format::cpu(read::cpu_model_name(opts.cpu_shorthand), num_cpus::get())
-                );
-                dsp!(
-                    elems.num_elements[7],
-                    padding,
-                    elems.memory_key,
-                    elems.separator,
-                    format::memory(memory::used(), memory::memtotal())
-                );
-                dsp!(
-                    elems.num_elements[8],
-                    padding,
-                    elems.uptime_key,
-                    elems.separator,
-                    format::uptime(read::uptime())
-                );
-                dsp!(
-                    elems.num_elements[9],
-                    padding,
-                    elems.battery_key,
-                    elems.separator,
-                    format::battery(read::battery_percentage(), read::battery_status())
-                );
-            }
+    match opts.color {
+        true => {
+            dsp!(
+                elems.num_elements[0],
+                padding,
+                elems.hostname_key.purple().bold(),
+                elems.separator,
+                read::hostname()
+            );
+            dsp!(
+                elems.num_elements[1],
+                padding,
+                elems.os_key.blue().bold(),
+                elems.separator,
+                read::operating_system()
+            );
+            dsp!(
+                elems.num_elements[2],
+                padding,
+                elems.kernel_version_key.cyan().bold(),
+                elems.separator,
+                read::kernel_version()
+            );
+            dsp!(
+                elems.num_elements[3],
+                padding,
+                elems.package_count_key.green().bold(),
+                elems.separator,
+                read::package_count()
+            );
+            dsp!(
+                elems.num_elements[4],
+                padding,
+                elems.shell_key.yellow().bold(),
+                elems.separator,
+                read::shell(opts.shell_shorthand)
+            );
+            dsp!(
+                elems.num_elements[5],
+                padding,
+                elems.terminal_key.red().bold(),
+                elems.separator,
+                read::terminal()
+            );
+            dsp!(
+                elems.num_elements[6],
+                padding,
+                elems.cpu_key.purple().bold(),
+                elems.separator,
+                format::cpu(read::cpu_model_name(), num_cpus::get())
+            );
+            dsp!(
+                elems.num_elements[7],
+                padding,
+                elems.memory_key.blue().bold(),
+                elems.separator,
+                format::memory(memory::used(), memory::memtotal())
+            );
+            dsp!(
+                elems.num_elements[8],
+                padding,
+                elems.uptime_key.cyan().bold(),
+                elems.separator,
+                format::uptime(read::uptime())
+            );
+            dsp!(
+                elems.num_elements[9],
+                padding,
+                elems.battery_key.green().bold(),
+                elems.separator,
+                format::battery(read::battery_percentage(), read::battery_status())
+            );
         }
-        if opts.palette_status {
-            palette(elems);
-            println!();
+        false => {
+            dsp!(
+                elems.num_elements[0],
+                padding,
+                elems.hostname_key,
+                elems.separator,
+                read::hostname()
+            );
+            dsp!(
+                elems.num_elements[1],
+                padding,
+                elems.os_key,
+                elems.separator,
+                read::operating_system()
+            );
+            dsp!(
+                elems.num_elements[2],
+                padding,
+                elems.kernel_version_key,
+                elems.separator,
+                read::kernel_version()
+            );
+            dsp!(
+                elems.num_elements[3],
+                padding,
+                elems.package_count_key,
+                elems.separator,
+                read::package_count()
+            );
+            dsp!(
+                elems.num_elements[4],
+                padding,
+                elems.shell_key,
+                elems.separator,
+                read::shell(opts.shell_shorthand)
+            );
+            dsp!(
+                elems.num_elements[5],
+                padding,
+                elems.terminal_key,
+                elems.separator,
+                read::terminal()
+            );
+            dsp!(
+                elems.num_elements[6],
+                padding,
+                elems.cpu_key,
+                elems.separator,
+                format::cpu(read::cpu_model_name(), num_cpus::get())
+            );
+            dsp!(
+                elems.num_elements[7],
+                padding,
+                elems.memory_key,
+                elems.separator,
+                format::memory(memory::used(), memory::memtotal())
+            );
+            dsp!(
+                elems.num_elements[8],
+                padding,
+                elems.uptime_key,
+                elems.separator,
+                format::uptime(read::uptime())
+            );
+            dsp!(
+                elems.num_elements[9],
+                padding,
+                elems.battery_key,
+                elems.separator,
+                format::battery(read::battery_percentage(), read::battery_status())
+            );
         }
+    }
+    if opts.palette_status {
+        palette(elems);
+        println!();
     }
 }
 
@@ -265,6 +258,7 @@ pub fn palette(elems: Elements) {
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<String>) {
     let mut supplied_wrong_parameter: bool = false;
     let mut inc_params: Vec<String> = Vec::new();
+
     //  Labels contains all hideable elements.
     //  The order of each element in the array
     //  is important for the hide functionality
@@ -316,12 +310,12 @@ pub fn hide_error(inc_params: &Vec<String>) {
         inc_params
     );
     println!(
-        "{}{} [{}]",
+        "{}{} <{}>",
         padding,
-        "Usage: macchina --hide",
-        "element".cyan().bold()
+        "USAGE: macchina --hide",
+        "ELEMENTS".cyan().bold()
     );
-    println!("{}{}:", padding, "Elements".cyan().bold());
+    println!("{}{}:", padding, "ELEMENTS".cyan().bold());
     println!("{} -  {}", padding, "host");
     println!("{} -  {}", padding, "os");
     println!("{} -  {}", padding, "kern");
@@ -337,7 +331,7 @@ pub fn hide_error(inc_params: &Vec<String>) {
 pub fn help() {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
-    println!("{}{}:", padding, "Macchina".blue().bold());
+    println!("{}{}, v{}", padding, "Macchina".blue().bold(), VERSION);
     usage!(elems);
 }
 
