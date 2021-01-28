@@ -2,8 +2,10 @@
 
 <p align="center">
   <img src="preview.png"/>
-  <a href="https://forthebadge.com/images/badges/made-with-rust.svg" alt="Made With Rust Badge">
+  <a href="https://forthebadge.com/images/badges/made-with-rust.svg" alt="Made With Rust Badge"></a>
 </p>
+
+[![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
 
 ## Table of Contents:
 - [About](#about)
