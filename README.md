@@ -26,10 +26,11 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 
 ## Changelog <a name="change"></a>
 
-- Faster implementation for printing memory usage: read from `/proc/meminfo` instead of running commands and relying on awk.
-- Faster implementation for printing package count: newer implementation only relies on the output of one `pacman -Qq` instead of `pacman -Qq | wc -l`
-> New implementations are __~5.4 ms faster__!
-- Under the hood improvements
+- __main.rs rework__: utilize clap for parsing command line arguments to optimize and automate the process
+- __Drop --short-cpu argument__: this argument has been removed due to the fact that there are thousands of processor model names
+and previous implementation only worked on Intel Core CPUs
+- Performance improvement after reimplementing argument handling using clap.
+- Miscellaneous changes
 
 ---
 
@@ -40,10 +41,10 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 23.6 ± 1.4 | 21.7 | 28.6 | 1.00 |
-| `neofetch` | 245.3 ± 4.1 | 241.8 | 257.1 | 10.41 ± 0.66 |
+| `macchina` | 22.2 ± 0.7 | 21.0 | 25.1 | 1.00 |
+| `neofetch` | 243.9 ± 2.3 | 240.0 | 246.9 | 11.01 ± 0.37 |
 
-__Summary__: `macchina` runs __10.41 ± 0.66__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 - Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
 
@@ -65,9 +66,8 @@ Macchina displays basic system information such as:
 Macchina supports the following arguments:
 - --no-color: disable colors
 - --palette: display palette
+- --short-sh: shorten shell output (/bin/zsh --> zsh)
 - --hide: for hiding elements such as host, os, kern, et cetera.
-- --short-cpu: shorten processor output _(Intel Core CPUs Only)_
-- --short-sh: shorten shell output
 - --help
 
 ---

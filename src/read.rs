@@ -6,18 +6,26 @@ use std::process::{Command, Stdio};
 
 /// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
 pub fn battery_percentage() -> String {
-    let mut percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity")
-        .expect("Could not extract battery percentage!");
-    percentage = extra::pop_newline(percentage);
-    percentage
+    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
+
+    let ret = match percentage {
+        Ok(ret) => ret,
+        Err(_e) => return String::from("ERROR"),
+    };
+
+    extra::pop_newline(ret)
 }
 
 /// Read battery status from __/sys/class/power_supply/BAT0/status__
 pub fn battery_status() -> String {
-    let mut status = fs::read_to_string("/sys/class/power_supply/BAT0/status")
-        .expect("Could not extract battery status!");
-    status = extra::pop_newline(status);
-    status
+    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
+
+    let ret = match status {
+        Ok(ret) => ret,
+        Err(_e) => return String::from("ERROR"),
+    };
+
+    extra::pop_newline(ret)
 }
 
 /// Read current terminal instance using __ps__ command
@@ -25,7 +33,6 @@ pub fn terminal() -> String {
     //  ps -p $$ -o ppid=
     //  $$ doesn't work natively in rust but its value can be
     //  accessed through nix::unistd::getppid()
-
     let ppid = Command::new("ps")
         .arg("-p")
         .arg(unistd::getppid().to_string())
@@ -116,7 +123,7 @@ pub fn kernel_version() -> String {
     String::from(kern_vers.trim())
 }
 
-/// Read hostname by calling "uname -n"
+/// Read hostname using __unistd::gethostname()__
 pub fn hostname() -> String {
     let mut buf = [0u8; 64];
     let hostname_cstr = unistd::gethostname(&mut buf).expect("Failed getting hostname");
@@ -137,19 +144,16 @@ pub fn operating_system() -> String {
 }
 
 /// Read processor information from __/proc/cpuinfo__
-pub fn cpu_model_name(shorthand: bool) -> String {
+pub fn cpu_model_name() -> String {
     let mut cpu = String::from(
         extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap(),
     );
+
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")
         .trim()
         .to_string();
-    if shorthand && cpu.contains("Intel(R) Core(TM)") {
-        cpu = cpu.replace("Intel(R) Core(TM)", "").replace("CPU ", "");
-        return cpu.trim().to_string();
-    }
     cpu
 }
 
