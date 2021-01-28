@@ -34,10 +34,13 @@ pub fn uptime(up: String) -> String {
 }
 
 pub fn battery(percentage: String, status: String) -> String {
-    if percentage != "100" {
-        return String::from(percentage + "% - " + &status);
+    if percentage != "ERROR" && status != "ERROR" {
+        if percentage != "100" {
+            return String::from(percentage + "% - " + &status);
+        }
+        return String::from(&status);
     }
-    String::from(&status)
+    String::from("could not extract battery info")
 }
 
 pub fn memory(used: u64, total: u64) -> String {

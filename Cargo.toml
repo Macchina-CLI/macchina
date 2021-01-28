@@ -10,7 +10,6 @@ repository = "https://github.com/grtcdr/macchina"
 documentation = "https://github.com/grtcdr/macchina"
 
 license = "MIT"
-license-file = "LICENSE"
 readme = "README.md"
 
 

@@ -4,7 +4,7 @@ mod extra;
 mod format;
 mod memory;
 mod read;
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg};
 use display::Elements;
 use display::Options;
 use std::process::exit;
@@ -35,8 +35,8 @@ fn main() {
                 .short("H")
                 .long("hide")
                 .takes_value(true)
-                .max_values(10)
                 .min_values(1)
+                .max_values(10)
                 .help("Hide elements such as (host, kern, os, etc.)"),
         )
         .arg(
@@ -65,7 +65,7 @@ fn main() {
         )
         .get_matches();
 
-    // Instanties Macchina's elements.
+    // Instantiates Macchina's elements.
     // Contains the key strings to be displayed
     // as well as the separator character and
     // num_elements that allows hiding elements
@@ -88,7 +88,11 @@ fn main() {
     if matches.is_present("short-sh") {
         opts.shell_shorthand = true;
     }
-
+    if matches.is_present("hide") {
+        let hide_parameters: Vec<&str> = matches.values_of("hide").unwrap().collect();
+        display::hide(elems, opts, hide_parameters);
+        exit(0);
+    }
     display::print_info(elems, opts);
 }
 

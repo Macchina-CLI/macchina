@@ -10,9 +10,9 @@ pub fn battery_percentage() -> String {
 
     let ret = match percentage {
         Ok(ret) => ret,
-        Err(_e) => return String::from("/sys/class/power_supply/BAT0/capacity: not a real path"),
+        Err(_e) => return String::from("ERROR"),
     };
-    
+
     extra::pop_newline(ret)
 }
 
@@ -22,9 +22,9 @@ pub fn battery_status() -> String {
 
     let ret = match status {
         Ok(ret) => ret,
-        Err(_e) => return String::from("/sys/class/power_supply/BAT0/status: not a real path"),
+        Err(_e) => return String::from("ERROR"),
     };
-    
+
     extra::pop_newline(ret)
 }
 
@@ -148,7 +148,7 @@ pub fn cpu_model_name() -> String {
     let mut cpu = String::from(
         extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap(),
     );
-    
+
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")

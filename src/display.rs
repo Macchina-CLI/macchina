@@ -255,51 +255,39 @@ pub fn palette(elems: Elements) {
     );
 }
 
-pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<String>) {
+pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     let mut supplied_wrong_parameter: bool = false;
-    let mut inc_params: Vec<String> = Vec::new();
+    let mut inc_params: Vec<&str> = Vec::new();
 
     //  Labels contains all hideable elements.
     //  The order of each element in the array
     //  is important for the hide functionality
     //  to work properly
-    let labels: [String; 10] = [
-        "host".to_string(),
-        "os".to_string(),
-        "kern".to_string(),
-        "pkgs".to_string(),
-        "sh".to_string(),
-        "term".to_string(),
-        "cpu".to_string(),
-        "mem".to_string(),
-        "up".to_string(),
-        "bat".to_string(),
+    let labels: [&str; 10] = [
+        "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
     ];
-    if hide_parameters.len() > 0 {
-        for z in 0..hide_parameters.len() {
-            if !labels.contains(&hide_parameters[z]) {
-                inc_params.push(hide_parameters[z].clone());
-                supplied_wrong_parameter = true;
-            }
+
+    for z in 0..hide_parameters.len() {
+        if !labels.contains(&hide_parameters[z]) {
+            inc_params.push(&hide_parameters[z].clone());
+            supplied_wrong_parameter = true;
         }
-        if supplied_wrong_parameter == true {
-            hide_error(&inc_params);
-            exit(0);
-        } else {
-            for i in 0..9 {
-                if hide_parameters.contains(&labels[i]) {
-                    elems.num_elements[i] = false;
-                }
-            }
-        }
-    } else {
+    }
+    if supplied_wrong_parameter == true {
         hide_error(&inc_params);
         exit(0);
+    } else {
+        for i in 0..9 {
+            if hide_parameters.contains(&labels[i]) {
+                elems.num_elements[i] = false;
+            }
+        }
     }
+
     print_info(elems, options);
 }
 
-pub fn hide_error(inc_params: &Vec<String>) {
+pub fn hide_error(inc_params: &Vec<&str>) {
     let elems = Elements::new();
     let padding: String = " ".repeat(elems.left_padding);
     eprintln!(
@@ -333,17 +321,15 @@ pub fn help() {
     let padding: String = " ".repeat(elems.left_padding);
     println!("{}{}, v{}", padding, "Macchina".blue().bold(), VERSION);
     usage!(elems);
-}
-
-pub fn error(inc_args: &Vec<String>) {
-    let elems = Elements::new();
-    let padding: String = " ".repeat(elems.left_padding);
-    eprintln!(
-        "{}{}: {} {:?}",
-        padding,
-        "Error".red().bold(),
-        "bad option",
-        inc_args
+    println!();
+    println!("{}{}", padding, "Battery information might print an error if the file Macchina is trying to read from does not exist.");
+    println!("{}{}", padding, "Macchina reads battery information from:");
+    println!(
+        "{}{}{}",
+        padding, padding, "/sys/class/power_supply/BAT0/capacity"
     );
-    usage!(elems);
+    println!(
+        "{}{}{}",
+        padding, padding, "/sys/class/power_supply/BAT0/status"
+    );
 }
