@@ -1,11 +1,14 @@
 mod display;
 mod extra;
 mod format;
-mod read;
 mod memory;
-use std::{env, process::exit};
+mod read;
 use display::Elements;
 use display::Options;
+use std::{env, process::exit};
+
+//  main.rs will soon be reworked to use clap because the current
+//  method of parsing is not optimal whatsoever
 
 fn main() {
     let mut args: Vec<String> = env::args().collect();
@@ -45,12 +48,12 @@ fn main() {
             if args.contains(&"--hide".to_string()) {
                 let mut params: Vec<String> = Vec::new();
                 let args_copy = args;
-                for i in 0 .. args_copy.len() {
-                    if !args_copy[i].starts_with('-') { 
+                for i in 0..args_copy.len() {
+                    if !args_copy[i].starts_with('-') {
                         params.push(args_copy[i].clone());
                     }
                 }
-                display::hide(elems,opts, params);
+                display::hide(elems, opts, params);
                 exit(0);
             }
         } else {

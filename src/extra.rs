@@ -9,7 +9,11 @@ pub fn pop_newline(mut string: String) -> String {
     String::from(string)
 }
 
-pub fn get_line_at(path_to_file: &str, line_number: usize, error_message: &str) -> Result<String, Error> {
+pub fn get_line_at(
+    path_to_file: &str,
+    line_number: usize,
+    error_message: &str,
+) -> Result<String, Error> {
     let _path = Path::new(path_to_file);
     let file = File::open(path_to_file).expect(&error_message);
     let content = BufReader::new(&file);

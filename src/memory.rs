@@ -13,25 +13,22 @@ pub fn memtotal() -> u64 {
 }
 
 pub fn memfree() -> u64 {
-    let mem = String::from(
-        extra::get_line_at("/proc/meminfo", 1, "Could not extract MemFree!").unwrap(),
-    );
+    let mem =
+        String::from(extra::get_line_at("/proc/meminfo", 1, "Could not extract MemFree!").unwrap());
     let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
     s_mem_kb.parse::<u64>().unwrap()
 }
 
 pub fn buffers() -> u64 {
-    let mem = String::from(
-        extra::get_line_at("/proc/meminfo", 3, "Could not extract Buffers!").unwrap(),
-    );
+    let mem =
+        String::from(extra::get_line_at("/proc/meminfo", 3, "Could not extract Buffers!").unwrap());
     let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
     s_mem_kb.parse::<u64>().unwrap()
 }
 
 pub fn cached() -> u64 {
-    let mem = String::from(
-        extra::get_line_at("/proc/meminfo", 4, "Could not extract Cached!").unwrap(),
-    );
+    let mem =
+        String::from(extra::get_line_at("/proc/meminfo", 4, "Could not extract Cached!").unwrap());
     let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
     s_mem_kb.parse::<u64>().unwrap()
 }

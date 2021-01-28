@@ -12,7 +12,7 @@ pub fn uptime(up: String) -> String {
         if up_days != 0.0 {
             formatted_uptime.push_str(&up_days.to_string());
             formatted_uptime.push_str("d ");
-        }  
+        }
         if up_hours != 0.0 {
             formatted_uptime.push_str(&up_hours.to_string());
             formatted_uptime.push_str("h ");
