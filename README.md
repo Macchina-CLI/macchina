@@ -51,7 +51,7 @@ Macchina displays basic system information such as:
 - Hostname
 - Operating system
 - Kernel version
-- Package count (Arch Linux Only, will print __0__ on any other distribution)
+- Package count _(Arch Linux Only, will print __0__ on any other distribution)_
 - Current SHELL name/SHELL path
 - Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_
@@ -63,7 +63,7 @@ Macchina supports the following arguments:
 - --no-color: disable colors
 - --palette: display palette
 - --hide: for hiding elements such as host, os, kern, et cetera.
-- --short-cpu: shorten processor output
+- --short-cpu: shorten processor output _(Intel Core CPUs Only)_
 - --short-sh: shorten shell output
 - --help
 
