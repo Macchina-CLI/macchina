@@ -20,21 +20,34 @@ impl Options {
         }
     }
 }
+pub struct Pair {
+    key: String,
+    value: String,
+}
+
+impl Pair {
+    pub fn new(k: String, v: String) -> Pair {
+        Pair { key: k, value: v }
+    }
+    fn modify(&mut self, val: String) {
+        self.value = val;
+    }
+}
 
 pub struct Elements {
-    pub separator: char,
-    pub left_padding: usize,
-    pub hostname_key: String,
-    pub os_key: String,
-    pub kernel_version_key: String,
-    pub terminal_key: String,
-    pub shell_key: String,
-    pub cpu_key: String,
-    pub uptime_key: String,
-    pub battery_key: String,
-    pub package_count_key: String,
-    pub memory_key: String,
-    pub num_elements: [bool; 10],
+    separator: char,
+    left_padding: usize,
+    hostname: Pair,
+    os: Pair,
+    kernel: Pair,
+    packages: Pair,
+    shell: Pair,
+    terminal: Pair,
+    cpu: Pair,
+    memory: Pair,
+    uptime: Pair,
+    battery: Pair,
+    num_elements: [bool; 10],
 }
 
 impl Elements {
@@ -42,16 +55,25 @@ impl Elements {
         Elements {
             separator: ':',
             left_padding: 4,
-            hostname_key: "host".to_string(),
-            os_key: "os".to_string(),
-            kernel_version_key: "kern".to_string(),
-            terminal_key: "term".to_string(),
-            shell_key: "sh".to_string(),
-            cpu_key: "cpu".to_string(),
-            uptime_key: "up".to_string(),
-            battery_key: "bat".to_string(),
-            package_count_key: "pkgs".to_string(),
-            memory_key: "mem".to_string(),
+            hostname: Pair::new(String::from("host"), read::hostname()),
+            os: Pair::new(String::from("os"), read::operating_system()),
+            kernel: Pair::new(String::from("kern"), read::kernel_version()),
+            packages: Pair::new(String::from("pkg"), read::package_count().to_string()),
+            shell: Pair::new(String::from("sh"), String::new()),
+            terminal: Pair::new(String::from("term"), read::terminal()),
+            cpu: Pair::new(
+                String::from("cpu"),
+                format::cpu(read::cpu_model_name(), num_cpus::get()),
+            ),
+            memory: Pair::new(
+                String::from("mem"),
+                format::memory(memory::used(), memory::memtotal()),
+            ),
+            uptime: Pair::new(String::from("up"), format::uptime(read::uptime())),
+            battery: Pair::new(
+                String::from("bat"),
+                format::battery(read::battery_percentage(), read::battery_status()),
+            ),
             num_elements: [true; 10],
         }
     }
@@ -84,151 +106,156 @@ macro_rules! dsp {
     };
 }
 
-pub fn print_info(elems: Elements, opts: Options) {
+pub fn print_info(mut elems: Elements, opts: Options) {
     let padding: String = " ".repeat(elems.left_padding);
+    if opts.shell_shorthand {
+        elems.shell.modify(read::shell(true))
+    } else {
+        elems.shell.modify(read::shell(false))
+    }
     match opts.color {
         true => {
             dsp!(
                 elems.num_elements[0],
                 padding,
-                elems.hostname_key.purple().bold(),
+                elems.hostname.key.purple().bold(),
                 elems.separator,
-                read::hostname()
+                elems.hostname.value
             );
             dsp!(
                 elems.num_elements[1],
                 padding,
-                elems.os_key.blue().bold(),
+                elems.os.key.blue().bold(),
                 elems.separator,
-                read::operating_system()
+                elems.os.value
             );
             dsp!(
                 elems.num_elements[2],
                 padding,
-                elems.kernel_version_key.cyan().bold(),
+                elems.kernel.key.cyan().bold(),
                 elems.separator,
-                read::kernel_version()
+                elems.kernel.value
             );
             dsp!(
                 elems.num_elements[3],
                 padding,
-                elems.package_count_key.green().bold(),
+                elems.packages.key.green().bold(),
                 elems.separator,
-                read::package_count()
+                elems.os.value
             );
             dsp!(
                 elems.num_elements[4],
                 padding,
-                elems.shell_key.yellow().bold(),
+                elems.shell.key.yellow().bold(),
                 elems.separator,
-                read::shell(opts.shell_shorthand)
+                elems.shell.value
             );
             dsp!(
                 elems.num_elements[5],
                 padding,
-                elems.terminal_key.red().bold(),
+                elems.terminal.key.red().bold(),
                 elems.separator,
-                read::terminal()
+                elems.terminal.value
             );
             dsp!(
                 elems.num_elements[6],
                 padding,
-                elems.cpu_key.purple().bold(),
+                elems.cpu.key.purple().bold(),
                 elems.separator,
-                format::cpu(read::cpu_model_name(), num_cpus::get())
+                elems.cpu.value
             );
             dsp!(
                 elems.num_elements[7],
                 padding,
-                elems.memory_key.blue().bold(),
+                elems.memory.key.blue().bold(),
                 elems.separator,
-                format::memory(memory::used(), memory::memtotal())
+                elems.memory.value
             );
             dsp!(
                 elems.num_elements[8],
                 padding,
-                elems.uptime_key.cyan().bold(),
+                elems.uptime.key.cyan().bold(),
                 elems.separator,
-                format::uptime(read::uptime())
+                elems.uptime.value
             );
             dsp!(
                 elems.num_elements[9],
                 padding,
-                elems.battery_key.green().bold(),
+                elems.battery.key.green().bold(),
                 elems.separator,
-                format::battery(read::battery_percentage(), read::battery_status())
+                elems.battery.value
             );
         }
         false => {
             dsp!(
                 elems.num_elements[0],
                 padding,
-                elems.hostname_key,
+                elems.hostname.key,
                 elems.separator,
-                read::hostname()
+                elems.hostname.value
             );
             dsp!(
                 elems.num_elements[1],
                 padding,
-                elems.os_key,
+                elems.os.key,
                 elems.separator,
-                read::operating_system()
+                elems.os.value
             );
             dsp!(
                 elems.num_elements[2],
                 padding,
-                elems.kernel_version_key,
+                elems.kernel.key,
                 elems.separator,
-                read::kernel_version()
+                elems.kernel.value
             );
             dsp!(
                 elems.num_elements[3],
                 padding,
-                elems.package_count_key,
+                elems.packages.key,
                 elems.separator,
-                read::package_count()
+                elems.packages.value
             );
             dsp!(
                 elems.num_elements[4],
                 padding,
-                elems.shell_key,
+                elems.shell.key,
                 elems.separator,
-                read::shell(opts.shell_shorthand)
+                elems.shell.value
             );
             dsp!(
                 elems.num_elements[5],
                 padding,
-                elems.terminal_key,
+                elems.terminal.key,
                 elems.separator,
-                read::terminal()
+                elems.terminal.value
             );
             dsp!(
                 elems.num_elements[6],
                 padding,
-                elems.cpu_key,
+                elems.cpu.key,
                 elems.separator,
-                format::cpu(read::cpu_model_name(), num_cpus::get())
+                elems.cpu.value
             );
             dsp!(
                 elems.num_elements[7],
                 padding,
-                elems.memory_key,
+                elems.memory.key,
                 elems.separator,
-                format::memory(memory::used(), memory::memtotal())
+                elems.memory.value
             );
             dsp!(
                 elems.num_elements[8],
                 padding,
-                elems.uptime_key,
+                elems.uptime.key,
                 elems.separator,
-                format::uptime(read::uptime())
+                elems.uptime.value
             );
             dsp!(
                 elems.num_elements[9],
                 padding,
-                elems.battery_key,
+                elems.battery.key,
                 elems.separator,
-                format::battery(read::battery_percentage(), read::battery_status())
+                elems.battery.value
             );
         }
     }
