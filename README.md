@@ -55,7 +55,7 @@ Macchina displays basic system information such as:
 - Hostname
 - Operating system
 - Kernel version
-- Package count _(Arch Linux Only, will print __0__ on any other distribution)_
+- Package count _(Arch-based distributions only, will print __0__ on any other distribution)_
 - Current SHELL name/SHELL path
 - Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_

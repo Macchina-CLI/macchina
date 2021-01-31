@@ -94,7 +94,14 @@ pub fn shell(shorthand: bool) -> String {
 }
 
 pub fn package_count() -> usize {
-    if operating_system() == "Arch Linux" {
+    let wh = Command::new("which")
+            .arg("pacman")
+            .output()
+            .expect("Failed to start 'which' process");
+
+    let which = String::from_utf8(wh.stdout).expect("Conversion error");
+
+    if which.trim() == "/usr/bin/pacman" {
         let pacman = Command::new("pacman")
             .arg("-Q")
             .arg("-q")

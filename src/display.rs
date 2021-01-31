@@ -141,7 +141,7 @@ pub fn print_info(mut elems: Elements, opts: Options) {
                 padding,
                 elems.packages.key.green().bold(),
                 elems.separator,
-                elems.os.value
+                elems.packages.value
             );
             dsp!(
                 elems.num_elements[4],
