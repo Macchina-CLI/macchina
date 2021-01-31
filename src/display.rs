@@ -4,7 +4,6 @@ use crate::{format, VERSION};
 use crate::{memory, DEFAULT_COLOR, DEFAULT_PADDING};
 use colored::{Color, Colorize};
 use rand::Rng;
-use std::process::exit;
 
 pub struct Options {
     pub color: bool,
@@ -60,7 +59,7 @@ impl Elements {
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
-            packages: Pair::new(String::from("pkg"), read::package_count().to_string()),
+            packages: Pair::new(String::from("pkgs"), read::package_count().to_string()),
             shell: Pair::new(String::from("sh"), String::new()),
             terminal: Pair::new(String::from("term"), read::terminal()),
             cpu: Pair::new(
@@ -306,9 +305,6 @@ pub fn palette(elems: Elements) {
 }
 
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
-    let mut supplied_wrong_parameter: bool = false;
-    let mut inc_params: Vec<&str> = Vec::new();
-
     //  Labels contains all hideable elements.
     //  The order of each element in the array
     //  is important for the hide functionality
@@ -316,54 +312,13 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     let labels: [&str; 10] = [
         "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
     ];
-
-    for z in 0..hide_parameters.len() {
-        if !labels.contains(&hide_parameters[z]) {
-            inc_params.push(&hide_parameters[z].clone());
-            supplied_wrong_parameter = true;
-        }
-    }
-    if supplied_wrong_parameter == true {
-        hide_error(&inc_params);
-        exit(0);
-    } else {
-        for i in 0..9 {
+    for i in 0..10 {
             if hide_parameters.contains(&labels[i]) {
                 elems.num_elements[i] = false;
-            }
         }
     }
 
     print_info(elems, options);
-}
-
-pub fn hide_error(inc_params: &Vec<&str>) {
-    let elems = Elements::new();
-    let padding: String = " ".repeat(elems.left_padding);
-    eprintln!(
-        "{}{}: {} {:?}",
-        padding,
-        "Error".red().bold(),
-        "bad option",
-        inc_params
-    );
-    println!(
-        "{}{} <{}>",
-        padding,
-        "USAGE: macchina --hide",
-        "ELEMENTS".cyan().bold()
-    );
-    println!("{}{}:", padding, "ELEMENTS".cyan().bold());
-    println!("{} -  {}", padding, "host");
-    println!("{} -  {}", padding, "os");
-    println!("{} -  {}", padding, "kern");
-    println!("{} -  {}", padding, "pkgs");
-    println!("{} -  {}", padding, "term");
-    println!("{} -  {}", padding, "sh");
-    println!("{} -  {}", padding, "cpu");
-    println!("{} -  {}", padding, "mem");
-    println!("{} -  {}", padding, "up");
-    println!("{} -  {}", padding, "bat");
 }
 
 pub fn choose_color(color: &str) -> Color {

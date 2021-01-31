@@ -42,6 +42,7 @@ fn main() {
                 .takes_value(true)
                 .multiple(false)
                 .max_values(1)
+                .possible_values(&["red","green","blue","yellow","cyan","magenta","black","white"])
                 .help("Specify the color of the keys"),
         )
         .arg(
@@ -59,6 +60,7 @@ fn main() {
                 .min_values(1)
                 .max_values(10)
                 .multiple(false)
+                .possible_values(&["host","os","kern","pkgs","sh","term","cpu","mem","up","bat"])
                 .help("Hide elements such as (host, kern, os, etc.)"),
         )
         .arg(
@@ -118,8 +120,8 @@ fn main() {
         std::process::exit(0);
     }
     if matches.is_present("version") {
-        let color: colored::Color = choose_color(matches.value_of("color").unwrap());
-        elems.set_color(color);
+        println!("Macchina v{}",VERSION);
+        std::process::exit(0);
     }
     if matches.is_present("random-color") {
         elems.set_color(display::randomize_color());
