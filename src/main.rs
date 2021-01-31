@@ -45,12 +45,20 @@ fn main() {
                 .help("Specify the color of the keys"),
         )
         .arg(
+            Arg::with_name("random-color")
+                .short("r")
+                .long("random-color")
+                .multiple(false)
+                .help("Specify the color of the keys"),
+        )
+        .arg(
             Arg::with_name("hide")
                 .short("H")
                 .long("hide")
                 .takes_value(true)
                 .min_values(1)
                 .max_values(10)
+                .multiple(false)
                 .help("Hide elements such as (host, kern, os, etc.)"),
         )
         .arg(
@@ -66,7 +74,6 @@ fn main() {
                 .short("h")
                 .long("help")
                 .takes_value(false)
-                .multiple(false)
                 .help("Print out helpful information"),
         )
         .arg(
@@ -74,7 +81,6 @@ fn main() {
                 .short("v")
                 .long("version")
                 .takes_value(false)
-                .multiple(false)
                 .help("Print out Macchina's version"),
         )
         .get_matches();
@@ -96,20 +102,27 @@ fn main() {
     if matches.is_present("palette") {
         opts.palette_status = true;
     }
-    if matches.is_present("no-color") {
-        opts.color = false;
+    if matches.is_present("color") {
+        let color: colored::Color = choose_color(matches.value_of("color").unwrap());
+        elems.set_color(color);
     }
     if matches.is_present("short-sh") {
         opts.shell_shorthand = true;
+    }
+    if matches.is_present("no-color") {
+        opts.color = false;
     }
     if matches.is_present("hide") {
         let hide_parameters: Vec<&str> = matches.values_of("hide").unwrap().collect();
         display::hide(elems, opts, hide_parameters);
         std::process::exit(0);
     }
-    if matches.is_present("color") {
+    if matches.is_present("version") {
         let color: colored::Color = choose_color(matches.value_of("color").unwrap());
         elems.set_color(color);
+    }
+    if matches.is_present("random-color") {
+        elems.set_color(display::randomize_color());
     }
     display::print_info(elems, opts);
 }
