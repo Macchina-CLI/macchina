@@ -5,9 +5,14 @@ mod format;
 mod memory;
 mod read;
 use clap::{App, Arg};
-use display::{Elements, choose_color};
 use display::Options;
-use std::process::exit;
+use display::{choose_color, Elements};
+
+pub const VERSION: &str = "0.1.1";
+pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
+pub const DEFAULT_PADDING: usize = 4;
+pub const PATH_TO_BATTERY_PERCENTAGE: &str = "/sys/class/power_supply/BAT0/capacity";
+pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
 
 fn main() {
     let matches = App::new("Macchina")
@@ -86,7 +91,7 @@ fn main() {
 
     if matches.is_present("help") {
         display::help();
-        exit(0);
+        std::process::exit(0);
     }
     if matches.is_present("palette") {
         opts.palette_status = true;
@@ -100,7 +105,7 @@ fn main() {
     if matches.is_present("hide") {
         let hide_parameters: Vec<&str> = matches.values_of("hide").unwrap().collect();
         display::hide(elems, opts, hide_parameters);
-        exit(0);
+        std::process::exit(0);
     }
     if matches.is_present("color") {
         let color: colored::Color = choose_color(matches.value_of("color").unwrap());
@@ -108,5 +113,3 @@ fn main() {
     }
     display::print_info(elems, opts);
 }
-
-pub const VERSION: &str = "1.0.0";

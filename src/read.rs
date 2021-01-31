@@ -1,12 +1,12 @@
 extern crate nix;
-use crate::extra;
+use crate::{extra, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
 use nix::unistd;
 use std::fs;
 use std::process::{Command, Stdio};
 
 /// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
 pub fn battery_percentage() -> String {
-    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
+    let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
 
     let ret = match percentage {
         Ok(ret) => ret,
@@ -18,7 +18,7 @@ pub fn battery_percentage() -> String {
 
 /// Read battery status from __/sys/class/power_supply/BAT0/status__
 pub fn battery_status() -> String {
-    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
+    let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
 
     let ret = match status {
         Ok(ret) => ret,
@@ -95,9 +95,9 @@ pub fn shell(shorthand: bool) -> String {
 
 pub fn package_count() -> usize {
     let wh = Command::new("which")
-            .arg("pacman")
-            .output()
-            .expect("Failed to start 'which' process");
+        .arg("pacman")
+        .output()
+        .expect("Failed to start 'which' process");
 
     let which = String::from_utf8(wh.stdout).expect("Conversion error");
 

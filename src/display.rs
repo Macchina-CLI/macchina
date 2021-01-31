@@ -1,7 +1,7 @@
 extern crate num_cpus;
-use crate::memory;
 use crate::read;
 use crate::{format, VERSION};
+use crate::{memory, DEFAULT_COLOR, DEFAULT_PADDING};
 use colored::{Color, Colorize};
 use std::process::exit;
 
@@ -55,7 +55,7 @@ impl Elements {
     pub fn new() -> Elements {
         Elements {
             separator: ':',
-            left_padding: 4,
+            left_padding: DEFAULT_PADDING,
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
@@ -76,7 +76,7 @@ impl Elements {
                 format::battery(read::battery_percentage(), read::battery_status()),
             ),
             num_elements: [true; 10],
-            color: colored::Color::Magenta,
+            color: DEFAULT_COLOR,
         }
     }
     pub fn set_color(&mut self, c: Color) {
@@ -97,7 +97,10 @@ macro_rules! usage {
         println!("{} {}", padding, "-h, --help");
         println!("{} {}", padding, "-p, --palette");
         println!("{} {}", padding, "-n, --no-color");
-        println!("{} {}", padding, "-c, --color (red, green, blue, cyan, magenta, yellow, black, white)");
+        println!(
+            "{} {}",
+            padding, "-c, --color (red, green, blue, cyan, magenta, yellow, black, white)"
+        );
         println!("{} {}", padding, "-H, --hide (host, os, kern, etc.)");
         println!("{} {}", padding, "-s, --short-sh");
     };
@@ -373,14 +376,63 @@ pub fn help() {
     println!("{}{}, v{}", padding, "Macchina".blue().bold(), VERSION);
     usage!(elems);
     println!();
-    println!("{}{}", padding, "Battery information might print an error if the file Macchina is trying to read from does not exist.");
-    println!("{}{}", padding, "Macchina reads battery information from:");
+    println!("{}{}:", padding, "Battery information".green().bold());
     println!(
-        "{}{}{}",
-        padding, padding, "/sys/class/power_supply/BAT0/capacity"
+        "{}{}",
+        padding, "Battery information might print an error if the file macchina"
+    );
+    println!("{}{}", padding, "is trying to read from does not exist.");
+    println!();
+    println!(
+        "{}{}",
+        padding, "Macchina reads battery information from two paths."
+    );
+    println!(
+        "{}{}",
+        padding, "The value of these paths are contained in two constants."
+    );
+    println!(
+        "{}{}",
+        padding, "These two constants are defined in main.rs."
     );
     println!(
         "{}{}{}",
-        padding, padding, "/sys/class/power_supply/BAT0/status"
+        padding, padding, "PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity"
+    );
+    println!(
+        "{}{}{}",
+        padding, padding, "PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status"
+    );
+    println!("{}{}", padding, "----------------------------------");
+    println!("{}{}:", padding, "Package information".green().bold());
+    println!(
+        "{}{}",
+        padding, "Package count will equal 0 if the system is not arch-based"
+    );
+    println!(
+        "{}{}",
+        padding, "as macchina queries pacman to get the installed package count."
+    );
+    println!("{}{}", padding, "-----------------------------------");
+    println!("{}{}:", padding, "Coloring".green().bold());
+    println!(
+        "{}{}",
+        padding, "Macchina's default color is magenta, but this can be overriden."
+    );
+    println!(
+        "{}{}",
+        padding, "--color / -c supports a number of colors, provided by the colored crate."
+    );
+    println!(
+        "{}Supported colors: {}, {}, {}, {}, {}, {}, {}, {}",
+        padding,
+        "red".red(),
+        "green".green(),
+        "blue".blue(),
+        "magenta".magenta(),
+        "yellow".yellow(),
+        "cyan".cyan(),
+        "black".black(),
+        "white".white()
     );
 }
