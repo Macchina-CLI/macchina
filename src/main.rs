@@ -5,7 +5,7 @@ mod format;
 mod memory;
 mod read;
 use clap::{App, Arg};
-use display::Elements;
+use display::{Elements, choose_color};
 use display::Options;
 use std::process::exit;
 
@@ -29,6 +29,15 @@ fn main() {
                 .takes_value(false)
                 .multiple(false)
                 .help("Disable colors"),
+        )
+        .arg(
+            Arg::with_name("color")
+                .short("c")
+                .long("color")
+                .takes_value(true)
+                .multiple(false)
+                .max_values(1)
+                .help("Specify the color of the keys"),
         )
         .arg(
             Arg::with_name("hide")
@@ -69,7 +78,7 @@ fn main() {
     // Contains the key strings to be displayed
     // as well as the separator character and
     // num_elements that allows hiding elements
-    let elems = Elements::new();
+    let mut elems = Elements::new();
 
     // Instantiates Macchina's behavior
     // when no arguments are provided.
@@ -92,6 +101,10 @@ fn main() {
         let hide_parameters: Vec<&str> = matches.values_of("hide").unwrap().collect();
         display::hide(elems, opts, hide_parameters);
         exit(0);
+    }
+    if matches.is_present("color") {
+        let color: colored::Color = choose_color(matches.value_of("color").unwrap());
+        elems.set_color(color);
     }
     display::print_info(elems, opts);
 }

@@ -2,7 +2,7 @@ extern crate num_cpus;
 use crate::memory;
 use crate::read;
 use crate::{format, VERSION};
-use colored::Colorize;
+use colored::{Color, Colorize};
 use std::process::exit;
 
 pub struct Options {
@@ -26,7 +26,7 @@ pub struct Pair {
 }
 
 impl Pair {
-    pub fn new(k: String, v: String) -> Pair {
+    fn new(k: String, v: String) -> Pair {
         Pair { key: k, value: v }
     }
     fn modify(&mut self, val: String) {
@@ -47,6 +47,7 @@ pub struct Elements {
     memory: Pair,
     uptime: Pair,
     battery: Pair,
+    color: colored::Color,
     num_elements: [bool; 10],
 }
 
@@ -75,7 +76,11 @@ impl Elements {
                 format::battery(read::battery_percentage(), read::battery_status()),
             ),
             num_elements: [true; 10],
+            color: colored::Color::Magenta,
         }
+    }
+    pub fn set_color(&mut self, c: Color) {
+        self.color = c;
     }
 }
 
@@ -92,6 +97,7 @@ macro_rules! usage {
         println!("{} {}", padding, "-h, --help");
         println!("{} {}", padding, "-p, --palette");
         println!("{} {}", padding, "-n, --no-color");
+        println!("{} {}", padding, "-c, --color (red, green, blue, cyan, magenta, yellow, black, white)");
         println!("{} {}", padding, "-H, --hide (host, os, kern, etc.)");
         println!("{} {}", padding, "-s, --short-sh");
     };
@@ -118,70 +124,70 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             dsp!(
                 elems.num_elements[0],
                 padding,
-                elems.hostname.key.purple().bold(),
+                elems.hostname.key.color(elems.color).bold(),
                 elems.separator,
                 elems.hostname.value
             );
             dsp!(
                 elems.num_elements[1],
                 padding,
-                elems.os.key.blue().bold(),
+                elems.os.key.color(elems.color).bold(),
                 elems.separator,
                 elems.os.value
             );
             dsp!(
                 elems.num_elements[2],
                 padding,
-                elems.kernel.key.cyan().bold(),
+                elems.kernel.key.color(elems.color).bold(),
                 elems.separator,
                 elems.kernel.value
             );
             dsp!(
                 elems.num_elements[3],
                 padding,
-                elems.packages.key.green().bold(),
+                elems.packages.key.color(elems.color).bold(),
                 elems.separator,
                 elems.packages.value
             );
             dsp!(
                 elems.num_elements[4],
                 padding,
-                elems.shell.key.yellow().bold(),
+                elems.shell.key.color(elems.color).bold(),
                 elems.separator,
                 elems.shell.value
             );
             dsp!(
                 elems.num_elements[5],
                 padding,
-                elems.terminal.key.red().bold(),
+                elems.terminal.key.color(elems.color).bold(),
                 elems.separator,
                 elems.terminal.value
             );
             dsp!(
                 elems.num_elements[6],
                 padding,
-                elems.cpu.key.purple().bold(),
+                elems.cpu.key.color(elems.color).bold(),
                 elems.separator,
                 elems.cpu.value
             );
             dsp!(
                 elems.num_elements[7],
                 padding,
-                elems.memory.key.blue().bold(),
+                elems.memory.key.color(elems.color).bold(),
                 elems.separator,
                 elems.memory.value
             );
             dsp!(
                 elems.num_elements[8],
                 padding,
-                elems.uptime.key.cyan().bold(),
+                elems.uptime.key.color(elems.color).bold(),
                 elems.separator,
                 elems.uptime.value
             );
             dsp!(
                 elems.num_elements[9],
                 padding,
-                elems.battery.key.green().bold(),
+                elems.battery.key.color(elems.color).bold(),
                 elems.separator,
                 elems.battery.value
             );
@@ -341,6 +347,24 @@ pub fn hide_error(inc_params: &Vec<&str>) {
     println!("{} -  {}", padding, "mem");
     println!("{} -  {}", padding, "up");
     println!("{} -  {}", padding, "bat");
+}
+
+pub fn choose_color(color: &str) -> Color {
+    match color {
+        "black" => Color::Black,
+        "red" => Color::Red,
+        "magenta" => Color::Magenta,
+        "cyan" => Color::Cyan,
+        "blue" => Color::Blue,
+        "green" => Color::Green,
+        "yellow" => Color::Yellow,
+        "white" => Color::White,
+        _ => color_error(),
+    }
+}
+
+fn color_error() -> Color {
+    return Color::Magenta;
 }
 
 pub fn help() {
