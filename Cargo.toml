@@ -12,9 +12,6 @@ documentation = "https://github.com/grtcdr/macchina"
 license = "MIT"
 readme = "README.md"
 
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 colored = "2"
 num_cpus = "1.13.0"

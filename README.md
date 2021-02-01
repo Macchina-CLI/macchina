@@ -25,7 +25,7 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 ---
 
 ## Changelog <a name="change"></a>
-- Added the ability to change the key colors with new "--color / -c <color>" argument, accepted colors: red, green, blue, magenta, yellow, cyan, black and white.
+- Macchina can now pick and use a color randomly for you using `--random-color` argument.
 ---
 
 ## Benchmarks <a name="bench"></a>
@@ -50,7 +50,7 @@ Macchina displays basic system information such as:
 - Operating system
 - Kernel version
 - Package count _(Arch-based distributions only, will print __0__ on any other distribution)_
-- Current SHELL name/SHELL path
+- Shell path/name in which macchina was ran
 - Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_
 - Memory usage
@@ -58,12 +58,14 @@ Macchina displays basic system information such as:
 - Battery _percentage_ and _status_
 
 Macchina supports the following arguments:
-- --no-color: disable colors
-- --color: display using the specified color
-- --palette: display palette
-- --short-sh: shorten shell output (/bin/zsh --> zsh)
-- --hide: for hiding elements such as host, os, kern, et cetera.
-- --help
+- `--no-color`      ->    disable colors
+- `--color`         ->    display information using the specified color
+- `--random-color`  ->    let macchina choose a color for you
+- `--palette`       ->    display palette
+- `--short-sh`      ->    shorten shell output (/bin/zsh => zsh)
+- `--hide`          ->    for hiding elements such as host, os, kern, etc.
+- `--help`          ->    display the help menu
+- `--version`       ->    print Macchina's version
 
 ---
 
