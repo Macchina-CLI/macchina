@@ -81,7 +81,7 @@ fn main() {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .possible_values(&["def", "alt"]),
+                .possible_values(&["def", "alt","giraffe"]),
         )
         .arg(
             Arg::with_name("short-sh")
@@ -147,8 +147,13 @@ fn main() {
     if matches.is_present("random-color") {
         elems.set_color(display::randomize_color());
     }
-    if matches.is_present("theme") && matches.value_of("theme").unwrap() == "alt" {
-        elems.set_theme_alt();
+    if matches.is_present("theme") {
+        if matches.value_of("theme").unwrap() == "alt" {
+            elems.set_theme_alt();
+        }
+        else if matches.value_of("theme").unwrap() == "giraffe" {
+            elems.set_theme_giraffe();
+        }
     }
     display::print_info(elems, opts);
 }
