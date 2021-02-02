@@ -6,7 +6,7 @@
 </p>
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
-![reposize](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=LINES%20OF%20CODE&logo=rust&style=for-the-badge)
+![reposize](https://img.shields.io/github/repo-size/grtcdr/macchina?color=BEE5BF&logo=github&style=for-the-badge)
 ![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=Lines%20of%20Code&style=for-the-badge)
 
 ## Table of Contents:
