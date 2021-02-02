@@ -6,6 +6,8 @@
 </p>
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
+[!reposize](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=LINES%20OF%20CODE&logo=rust&style=for-the-badge)
+[!loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=Lines%20of%20Code&style=for-the-badge)
 
 ## Table of Contents:
 - [About](#about)
@@ -26,6 +28,9 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 
 ## Changelog <a name="change"></a>
 - Macchina can now pick and use a color randomly for you using `--random-color` argument.
+- Compress preview image
+- Add more badges
+
 ---
 
 ## Benchmarks <a name="bench"></a>
