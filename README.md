@@ -9,8 +9,8 @@
 
 ## Table of Contents:
 - [About](#about)
-- [Benchmarks](#bench)
 - [Changelog](#change)
+- [Benchmarks](#bench)
 - [Features](#features)
 - [Installation](#install)
 - [Platform Support](#platform-support)
@@ -63,7 +63,7 @@ Macchina supports the following arguments:
 - `--random-color`  ->    let macchina choose a color for you
 - `--palette`       ->    display palette
 - `--short-sh`      ->    shorten shell output (/bin/zsh => zsh)
-- `--hide`          ->    for hiding elements such as host, os, kern, etc.
+- `--hide`          ->    hide elements such as host, os, kern, etc.
 - `--help`          ->    display the help menu
 - `--version`       ->    print Macchina's version
 
