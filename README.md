@@ -67,14 +67,15 @@ Macchina displays basic system information such as:
 
 Macchina supports the following arguments:
 - `--no-color` -> disable colors
-- `--color <color>` -> override key color
-- `--separator-color <color>` -> override separator color
-- `--random-color` -> let macchina choose a color for you
+- `--color <color>` -> specify the key color
+- `--separator-color <color>` -> specify the separator color
+- `--random-color` -> let macchina choose a random color for you
 - `--palette` -> display palette
 - `--short-sh` -> shorten shell output (/bin/zsh => zsh)
 - `--hide <element>` -> hide elements such as host, os, kern, etc.
-- `--help` -> display the help menu
-- `--version` -> print Macchina's version
+- `--help` -> display help menu
+- `--version` -> print version
+- `--padding <amount>` -> specify the amount of padding to use
 
 ---
 
