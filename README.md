@@ -20,9 +20,8 @@
 ---
 
 ## About Macchina <a name="about"></a>
-Macchina lets you flex... I mean view system information.
-It's an alternative to slower BASH fetchers but isn't as featureful,
-so if you're willing to sacrifice features for speed, then Macchina is the right tool for you.
+Macchina lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
+No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 ---
 
