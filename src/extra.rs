@@ -18,5 +18,5 @@ pub fn get_line_at(
     let file = File::open(path_to_file).expect(&error_message);
     let content = BufReader::new(&file);
     let mut lines = content.lines();
-    lines.nth(line_number).expect("Line out-of-bounds")
+    lines.nth(line_number).expect("Line is out-of-bounds")
 }
