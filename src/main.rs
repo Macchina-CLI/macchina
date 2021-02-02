@@ -8,8 +8,9 @@ use clap::{App, Arg};
 use display::Options;
 use display::{choose_color, Elements};
 
-pub const VERSION: &str = "0.1.1";
+pub const VERSION: &str = "0.1.2";
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
+pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
 pub const DEFAULT_PADDING: usize = 4;
 pub const PATH_TO_BATTERY_PERCENTAGE: &str = "/sys/class/power_supply/BAT0/capacity";
 pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
@@ -24,16 +25,14 @@ fn main() {
                 .short("p")
                 .long("palette")
                 .takes_value(false)
-                .multiple(false)
-                .help("Display palette"),
+                .multiple(false),
         )
         .arg(
             Arg::with_name("no-color")
                 .short("n")
                 .long("no-color")
                 .takes_value(false)
-                .multiple(false)
-                .help("Disable colors"),
+                .multiple(false),
         )
         .arg(
             Arg::with_name("color")
@@ -42,15 +41,26 @@ fn main() {
                 .takes_value(true)
                 .multiple(false)
                 .max_values(1)
-                .possible_values(&["red","green","blue","yellow","cyan","magenta","black","white"])
-                .help("Specify the color of the keys"),
+                .possible_values(&[
+                    "red", "green", "blue", "yellow", "cyan", "magenta", "black", "white",
+                ]),
+        )
+        .arg(
+            Arg::with_name("separator-color")
+                .short("C")
+                .long("separator-color")
+                .takes_value(true)
+                .multiple(false)
+                .max_values(1)
+                .possible_values(&[
+                    "red", "green", "blue", "yellow", "cyan", "magenta", "black", "white",
+                ]),
         )
         .arg(
             Arg::with_name("random-color")
                 .short("r")
                 .long("random-color")
-                .multiple(false)
-                .help("Specify the color of the keys"),
+                .multiple(false),
         )
         .arg(
             Arg::with_name("hide")
@@ -60,30 +70,37 @@ fn main() {
                 .min_values(1)
                 .max_values(10)
                 .multiple(false)
-                .possible_values(&["host","os","kern","pkgs","sh","term","cpu","mem","up","bat"])
-                .help("Hide elements such as (host, kern, os, etc.)"),
+                .possible_values(&[
+                    "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
+                ]),
+        )
+        .arg(
+            Arg::with_name("theme")
+                .short("t")
+                .long("theme")
+                .takes_value(true)
+                .max_values(1)
+                .multiple(false)
+                .possible_values(&["def", "alt"]),
         )
         .arg(
             Arg::with_name("short-sh")
                 .short("s")
                 .long("short-sh")
                 .takes_value(false)
-                .multiple(false)
-                .help("Shorten shell value, for example: /usr/bin/zsh -> zsh"),
+                .multiple(false),
         )
         .arg(
             Arg::with_name("help")
                 .short("h")
                 .long("help")
-                .takes_value(false)
-                .help("Print out helpful information"),
+                .takes_value(false),
         )
         .arg(
             Arg::with_name("version")
                 .short("v")
                 .long("version")
-                .takes_value(false)
-                .help("Print out Macchina's version"),
+                .takes_value(false),
         )
         .get_matches();
 
@@ -108,6 +125,10 @@ fn main() {
         let color: colored::Color = choose_color(matches.value_of("color").unwrap());
         elems.set_color(color);
     }
+    if matches.is_present("separator-color") {
+        let color: colored::Color = choose_color(matches.value_of("separator-color").unwrap());
+        elems.set_separator_color(color);
+    }
     if matches.is_present("short-sh") {
         opts.shell_shorthand = true;
     }
@@ -120,11 +141,14 @@ fn main() {
         std::process::exit(0);
     }
     if matches.is_present("version") {
-        println!("Macchina v{}",VERSION);
+        println!("Macchina v{}", VERSION);
         std::process::exit(0);
     }
     if matches.is_present("random-color") {
         elems.set_color(display::randomize_color());
+    }
+    if matches.is_present("theme") && matches.value_of("theme").unwrap() == "alt" {
+        elems.set_theme_alt();
     }
     display::print_info(elems, opts);
 }

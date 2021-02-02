@@ -1,7 +1,7 @@
 extern crate num_cpus;
 use crate::read;
 use crate::{format, VERSION};
-use crate::{memory, DEFAULT_COLOR, DEFAULT_PADDING};
+use crate::{memory, DEFAULT_COLOR, DEFAULT_SEPARATOR_COLOR, DEFAULT_PADDING};
 use colored::{Color, Colorize};
 use rand::Rng;
 
@@ -32,10 +32,13 @@ impl Pair {
     fn modify(&mut self, val: String) {
         self.value = val;
     }
+    fn update_key(&mut self, val: String) {
+        self.key = val;
+    }
 }
 
 pub struct Elements {
-    separator: char,
+    separator: String,
     left_padding: usize,
     hostname: Pair,
     os: Pair,
@@ -48,13 +51,14 @@ pub struct Elements {
     uptime: Pair,
     battery: Pair,
     color: colored::Color,
+    separator_color: colored::Color,
     num_elements: [bool; 10],
 }
 
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            separator: ':',
+            separator: String::from(":"),
             left_padding: DEFAULT_PADDING,
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
@@ -77,10 +81,27 @@ impl Elements {
             ),
             num_elements: [true; 10],
             color: DEFAULT_COLOR,
+            separator_color: DEFAULT_SEPARATOR_COLOR,
         }
+    }
+    pub fn set_theme_alt(&mut self) {
+        self.separator = String::from("  => ");
+        self.hostname.update_key(String::from("Ho"));
+        self.os.update_key(String::from("Os"));
+        self.kernel.update_key(String::from("Ke"));
+        self.packages.update_key(String::from("Pa"));
+        self.shell.update_key(String::from("Sh"));
+        self.terminal.update_key(String::from("Te"));
+        self.cpu.update_key(String::from("Cp"));
+        self.memory.update_key(String::from("Me"));
+        self.uptime.update_key(String::from("Up"));
+        self.battery.update_key(String::from("Ba"));
     }
     pub fn set_color(&mut self, c: Color) {
         self.color = c;
+    }
+    pub fn set_separator_color(&mut self, c: Color) {
+        self.separator_color = c;
     }
 }
 
@@ -96,25 +117,33 @@ macro_rules! usage {
         println!("{}{}:", padding, "OPTIONS".cyan().bold());
         println!(
             "{} {}",
-            padding, "-h, --help            -  display the help menu"
+            padding, "-h, --help  -  display the help menu"
         );
         println!(
             "{} {}",
-            padding, "-p, --palette         -  display the palette"
+            padding, "-p, --palette  -  display the palette"
         );
-        println!("{} {}", padding, "-n, --no-color        -  disable colors");
+        println!("{} {}", padding, "-n, --no-color  -  disable colors");
         println!(
             "{} {}",
-            padding, "-r, --random-color    -  let macchina decide the color for you randomly"
+            padding, "-r, --random-color  -  let macchina decide the color for you randomly"
         );
         println!(
             "{} {}",
-            padding, "-c, --color           -  specify the color"
+            padding, "-c, --color <color>  -  specify the color"
         );
-        println!("{} {}", padding, "-H, --hide            -  hide elements");
         println!(
             "{} {}",
-            padding, "-s, --short-sh        -  short shell output"
+            padding, "-C, --separator-color <color>  -  specify the separator color"
+        );
+        println!(
+            "{} {}",
+            padding, "-t, --theme <theme_name>  -  specify the theme"
+        );
+        println!("{} {}", padding, "-H, --hide <element>  -  hide elements");
+        println!(
+            "{} {}",
+            padding, "-s, --short-sh  -  short shell output"
         );
     };
 }
@@ -141,70 +170,70 @@ pub fn print_info(mut elems: Elements, opts: Options) {
                 elems.num_elements[0],
                 padding,
                 elems.hostname.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.hostname.value
             );
             dsp!(
                 elems.num_elements[1],
                 padding,
                 elems.os.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.os.value
             );
             dsp!(
                 elems.num_elements[2],
                 padding,
                 elems.kernel.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.kernel.value
             );
             dsp!(
                 elems.num_elements[3],
                 padding,
                 elems.packages.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.packages.value
             );
             dsp!(
                 elems.num_elements[4],
                 padding,
                 elems.shell.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.shell.value
             );
             dsp!(
                 elems.num_elements[5],
                 padding,
                 elems.terminal.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.terminal.value
             );
             dsp!(
                 elems.num_elements[6],
                 padding,
                 elems.cpu.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.cpu.value
             );
             dsp!(
                 elems.num_elements[7],
                 padding,
                 elems.memory.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.memory.value
             );
             dsp!(
                 elems.num_elements[8],
                 padding,
                 elems.uptime.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.uptime.value
             );
             dsp!(
                 elems.num_elements[9],
                 padding,
                 elems.battery.key.color(elems.color).bold(),
-                elems.separator,
+                elems.separator.color(elems.separator_color).bold(),
                 elems.battery.value
             );
         }
@@ -312,6 +341,7 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     let labels: [&str; 10] = [
         "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
     ];
+    
     for i in 0..10 {
             if hide_parameters.contains(&labels[i]) {
                 elems.num_elements[i] = false;
@@ -382,10 +412,13 @@ pub fn help() {
     println!("{}{}", padding, "as Macchina queries pacman to get a list of the installed packages.");
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}:", padding, "Coloring".green().bold());
-    println!("{}{}", padding, "Macchina's default color is magenta, but this can be overriden.");
-    println!("{}{}", padding, "--color / -c supports a number of colors, provided by the colored crate.");
+    println!("{}{}", padding, "Macchina's default key color is magenta, but this can be overriden.");
+    println!("{}{}", padding, "using --color / -c <color>");
+    println!("{}{}", padding, "You can also change the default separator color using");
+    println!("{}{}", padding, "--separator-color / -C <color>");
+    println!("{}{}", padding, "these two arguments support a range of colors, provided by the colored crate.");
     println!(
-        "{}Supported colors: {}, {}, {}, {}, {}, {}, {}, {}",
+        "{}   Supported colors: {}, {}, {}, {}, {}, {}, {}, {}",
         padding,
         "red".red(),
         "green".green(),
@@ -397,7 +430,11 @@ pub fn help() {
         "white".white()
     );
     println!("{}{}", padding, "You may also run macchina followed by -r / --random-color");
-    println!("{}{}", padding, "to get a different color everytime.");
+    println!("{}{}", padding, "to let Macchina choose a random color you.");
+    println!("{}{}", padding, "-----------------------------------");
+    println!("{}{}", padding, "Theming".green().bold());
+    println!("{}{}", padding, "Macchina offers themes for you to change between on the fly using");
+    println!("{}{}", padding, "the --theme / -t argument.");
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}:", padding, "Hiding elements".green().bold());
     println!("{}{}", padding, "Macchina allows you to hide elements using -H / --hide e.g. ");

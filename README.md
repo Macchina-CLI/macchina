@@ -7,7 +7,7 @@
 
 ![madewith](https://img.shields.io/static/v1?label=MADE%20WITH&message=RUST&color=ef4041&style=for-the-badge)
 ![reposize](https://img.shields.io/github/repo-size/grtcdr/macchina?color=BEE5BF&logo=github&style=for-the-badge)
-![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=Lines%20of%20Code&style=for-the-badge)
+![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=FFD1BA&label=Lines%20of%20Code&logo=rust&style=for-the-badge)
 
 ## Table of Contents:
 - [About](#about)
@@ -27,9 +27,12 @@ so if you're willing to sacrifice features for speed, then Macchina is the right
 ---
 
 ## Changelog <a name="change"></a>
-- Macchina can now pick and use a color randomly for you using `--random-color` argument.
-- Compress preview image
-- Add more badges
+- Macchina now has an alternative theme for you to use (on the fly!), just run: `macchina -t alt`
+ 
+   - This feature was inspired by a reddit user's configuration of what seems to be Neofetch, I now realize that theming possibilites are
+   endless, and more themes will be added to take Macchina's aesthetics to a whole new level.
+
+- You can now change the separator color, just run: `macchina -C black`
 
 ---
 
@@ -61,16 +64,18 @@ Macchina displays basic system information such as:
 - Memory usage
 - Uptime
 - Battery _percentage_ and _status_
+- Palette (if user runs Macchina with `--palette / -p`)
 
 Macchina supports the following arguments:
-- `--no-color`      ->    disable colors
-- `--color`         ->    display information using the specified color
-- `--random-color`  ->    let macchina choose a color for you
-- `--palette`       ->    display palette
-- `--short-sh`      ->    shorten shell output (/bin/zsh => zsh)
-- `--hide`          ->    hide elements such as host, os, kern, etc.
-- `--help`          ->    display the help menu
-- `--version`       ->    print Macchina's version
+- `--no-color` -> disable colors
+- `--color <color>` -> override key color
+- `--separator-color <color>` -> override separator color
+- `--random-color` -> let macchina choose a color for you
+- `--palette` -> display palette
+- `--short-sh` -> shorten shell output (/bin/zsh => zsh)
+- `--hide <element>` -> hide elements such as host, os, kern, etc.
+- `--help` -> display the help menu
+- `--version` -> print Macchina's version
 
 ---
 
