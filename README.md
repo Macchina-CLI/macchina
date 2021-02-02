@@ -26,12 +26,7 @@ No one wants a slow fetcher, and macchina's main goal is to provide you with han
 ---
 
 ## Changelog <a name="change"></a>
-- Macchina now has an alternative theme for you to use (on the fly!), just run: `macchina -t alt`
- 
-   - This feature was inspired by a reddit user's configuration of what seems to be Neofetch, I now realize that theming possibilites are
-   endless, and more themes will be added to take Macchina's aesthetics to a whole new level.
-
-- You can now change the separator color, just run: `macchina -C black`
+- You __visualize__ memory usage and battery percentage using progress bars
 
 ---
 
@@ -60,8 +55,8 @@ Macchina displays basic system information such as:
 - Shell path/name in which macchina was ran
 - Terminal instance name in which macchina was ran
 - Processor _model name_, _frequency_ and _thread count_
-- Memory usage
 - Uptime
+- Memory usage
 - Battery _percentage_ and _status_
 - Palette (if user runs Macchina with `--palette / -p`)
 
@@ -73,6 +68,8 @@ Macchina supports the following arguments:
 - `--palette` -> display palette
 - `--short-sh` -> shorten shell output (/bin/zsh => zsh)
 - `--hide <element>` -> hide elements such as host, os, kern, etc.
+- `--bar` -> display memory usage and battery percentage as progress bars
+- `--theme <theme_name>` -> change themes
 - `--help` -> display help menu
 - `--version` -> print version
 - `--padding <amount>` -> specify the amount of padding to use

@@ -1,7 +1,7 @@
 extern crate num_cpus;
-use crate::read;
-use crate::{format, VERSION};
-use crate::{memory, DEFAULT_COLOR, DEFAULT_SEPARATOR_COLOR, DEFAULT_PADDING};
+use crate::{
+    bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, VERSION,
+};
 use colored::{Color, Colorize};
 use rand::Rng;
 
@@ -53,6 +53,7 @@ pub struct Elements {
     color: colored::Color,
     separator_color: colored::Color,
     num_elements: [bool; 10],
+    bar: bool,
 }
 
 impl Elements {
@@ -60,6 +61,7 @@ impl Elements {
         Elements {
             separator: String::from(":"),
             left_padding: DEFAULT_PADDING,
+            bar: false,
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
@@ -119,6 +121,9 @@ impl Elements {
     pub fn set_left_padding_to(&mut self, val: usize) {
         self.left_padding = val;
     }
+    pub fn enable_bar(&mut self) {
+        self.bar = true;
+    }
 }
 
 macro_rules! usage {
@@ -131,14 +136,8 @@ macro_rules! usage {
             "OPTIONS".blue().bold()
         );
         println!("{}{}:", padding, "OPTIONS".blue().bold());
-        println!(
-            "{} {}",
-            padding, "-h, --help  -  display the help menu"
-        );
-        println!(
-            "{} {}",
-            padding, "-p, --palette  -  display the palette"
-        );
+        println!("{} {}", padding, "-h, --help  -  display the help menu");
+        println!("{} {}", padding, "-p, --palette  -  display the palette");
         println!("{} {}", padding, "-n, --no-color  -  disable colors");
         println!(
             "{} {}",
@@ -157,13 +156,14 @@ macro_rules! usage {
             padding, "-t, --theme <theme_name>  -  specify the theme"
         );
         println!("{} {}", padding, "-H, --hide <element>  -  hide elements");
-        println!(
-            "{} {}",
-            padding, "-s, --short-sh  -  short shell output"
-        );
+        println!("{} {}", padding, "-s, --short-sh  -  short shell output");
         println!(
             "{} {}",
             padding, "-P, --padding  <amount> -  specify the amount of padding to use"
+        );
+        println!(
+            "{} {}",
+            padding, "-b, --bar  -  display memory usage and battery percentage as progress bars"
         );
     };
 }
@@ -173,6 +173,14 @@ macro_rules! dsp {
     ($elem: expr, $pad: ident, $key: expr, $sep: expr, $val: expr) => {
         if $elem {
             println!("{}{}{} {}", $pad, $key, $sep, $val);
+        }
+    };
+}
+
+macro_rules! dsp_bar {
+    ($elem: expr, $pad: ident, $key: expr, $sep: expr) => {
+        if $elem {
+            print!("{}{}{} ", $pad, $key, $sep);
         }
     };
 }
@@ -238,24 +246,54 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             dsp!(
                 elems.num_elements[7],
                 padding,
-                elems.memory.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.memory.value
-            );
-            dsp!(
-                elems.num_elements[8],
-                padding,
                 elems.uptime.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.uptime.value
             );
-            dsp!(
-                elems.num_elements[9],
-                padding,
-                elems.battery.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.battery.value
-            );
+            match elems.bar {
+                false => {
+                    dsp!(
+                        elems.num_elements[8],
+                        padding,
+                        elems.memory.key.color(elems.color).bold(),
+                        elems.separator.color(elems.separator_color).bold(),
+                        elems.memory.value
+                    );
+                }
+                true => {
+                    dsp_bar!(
+                        elems.num_elements[8],
+                        padding,
+                        elems.memory.key.color(elems.color).bold(),
+                        elems.separator.color(elems.separator_color).bold()
+                    );
+                    if elems.num_elements[8] {
+                        show_bar(bars::memory(), elems.color);
+                    }
+                }
+            }
+            match elems.bar {
+                false => {
+                    dsp!(
+                        elems.num_elements[9],
+                        padding,
+                        elems.battery.key.color(elems.color).bold(),
+                        elems.separator.color(elems.separator_color).bold(),
+                        elems.battery.value
+                    );
+                }
+                true => {
+                    dsp_bar!(
+                        elems.num_elements[9],
+                        padding,
+                        elems.battery.key.color(elems.color).bold(),
+                        elems.separator.color(elems.separator_color).bold()
+                    );
+                    if elems.num_elements[9] {
+                        show_bar(bars::battery(), elems.color);
+                    }
+                }
+            }
         }
         false => {
             dsp!(
@@ -310,16 +348,16 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             dsp!(
                 elems.num_elements[7],
                 padding,
-                elems.memory.key,
+                elems.uptime.key,
                 elems.separator,
-                elems.memory.value
+                elems.uptime.value
             );
             dsp!(
                 elems.num_elements[8],
                 padding,
-                elems.uptime.key,
+                elems.memory.key,
                 elems.separator,
-                elems.uptime.value
+                elems.memory.value
             );
             dsp!(
                 elems.num_elements[9],
@@ -359,12 +397,12 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     //  is important for the hide functionality
     //  to work properly
     let labels: [&str; 10] = [
-        "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
+        "host", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
     ];
-    
+
     for i in 0..10 {
-            if hide_parameters.contains(&labels[i]) {
-                elems.num_elements[i] = false;
+        if hide_parameters.contains(&labels[i]) {
+            elems.num_elements[i] = false;
         }
     }
 
@@ -412,16 +450,37 @@ pub fn help() {
     usage!(elems);
     println!();
     println!("{}{}", padding, "Battery information".blue().bold());
-    println!("{}{}", padding, "Battery information might print an error if the file macchina");
+    println!(
+        "{}{}",
+        padding, "Battery information might print an error if the file macchina"
+    );
     println!("{}{}", padding, "is trying to read from does not exist.");
     println!();
-    println!("{}{}", padding, "Macchina reads battery information from two paths.");
+    println!(
+        "{}{}",
+        padding, "Macchina reads battery information from two paths."
+    );
     println!("{}{}", padding, "Each path is contained in a constant.");
-    println!("{}{}", padding, "These two constants are defined in main.rs:");
-    println!("{}    {}", padding, "PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity");
-    println!("{}    {}", padding, "PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status");
-    println!("{}{}", padding, "If one of the paths does not exist, or is incorrect, macchina will print");
-    println!("{}{}", padding, "\"could not extract battery info\" next to the battery key.");
+    println!(
+        "{}{}",
+        padding, "These two constants are defined in main.rs:"
+    );
+    println!(
+        "{}    {}",
+        padding, "PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity"
+    );
+    println!(
+        "{}    {}",
+        padding, "PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status"
+    );
+    println!(
+        "{}{}",
+        padding, "If one of the paths does not exist, or is incorrect, macchina will print"
+    );
+    println!(
+        "{}{}",
+        padding, "\"could not extract battery info\" next to the battery key."
+    );
     println!("{}{}", padding, "----------------------------------");
     println!("{}{}", padding, "Package information".blue().bold());
     println!(
@@ -432,26 +491,150 @@ pub fn help() {
         " if the system is ",
         "not arch-based".bold()
     );
-    println!("{}{}", padding, "as Macchina queries pacman to get a list of the installed packages.");
+    println!(
+        "{}{}",
+        padding, "as Macchina queries pacman to get a list of the installed packages."
+    );
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}", padding, "Coloring".blue().bold());
-    println!("{}{}", padding, "Macchina's default key color is magenta, but this can be overriden.");
+    println!(
+        "{}{}",
+        padding, "Macchina's default key color is magenta, but this can be overriden."
+    );
     println!("{}{}", padding, "using --color / -c <color>");
-    println!("{}{}", padding, "You can also change the default separator color using");
+    println!(
+        "{}{}",
+        padding, "You can also change the default separator color using"
+    );
     println!("{}{}", padding, "--separator-color / -C <color>");
-    println!("{}{}", padding, "these two arguments support a range of colors, provided by the colored crate.");
-    println!("{}{}", padding, "     Supported colors: red, green, blue, magenta, cyan, yellow, black and white.");
-    println!("{}{}", padding, "You may also run macchina followed by -r / --random-color");
-    println!("{}{}", padding, "to let Macchina choose a random color you.");
+    println!(
+        "{}{}",
+        padding, "these two arguments support a range of colors, provided by the colored crate."
+    );
+    println!(
+        "{}{}",
+        padding, "     Supported colors: red, green, blue, magenta, cyan, yellow, black and white."
+    );
+    println!(
+        "{}{}",
+        padding, "You may also run macchina followed by -r / --random-color"
+    );
+    println!(
+        "{}{}",
+        padding, "to let Macchina choose a random color you."
+    );
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}", padding, "Theming".blue().bold());
-    println!("{}{}", padding, "Macchina offers themes for you to change between on the fly using");
-    println!("{}{}", padding, "the --theme / -t argument.");
+    println!(
+        "{}{}",
+        padding, "Macchina offers themes for you to change between on the fly using"
+    );
+    println!("{}{}", padding, "the --theme / -t <theme_name>");
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}", padding, "Hiding elements".blue().bold());
-    println!("{}{}", padding, "Macchina allows you to hide elements using -H / --hide e.g. ");
-    println!("{}{}", padding, "to hide the kernel version and the package count simply run:");
+    println!(
+        "{}{}",
+        padding, "Macchina allows you to hide elements using -H / --hide e.g. "
+    );
+    println!(
+        "{}{}",
+        padding, "to hide the kernel version and the package count simply run:"
+    );
     println!("{}{}", padding, "     $ macchina --hide kern pkgs");
-    println!("{}{}", padding, "In case the element you are trying to hide doesn't exist,");
-    println!("{}{}", padding, "Macchina will display an error alongside a list of hideable elements");
+    println!(
+        "{}{}",
+        padding, "In case the element you are trying to hide doesn't exist,"
+    );
+    println!(
+        "{}{}",
+        padding, "Macchina will display an error alongside a list of hideable elements"
+    );
+}
+
+pub fn show_bar(bar: usize, color: Color) {
+    match bar {
+        1 => println!("[ {} ■ ■ ■ ■ ■ ■ ■ ■ ■ ]", "■".color(color)),
+        2 => println!(
+            "[ {} {} ■ ■ ■ ■ ■ ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color)
+        ),
+        3 => println!(
+            "[ {} {} {} ■ ■ ■ ■ ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        4 => println!(
+            "[ {} {} {} {} ■ ■ ■ ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        5 => println!(
+            "[ {} {} {} {} {} ■ ■ ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        6 => println!(
+            "[ {} {} {} {} {} {} ■ ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        7 => println!(
+            "[ {} {} {} {} {} {} {} ■ ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        8 => println!(
+            "[ {} {} {} {} {} {} {} {} ■ ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        9 => println!(
+            "[ {} {} {} {} {} {} {} {} {} ■ ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        10 => println!(
+            "[ {} {} {} {} {} {} {} {} {} {} ]",
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color),
+            "■".color(color)
+        ),
+        _ => println!("could not display memory bar"),
+    }
 }

@@ -1,4 +1,5 @@
 extern crate clap;
+mod bars;
 mod display;
 mod extra;
 mod format;
@@ -24,21 +25,20 @@ fn main() {
             Arg::with_name("palette")
                 .short("p")
                 .long("palette")
-                .takes_value(false)
                 .multiple(false),
         )
         .arg(
             Arg::with_name("padding")
-            .short("-P")
-            .long("padding")
-            .takes_value(true)
-            .multiple(false),
+                .short("-P")
+                .validator(extra::is_int)
+                .long("padding")
+                .takes_value(true)
+                .multiple(false),
         )
         .arg(
             Arg::with_name("no-color")
                 .short("n")
                 .long("no-color")
-                .takes_value(false)
                 .multiple(false),
         )
         .arg(
@@ -52,6 +52,7 @@ fn main() {
                     "red", "green", "blue", "yellow", "cyan", "magenta", "black", "white",
                 ]),
         )
+        .arg(Arg::with_name("bar").short("b").long("bar").multiple(false))
         .arg(
             Arg::with_name("separator-color")
                 .short("C")
@@ -78,7 +79,7 @@ fn main() {
                 .max_values(10)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "os", "kern", "pkgs", "sh", "term", "cpu", "mem", "up", "bat",
+                    "host", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
                 ]),
         )
         .arg(
@@ -88,27 +89,16 @@ fn main() {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .possible_values(&["def", "alt","giraffe"]),
+                .possible_values(&["def", "alt", "giraffe"]),
         )
         .arg(
             Arg::with_name("short-sh")
                 .short("s")
                 .long("short-sh")
-                .takes_value(false)
                 .multiple(false),
         )
-        .arg(
-            Arg::with_name("help")
-                .short("h")
-                .long("help")
-                .takes_value(false),
-        )
-        .arg(
-            Arg::with_name("version")
-                .short("v")
-                .long("version")
-                .takes_value(false),
-        )
+        .arg(Arg::with_name("help").short("h").long("help"))
+        .arg(Arg::with_name("version").short("v").long("version"))
         .get_matches();
 
     // Instantiates Macchina's elements.
@@ -145,6 +135,9 @@ fn main() {
     if matches.is_present("no-color") {
         opts.color = false;
     }
+    if matches.is_present("bar") {
+        elems.enable_bar();
+    }
     if matches.is_present("hide") {
         let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
         display::hide(elems, opts, elements_to_hide);
@@ -160,10 +153,10 @@ fn main() {
     if matches.is_present("theme") {
         if matches.value_of("theme").unwrap() == "alt" {
             elems.set_theme_alt();
-        }
-        else if matches.value_of("theme").unwrap() == "giraffe" {
+        } else if matches.value_of("theme").unwrap() == "giraffe" {
             elems.set_theme_giraffe();
         }
     }
+
     display::print_info(elems, opts);
 }
