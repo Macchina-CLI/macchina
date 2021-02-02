@@ -20,9 +20,8 @@
 ---
 
 ## About Macchina <a name="about"></a>
-Macchina lets you flex... I mean view system information.
-It's an alternative to slower BASH fetchers but isn't as featureful,
-so if you're willing to sacrifice features for speed, then Macchina is the right tool for you.
+Macchina lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
+No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 ---
 
@@ -68,14 +67,15 @@ Macchina displays basic system information such as:
 
 Macchina supports the following arguments:
 - `--no-color` -> disable colors
-- `--color <color>` -> override key color
-- `--separator-color <color>` -> override separator color
-- `--random-color` -> let macchina choose a color for you
+- `--color <color>` -> specify the key color
+- `--separator-color <color>` -> specify the separator color
+- `--random-color` -> let macchina choose a random color for you
 - `--palette` -> display palette
 - `--short-sh` -> shorten shell output (/bin/zsh => zsh)
 - `--hide <element>` -> hide elements such as host, os, kern, etc.
-- `--help` -> display the help menu
-- `--version` -> print Macchina's version
+- `--help` -> display help menu
+- `--version` -> print version
+- `--padding <amount>` -> specify the amount of padding to use
 
 ---
 

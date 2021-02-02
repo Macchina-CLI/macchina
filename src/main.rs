@@ -8,7 +8,7 @@ use clap::{App, Arg};
 use display::Options;
 use display::{choose_color, Elements};
 
-pub const VERSION: &str = "0.1.2";
+pub const VERSION: &str = "0.1.3";
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
 pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
 pub const DEFAULT_PADDING: usize = 4;
@@ -26,6 +26,13 @@ fn main() {
                 .long("palette")
                 .takes_value(false)
                 .multiple(false),
+        )
+        .arg(
+            Arg::with_name("padding")
+            .short("-P")
+            .long("padding")
+            .takes_value(true)
+            .multiple(false),
         )
         .arg(
             Arg::with_name("no-color")
@@ -121,6 +128,9 @@ fn main() {
     if matches.is_present("palette") {
         opts.palette_status = true;
     }
+    if matches.is_present("padding") {
+        elems.set_left_padding_to(matches.value_of("padding").unwrap().parse().unwrap());
+    }
     if matches.is_present("color") {
         let color: colored::Color = choose_color(matches.value_of("color").unwrap());
         elems.set_color(color);
@@ -136,12 +146,12 @@ fn main() {
         opts.color = false;
     }
     if matches.is_present("hide") {
-        let hide_parameters: Vec<&str> = matches.values_of("hide").unwrap().collect();
-        display::hide(elems, opts, hide_parameters);
+        let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
+        display::hide(elems, opts, elements_to_hide);
         std::process::exit(0);
     }
     if matches.is_present("version") {
-        println!("Macchina v{}", VERSION);
+        println!("Macchina, version {}", VERSION);
         std::process::exit(0);
     }
     if matches.is_present("random-color") {
