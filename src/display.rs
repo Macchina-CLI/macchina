@@ -97,6 +97,19 @@ impl Elements {
         self.uptime.update_key(String::from("Up"));
         self.battery.update_key(String::from("Ba"));
     }
+    pub fn set_theme_giraffe(&mut self) {
+        self.separator = String::from("  ~ ");
+        self.hostname.update_key(String::from("Hostname"));
+        self.os.update_key(String::from("Distribution"));
+        self.kernel.update_key(String::from("Kernel"));
+        self.packages.update_key(String::from("Packages"));
+        self.shell.update_key(String::from("Shell"));
+        self.terminal.update_key(String::from("Terminal"));
+        self.cpu.update_key(String::from("Processor"));
+        self.memory.update_key(String::from("Memory"));
+        self.uptime.update_key(String::from("Uptime"));
+        self.battery.update_key(String::from("Battery"));
+    }
     pub fn set_color(&mut self, c: Color) {
         self.color = c;
     }
