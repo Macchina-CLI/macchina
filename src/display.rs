@@ -552,89 +552,104 @@ pub fn help() {
 }
 
 pub fn show_bar(bar: usize, color: Color) {
-    match bar {
-        1 => println!("[ {} ■ ■ ■ ■ ■ ■ ■ ■ ■ ]", "■".color(color)),
-        2 => println!(
-            "[ {} {} ■ ■ ■ ■ ■ ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color)
-        ),
-        3 => println!(
-            "[ {} {} {} ■ ■ ■ ■ ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        4 => println!(
-            "[ {} {} {} {} ■ ■ ■ ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        5 => println!(
-            "[ {} {} {} {} {} ■ ■ ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        6 => println!(
-            "[ {} {} {} {} {} {} ■ ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        7 => println!(
-            "[ {} {} {} {} {} {} {} ■ ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        8 => println!(
-            "[ {} {} {} {} {} {} {} {} ■ ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        9 => println!(
-            "[ {} {} {} {} {} {} {} {} {} ■ ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        10 => println!(
-            "[ {} {} {} {} {} {} {} {} {} {} ]",
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color),
-            "■".color(color)
-        ),
-        _ => println!("could not display memory bar"),
+    match color {
+        Color::Black | Color::Blue | Color::Red | Color:: Green | Color::Yellow | Color::Cyan | Color::Magenta => match bar {
+            1 => println!("[ {} ■ ■ ■ ■ ■ ■ ■ ■ ■ ]", "■".color(color)),
+            2 => println!(
+                "[ {} {} ■ ■ ■ ■ ■ ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color)
+            ),
+            3 => println!(
+                "[ {} {} {} ■ ■ ■ ■ ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            4 => println!(
+                "[ {} {} {} {} ■ ■ ■ ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            5 => println!(
+                "[ {} {} {} {} {} ■ ■ ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            6 => println!(
+                "[ {} {} {} {} {} {} ■ ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            7 => println!(
+                "[ {} {} {} {} {} {} {} ■ ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            8 => println!(
+                "[ {} {} {} {} {} {} {} {} ■ ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            9 => println!(
+                "[ {} {} {} {} {} {} {} {} {} ■ ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            10 => println!(
+                "[ {} {} {} {} {} {} {} {} {} {} ]",
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color),
+                "■".color(color)
+            ),
+            _ => println!("could not display memory bar"),
+        },
+        _ => match bar {
+            1 => println!("[ ■                   ]"),
+            2 => println!("[ ■ ■                 ]"),
+            3 => println!("[ ■ ■ ■               ]"),
+            4 => println!("[ ■ ■ ■ ■             ]"),
+            5 => println!("[ ■ ■ ■ ■ ■           ]"),
+            6 => println!("[ ■ ■ ■ ■ ■ ■         ]"),
+            7 => println!("[ ■ ■ ■ ■ ■ ■ ■       ]"),
+            8 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■     ]"),
+            9 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■ ■   ]"),
+            10 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ]"),
+            _ => println!("could not display memory bar"),
+        },
     }
 }
