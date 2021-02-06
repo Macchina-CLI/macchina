@@ -9,7 +9,8 @@
 ---
 
 ## About Macchina
-Macchina is a program, not a library.
+Macchina is a fetching program, not a library.
+
 It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
@@ -43,7 +44,7 @@ Macchina displays basic system information such as:
 - Uptime
 - Memory usage
 - Battery _percentage_ and _status_
-- Palette (if user runs Macchina with `--palette / -p`)
+- Palette (using `--palette / -p`)
 
 Macchina supports the following arguments:
 - `--no-color` -> disable colors
@@ -57,13 +58,14 @@ Macchina supports the following arguments:
 - `--theme <theme_name>` -> change themes
 - `--help` -> display help menu
 - `--version` -> print version
-- `--padding <amount>` -> specify the amount of padding to use
+- `--padding <amount>` -> specify the amount of (left) padding to use
 
 ---
 
 ## Installation
 
-Macchina is available on [crates.io](https://crates.io/crates/macchina), to install it run:
+To install macchina on your system, run the following command:
+
 ```
 cargo install macchina
 ```
@@ -80,5 +82,7 @@ cargo install macchina
 | Windows       |                    |
 
 > Cells containing X: Macchina supports that platform
+
 > Cells containing ?: Macchina has not been tested yet on that platform
+
 > Empty cells: Macchina does not support that platform

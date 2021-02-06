@@ -58,7 +58,7 @@ Macchina displays basic system information such as:
 - Uptime
 - Memory usage
 - Battery _percentage_ and _status_
-- Palette (if user runs Macchina with `--palette / -p`)
+- Palette (using `--palette / -p`)
 
 Macchina supports the following arguments:
 - `--no-color` -> disable colors
@@ -72,7 +72,7 @@ Macchina supports the following arguments:
 - `--theme <theme_name>` -> change themes
 - `--help` -> display help menu
 - `--version` -> print version
-- `--padding <amount>` -> specify the amount of padding to use
+- `--padding <amount>` -> specify the amount of (left) padding to use
 
 ---
 
@@ -94,4 +94,8 @@ cargo install macchina
 | MacOS         |                    |
 | Windows       |                    |
 
-> Cells containing :question: have not yet been tested.
+> Cells containing :heavy_check_mark:: Macchina supports that platform
+
+> Cells containing :question:: Macchina has not been tested yet on that platform
+
+> Empty cells: Macchina does not support that platform
