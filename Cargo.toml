@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>"]
 edition = "2018"
 description = "System information fetcher, written in Rust."
@@ -10,7 +10,7 @@ repository = "https://github.com/grtcdr/macchina"
 documentation = "https://github.com/grtcdr/macchina"
 
 license = "MIT"
-readme = "README.md"
+readme = "CARGO_README.md"
 
 [dependencies]
 colored = "2"

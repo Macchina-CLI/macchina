@@ -9,7 +9,7 @@ use clap::{App, Arg};
 use display::Options;
 use display::{choose_color, Elements};
 
-pub const VERSION: &str = "0.1.3";
+pub const VERSION: &str = "0.1.5";
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
 pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
 pub const DEFAULT_PADDING: usize = 4;
