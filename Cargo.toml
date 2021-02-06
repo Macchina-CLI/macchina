@@ -15,7 +15,7 @@ readme = "README.md"
 [dependencies]
 colored = "2"
 num_cpus = "1.13.0"
-nix = "0.19.0"
+nix = "0.19.1"
 bytesize = "1.0.1"
 clap = "2.33.3"
 rand = "0.8.3"
