@@ -63,8 +63,9 @@ Macchina supports the following arguments:
 ---
 
 ## Installation
+Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/)
 
-To install macchina on your system, run the following command:
+To install macchina on your system (using __cargo__), run the following command:
 
 ```
 cargo install macchina

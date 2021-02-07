@@ -78,11 +78,11 @@ Macchina supports the following arguments:
 
 ## Installation <a name="install"></a>
 
-Macchina is available on [crates.io](https://crates.io/crates/macchina), to install it run:
+Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/)
+Macchina is also available on [crates.io](https://crates.io/crates/macchina), to install it run:
 ```
 cargo install macchina
 ```
-
 ---
 
 ## Will Macchina Work on Your Macchina? <a name="platform-support"></a>
