@@ -16,15 +16,23 @@ pub fn battery_percentage() -> String {
     extra::pop_newline(ret)
 }
 
+/// The name of the computer as specified in /sys/class/dmi/id/product_version
+pub fn product_name() -> String {
+    let name = fs::read_to_string("/sys/class/dmi/id/product_version");
+    let ret = match name {
+        Ok(ret) => ret,
+        Err(_e) => return String::from("couldn't extract product name"),
+    };
+    extra::pop_newline(ret)
+}
+
 /// Read battery status from __/sys/class/power_supply/BAT0/status__
 pub fn battery_status() -> String {
     let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
-
     let ret = match status {
         Ok(ret) => ret,
         Err(_e) => return String::from("ERROR"),
     };
-
     extra::pop_newline(ret)
 }
 

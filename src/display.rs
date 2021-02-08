@@ -42,6 +42,7 @@ pub struct Elements {
     left_padding: usize,
     hostname: Pair,
     os: Pair,
+    machine: Pair,
     kernel: Pair,
     packages: Pair,
     shell: Pair,
@@ -52,7 +53,7 @@ pub struct Elements {
     battery: Pair,
     color: colored::Color,
     separator_color: colored::Color,
-    num_elements: [bool; 10],
+    num_elements: [bool; 11],
     bar: bool,
 }
 
@@ -67,6 +68,7 @@ impl Elements {
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
             packages: Pair::new(String::from("pkgs"), read::package_count().to_string()),
             shell: Pair::new(String::from("sh"), String::new()),
+            machine: Pair::new(String::from("mach"), read::product_name()),
             terminal: Pair::new(String::from("term"), read::terminal()),
             cpu: Pair::new(
                 String::from("cpu"),
@@ -81,7 +83,7 @@ impl Elements {
                 String::from("bat"),
                 format::battery(read::battery_percentage(), read::battery_status()),
             ),
-            num_elements: [true; 10],
+            num_elements: [true; 11],
             color: DEFAULT_COLOR,
             separator_color: DEFAULT_SEPARATOR_COLOR,
         }
@@ -89,6 +91,7 @@ impl Elements {
     pub fn set_theme_alt(&mut self) {
         self.separator = String::from("  => ");
         self.hostname.update_key(String::from("Ho"));
+        self.machine.update_key(String::from("Ma"));
         self.os.update_key(String::from("Os"));
         self.kernel.update_key(String::from("Ke"));
         self.packages.update_key(String::from("Pa"));
@@ -102,6 +105,7 @@ impl Elements {
     pub fn set_theme_giraffe(&mut self) {
         self.separator = String::from("  ~ ");
         self.hostname.update_key(String::from("Hostname"));
+        self.machine.update_key(String::from("Machine"));
         self.os.update_key(String::from("Distribution"));
         self.kernel.update_key(String::from("Kernel"));
         self.packages.update_key(String::from("Packages"));
@@ -204,47 +208,54 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             dsp!(
                 elems.num_elements[1],
                 padding,
+                elems.machine.key.color(elems.color).bold(),
+                elems.separator.color(elems.separator_color).bold(),
+                elems.machine.value
+            );
+            dsp!(
+                elems.num_elements[2],
+                padding,
                 elems.os.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.os.value
             );
             dsp!(
-                elems.num_elements[2],
+                elems.num_elements[3],
                 padding,
                 elems.kernel.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.kernel.value
             );
             dsp!(
-                elems.num_elements[3],
+                elems.num_elements[4],
                 padding,
                 elems.packages.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.packages.value
             );
             dsp!(
-                elems.num_elements[4],
+                elems.num_elements[5],
                 padding,
                 elems.shell.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.shell.value
             );
             dsp!(
-                elems.num_elements[5],
+                elems.num_elements[6],
                 padding,
                 elems.terminal.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.terminal.value
             );
             dsp!(
-                elems.num_elements[6],
+                elems.num_elements[7],
                 padding,
                 elems.cpu.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
                 elems.cpu.value
             );
             dsp!(
-                elems.num_elements[7],
+                elems.num_elements[8],
                 padding,
                 elems.uptime.key.color(elems.color).bold(),
                 elems.separator.color(elems.separator_color).bold(),
@@ -253,7 +264,7 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             match elems.bar {
                 false => {
                     dsp!(
-                        elems.num_elements[8],
+                        elems.num_elements[9],
                         padding,
                         elems.memory.key.color(elems.color).bold(),
                         elems.separator.color(elems.separator_color).bold(),
@@ -262,12 +273,12 @@ pub fn print_info(mut elems: Elements, opts: Options) {
                 }
                 true => {
                     dsp_bar!(
-                        elems.num_elements[8],
+                        elems.num_elements[9],
                         padding,
                         elems.memory.key.color(elems.color).bold(),
                         elems.separator.color(elems.separator_color).bold()
                     );
-                    if elems.num_elements[8] {
+                    if elems.num_elements[9] {
                         show_bar(bars::memory(), elems.color);
                     }
                 }
@@ -275,7 +286,7 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             match elems.bar {
                 false => {
                     dsp!(
-                        elems.num_elements[9],
+                        elems.num_elements[10],
                         padding,
                         elems.battery.key.color(elems.color).bold(),
                         elems.separator.color(elems.separator_color).bold(),
@@ -284,12 +295,12 @@ pub fn print_info(mut elems: Elements, opts: Options) {
                 }
                 true => {
                     dsp_bar!(
-                        elems.num_elements[9],
+                        elems.num_elements[10],
                         padding,
                         elems.battery.key.color(elems.color).bold(),
                         elems.separator.color(elems.separator_color).bold()
                     );
-                    if elems.num_elements[9] {
+                    if elems.num_elements[10] {
                         show_bar(bars::battery(), elems.color);
                     }
                 }
@@ -306,61 +317,68 @@ pub fn print_info(mut elems: Elements, opts: Options) {
             dsp!(
                 elems.num_elements[1],
                 padding,
+                elems.machine.key,
+                elems.separator,
+                elems.machine.value
+            );
+            dsp!(
+                elems.num_elements[2],
+                padding,
                 elems.os.key,
                 elems.separator,
                 elems.os.value
             );
             dsp!(
-                elems.num_elements[2],
+                elems.num_elements[3],
                 padding,
                 elems.kernel.key,
                 elems.separator,
                 elems.kernel.value
             );
             dsp!(
-                elems.num_elements[3],
+                elems.num_elements[4],
                 padding,
                 elems.packages.key,
                 elems.separator,
                 elems.packages.value
             );
             dsp!(
-                elems.num_elements[4],
+                elems.num_elements[5],
                 padding,
                 elems.shell.key,
                 elems.separator,
                 elems.shell.value
             );
             dsp!(
-                elems.num_elements[5],
+                elems.num_elements[6],
                 padding,
                 elems.terminal.key,
                 elems.separator,
                 elems.terminal.value
             );
             dsp!(
-                elems.num_elements[6],
+                elems.num_elements[7],
                 padding,
                 elems.cpu.key,
                 elems.separator,
                 elems.cpu.value
             );
             dsp!(
-                elems.num_elements[7],
+                elems.num_elements[8],
                 padding,
                 elems.uptime.key,
                 elems.separator,
                 elems.uptime.value
             );
             dsp!(
-                elems.num_elements[8],
+                elems.num_elements[9],
                 padding,
                 elems.memory.key,
                 elems.separator,
                 elems.memory.value
             );
             dsp!(
-                elems.num_elements[9],
+                elems.num_elements[10],
                 padding,
                 elems.battery.key,
                 elems.separator,
@@ -396,11 +414,11 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     //  The order of each element in the array
     //  is important for the hide functionality
     //  to work properly
-    let labels: [&str; 10] = [
-        "host", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
+    let labels: [&str; 11] = [
+        "host", "mach", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
     ];
 
-    for i in 0..10 {
+    for i in 0..11 {
         if hide_parameters.contains(&labels[i]) {
             elems.num_elements[i] = false;
         }
@@ -553,7 +571,13 @@ pub fn help() {
 
 pub fn show_bar(bar: usize, color: Color) {
     match color {
-        Color::Black | Color::Blue | Color::Red | Color:: Green | Color::Yellow | Color::Cyan | Color::Magenta => match bar {
+        Color::Black
+        | Color::Blue
+        | Color::Red
+        | Color::Green
+        | Color::Yellow
+        | Color::Cyan
+        | Color::Magenta => match bar {
             1 => println!("[ {} ■ ■ ■ ■ ■ ■ ■ ■ ■ ]", "■".color(color)),
             2 => println!(
                 "[ {} {} ■ ■ ■ ■ ■ ■ ■ ■ ]",

@@ -9,7 +9,7 @@ use clap::{App, Arg};
 use display::Options;
 use display::{choose_color, Elements};
 
-pub const VERSION: &str = "0.1.6";
+pub const VERSION: &str = "0.1.7";
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
 pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
 pub const DEFAULT_PADDING: usize = 4;
@@ -18,7 +18,7 @@ pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
 
 fn main() {
     let matches = App::new("Macchina")
-        .version("1.0.0")
+        .version(VERSION)
         .author("grtcdr <ba.tahaaziz@gmail.com>")
         .about("System information fetcher")
         .arg(
@@ -76,10 +76,10 @@ fn main() {
                 .long("hide")
                 .takes_value(true)
                 .min_values(1)
-                .max_values(10)
+                .max_values(11)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
+                    "host", "mach", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
                 ]),
         )
         .arg(

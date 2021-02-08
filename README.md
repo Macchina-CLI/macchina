@@ -26,7 +26,7 @@ No one wants a slow fetcher, and macchina's main goal is to provide you with han
 ---
 
 ## Changelog <a name="change"></a>
-- You can __visualize__ memory usage and battery percentage using progress bars
+- Macchina now includes your product name
 
 ---
 
