@@ -163,7 +163,7 @@ macro_rules! usage {
         println!("{} {}", padding, "-s, --short-sh  -  short shell output");
         println!(
             "{} {}",
-            padding, "-P, --padding  <amount> -  specify the amount of padding to use"
+            padding, "-P, --padding  <amount>  -  specify the amount of padding to use"
         );
         println!(
             "{} {}",
@@ -547,7 +547,7 @@ pub fn help() {
         "{}{}",
         padding, "Macchina offers themes for you to change between on the fly using"
     );
-    println!("{}{}", padding, "the --theme / -t <theme_name>");
+    println!("{}{}", padding, "--theme / -t <theme_name>");
     println!("{}{}", padding, "-----------------------------------");
     println!("{}{}", padding, "Hiding elements".blue().bold());
     println!(

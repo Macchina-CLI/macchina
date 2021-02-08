@@ -26,7 +26,7 @@ No one wants a slow fetcher, and macchina's main goal is to provide you with han
 ---
 
 ## Changelog <a name="change"></a>
-- Macchina now includes your product name
+- Fixed a bug where memory usage never exceeds two bars
 
 ---
 

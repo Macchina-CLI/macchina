@@ -21,27 +21,29 @@ pub fn battery() -> usize {
 }
 
 pub fn memory() -> usize {
-    let u: u64 = memory::used();
-    if u > 0 && u < percent_of_total(10) {
+    let u = memory::used();
+
+    if u <= percent_of_total(10) {
         return 1;
-    } else if u > 11 && u <= percent_of_total(20) {
+    } else if u <= percent_of_total(20) {
         return 2;
-    } else if u > 21 && u <= percent_of_total(30) {
-        return 2;
-    } else if u > 31 && u <= percent_of_total(40) {
-        return 2;
-    } else if u > 41 && u <= percent_of_total(50) {
-        return 2;
-    } else if u > 51 && u <= percent_of_total(60) {
-        return 2;
-    } else if u > 61 && u <= percent_of_total(70) {
-        return 2;
-    } else if u > 71 && u <= percent_of_total(80) {
-        return 2;
-    } else if u > 81 && u <= percent_of_total(90) {
-        return 2;
-    } else if u > 91 && u <= memory::memtotal() {
-        return 2;
+    } else if u <= percent_of_total(30) {
+        return 3;
+    } else if u <= percent_of_total(40) {
+        return 4;
+    } else if u <= percent_of_total(50) {
+        return 5;
+    } else if u <= percent_of_total(60) {
+        return 6;
+    } else if u <= percent_of_total(70) {
+        return 7;
+    } else if u <= percent_of_total(80) {
+        return 8;
+    } else if u <= percent_of_total(90) {
+        return 9;
+    } else if u <= percent_of_total(100) {
+        return 10;
     }
+
     0
 }

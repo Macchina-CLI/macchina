@@ -16,7 +16,7 @@ pub fn battery_percentage() -> String {
     extra::pop_newline(ret)
 }
 
-/// The name of the computer as specified in /sys/class/dmi/id/product_version
+/// Read name of the computer as specified in /sys/class/dmi/id/product_version
 pub fn product_name() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_version");
     let ret = match name {
@@ -101,6 +101,7 @@ pub fn shell(shorthand: bool) -> String {
     String::from(shell_name.trim())
 }
 
+/// Extract package count by running /usr/bin/pacman -Qq
 pub fn package_count() -> usize {
     let wh = Command::new("which")
         .arg("pacman")
@@ -126,7 +127,7 @@ pub fn package_count() -> usize {
     return 0;
 }
 
-/// Read kernel version by calling "uname -r"
+/// Read kernel version by running "uname -r"
 pub fn kernel_version() -> String {
     let output = Command::new("uname")
         .arg("-r")
