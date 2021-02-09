@@ -144,7 +144,7 @@ fn main() {
         std::process::exit(0);
     }
     if matches.is_present("version") {
-        println!("Macchina, version {}", VERSION);
+        println!("Macchina v{}", VERSION);
         std::process::exit(0);
     }
     if matches.is_present("random-color") {

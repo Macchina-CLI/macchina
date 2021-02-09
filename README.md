@@ -26,7 +26,7 @@ No one wants a slow fetcher, and macchina's main goal is to provide you with han
 ---
 
 ## Changelog <a name="change"></a>
-- Fixed a bug where memory usage never exceeds two bars
+- Most functions will not panic when system information extraction fails
 
 ---
 

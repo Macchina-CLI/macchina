@@ -78,7 +78,7 @@ impl Elements {
                 String::from("mem"),
                 format::memory(memory::used(), memory::memtotal()),
             ),
-            uptime: Pair::new(String::from("up"), format::uptime(read::uptime())),
+            uptime: Pair::new(String::from("up"), read::uptime()),
             battery: Pair::new(
                 String::from("bat"),
                 format::battery(read::battery_percentage(), read::battery_status()),

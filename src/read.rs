@@ -1,5 +1,5 @@
 extern crate nix;
-use crate::{extra, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
+use crate::{extra, format, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
 use nix::unistd;
 use std::fs;
 use std::process::{Command, Stdio};
@@ -10,7 +10,7 @@ pub fn battery_percentage() -> String {
 
     let ret = match percentage {
         Ok(ret) => ret,
-        Err(_e) => return String::from("ERROR"),
+        Err(_e) => return String::new(),
     };
 
     extra::pop_newline(ret)
@@ -21,7 +21,7 @@ pub fn product_name() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_version");
     let ret = match name {
         Ok(ret) => ret,
-        Err(_e) => return String::from("couldn't extract product name"),
+        Err(_e) => return String::from("Could not obtain product name"),
     };
     extra::pop_newline(ret)
 }
@@ -31,7 +31,7 @@ pub fn battery_status() -> String {
     let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
     let ret = match status {
         Ok(ret) => ret,
-        Err(_e) => return String::from("ERROR"),
+        Err(_e) => return String::new(),
     };
     extra::pop_newline(ret)
 }
@@ -50,7 +50,7 @@ pub fn terminal() -> String {
         .expect("Failed to get current terminal instance PPID using 'ps -p <PID> o ppid='");
 
     let terminal_ppid = String::from_utf8(ppid.stdout)
-        .expect("'ps' process stdout wasn't valid UTF-8")
+        .expect("'ps' process stdout was not valid UTF-8")
         .trim()
         .to_string();
 
@@ -62,9 +62,10 @@ pub fn terminal() -> String {
         .output()
         .expect("Failed to get current terminal instance name using 'ps -p <PID> o comm='");
 
-    let terminal_name =
-        String::from_utf8(name.stdout).expect("'ps' process stdout wasn't valid UTF-8");
-    String::from(terminal_name.trim())
+    String::from_utf8(name.stdout)
+        .expect("'ps' process stdout was not valid UTF-8")
+        .trim()
+        .to_string()
 }
 
 /// Read current shell instance name using __ps__ command
@@ -108,7 +109,7 @@ pub fn package_count() -> usize {
         .output()
         .expect("Failed to start 'which' process");
 
-    let which = String::from_utf8(wh.stdout).expect("Conversion error");
+    let which = String::from_utf8(wh.stdout).expect("'which' process stdout was not valid UTF-8");
 
     if which.trim() == "/usr/bin/pacman" {
         let pacman = Command::new("pacman")
@@ -119,7 +120,7 @@ pub fn package_count() -> usize {
             .expect("Failed to start 'pacman' process");
 
         let pac_out =
-            String::from_utf8(pacman.stdout).expect("'pacman' process stdout wasn't valid UTF-8");
+            String::from_utf8(pacman.stdout).expect("'pacman' process stdout was not valid UTF-8");
         let packages: Vec<&str> = pac_out.split('\n').collect();
 
         return packages.len() - 1;
@@ -129,29 +130,28 @@ pub fn package_count() -> usize {
 
 /// Read kernel version by running "uname -r"
 pub fn kernel_version() -> String {
-    let output = Command::new("uname")
-        .arg("-r")
-        .output()
-        .expect("Failed to get kernel release using 'uname -r'");
-
-    let kern_vers = String::from_utf8(output.stdout)
-        .expect("read_kernel_version: stdout to string conversion failed");
-    String::from(kern_vers.trim())
+    let output = fs::read_to_string("/proc/version");
+    let ret = match output {
+        Ok(ret) => ret.split_whitespace().nth(2).unwrap().to_string(),
+        Err(_e) => return String::from("Could not obtain kernel version"),
+    };
+    ret
 }
 
 /// Read hostname using __unistd::gethostname()__
 pub fn hostname() -> String {
-    let mut buf = [0u8; 64];
-    let hostname_cstr = unistd::gethostname(&mut buf).expect("Failed getting hostname");
-    let hostname = hostname_cstr.to_str().expect("Hostname wasn't valid UTF-8");
-    String::from(hostname)
+    let output = fs::read_to_string("/etc/hostname");
+    let ret = match output {
+        Ok(ret) => extra::pop_newline(ret),
+        Err(_e) => return String::from("Could not obtain hostname"),
+    };
+    ret
 }
 
 /// Read operating system name from __/etc/os-release__
 pub fn operating_system() -> String {
-    let mut os = String::from(
-        extra::get_line_at("/etc/os-release", 0, "Could not extract OS name!").unwrap(),
-    );
+    let mut os =
+        String::from(extra::get_line_at("/etc/os-release", 0, "Could not obtain distribution name").unwrap());
     if !os.contains("NAME=\"") {
         return os.replace("NAME=", "");
     }
@@ -162,7 +162,7 @@ pub fn operating_system() -> String {
 /// Read processor information from __/proc/cpuinfo__
 pub fn cpu_model_name() -> String {
     let mut cpu = String::from(
-        extra::get_line_at("/proc/cpuinfo", 4, "Could not extract CPU model name!").unwrap(),
+        extra::get_line_at("/proc/cpuinfo", 4, "Could not obtain processor model name").unwrap(),
     );
 
     cpu = cpu
@@ -175,8 +175,10 @@ pub fn cpu_model_name() -> String {
 
 /// Read first float (uptime) from __/proc/uptime
 pub fn uptime() -> String {
-    let uptime = fs::read_to_string("/proc/uptime").expect("Could not extract uptime!");
-    //  Read first float from uptime
-    let up = uptime.split_whitespace().next().unwrap_or("").to_string();
-    up
+    let uptime = fs::read_to_string("/proc/uptime");
+    let ret = match uptime {
+        Ok(ret) => format::uptime(ret.split_whitespace().next().unwrap().to_string()),
+        Err(_e) => return String::from("Could not obtain uptime"),
+    };
+    ret
 }
