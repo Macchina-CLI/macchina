@@ -140,7 +140,7 @@ pub fn kernel_version() -> String {
 
 /// Read hostname using __unistd::gethostname()__
 pub fn hostname() -> String {
-    let output = fs::read_to_string("/etc/hostnamae");
+    let output = fs::read_to_string("/etc/hostname");
     let ret = match output {
         Ok(ret) => extra::pop_newline(ret),
         Err(_e) => return String::from("Could not obtain hostname"),
