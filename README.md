@@ -19,18 +19,16 @@
 
 ---
 
-## About Macchina <a name="about"></a>
+# About Macchina <a name="about"></a>
 Macchina lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
----
-
-## Changelog <a name="change"></a>
-- Most functions will not panic when system information extraction fails
+# Changelog <a name="change"></a>
+- Simplify help function and remove usage macro
 
 ---
 
-## Benchmarks <a name="bench"></a>
+# Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
@@ -46,18 +44,18 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 ---
 
-## Features <a name="features"></a>
+# Features <a name="features"></a>
 Macchina displays basic system information such as:
 - Hostname
-- Operating system
+- Distribution
 - Kernel version
-- Package count _(Arch-based distributions only, will print __0__ on any other distribution)_
-- Shell path/name in which macchina was ran
-- Terminal instance name in which macchina was ran
-- Processor _model name_, _frequency_ and _thread count_
+- Package count (Arch-based distributions only, will print __0__ on any other distribution)
+- Shell
+- Terminal
+- Processor: __model name__, __frequency__ and __thread count__
 - Uptime
 - Memory usage
-- Battery _percentage_ and _status_
+- Battery: __percentage__ and __status__
 - Palette (using `--palette / -p`)
 
 Macchina supports the following arguments:
@@ -76,17 +74,24 @@ Macchina supports the following arguments:
 
 ---
 
-## Installation <a name="install"></a>
+# Installation <a name="install"></a>
 
-Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/)
+Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/) and [crates.io](https://crates.io/crates/macchina)
 
-It's also available on [crates.io](https://crates.io/crates/macchina), to install it run:
+- Install using your favorite AUR helper or by running:
+```
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+- Install using cargo:
 ```
 cargo install macchina
 ```
 ---
 
-## Will Macchina Work on Your Macchina? <a name="platform-support"></a>
+# Platform Support <a name="platform-support"></a>
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |
@@ -95,8 +100,8 @@ cargo install macchina
 | MacOS         |                    |
 | Windows       |                    |
 
-> Cells containing :heavy_check_mark:: Macchina supports that platform
+Cells containing :heavy_check_mark:: Macchina supports that platform
 
-> Cells containing :question:: Macchina has not been tested yet on that platform
+Cells containing :question:: Macchina has not been tested yet on that platform
 
-> Empty cells: Macchina does not support that platform
+Empty cells: Macchina does not support that platform

@@ -1,7 +1,5 @@
 extern crate num_cpus;
-use crate::{
-    bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, VERSION,
-};
+use crate::{bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
 use colored::{Color, Colorize};
 use rand::Rng;
 
@@ -128,48 +126,6 @@ impl Elements {
     pub fn enable_bar(&mut self) {
         self.bar = true;
     }
-}
-
-macro_rules! usage {
-    ($i: ident) => {
-        let padding: String = " ".repeat($i.left_padding);
-        println!(
-            "{}{} <{}>",
-            padding,
-            "USAGE: macchina",
-            "OPTIONS".blue().bold()
-        );
-        println!("{}{}:", padding, "OPTIONS".blue().bold());
-        println!("{} {}", padding, "-h, --help  -  display the help menu");
-        println!("{} {}", padding, "-p, --palette  -  display the palette");
-        println!("{} {}", padding, "-n, --no-color  -  disable colors");
-        println!(
-            "{} {}",
-            padding, "-r, --random-color  -  let macchina pick a random color for you"
-        );
-        println!(
-            "{} {}",
-            padding, "-c, --color <color>  -  specify the color"
-        );
-        println!(
-            "{} {}",
-            padding, "-C, --separator-color <color>  -  specify the separator color"
-        );
-        println!(
-            "{} {}",
-            padding, "-t, --theme <theme_name>  -  specify the theme"
-        );
-        println!("{} {}", padding, "-H, --hide <element>  -  hide elements");
-        println!("{} {}", padding, "-s, --short-sh  -  short shell output");
-        println!(
-            "{} {}",
-            padding, "-P, --padding  <amount>  -  specify the amount of padding to use"
-        );
-        println!(
-            "{} {}",
-            padding, "-b, --bar  -  display memory usage and battery percentage as progress bars"
-        );
-    };
 }
 
 /// dsp: display element
@@ -461,112 +417,54 @@ pub fn randomize_color() -> Color {
 }
 
 pub fn help() {
-    let elems = Elements::new();
-    let padding: String = " ".repeat(elems.left_padding);
-    println!("{}Macchina, version {}", padding, VERSION);
-    println!();
-    usage!(elems);
-    println!();
-    println!("{}{}", padding, "Battery information".blue().bold());
-    println!(
-        "{}{}",
-        padding, "Battery information might print an error if the file macchina"
-    );
-    println!("{}{}", padding, "is trying to read from does not exist.");
-    println!();
-    println!(
-        "{}{}",
-        padding, "Macchina reads battery information from two paths."
-    );
-    println!("{}{}", padding, "Each path is contained in a constant.");
-    println!(
-        "{}{}",
-        padding, "These two constants are defined in main.rs:"
-    );
-    println!(
-        "{}    {}",
-        padding, "PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity"
-    );
-    println!(
-        "{}    {}",
-        padding, "PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status"
-    );
-    println!(
-        "{}{}",
-        padding, "If one of the paths does not exist, or is incorrect, macchina will print"
-    );
-    println!(
-        "{}{}",
-        padding, "\"could not extract battery info\" next to the battery key."
-    );
-    println!("{}{}", padding, "----------------------------------");
-    println!("{}{}", padding, "Package information".blue().bold());
-    println!(
-        "{}{}{}{}{}",
-        padding,
-        "Package count will equal ",
-        "0".white().bold(),
-        " if the system is ",
-        "not arch-based".bold()
-    );
-    println!(
-        "{}{}",
-        padding, "as Macchina queries pacman to get a list of the installed packages."
-    );
-    println!("{}{}", padding, "-----------------------------------");
-    println!("{}{}", padding, "Coloring".blue().bold());
-    println!(
-        "{}{}",
-        padding, "Macchina's default key color is magenta, but this can be overriden."
-    );
-    println!("{}{}", padding, "using --color / -c <color>");
-    println!(
-        "{}{}",
-        padding, "You can also change the default separator color using"
-    );
-    println!("{}{}", padding, "--separator-color / -C <color>");
-    println!(
-        "{}{}",
-        padding, "these two arguments support a range of colors, provided by the colored crate."
-    );
-    println!(
-        "{}{}",
-        padding, "     Supported colors: red, green, blue, magenta, cyan, yellow, black and white."
-    );
-    println!(
-        "{}{}",
-        padding, "You may also run macchina followed by -r / --random-color"
-    );
-    println!(
-        "{}{}",
-        padding, "to let Macchina choose a random color you."
-    );
-    println!("{}{}", padding, "-----------------------------------");
-    println!("{}{}", padding, "Theming".blue().bold());
-    println!(
-        "{}{}",
-        padding, "Macchina offers themes for you to change between on the fly using"
-    );
-    println!("{}{}", padding, "--theme / -t <theme_name>");
-    println!("{}{}", padding, "-----------------------------------");
-    println!("{}{}", padding, "Hiding elements".blue().bold());
-    println!(
-        "{}{}",
-        padding, "Macchina allows you to hide elements using -H / --hide e.g. "
-    );
-    println!(
-        "{}{}",
-        padding, "to hide the kernel version and the package count simply run:"
-    );
-    println!("{}{}", padding, "     $ macchina --hide kern pkgs");
-    println!(
-        "{}{}",
-        padding, "In case the element you are trying to hide doesn't exist,"
-    );
-    println!(
-        "{}{}",
-        padding, "Macchina will display an error alongside a list of hideable elements"
-    );
+    let usage_string: &str = "
+    USAGE: macchina [OPTIONS]
+    OPTIONS:
+    -h, --help                      -   display the help menu
+    -p, --palette                   -   display the palette
+    -n, --no-color                  -   disable colors
+    -r, --random-color              -   let macchina pick a random color for you
+    -c, --color <color>             -   specify the key color
+    -C, --separator-color <color>   -   specify the separator color
+    -t, --theme <theme>             -   specify the theme
+    -H, --hide <element>            -   hide the specified elements
+    -P, --padding <amount>          -   specify the amount of left padding to use
+    -b, --bar                       -   display bars instead of values for battery and memory";
+    let help_string: &str = "
+    Battery Information:
+        Battery information might print an error if the file macchina is 
+        trying to read from does not exist.
+        Macchina reads battery information from two paths.
+        Each path is contained in a constant.
+        These two constants are defined in main.rs:
+            PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity
+            PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status
+        If one of the paths does not exist, macchina will print \"could not extract battery info\"
+
+    Package information:
+        Package count will equal 0 if the system is not arch-based, as macchina queries pacman to
+        get a list of the installed packages and then return the package count.
+
+    Coloring:
+        Macchina's default key color is magenta, but this can be overriden
+        using --color / -c <color>
+        Supported colors (case-sensitive):
+            red, green, blue, magenta, cyan, yellow, black and white.
+        To let macchina randomly pick a color for you, use --random-color / -r
+        To change the separator color, use --separator-color / -C <color>   
+
+    Theming:
+        Macchina comes with multiple themes out of the box,
+        to change the default theme, use --theme / -t <theme>
+        Supported themes (case-sensitive):
+            def, alt and giraffe.
+
+    Hiding elements:
+        To hide an element (or more), use --hide / -H <element>
+        Hideable elements (case-sensitive):
+            host, mach, os, kern, pkgs, sh, term, cpu, up, mem, bat ";
+    println!("{}",usage_string);
+    println!("{}", help_string);
 }
 
 pub fn show_bar(bar: usize, color: Color) {

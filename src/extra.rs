@@ -35,4 +35,3 @@ pub fn is_int(s: String) -> Result<(), String> {
     }
     Err(String::from("This argument only accepts integers"))
 }
-

@@ -12,6 +12,10 @@ documentation = "https://github.com/grtcdr/macchina"
 license = "MIT"
 readme = "CARGO_README.md"
 
+[profile.release]
+opt-level = "s"
+debug = false
+
 [dependencies]
 colored = "2"
 num_cpus = "1.13.0"
