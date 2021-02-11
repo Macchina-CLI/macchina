@@ -64,7 +64,7 @@ impl Elements {
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
-            packages: Pair::new(String::from("pkgs"), read::package_count().to_string()),
+            packages: Pair::new(String::from("pkgs"), read::package_count()),
             shell: Pair::new(String::from("sh"), String::new()),
             machine: Pair::new(String::from("mach"), read::product_name()),
             terminal: Pair::new(String::from("term"), read::terminal()),

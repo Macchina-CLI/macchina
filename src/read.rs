@@ -103,7 +103,7 @@ pub fn shell(shorthand: bool) -> String {
 }
 
 /// Extract package count by running /usr/bin/pacman -Qq
-pub fn package_count() -> usize {
+pub fn package_count() -> String {
     let wh = Command::new("which")
         .arg("pacman")
         .output()
@@ -116,16 +116,25 @@ pub fn package_count() -> usize {
             .arg("-Q")
             .arg("-q")
             .stdout(Stdio::piped())
-            .output()
-            .expect("Failed to start 'pacman' process");
+            .spawn()
+            .expect("Failed to start pacman process");
 
-        let pac_out =
-            String::from_utf8(pacman.stdout).expect("'pacman' process stdout was not valid UTF-8");
-        let packages: Vec<&str> = pac_out.split('\n').collect();
+        let pac_out = pacman.stdout.expect("Failed to open pacman stdout");
 
-        return packages.len() - 1;
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(pac_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("Failed to start wc process");
+
+        let output = count.wait_with_output().expect("Failed to wait on wc");
+        return String::from_utf8(output.stdout)
+            .expect("read_package_count: stdout to string conversion failed")
+            .trim()
+            .to_string();
     }
-    return 0;
+    return String::from("0");
 }
 
 /// Read kernel version by running "uname -r"
@@ -150,8 +159,9 @@ pub fn hostname() -> String {
 
 /// Read operating system name from __/etc/os-release__
 pub fn operating_system() -> String {
-    let mut os =
-        String::from(extra::get_line_at("/etc/os-release", 0, "Could not obtain distribution name").unwrap());
+    let mut os = String::from(
+        extra::get_line_at("/etc/os-release", 0, "Could not obtain distribution name").unwrap(),
+    );
     if !os.contains("NAME=\"") {
         return os.replace("NAME=", "");
     }
