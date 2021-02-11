@@ -21,7 +21,7 @@ pub fn sys_vendor() -> String {
     extra::pop_newline(ret)
 }
 
-/// Read product family from `/sys/class/dmi/id/sys_vendor`
+/// Read product family from `/sys/class/dmi/id/product_family`
 pub fn product_family() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_family");
     let ret = match name {
@@ -31,3 +31,12 @@ pub fn product_family() -> String {
     extra::pop_newline(ret)
 }
 
+/// Read product name from `/sys/class/dmi/id/product_name`
+pub fn product_name() -> String {
+    let name = fs::read_to_string("/sys/class/dmi/id/product_name");
+    let ret = match name {
+        Ok(ret) => ret,
+        Err(_e) => return String::new(),
+    };
+    extra::pop_newline(ret)
+}

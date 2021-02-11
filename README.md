@@ -26,6 +26,7 @@ No one wants a slow fetcher, and macchina's main goal is to provide you with han
 # Changelog <a name="change"></a>
 - Document previously undocumented code
 - Add a separate crate for obtaining product information (machine name)
+- Let cargo handle the documentation for the `macchina` crate
 
 ---
 

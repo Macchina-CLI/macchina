@@ -1,13 +1,12 @@
 [package]
 name = "macchina"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>"]
 edition = "2018"
 description = "System information fetcher, written in Rust."
 keywords = ["system", "fetch", "command-line"]
 
 repository = "https://github.com/grtcdr/macchina"
-documentation = "https://github.com/grtcdr/macchina"
 
 license = "MIT"
 readme = "README_CARGO.md"

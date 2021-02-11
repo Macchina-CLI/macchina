@@ -64,9 +64,9 @@ pub fn cpu(cpu_model_name: String, logical_cores: usize) -> String {
 
 /// This function contructs a new _String_ from the values
 /// returned by `machine::sys_vendor` and `machine::product_family` or `machine::product_version`
-pub fn machine(product_version: String, sys_vendor: String, product_family: String) -> String {
+pub fn machine(product_version: String, sys_vendor: String, product_family: String, product_name: String) -> String {
     if product_version.is_empty() {
-        return String::from(sys_vendor + " " + &product_family);
+        return String::from(sys_vendor + " " + &product_family + " " + &product_name);
     }
     product_version
 }

@@ -1,5 +1,7 @@
 extern crate num_cpus;
-use crate::{bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, machine};
+use crate::{
+    bars, format, machine, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
+};
 use colored::{Color, Colorize};
 use rand::Rng;
 
@@ -74,7 +76,15 @@ impl Elements {
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
             packages: Pair::new(String::from("pkgs"), read::package_count()),
             shell: Pair::new(String::from("sh"), String::new()),
-            machine: Pair::new(String::from("mach"), format::machine(machine::product_version(), machine::sys_vendor(), machine::product_family())),
+            machine: Pair::new(
+                String::from("mach"),
+                format::machine(
+                    machine::product_version(),
+                    machine::sys_vendor(),
+                    machine::product_family(),
+                    machine::product_name(),
+                ),
+            ),
             terminal: Pair::new(String::from("term"), read::terminal()),
             cpu: Pair::new(
                 String::from("cpu"),
