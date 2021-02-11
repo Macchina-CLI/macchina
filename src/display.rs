@@ -468,7 +468,7 @@ pub fn help() {
         get a list of the installed packages and then return the package count.
 
     Coloring:
-        Macchina's default key color is magenta, but this can be overriden
+        Macchina's default key color is blue, but this can be overriden
         using --color / -c <color>
         Supported colors (case-sensitive):
             red, green, blue, magenta, cyan, yellow, black and white.

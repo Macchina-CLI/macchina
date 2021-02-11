@@ -12,8 +12,8 @@ pub fn pop_newline(mut string: String) -> String {
     String::from(string)
 }
 
-/// Return the content of the specified line from the specified path.
-/// If something goes wrong, display the specified error message
+/// Return the content of the specified line from `path_to_file`
+/// If something goes wrong, display `error_message`
 pub fn get_line_at(
     path_to_file: &str,
     line_number: usize,

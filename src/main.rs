@@ -1,21 +1,22 @@
 extern crate clap;
 mod bars;
 mod display;
-mod machine;
 mod extra;
 mod format;
+mod machine;
 mod memory;
 mod read;
 use clap::{App, Arg};
+use colored::Color;
 use display::Options;
 use display::{choose_color, Elements};
 
 /// Macchina's version
-pub const VERSION: &str = "0.2.3";
+pub const VERSION: &str = "0.2.4";
 /// Macchina's default color
-pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
+pub const DEFAULT_COLOR: Color = Color::Blue;
 /// Macchina's default separator color
-pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
+pub const DEFAULT_SEPARATOR_COLOR: Color = Color::White;
 /// Macchina's default padding value
 pub const DEFAULT_PADDING: usize = 4;
 /// The path that Macchina reads battery percentage from
@@ -129,11 +130,11 @@ fn main() {
         elems.set_left_padding_to(matches.value_of("padding").unwrap().parse().unwrap());
     }
     if matches.is_present("color") {
-        let color: colored::Color = choose_color(matches.value_of("color").unwrap());
+        let color: Color = choose_color(matches.value_of("color").unwrap());
         elems.set_color(color);
     }
     if matches.is_present("separator-color") {
-        let color: colored::Color = choose_color(matches.value_of("separator-color").unwrap());
+        let color: Color = choose_color(matches.value_of("separator-color").unwrap());
         elems.set_separator_color(color);
     }
     if matches.is_present("short-sh") {

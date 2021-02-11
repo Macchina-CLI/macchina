@@ -24,9 +24,8 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Document previously undocumented code
-- Add a separate crate for obtaining product information (machine name)
-- Let cargo handle the documentation for the `macchina` crate
+- Change DEFAULT_COLOR to Color::Blue
+- Other miscellaneous changes
 
 ---
 
@@ -49,49 +48,74 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 # Features <a name="features"></a>
 Macchina displays basic system information such as:
 - Hostname
+- Product
+  - Manufacturer
+  - Model name
 - Distribution
 - Kernel version
-- Package count (Arch-based distributions only, will print __0__ on any other distribution)
+- Package count
 - Shell
 - Terminal
-- Processor: __model name__, __frequency__ and __thread count__
+- Processor
+  - Model name
+  - Frequency
+  - Thread count
 - Uptime
-- Memory usage
-- Battery: __percentage__ and __status__
-- Palette (using `--palette / -p`)
+- Memory
+  - Used / Total
+- Battery
+  - Percentage
+  - Status
+- Palette
+
+> Package count: Arch-based distributions only, as it will print __0__ on any other distribution
 
 Macchina supports the following arguments:
-- `--no-color` -> disable colors
-- `--color <color>` -> specify the key color
-- `--separator-color <color>` -> specify the separator color
-- `--random-color` -> let macchina choose a random color for you
-- `--palette` -> display palette
-- `--short-sh` -> shorten shell output (/bin/zsh => zsh)
-- `--hide <element>` -> hide elements such as host, os, kern, etc.
-- `--bar` -> display memory usage and battery percentage as bars
-![bar argument preview](screenshots/example_bars.png)
 
-- `--theme <theme_name>` -> change themes
-- `--help` -> display help menu
-- `--version` -> print version
-- `--padding <amount>` -> specify the amount of (left) padding to use
+`--no-color` - Disable colors
+
+`--color <color>` - Specify the key color
+
+`--separator-color <color>` - Specify the separator color
+
+`--random-color` - Let Macchina pick a random color for you
+
+`--palette` - Display palette
+
+`--short-sh` - Shorten shell output (/bin/zsh -> zsh)
+
+`--hide <element>` - Hide elements such as host, os, kern, etc.
+
+`--bar` - Display memory usage and battery percentage as bars
+
+![Preview of bar argument](screenshots/bars.png)
+
+`--theme <theme_name>` - Change themes
+
+`--padding <amount>` - Specify the amount of (left) padding to use
+
+`--help` -  Display help menu
+
+`--version` - Print version
 
 ---
 
 # Installation <a name="install"></a>
+Macchina is available on:
 
-Macchina is available in the [AUR](https://aur.archlinux.org/packages/macchina/) and [crates.io](https://crates.io/crates/macchina)
+- [AUR](https://aur.archlinux.org/packages/macchina/)
 
-- Install using your favorite AUR helper or by running:
-```
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
-- Install using cargo:
-```
-cargo install macchina
-```
+  - Install using your favorite AUR helper or by running:
+  ```
+  git clone https://aur.archlinux.org/macchina.git
+  cd macchina
+  makepkg -si
+  ```
+- [crates.io](https://crates.io/crates/macchina)
+  - Install using cargo:
+  ```
+  cargo install macchina
+  ```
 ---
 
 # Platform Support <a name="platform-support"></a>

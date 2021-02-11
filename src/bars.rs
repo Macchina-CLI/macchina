@@ -1,8 +1,7 @@
-use extra::percent_of_total;
-
 use crate::extra;
 use crate::memory;
 use crate::read;
+use extra::percent_of_total;
 
 /// Returns a usize (0 .. 10) based on the battery percentage,
 /// display::show_bar takes this usize as a parameter to handle

@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>"]
 edition = "2018"
 description = "System information fetcher, written in Rust."
@@ -12,7 +12,7 @@ license = "MIT"
 readme = "README_CARGO.md"
 
 [profile.release]
-opt-level = "s"
+opt-level = 3
 debug = false
 
 [dependencies]

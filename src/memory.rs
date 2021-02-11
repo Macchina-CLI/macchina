@@ -1,12 +1,5 @@
 use crate::extra;
 
-// Instead of throwing every function that collects information in read.rs,
-// memory.rs groups all functions that relate to memory information
-
-// Memory Utilization is extracted from /proc/meminfo
-// Used memory is calculated using the following formula:
-// used = memtotal - memfree - cached - sreclaimable - buffers
-
 /// Read __MemTotal__ from `/proc/meminfo`
 pub fn memtotal() -> u64 {
     let mem = String::from(

@@ -1,7 +1,7 @@
 extern crate bytesize;
 use bytesize::ByteSize;
 
-/// This function constructs a new _String_ from the value
+/// Construct a new _String_ from the value
 /// returned by `read::uptime`
 pub fn uptime(up: String) -> String {
     let mut formatted_uptime = String::new();
@@ -35,7 +35,7 @@ pub fn uptime(up: String) -> String {
     formatted_uptime.trim().to_string()
 }
 
-/// This function constructs a new _String_ from the values
+/// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery(percentage: String, status: String) -> String {
     if !percentage.is_empty() && !status.is_empty() {
@@ -47,7 +47,7 @@ pub fn battery(percentage: String, status: String) -> String {
     String::from("Could not extract battery info")
 }
 
-/// This function constructs a new _String_ from the values 
+/// Construct a new _String_ from the values
 /// returned by `memory::used` and `memory::memtotal`
 pub fn memory(used: u64, total: u64) -> String {
     let total = ByteSize::kb(total);
@@ -56,16 +56,21 @@ pub fn memory(used: u64, total: u64) -> String {
     String::from(used.to_string() + "/" + &total.to_string())
 }
 
-/// This function constructs a new _String_ from the values
+/// Construct a new _String_ from the values
 /// returned by `read::cpu_model_name` and `num_cpus::get`
 pub fn cpu(cpu_model_name: String, logical_cores: usize) -> String {
     String::from(cpu_model_name + " (" + &logical_cores.to_string() + ")")
 }
 
-/// This function contructs a new _String_ from the values
+/// Construct a new _String_ from the values
 /// returned by `machine::sys_vendor` and `machine::product_family` or `machine::product_version`
-pub fn machine(product_version: String, sys_vendor: String, product_family: String, product_name: String) -> String {
-    if product_version.is_empty() {
+pub fn machine(
+    product_version: String,
+    sys_vendor: String,
+    product_family: String,
+    product_name: String,
+) -> String {
+    if product_version.is_empty() || product_version.len() <= 10 {
         return String::from(sys_vendor + " " + &product_family + " " + &product_name);
     }
     product_version

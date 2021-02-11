@@ -36,50 +36,75 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 ## Features
 Macchina displays basic system information such as:
 - Hostname
-- Operating system
+- Product
+  - Manufacturer
+  - Model name
+- Distribution
 - Kernel version
-- Package count _(Arch-based distributions only, will print __0__ on any other distribution)_
-- Shell path/name in which macchina was ran
-- Terminal instance name in which macchina was ran
-- Processor _model name_, _frequency_ and _thread count_
+- Package count
+- Shell
+- Terminal
+- Processor
+  - Model name
+  - Frequency
+  - Thread count
 - Uptime
-- Memory usage
-- Battery _percentage_ and _status_
-- Palette (using `--palette / -p`)
+- Memory
+  - Used / Total
+- Battery
+  - Percentage
+  - Status
+- Palette
+
+> Package count: Arch-based distributions only, as it will print __0__ on any other distribution
 
 Macchina supports the following arguments:
-- `--no-color` -> disable colors
-- `--color <color>` -> specify the key color
-- `--separator-color <color>` -> specify the separator color
-- `--random-color` -> let macchina choose a random color for you
-- `--palette` -> display palette
-- `--short-sh` -> shorten shell output (/bin/zsh => zsh)
-- `--hide <element>` -> hide elements such as host, os, kern, etc.
-- `--bar` -> display memory usage and battery percentage as progress bars
-- `--theme <theme_name>` -> change themes
-- `--help` -> display help menu
-- `--version` -> print version
-- `--padding <amount>` -> specify the amount of (left) padding to use
+
+`--no-color` - Disable colors
+
+`--color <color>` - Specify the key color
+
+`--separator-color <color>` - Specify the separator color
+
+`--random-color` - Let Macchina pick a random color for you
+
+`--palette` - Display palette
+
+`--short-sh` - Shorten shell output (/bin/zsh -> zsh)
+
+`--hide <element>` - Hide elements such as host, os, kern, etc.
+
+`--bar` - Display memory usage and battery percentage as bars
+
+`--theme <theme_name>` - Change themes
+
+`--padding <amount>` - Specify the amount of (left) padding to use
+
+`--help` -  Display help menu
+
+`--version` - Print version
 
 ---
 
 ## Installation
+Macchina is available on:
 
-- Install using cargo:
-```
-cargo install macchina
-```
-Macchina is also available in the [AUR](https://aur.archlinux.org/packages/macchina/)
+- [AUR](https://aur.archlinux.org/packages/macchina/)
 
-- Install using your favorite AUR helper or by running:
-```
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
+  - Install using your favorite AUR helper or by running:
+  ```
+  git clone https://aur.archlinux.org/macchina.git
+  cd macchina
+  makepkg -si
+  ```
+- [crates.io](https://crates.io/crates/macchina)
+  - Install using cargo:
+  ```
+  cargo install macchina
+  ```
 ---
 
-## Will Macchina Work on Your Macchina?
+## Platform Support
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |
@@ -88,8 +113,8 @@ makepkg -si
 | MacOS         |                    |
 | Windows       |                    |
 
-> Cells containing X: Macchina supports that platform
+Cells containing X: Macchina supports that platform
 
-> Cells containing ?: Macchina has not been tested yet on that platform
+Cells containing ?: Macchina has not been tested yet on that platform
 
-> Empty cells: Macchina does not support that platform
+Empty cells: Macchina does not support that platform
