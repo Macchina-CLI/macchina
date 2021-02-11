@@ -4,6 +4,9 @@ use crate::extra;
 use crate::memory;
 use crate::read;
 
+/// Returns a usize (0 .. 10) based on the battery percentage,
+/// display::show_bar takes this usize as a parameter to handle
+/// displaying the bar
 pub fn battery() -> usize {
     match read::battery_percentage().parse::<u32>().unwrap() {
         0..=10 => 1,
@@ -20,6 +23,9 @@ pub fn battery() -> usize {
     }
 }
 
+/// Returns a usize (0 .. 10) based on the memory usage,
+/// display::show_bar takes this usize as a parameter to handle
+/// displaying the bar
 pub fn memory() -> usize {
     let u = memory::used();
 

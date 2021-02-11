@@ -1,6 +1,6 @@
 # Macchina
 
-![Macchina preview image](preview.png)
+![Macchina preview image](screenshots/preview.png)
 
 ![madewith](https://img.shields.io/static/v1?label=MADE%20WITH&message=RUST&color=ef4041&style=for-the-badge)
 ![reposize](https://img.shields.io/github/repo-size/grtcdr/macchina?color=BEE5BF&logo=github&style=for-the-badge)
@@ -9,7 +9,8 @@
 ---
 
 ## About Macchina
-Macchina is a fetching program, not a library.
+Macchina is a fetching program, not a library. But you can use the 
+functions it relies on to extract system data in your own program.
 
 It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
@@ -63,14 +64,19 @@ Macchina supports the following arguments:
 ---
 
 ## Installation
-Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/)
 
-To install macchina on your system (using __cargo__), run the following command:
-
+- Install using cargo:
 ```
 cargo install macchina
 ```
+Macchina is also available in the [AUR](https://aur.archlinux.org/packages/macchina/)
 
+- Install using your favorite AUR helper or by running:
+```
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
 ---
 
 ## Will Macchina Work on Your Macchina?

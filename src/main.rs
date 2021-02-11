@@ -1,6 +1,7 @@
 extern crate clap;
 mod bars;
 mod display;
+mod machine;
 mod extra;
 mod format;
 mod memory;
@@ -9,11 +10,17 @@ use clap::{App, Arg};
 use display::Options;
 use display::{choose_color, Elements};
 
+/// Macchina's version
 pub const VERSION: &str = "0.2.1";
+/// Macchina's default color
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
+/// Macchina's default separator color
 pub const DEFAULT_SEPARATOR_COLOR: colored::Color = colored::Color::White;
+/// Macchina's default padding value
 pub const DEFAULT_PADDING: usize = 4;
+/// The path that Macchina reads battery percentage from
 pub const PATH_TO_BATTERY_PERCENTAGE: &str = "/sys/class/power_supply/BAT0/capacity";
+/// The path that Macchina reads battery status from
 pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
 
 fn main() {

@@ -1,8 +1,10 @@
 extern crate num_cpus;
-use crate::{bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
+use crate::{bars, format, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, machine};
 use colored::{Color, Colorize};
 use rand::Rng;
 
+/// __Options__ holds Macchina's behaviour that the user
+/// can alter using the program's arguments
 pub struct Options {
     pub color: bool,
     pub palette_status: bool,
@@ -18,6 +20,8 @@ impl Options {
         }
     }
 }
+
+/// A __Pair__ is simply two strings: key and value
 pub struct Pair {
     key: String,
     value: String,
@@ -35,6 +39,8 @@ impl Pair {
     }
 }
 
+/// __Elements__ encapsulates elements that are to be displayed,
+/// each element is a __Pair__
 pub struct Elements {
     separator: String,
     left_padding: usize,
@@ -55,6 +61,8 @@ pub struct Elements {
     bar: bool,
 }
 
+/// Initialize each pair of elements, assign them their key name and their value using functions
+/// found in the _read crate_
 impl Elements {
     pub fn new() -> Elements {
         Elements {
@@ -66,7 +74,7 @@ impl Elements {
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
             packages: Pair::new(String::from("pkgs"), read::package_count()),
             shell: Pair::new(String::from("sh"), String::new()),
-            machine: Pair::new(String::from("mach"), read::product_name()),
+            machine: Pair::new(String::from("mach"), format::machine(machine::product_version(), machine::sys_vendor(), machine::product_family())),
             terminal: Pair::new(String::from("term"), read::terminal()),
             cpu: Pair::new(
                 String::from("cpu"),
@@ -128,7 +136,7 @@ impl Elements {
     }
 }
 
-/// dsp: display element
+/// Display an element and its value
 macro_rules! dsp {
     ($elem: expr, $pad: ident, $key: expr, $sep: expr, $val: expr) => {
         if $elem {
@@ -137,6 +145,7 @@ macro_rules! dsp {
     };
 }
 
+/// Display an element as well as a bar next to it
 macro_rules! dsp_bar {
     ($elem: expr, $pad: ident, $key: expr, $sep: expr) => {
         if $elem {
@@ -145,6 +154,8 @@ macro_rules! dsp_bar {
     };
 }
 
+/// Handles displaying each element (key and value pair) found in
+/// __Elements__ struct, as well as the palette.
 pub fn print_info(mut elems: Elements, opts: Options) {
     let padding: String = " ".repeat(elems.left_padding);
     if opts.shell_shorthand {
@@ -348,6 +359,7 @@ pub fn print_info(mut elems: Elements, opts: Options) {
     }
 }
 
+/// Print a palette using the terminal's colorscheme
 pub fn palette(elems: Elements) {
     let padding: String = " ".repeat(elems.left_padding);
     println!();
@@ -365,6 +377,7 @@ pub fn palette(elems: Elements) {
     );
 }
 
+/// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     //  Labels contains all hideable elements.
     //  The order of each element in the array
@@ -383,6 +396,7 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     print_info(elems, options);
 }
 
+/// Colorize the keys using the user-specified color _(--color <color>)_
 pub fn choose_color(color: &str) -> Color {
     match color {
         "black" => Color::Black,
@@ -393,14 +407,11 @@ pub fn choose_color(color: &str) -> Color {
         "green" => Color::Green,
         "yellow" => Color::Yellow,
         "white" => Color::White,
-        _ => color_error(),
+        _ => Color::Magenta,
     }
 }
 
-fn color_error() -> Color {
-    return Color::Magenta;
-}
-
+/// Using the _rand crate_, pick a random color for the keys _(--random-color)_
 pub fn randomize_color() -> Color {
     let mut rng = rand::thread_rng();
     let rand: usize = rng.gen_range(0..8);
@@ -416,6 +427,7 @@ pub fn randomize_color() -> Color {
     }
 }
 
+/// Prints a help message
 pub fn help() {
     let usage_string: &str = "
     USAGE: macchina [OPTIONS]
@@ -463,10 +475,13 @@ pub fn help() {
         To hide an element (or more), use --hide / -H <element>
         Hideable elements (case-sensitive):
             host, mach, os, kern, pkgs, sh, term, cpu, up, mem, bat ";
-    println!("{}",usage_string);
+    println!("{}", usage_string);
     println!("{}", help_string);
 }
 
+/// Prints a bar next to memory and battery keys:
+/// it takes a function from the _bars crate_ as the first parameter
+/// and the color of the keys as a second
 pub fn show_bar(bar: usize, color: Color) {
     match color {
         Color::Black

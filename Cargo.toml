@@ -10,7 +10,7 @@ repository = "https://github.com/grtcdr/macchina"
 documentation = "https://github.com/grtcdr/macchina"
 
 license = "MIT"
-readme = "CARGO_README.md"
+readme = "README_CARGO.md"
 
 [profile.release]
 opt-level = "s"

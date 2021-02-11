@@ -1,7 +1,7 @@
 <h1 align="center"> Macchina </h1>
 
 <p align="center">
-  <img src="preview.png"/>
+  <img src="screenshots/preview.png"/>
   <a href="https://forthebadge.com/images/badges/made-with-rust.svg" alt="Made With Rust Badge"></a>
 </p>
 
@@ -24,7 +24,8 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Rollback read::package_count to its first implementation for the best performance 
+- Document previously undocumented code
+- Add a separate crate for obtaining product information (machine name)
 
 ---
 
@@ -66,7 +67,9 @@ Macchina supports the following arguments:
 - `--palette` -> display palette
 - `--short-sh` -> shorten shell output (/bin/zsh => zsh)
 - `--hide <element>` -> hide elements such as host, os, kern, etc.
-- `--bar` -> display memory usage and battery percentage as progress bars
+- `--bar` -> display memory usage and battery percentage as bars
+![bar argument preview](screenshots/example_bars.png)
+
 - `--theme <theme_name>` -> change themes
 - `--help` -> display help menu
 - `--version` -> print version
@@ -76,7 +79,7 @@ Macchina supports the following arguments:
 
 # Installation <a name="install"></a>
 
-Macchina is available on the [AUR](https://aur.archlinux.org/packages/macchina/) and [crates.io](https://crates.io/crates/macchina)
+Macchina is available in the [AUR](https://aur.archlinux.org/packages/macchina/) and [crates.io](https://crates.io/crates/macchina)
 
 - Install using your favorite AUR helper or by running:
 ```
@@ -84,7 +87,6 @@ git clone https://aur.archlinux.org/macchina.git
 cd macchina
 makepkg -si
 ```
-
 - Install using cargo:
 ```
 cargo install macchina

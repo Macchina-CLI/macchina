@@ -4,7 +4,7 @@ use nix::unistd;
 use std::fs;
 use std::process::{Command, Stdio};
 
-/// Read battery percentage from __/sys/class/power_supply/BAT0/capacity__
+/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 pub fn battery_percentage() -> String {
     let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
 
@@ -16,17 +16,7 @@ pub fn battery_percentage() -> String {
     extra::pop_newline(ret)
 }
 
-/// Read name of the computer as specified in /sys/class/dmi/id/product_version
-pub fn product_name() -> String {
-    let name = fs::read_to_string("/sys/class/dmi/id/product_version");
-    let ret = match name {
-        Ok(ret) => ret,
-        Err(_e) => return String::from("Could not obtain product name"),
-    };
-    extra::pop_newline(ret)
-}
-
-/// Read battery status from __/sys/class/power_supply/BAT0/status__
+/// Read battery status from `/sys/class/power_supply/BAT0/status`
 pub fn battery_status() -> String {
     let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
     let ret = match status {
@@ -36,7 +26,7 @@ pub fn battery_status() -> String {
     extra::pop_newline(ret)
 }
 
-/// Read current terminal instance using __ps__ command
+/// Read current terminal instance name using `ps`
 pub fn terminal() -> String {
     //  ps -p $$ -o ppid=
     //  $$ doesn't work natively in rust but its value can be
@@ -68,7 +58,7 @@ pub fn terminal() -> String {
         .to_string()
 }
 
-/// Read current shell instance name using __ps__ command
+/// Read current shell instance name using `ps`
 pub fn shell(shorthand: bool) -> String {
     //  ps -p $$ -o comm=
     //  $$ doesn't work natively in rust but its value can be
@@ -102,7 +92,7 @@ pub fn shell(shorthand: bool) -> String {
     String::from(shell_name.trim())
 }
 
-/// Extract package count by running /usr/bin/pacman -Qq
+/// Extract package count using `pacman -Qq | wc -l`
 pub fn package_count() -> String {
     let wh = Command::new("which")
         .arg("pacman")
@@ -111,13 +101,14 @@ pub fn package_count() -> String {
 
     let which = String::from_utf8(wh.stdout).expect("'which' process stdout was not valid UTF-8");
 
-    if which.trim() == "/usr/bin/pacman" {
+    // Continue only if pacman exists
+    if !which.is_empty() {
         let pacman = Command::new("pacman")
             .arg("-Q")
             .arg("-q")
             .stdout(Stdio::piped())
             .spawn()
-            .expect("Failed to start pacman process");
+            .expect("Failed to start 'pacman' process");
 
         let pac_out = pacman.stdout.expect("Failed to open pacman stdout");
 
@@ -126,18 +117,19 @@ pub fn package_count() -> String {
             .stdin(Stdio::from(pac_out))
             .stdout(Stdio::piped())
             .spawn()
-            .expect("Failed to start wc process");
+            .expect("Failed to start 'wc' process");
 
         let output = count.wait_with_output().expect("Failed to wait on wc");
         return String::from_utf8(output.stdout)
-            .expect("read_package_count: stdout to string conversion failed")
+            .expect("package_count: output was not valid UTF-8")
             .trim()
             .to_string();
     }
+    // If /usr/bin/pacman does not exist, package_count will return 0
     return String::from("0");
 }
 
-/// Read kernel version by running "uname -r"
+/// Read kernel version from `/proc/version`
 pub fn kernel_version() -> String {
     let output = fs::read_to_string("/proc/version");
     let ret = match output {
@@ -147,7 +139,7 @@ pub fn kernel_version() -> String {
     ret
 }
 
-/// Read hostname using __unistd::gethostname()__
+/// Read hostname from `/etc/hostname`
 pub fn hostname() -> String {
     let output = fs::read_to_string("/etc/hostname");
     let ret = match output {
@@ -157,7 +149,7 @@ pub fn hostname() -> String {
     ret
 }
 
-/// Read operating system name from __/etc/os-release__
+/// Read distribution name from `/etc/os-release`
 pub fn operating_system() -> String {
     let mut os = String::from(
         extra::get_line_at("/etc/os-release", 0, "Could not obtain distribution name").unwrap(),
@@ -169,7 +161,7 @@ pub fn operating_system() -> String {
     os.replace("NAME=\"", "")
 }
 
-/// Read processor information from __/proc/cpuinfo__
+/// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
     let mut cpu = String::from(
         extra::get_line_at("/proc/cpuinfo", 4, "Could not obtain processor model name").unwrap(),
@@ -183,7 +175,7 @@ pub fn cpu_model_name() -> String {
     cpu
 }
 
-/// Read first float (uptime) from __/proc/uptime
+/// Read uptime (first float) from `/proc/uptime`
 pub fn uptime() -> String {
     let uptime = fs::read_to_string("/proc/uptime");
     let ret = match uptime {
