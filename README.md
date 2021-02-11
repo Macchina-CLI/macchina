@@ -24,7 +24,7 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Simplify help function and remove usage macro
+- Rollback read::package_count to its first implementation for the best performance 
 
 ---
 
