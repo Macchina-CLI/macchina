@@ -91,17 +91,19 @@ Macchina is available on:
 
 - [AUR](https://aur.archlinux.org/packages/macchina/)
 
-  - Install using your favorite AUR helper or by running:
+  Install using your favorite AUR helper or by running:
   ```
   git clone https://aur.archlinux.org/macchina.git
   cd macchina
   makepkg -si
   ```
 - [crates.io](https://crates.io/crates/macchina)
-  - Install using cargo:
+
+  Install using cargo:
   ```
   cargo install macchina
   ```
+  
 ---
 
 ## Platform Support
