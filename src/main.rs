@@ -11,7 +11,7 @@ use display::Options;
 use display::{choose_color, Elements};
 
 /// Macchina's version
-pub const VERSION: &str = "0.2.1";
+pub const VERSION: &str = "0.2.2";
 /// Macchina's default color
 pub const DEFAULT_COLOR: colored::Color = colored::Color::Magenta;
 /// Macchina's default separator color
