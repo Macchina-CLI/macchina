@@ -24,9 +24,9 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Change DEFAULT_COLOR to Color::Blue
-- Other miscellaneous changes
-
+- Previously, --no-color and --bar wouldn't work together properly, this has now been fixed.
+- Major structural changes to the __display__ crate
+- Macchina now prints your desktop environment.
 ---
 
 # Benchmarks <a name="bench"></a>
@@ -52,6 +52,7 @@ Macchina displays basic system information such as:
   - Manufacturer
   - Model name
 - Distribution
+- Desktop Environment
 - Kernel version
 - Package count
 - Shell

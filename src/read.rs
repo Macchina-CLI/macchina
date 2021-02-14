@@ -1,8 +1,13 @@
 extern crate nix;
 use crate::{extra, format, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
 use nix::unistd;
+use std::env;
 use std::fs;
 use std::process::{Command, Stdio};
+
+pub fn desktop_session() -> String {
+    return String::from(env!("DESKTOP_SESSION"));
+}
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 pub fn battery_percentage() -> String {

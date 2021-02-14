@@ -4,11 +4,11 @@ use crate::{
 };
 use colored::{Color, Colorize};
 use rand::Rng;
+use std::fmt;
 
 /// __Options__ holds Macchina's behaviour that the user
 /// can alter using the program's arguments
 pub struct Options {
-    pub color: bool,
     pub palette_status: bool,
     pub shell_shorthand: bool,
 }
@@ -16,22 +16,26 @@ pub struct Options {
 impl Options {
     pub fn new() -> Options {
         Options {
-            color: true,
             palette_status: false,
             shell_shorthand: false,
         }
     }
 }
 
-/// A __Pair__ is simply two strings: key and value
+/// A __Pair__ is simply two strings: key and value (and the pair's visibility)
 pub struct Pair {
     key: String,
     value: String,
+    hidden: bool,
 }
 
 impl Pair {
     fn new(k: String, v: String) -> Pair {
-        Pair { key: k, value: v }
+        Pair {
+            key: k,
+            value: v,
+            hidden: false,
+        }
     }
     fn modify(&mut self, val: String) {
         self.value = val;
@@ -41,13 +45,18 @@ impl Pair {
     }
 }
 
+impl fmt::Display for Pair {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.key)
+    }
+}
+
 /// __Elements__ encapsulates elements that are to be displayed,
 /// each element is a __Pair__
 pub struct Elements {
-    separator: String,
-    left_padding: usize,
     hostname: Pair,
     os: Pair,
+    desktop_env: Pair,
     machine: Pair,
     kernel: Pair,
     packages: Pair,
@@ -57,10 +66,11 @@ pub struct Elements {
     memory: Pair,
     uptime: Pair,
     battery: Pair,
+    separator: String,
+    bar: bool,
+    left_padding: usize,
     color: colored::Color,
     separator_color: colored::Color,
-    num_elements: [bool; 11],
-    bar: bool,
 }
 
 /// Initialize each pair of elements, assign them their key name and their value using functions
@@ -68,11 +78,12 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            separator: String::from(":"),
-            left_padding: DEFAULT_PADDING,
-            bar: false,
             hostname: Pair::new(String::from("host"), read::hostname()),
             os: Pair::new(String::from("os"), read::operating_system()),
+            desktop_env: Pair::new(
+                String::from("desk"),
+                format::desktop_session(read::desktop_session()),
+            ),
             kernel: Pair::new(String::from("kern"), read::kernel_version()),
             packages: Pair::new(String::from("pkgs"), read::package_count()),
             shell: Pair::new(String::from("sh"), String::new()),
@@ -99,7 +110,9 @@ impl Elements {
                 String::from("bat"),
                 format::battery(read::battery_percentage(), read::battery_status()),
             ),
-            num_elements: [true; 11],
+            separator: String::from(":"),
+            bar: false,
+            left_padding: DEFAULT_PADDING,
             color: DEFAULT_COLOR,
             separator_color: DEFAULT_SEPARATOR_COLOR,
         }
@@ -109,6 +122,7 @@ impl Elements {
         self.hostname.update_key(String::from("Ho"));
         self.machine.update_key(String::from("Ma"));
         self.os.update_key(String::from("Os"));
+        self.desktop_env.update_key(String::from("De"));
         self.kernel.update_key(String::from("Ke"));
         self.packages.update_key(String::from("Pa"));
         self.shell.update_key(String::from("Sh"));
@@ -123,6 +137,8 @@ impl Elements {
         self.hostname.update_key(String::from("Hostname"));
         self.machine.update_key(String::from("Machine"));
         self.os.update_key(String::from("Distribution"));
+        self.desktop_env
+            .update_key(String::from("Desktop Environment"));
         self.kernel.update_key(String::from("Kernel"));
         self.packages.update_key(String::from("Packages"));
         self.shell.update_key(String::from("Shell"));
@@ -146,223 +162,198 @@ impl Elements {
     }
 }
 
-/// Display an element and its value
-macro_rules! dsp {
-    ($elem: expr, $pad: ident, $key: expr, $sep: expr, $val: expr) => {
-        if $elem {
-            println!("{}{}{} {}", $pad, $key, $sep, $val);
-        }
-    };
+trait Printing {
+    fn print_hostname(&self);
+    fn print_machine(&self);
+    fn print_os(&self);
+    fn print_desktop_env(&self);
+    fn print_kernel_ver(&self);
+    fn print_package_count(&self);
+    fn print_shell(&self);
+    fn print_terminal(&self);
+    fn print_processor(&self);
+    fn print_uptime(&self);
+    fn print_memory(&self);
+    fn print_battery(&self);
 }
 
-/// Display an element as well as a bar next to it
-macro_rules! dsp_bar {
-    ($elem: expr, $pad: ident, $key: expr, $sep: expr) => {
-        if $elem {
-            print!("{}{}{} ", $pad, $key, $sep);
+impl Printing for Elements {
+    fn print_hostname(&self) {
+        if !self.hostname.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.hostname.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.hostname.value
+            );
         }
-    };
+    }
+    fn print_machine(&self) {
+        if !self.machine.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.machine.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.machine.value
+            );
+        }
+    }
+    fn print_os(&self) {
+        if !self.os.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.os.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.os.value
+            );
+        }
+    }
+    fn print_desktop_env(&self) {
+        if !self.kernel.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.desktop_env.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.desktop_env.value
+            );
+        }
+    }
+    fn print_kernel_ver(&self) {
+        if !self.kernel.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.kernel.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.kernel.value
+            );
+        }
+    }
+    fn print_package_count(&self) {
+        if !self.packages.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.packages.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.packages.value
+            );
+        }
+    }
+    fn print_shell(&self) {
+        if !self.shell.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.shell.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.shell.value
+            );
+        }
+    }
+    fn print_terminal(&self) {
+        if !self.terminal.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.terminal.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.terminal.value
+            );
+        }
+    }
+    fn print_processor(&self) {
+        if !self.cpu.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.cpu.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.cpu.value
+            );
+        }
+    }
+    fn print_uptime(&self) {
+        if !self.uptime.hidden {
+            println!(
+                "{}{}{} {}",
+                " ".repeat(self.left_padding),
+                self.uptime.key.color(self.color).bold(),
+                self.separator.color(self.separator_color).bold(),
+                self.uptime.value
+            );
+        }
+    }
+    fn print_memory(&self) {
+        if !self.memory.hidden {
+            if self.bar {
+                print!(
+                    "{}{}{} ",
+                    " ".repeat(self.left_padding),
+                    self.memory.key.color(self.color).bold(),
+                    self.separator.color(self.separator_color).bold(),
+                );
+                show_bar(bars::memory(), self.color);
+            } else {
+                println!(
+                    "{}{}{} {}",
+                    " ".repeat(self.left_padding),
+                    self.memory.key.color(self.color).bold(),
+                    self.separator.color(self.separator_color).bold(),
+                    self.memory.value
+                );
+            }
+        }
+    }
+    fn print_battery(&self) {
+        if !self.battery.hidden {
+            if self.bar {
+                print!(
+                    "{}{}{} ",
+                    " ".repeat(self.left_padding),
+                    self.battery.key.color(self.color).bold(),
+                    self.separator.color(self.separator_color).bold(),
+                );
+                show_bar(bars::battery(), self.color);
+            } else {
+                println!(
+                    "{}{}{} {}",
+                    " ".repeat(self.left_padding),
+                    self.battery.key.color(self.color).bold(),
+                    self.separator.color(self.separator_color).bold(),
+                    self.battery.value
+                );
+            }
+        }
+    }
 }
 
 /// Handles displaying each element (key and value pair) found in
 /// __Elements__ struct, as well as the palette.
 pub fn print_info(mut elems: Elements, opts: Options) {
-    let padding: String = " ".repeat(elems.left_padding);
     if opts.shell_shorthand {
         elems.shell.modify(read::shell(true))
     } else {
         elems.shell.modify(read::shell(false))
     }
-    match opts.color {
-        true => {
-            dsp!(
-                elems.num_elements[0],
-                padding,
-                elems.hostname.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.hostname.value
-            );
-            dsp!(
-                elems.num_elements[1],
-                padding,
-                elems.machine.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.machine.value
-            );
-            dsp!(
-                elems.num_elements[2],
-                padding,
-                elems.os.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.os.value
-            );
-            dsp!(
-                elems.num_elements[3],
-                padding,
-                elems.kernel.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.kernel.value
-            );
-            dsp!(
-                elems.num_elements[4],
-                padding,
-                elems.packages.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.packages.value
-            );
-            dsp!(
-                elems.num_elements[5],
-                padding,
-                elems.shell.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.shell.value
-            );
-            dsp!(
-                elems.num_elements[6],
-                padding,
-                elems.terminal.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.terminal.value
-            );
-            dsp!(
-                elems.num_elements[7],
-                padding,
-                elems.cpu.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.cpu.value
-            );
-            dsp!(
-                elems.num_elements[8],
-                padding,
-                elems.uptime.key.color(elems.color).bold(),
-                elems.separator.color(elems.separator_color).bold(),
-                elems.uptime.value
-            );
-            match elems.bar {
-                false => {
-                    dsp!(
-                        elems.num_elements[9],
-                        padding,
-                        elems.memory.key.color(elems.color).bold(),
-                        elems.separator.color(elems.separator_color).bold(),
-                        elems.memory.value
-                    );
-                }
-                true => {
-                    dsp_bar!(
-                        elems.num_elements[9],
-                        padding,
-                        elems.memory.key.color(elems.color).bold(),
-                        elems.separator.color(elems.separator_color).bold()
-                    );
-                    if elems.num_elements[9] {
-                        show_bar(bars::memory(), elems.color);
-                    }
-                }
-            }
-            match elems.bar {
-                false => {
-                    dsp!(
-                        elems.num_elements[10],
-                        padding,
-                        elems.battery.key.color(elems.color).bold(),
-                        elems.separator.color(elems.separator_color).bold(),
-                        elems.battery.value
-                    );
-                }
-                true => {
-                    dsp_bar!(
-                        elems.num_elements[10],
-                        padding,
-                        elems.battery.key.color(elems.color).bold(),
-                        elems.separator.color(elems.separator_color).bold()
-                    );
-                    if elems.num_elements[10] {
-                        show_bar(bars::battery(), elems.color);
-                    }
-                }
-            }
-        }
-        false => {
-            dsp!(
-                elems.num_elements[0],
-                padding,
-                elems.hostname.key,
-                elems.separator,
-                elems.hostname.value
-            );
-            dsp!(
-                elems.num_elements[1],
-                padding,
-                elems.machine.key,
-                elems.separator,
-                elems.machine.value
-            );
-            dsp!(
-                elems.num_elements[2],
-                padding,
-                elems.os.key,
-                elems.separator,
-                elems.os.value
-            );
-            dsp!(
-                elems.num_elements[3],
-                padding,
-                elems.kernel.key,
-                elems.separator,
-                elems.kernel.value
-            );
-            dsp!(
-                elems.num_elements[4],
-                padding,
-                elems.packages.key,
-                elems.separator,
-                elems.packages.value
-            );
-            dsp!(
-                elems.num_elements[5],
-                padding,
-                elems.shell.key,
-                elems.separator,
-                elems.shell.value
-            );
-            dsp!(
-                elems.num_elements[6],
-                padding,
-                elems.terminal.key,
-                elems.separator,
-                elems.terminal.value
-            );
-            dsp!(
-                elems.num_elements[7],
-                padding,
-                elems.cpu.key,
-                elems.separator,
-                elems.cpu.value
-            );
-            dsp!(
-                elems.num_elements[8],
-                padding,
-                elems.uptime.key,
-                elems.separator,
-                elems.uptime.value
-            );
-            dsp!(
-                elems.num_elements[9],
-                padding,
-                elems.memory.key,
-                elems.separator,
-                elems.memory.value
-            );
-            dsp!(
-                elems.num_elements[10],
-                padding,
-                elems.battery.key,
-                elems.separator,
-                elems.battery.value
-            );
-        }
-    }
+
+    elems.print_hostname();
+    elems.print_machine();
+    elems.print_os();
+    elems.print_desktop_env();
+    elems.print_kernel_ver();
+    elems.print_package_count();
+    elems.print_shell();
+    elems.print_terminal();
+    elems.print_processor();
+    elems.print_uptime();
+    elems.print_memory();
+    elems.print_battery();
+
     if opts.palette_status {
         palette(elems);
         println!();
@@ -389,18 +380,41 @@ pub fn palette(elems: Elements) {
 
 /// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
-    //  Labels contains all hideable elements.
-    //  The order of each element in the array
-    //  is important for the hide functionality
-    //  to work properly
-    let labels: [&str; 11] = [
-        "host", "mach", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
-    ];
-
-    for i in 0..11 {
-        if hide_parameters.contains(&labels[i]) {
-            elems.num_elements[i] = false;
-        }
+    if hide_parameters.contains(&"host") {
+        elems.hostname.hidden = true;
+    }
+    if hide_parameters.contains(&"mach") {
+        elems.machine.hidden = true;
+    }
+    if hide_parameters.contains(&"os") {
+        elems.os.hidden = true;
+    }
+    if hide_parameters.contains(&"desk") {
+        elems.desktop_env.hidden = true;
+    }
+    if hide_parameters.contains(&"kern") {
+        elems.kernel.hidden = true;
+    }
+    if hide_parameters.contains(&"pkgs") {
+        elems.packages.hidden = true;
+    }
+    if hide_parameters.contains(&"sh") {
+        elems.shell.hidden = true;
+    }
+    if hide_parameters.contains(&"term") {
+        elems.terminal.hidden = true;
+    }
+    if hide_parameters.contains(&"cpu") {
+        elems.cpu.hidden = true;
+    }
+    if hide_parameters.contains(&"up") {
+        elems.uptime.hidden = true;
+    }
+    if hide_parameters.contains(&"mem") {
+        elems.memory.hidden = true;
+    }
+    if hide_parameters.contains(&"bat") {
+        elems.battery.hidden = true;
     }
 
     print_info(elems, options);

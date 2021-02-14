@@ -40,6 +40,7 @@ Macchina displays basic system information such as:
   - Manufacturer
   - Model name
 - Distribution
+- Desktop Environment
 - Kernel version
 - Package count
 - Shell

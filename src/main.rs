@@ -6,13 +6,13 @@ mod format;
 mod machine;
 mod memory;
 mod read;
-use clap::{App, Arg};
+use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
 use display::Options;
 use display::{choose_color, Elements};
 
 /// Macchina's version
-pub const VERSION: &str = "0.2.4";
+pub const VERSION: &str = crate_version!();
 /// Macchina's default color
 pub const DEFAULT_COLOR: Color = Color::Blue;
 /// Macchina's default separator color
@@ -27,7 +27,7 @@ pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
 fn main() {
     let matches = App::new("Macchina")
         .version(VERSION)
-        .author("grtcdr <ba.tahaaziz@gmail.com>")
+        .author(crate_authors!())
         .about("System information fetcher")
         .arg(
             Arg::with_name("palette")
@@ -87,7 +87,8 @@ fn main() {
                 .max_values(11)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "mach", "os", "kern", "pkgs", "sh", "term", "cpu", "up", "mem", "bat",
+                    "host", "mach", "os", "desk", "kern", "pkgs", "sh", "term", "cpu", "up", "mem",
+                    "bat",
                 ]),
         )
         .arg(
@@ -109,14 +110,13 @@ fn main() {
         .arg(Arg::with_name("version").short("v").long("version"))
         .get_matches();
 
-    // Instantiates Macchina's elements.
-    // Contains the key strings to be displayed
-    // as well as the separator character and
-    // num_elements that allows hiding elements
+    // Instantiate Macchina's elements.
     let mut elems = Elements::new();
 
-    // Instantiates Macchina's behavior
-    // when no arguments are provided.
+    // Instantiate Macchina's default behavior, i.e:
+    //   color: enabled
+    //   palette: enabled
+    //   shell shorthand: disabled
     let mut opts = Options::new();
 
     if matches.is_present("help") {
@@ -141,7 +141,8 @@ fn main() {
         opts.shell_shorthand = true;
     }
     if matches.is_present("no-color") {
-        opts.color = false;
+        elems.set_color(Color::White);
+        elems.set_separator_color(Color::White);
     }
     if matches.is_present("bar") {
         elems.enable_bar();
