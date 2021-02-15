@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.2.5"
+version = "0.2.6"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>"]
 edition = "2018"
 description = "System information fetcher, written in Rust."

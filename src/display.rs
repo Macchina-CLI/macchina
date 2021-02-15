@@ -2,7 +2,7 @@ extern crate num_cpus;
 use crate::{
     bars, format, machine, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
 };
-use colored::{Color, Colorize};
+use colored::{Color, ColoredString, Colorize};
 use rand::Rng;
 use std::fmt;
 
@@ -68,8 +68,11 @@ pub struct Elements {
     battery: Pair,
     separator: String,
     bar: bool,
-    left_padding: usize,
+    bar_glyph: String,
+    padding: String,
     color: colored::Color,
+    bracket_open: char,
+    bracket_close: char,
     separator_color: colored::Color,
 }
 
@@ -78,17 +81,17 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            hostname: Pair::new(String::from("host"), read::hostname()),
-            os: Pair::new(String::from("os"), read::operating_system()),
+            hostname: Pair::new(String::from("Host"), read::hostname()),
+            os: Pair::new(String::from("Os"), read::operating_system()),
             desktop_env: Pair::new(
-                String::from("desk"),
+                String::from("Desk"),
                 format::desktop_session(read::desktop_session()),
             ),
-            kernel: Pair::new(String::from("kern"), read::kernel_version()),
-            packages: Pair::new(String::from("pkgs"), read::package_count()),
-            shell: Pair::new(String::from("sh"), String::new()),
+            kernel: Pair::new(String::from("Kern"), read::kernel_version()),
+            packages: Pair::new(String::from("Pkgs"), read::package_count()),
+            shell: Pair::new(String::from("Sh"), String::new()),
             machine: Pair::new(
-                String::from("mach"),
+                String::from("Mach"),
                 format::machine(
                     machine::product_version(),
                     machine::sys_vendor(),
@@ -96,29 +99,35 @@ impl Elements {
                     machine::product_name(),
                 ),
             ),
-            terminal: Pair::new(String::from("term"), read::terminal()),
+            terminal: Pair::new(String::from("Term"), read::terminal()),
             cpu: Pair::new(
-                String::from("cpu"),
+                String::from("Cpu"),
                 format::cpu(read::cpu_model_name(), num_cpus::get()),
             ),
             memory: Pair::new(
-                String::from("mem"),
+                String::from("Mem"),
                 format::memory(memory::used(), memory::memtotal()),
             ),
-            uptime: Pair::new(String::from("up"), read::uptime()),
+            uptime: Pair::new(String::from("Up"), read::uptime()),
             battery: Pair::new(
-                String::from("bat"),
+                String::from("Bat"),
                 format::battery(read::battery_percentage(), read::battery_status()),
             ),
             separator: String::from(":"),
             bar: false,
-            left_padding: DEFAULT_PADDING,
+            bar_glyph: String::from("●"),
+            bracket_open: '(',
+            bracket_close: ')',
+            padding: " ".repeat(DEFAULT_PADDING),
             color: DEFAULT_COLOR,
             separator_color: DEFAULT_SEPARATOR_COLOR,
         }
     }
     pub fn set_theme_alt(&mut self) {
         self.separator = String::from("  => ");
+        self.bar_glyph = String::from("■");
+        self.bracket_open = '[';
+        self.bracket_close = ']';
         self.hostname.update_key(String::from("Ho"));
         self.machine.update_key(String::from("Ma"));
         self.os.update_key(String::from("Os"));
@@ -154,8 +163,8 @@ impl Elements {
     pub fn set_separator_color(&mut self, c: Color) {
         self.separator_color = c;
     }
-    pub fn set_left_padding_to(&mut self, val: usize) {
-        self.left_padding = val;
+    pub fn set_left_padding_to(&mut self, amount: usize) {
+        self.padding = " ".repeat(amount)
     }
     pub fn enable_bar(&mut self) {
         self.bar = true;
@@ -182,7 +191,7 @@ impl Printing for Elements {
         if !self.hostname.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.hostname.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.hostname.value
@@ -193,7 +202,7 @@ impl Printing for Elements {
         if !self.machine.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.machine.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.machine.value
@@ -204,7 +213,7 @@ impl Printing for Elements {
         if !self.os.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.os.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.os.value
@@ -215,7 +224,7 @@ impl Printing for Elements {
         if !self.kernel.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.desktop_env.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.desktop_env.value
@@ -226,7 +235,7 @@ impl Printing for Elements {
         if !self.kernel.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.kernel.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.kernel.value
@@ -237,7 +246,7 @@ impl Printing for Elements {
         if !self.packages.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.packages.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.packages.value
@@ -248,7 +257,7 @@ impl Printing for Elements {
         if !self.shell.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.shell.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.shell.value
@@ -259,7 +268,7 @@ impl Printing for Elements {
         if !self.terminal.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.terminal.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.terminal.value
@@ -270,7 +279,7 @@ impl Printing for Elements {
         if !self.cpu.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.cpu.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.cpu.value
@@ -281,7 +290,7 @@ impl Printing for Elements {
         if !self.uptime.hidden {
             println!(
                 "{}{}{} {}",
-                " ".repeat(self.left_padding),
+                self.padding,
                 self.uptime.key.color(self.color).bold(),
                 self.separator.color(self.separator_color).bold(),
                 self.uptime.value
@@ -293,15 +302,15 @@ impl Printing for Elements {
             if self.bar {
                 print!(
                     "{}{}{} ",
-                    " ".repeat(self.left_padding),
+                    self.padding,
                     self.memory.key.color(self.color).bold(),
                     self.separator.color(self.separator_color).bold(),
                 );
-                show_bar(bars::memory(), self.color);
+                show_bar(self, bars::memory());
             } else {
                 println!(
                     "{}{}{} {}",
-                    " ".repeat(self.left_padding),
+                    self.padding,
                     self.memory.key.color(self.color).bold(),
                     self.separator.color(self.separator_color).bold(),
                     self.memory.value
@@ -314,15 +323,15 @@ impl Printing for Elements {
             if self.bar {
                 print!(
                     "{}{}{} ",
-                    " ".repeat(self.left_padding),
+                    self.padding,
                     self.battery.key.color(self.color).bold(),
                     self.separator.color(self.separator_color).bold(),
                 );
-                show_bar(bars::battery(), self.color);
+                show_bar(self, bars::battery());
             } else {
                 println!(
                     "{}{}{} {}",
-                    " ".repeat(self.left_padding),
+                    self.padding,
                     self.battery.key.color(self.color).bold(),
                     self.separator.color(self.separator_color).bold(),
                     self.battery.value
@@ -355,18 +364,17 @@ pub fn print_info(mut elems: Elements, opts: Options) {
     elems.print_battery();
 
     if opts.palette_status {
-        palette(elems);
+        println!();
+        print_palette(&elems);
         println!();
     }
 }
 
 /// Print a palette using the terminal's colorscheme
-pub fn palette(elems: Elements) {
-    let padding: String = " ".repeat(elems.left_padding);
-    println!();
+pub fn print_palette(elems: &Elements) {
     println!(
         "{}{}{}{}{}{}{}{}{}",
-        padding,
+        elems.padding,
         "   ".on_bright_black(),
         "   ".on_bright_red(),
         "   ".on_bright_green(),
@@ -416,7 +424,7 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = true;
     }
-
+    
     print_info(elems, options);
 }
 
@@ -506,111 +514,58 @@ pub fn help() {
 /// Prints a bar next to memory and battery keys:
 /// it takes a function from the _bars crate_ as the first parameter
 /// and the color of the keys as a second
-pub fn show_bar(bar: usize, color: Color) {
-    match color {
-        Color::Black
-        | Color::Blue
-        | Color::Red
-        | Color::Green
-        | Color::Yellow
-        | Color::Cyan
-        | Color::Magenta => match bar {
-            1 => println!("[ {} ■ ■ ■ ■ ■ ■ ■ ■ ■ ]", "■".color(color)),
-            2 => println!(
-                "[ {} {} ■ ■ ■ ■ ■ ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color)
-            ),
-            3 => println!(
-                "[ {} {} {} ■ ■ ■ ■ ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            4 => println!(
-                "[ {} {} {} {} ■ ■ ■ ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            5 => println!(
-                "[ {} {} {} {} {} ■ ■ ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            6 => println!(
-                "[ {} {} {} {} {} {} ■ ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            7 => println!(
-                "[ {} {} {} {} {} {} {} ■ ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            8 => println!(
-                "[ {} {} {} {} {} {} {} {} ■ ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            9 => println!(
-                "[ {} {} {} {} {} {} {} {} {} ■ ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            10 => println!(
-                "[ {} {} {} {} {} {} {} {} {} {} ]",
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color),
-                "■".color(color)
-            ),
-            _ => println!("could not display memory bar"),
-        },
-        _ => match bar {
-            1 => println!("[ ■                   ]"),
-            2 => println!("[ ■ ■                 ]"),
-            3 => println!("[ ■ ■ ■               ]"),
-            4 => println!("[ ■ ■ ■ ■             ]"),
-            5 => println!("[ ■ ■ ■ ■ ■           ]"),
-            6 => println!("[ ■ ■ ■ ■ ■ ■         ]"),
-            7 => println!("[ ■ ■ ■ ■ ■ ■ ■       ]"),
-            8 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■     ]"),
-            9 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■ ■   ]"),
-            10 => println!("[ ■ ■ ■ ■ ■ ■ ■ ■ ■ ■ ]"),
-            _ => println!("could not display memory bar"),
-        },
+pub fn show_bar(elems: &Elements, bar: usize) {
+    match elems.color {
+        Color::White => println!(
+            "{} {} {} {}",
+            elems.bracket_open,
+            colored_blocks(elems, bar),
+            hidden_blocks(elems, bar),
+            elems.bracket_close
+        ),
+        _ => println!(
+            "{} {} {} {}",
+            elems.bracket_open,
+            colored_blocks(elems, bar),
+            colorless_blocks(elems, bar),
+            elems.bracket_close
+        ),
     }
+}
+
+pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+    let colored_blocks = elems.bar_glyph.repeat(block_count);
+    colored_blocks
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(1)
+        .map(|c| c.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join(" ")
+        .color(elems.color)
+}
+
+pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+    let colorless_blocks = elems.bar_glyph.repeat(10 - block_count);
+    colorless_blocks
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(1)
+        .map(|c| c.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join(" ")
+        .color(Color::White)
+}
+
+/// Used to correctly format the bars when using `--no-color`
+pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+    let colorless_blocks = elems.bar_glyph.repeat(10 - block_count);
+    colorless_blocks
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(1)
+        .map(|c| c.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join(" ")
+        .hidden()
 }

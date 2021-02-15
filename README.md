@@ -24,9 +24,11 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Previously, --no-color and --bar wouldn't work together properly, this has now been fixed.
-- Major structural changes to the __display__ crate
-- Macchina now prints your desktop environment.
+Instead of sleeping, I made some achievements:
+- Simplify Macchina's padding implementation
+- Simpler and more maintainable bar system:
+  - In order to implement a new feature, which is a different bar glyph and brackets for different themes, the old bar implementation had to be revised, because it was nothing short of a __mess__... It's now half as long, _probably_ faster, but the end result was, drumroll please... __clean code__.
+
 ---
 
 # Benchmarks <a name="bench"></a>
