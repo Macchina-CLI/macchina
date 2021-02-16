@@ -23,7 +23,7 @@
 
 # About Macchina <a name="about"></a>
 Macchina lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
-No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
+No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
 Instead of sleeping, I made some achievements:
@@ -45,12 +45,12 @@ Macchina is pretty fast, see for yourself:
 
 __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
-- Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
+- Note that hiding elements using Macchina's __--hide <element>__ significantly improves speed
 
 ---
 
 # Features <a name="features"></a>
-Macchina displays basic system information such as:
+## Macchina displays basic system information such as:
 - Hostname
 - Product
   - Manufacturer
@@ -73,35 +73,35 @@ Macchina displays basic system information such as:
   - Status
 - Palette
 
-> Package count: Arch-based distributions only, as it will print __0__ on any other distribution
+> Package count: __Pacman only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
 
-Macchina supports the following arguments:
+## Macchina supports the following arguments:
 
-`--no-color` - Disable colors
+`--no-color / -n` - Disable colors
 
-`--color <color>` - Specify the key color
+`--color / -c <color>` - Specify the key color
 
-`--separator-color <color>` - Specify the separator color
+`--separator-color / -C <color>` - Specify the separator color
 
-`--random-color` - Let Macchina pick a random color for you
+`--random-color / -r` - Let Macchina pick a random color for you
 
-`--palette` - Display palette
+`--palette / -p` - Display palette
 
-`--short-sh` - Shorten shell output (/bin/zsh -> zsh)
+`--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
 
-`--hide <element>` - Hide elements such as host, os, kern, etc.
+`--hide / -H <element>` - Hide elements such as host, os, kern, etc.
 
-`--bar` - Display memory usage and battery percentage as bars
+`--bar / -b` - Display memory usage and battery percentage as bars
 
 ![Preview of bar argument](screenshots/bars.png)
 
-`--theme <theme_name>` - Change themes
+`--theme / -t <theme_name>` - Specify the theme to use
 
-`--padding <amount>` - Specify the amount of (left) padding to use
+`--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--help` -  Display help menu
+`--help / -h` -  Display help menu
 
-`--version` - Print version
+`--version / -v` - Print version
 
 ---
 

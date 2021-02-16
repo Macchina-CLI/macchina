@@ -557,7 +557,8 @@ pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
         .color(Color::White)
 }
 
-/// Used to correctly format the bars when using `--no-color`
+// Used to correctly format the bars when using `--no-color`:
+// Show the remaining unused blocks but they are hidden
 pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colorless_blocks = elems.bar_glyph.repeat(10 - block_count);
     colorless_blocks

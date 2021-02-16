@@ -8,16 +8,18 @@
 
 ---
 
-## About Macchina
+# About Macchina
 Macchina is a fetching program, not a library. But you can use the 
 functions it relies on to extract system data in your own program.
 
 It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
 
+If Macchina fails to display certain elements, or their output is incorrect, please create an [issue](https://github.com/grtcdr/macchina/issues/new).
+
 ---
 
-## Benchmarks
+# Benchmarks
 Macchina is pretty fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
@@ -29,12 +31,12 @@ Macchina is pretty fast, see for yourself:
 
 __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
-- Note that hiding elements using Macchina's __--hide__ argument significantly improves speed
+- Note that hiding elements using Macchina's __--hide <element>__ significantly improves speed
 
 ---
 
-## Features
-Macchina displays basic system information such as:
+# Features
+## Macchina displays basic system information such as:
 - Hostname
 - Product
   - Manufacturer
@@ -57,37 +59,39 @@ Macchina displays basic system information such as:
   - Status
 - Palette
 
-> Package count: Arch-based distributions only, as it will print __0__ on any other distribution
+> Package count: __Pacman only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
 
-Macchina supports the following arguments:
+## Macchina supports the following arguments
 
-`--no-color` - Disable colors
+`--no-color / -n` - Disable colors
 
-`--color <color>` - Specify the key color
+`--color / -c <color>` - Specify the key color
 
-`--separator-color <color>` - Specify the separator color
+`--separator-color / -C <color>` - Specify the separator color
 
-`--random-color` - Let Macchina pick a random color for you
+`--random-color / -r` - Let Macchina pick a random color for you
 
-`--palette` - Display palette
+`--palette / -p` - Display palette
 
-`--short-sh` - Shorten shell output (/bin/zsh -> zsh)
+`--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
 
-`--hide <element>` - Hide elements such as host, os, kern, etc.
+`--hide / -H <element>` - Hide elements such as host, os, kern, etc.
 
-`--bar` - Display memory usage and battery percentage as bars
+`--bar / -b` - Display memory usage and battery percentage as bars
 
-`--theme <theme_name>` - Change themes
+![Preview of bar argument](screenshots/bars.png)
 
-`--padding <amount>` - Specify the amount of (left) padding to use
+`--theme / -t <theme_name>` - Specify the theme
 
-`--help` -  Display help menu
+`--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--version` - Print version
+`--help / -h` -  Display help menu
+
+`--version / -v` - Print version
 
 ---
 
-## Installation
+# Installation
 Macchina is available on:
 
 - [AUR](https://aur.archlinux.org/packages/macchina/)
@@ -107,7 +111,7 @@ Macchina is available on:
   
 ---
 
-## Platform Support
+# Platform Support
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |

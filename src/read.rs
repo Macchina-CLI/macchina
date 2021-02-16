@@ -12,12 +12,10 @@ pub fn desktop_session() -> String {
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 pub fn battery_percentage() -> String {
     let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
-
     let ret = match percentage {
         Ok(ret) => ret,
         Err(_e) => return String::new(),
     };
-
     extra::pop_newline(ret)
 }
 
@@ -81,7 +79,6 @@ pub fn shell(shorthand: bool) -> String {
             .expect("read_terminal: stdout to string conversion failed");
         return shell_name.trim().to_string();
     }
-
     // If shell shorthand is false, we use "args=" instead of "comm="
     // to print the full path of the current shell instance name
     let output = Command::new("ps")
@@ -105,7 +102,6 @@ pub fn package_count() -> String {
         .expect("Failed to start 'which' process");
 
     let which = String::from_utf8(wh.stdout).expect("'which' process stdout was not valid UTF-8");
-
     // Continue only if pacman exists
     if !which.is_empty() {
         let pacman = Command::new("pacman")
@@ -130,7 +126,7 @@ pub fn package_count() -> String {
             .trim()
             .to_string();
     }
-    // If /usr/bin/pacman does not exist, package_count will return 0
+    // If pacman is not installed, return 0
     return String::from("0");
 }
 
@@ -169,9 +165,8 @@ pub fn operating_system() -> String {
 /// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
     let mut cpu = String::from(
-        extra::get_line_at("/proc/cpuinfo", 4, "Could not obtain processor model name").unwrap(),
+        extra::get_line_at("/proc/cpuinfo", 4, "Could not obtain processor information").unwrap(),
     );
-
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")

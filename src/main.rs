@@ -115,7 +115,7 @@ fn main() {
 
     // Instantiate Macchina's default behavior, i.e:
     //   color: enabled
-    //   (8 color) palette: disabled
+    //   palette: disabled
     //   shell shorthand: disabled
     let mut opts = Options::new();
 
@@ -126,7 +126,6 @@ fn main() {
     if matches.is_present("palette") {
         opts.palette_status = true;
     }
-
     if matches.is_present("padding") {
         elems.set_left_padding_to(matches.value_of("padding").unwrap().parse().unwrap());
     }
