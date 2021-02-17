@@ -1,8 +1,9 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader, Error};
-use std::path::Path;
-
 use crate::memory;
+use std::{
+    fs::File,
+    io::{BufRead, BufReader, Error},
+    path::Path,
+};
 
 /// Pop '__\n__' from the end of a string if it is found
 pub fn pop_newline(mut string: String) -> String {

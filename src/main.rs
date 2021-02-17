@@ -1,15 +1,13 @@
-extern crate clap;
 mod bars;
 mod display;
 mod extra;
 mod format;
-mod machine;
 mod memory;
+mod product;
 mod read;
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
-use display::Options;
-use display::{choose_color, Elements};
+use display::{choose_color, Elements, Options};
 
 /// Macchina's version
 pub const VERSION: &str = crate_version!();

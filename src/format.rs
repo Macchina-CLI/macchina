@@ -1,4 +1,3 @@
-extern crate bytesize;
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -52,7 +51,6 @@ pub fn battery(percentage: String, status: String) -> String {
 pub fn memory(used: u64, total: u64) -> String {
     let total = ByteSize::kb(total);
     let used = ByteSize::kb(used);
-
     String::from(used.to_string() + "/" + &total.to_string())
 }
 
@@ -70,7 +68,7 @@ pub fn machine(
     product_family: String,
     product_name: String,
 ) -> String {
-    if product_version.is_empty() || product_version.len() <= 10 {
+    if product_version.is_empty() || product_version.len() <= 15 {
         return String::from(sys_vendor + " " + &product_family + " " + &product_name);
     }
     product_version
@@ -80,7 +78,6 @@ pub fn desktop_session(mut session_name: String) -> String {
     if !session_name.is_empty() {
         let last_occurence_index = session_name.rfind("/").unwrap() + 1;
         session_name.replace_range(0..last_occurence_index, "");
-
         // Uppercase first letter
         let first_letter = session_name
             .chars()
@@ -90,11 +87,9 @@ pub fn desktop_session(mut session_name: String) -> String {
             .to_string();
         // Remove first letter from original string
         session_name.remove(0);
-        // Append to new string the uppercase
-        // letter and rest of original string
-        let new_string = first_letter + &session_name;
-
-        return new_string;
+        // Concatenate the first letter and
+        // the remainder of the original String
+        return first_letter + &session_name;
     }
     String::from("Unknown")
 }

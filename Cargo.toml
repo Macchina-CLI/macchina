@@ -16,7 +16,7 @@ opt-level = 3
 debug = false
 
 [dependencies]
-colored = "2"
+colored = "2.0.0"
 num_cpus = "1.13.0"
 nix = "0.19.1"
 bytesize = "1.0.1"

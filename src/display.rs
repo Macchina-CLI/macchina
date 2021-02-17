@@ -1,6 +1,5 @@
-extern crate num_cpus;
 use crate::{
-    bars, format, machine, memory, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
+    bars, format, memory, product, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
 };
 use colored::{Color, ColoredString, Colorize};
 use rand::Rng;
@@ -83,20 +82,17 @@ impl Elements {
         Elements {
             hostname: Pair::new(String::from("Host"), read::hostname()),
             os: Pair::new(String::from("Os"), read::operating_system()),
-            desktop_env: Pair::new(
-                String::from("Desk"),
-                format::desktop_session(read::desktop_session()),
-            ),
+            desktop_env: Pair::new(String::from("Desk"), read::desktop_session()),
             kernel: Pair::new(String::from("Kern"), read::kernel_version()),
             packages: Pair::new(String::from("Pkgs"), read::package_count()),
             shell: Pair::new(String::from("Sh"), String::new()),
             machine: Pair::new(
                 String::from("Mach"),
                 format::machine(
-                    machine::product_version(),
-                    machine::sys_vendor(),
-                    machine::product_family(),
-                    machine::product_name(),
+                    product::product_version(),
+                    product::sys_vendor(),
+                    product::product_family(),
+                    product::product_name(),
                 ),
             ),
             terminal: Pair::new(String::from("Term"), read::terminal()),
@@ -424,7 +420,7 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = true;
     }
-    
+
     print_info(elems, options);
 }
 
