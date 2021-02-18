@@ -85,7 +85,7 @@ fn main() {
                 .max_values(11)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "mach", "os", "desk", "kern", "pkgs", "sh", "term", "cpu", "up", "mem",
+                    "host", "mach", "distro", "desk", "kern", "pkgs", "sh", "term", "cpu", "up", "mem",
                     "bat",
                 ]),
         )
@@ -112,7 +112,7 @@ fn main() {
     let mut elems = Elements::new();
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
-    elems.extra.longest_key = Elements::longest_key(&elems);
+    elems.format.longest_key = Elements::longest_key(&elems);
 
     // Instantiate Macchina's default behavior, i.e:
     //   color: enabled

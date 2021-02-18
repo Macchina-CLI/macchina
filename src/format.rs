@@ -35,6 +35,13 @@ pub fn uptime(up: String) -> String {
 }
 
 /// Construct a new _String_ from the values
+/// returned by `read::hostname` and `read::username`
+pub fn host(hostname: String, username: String) -> String
+{
+    username + "@" + &hostname
+}
+
+/// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery(percentage: String, status: String) -> String {
     if !percentage.is_empty() && !status.is_empty() {
