@@ -1,6 +1,4 @@
-use crate::{
-    bars, format, memory, product, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
-};
+use crate::{bars, format, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
 use colored::{Color, ColoredString, Colorize};
 use rand::Rng;
 use std::fmt;
@@ -103,38 +101,18 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            host: Pair::new(
-                String::from("Host"),
-                format::host(read::hostname(), read::username()),
-            ),
+            host: Pair::new(String::from("Host"), format::host()),
             distro: Pair::new(String::from("Dist"), read::operating_system()),
             desktop_env: Pair::new(String::from("Desk"), read::desktop_session()),
             kernel: Pair::new(String::from("Kern"), read::kernel_version()),
             packages: Pair::new(String::from("Pkgs"), read::package_count()),
             shell: Pair::new(String::from("Shll"), String::new()),
-            machine: Pair::new(
-                String::from("Mach"),
-                format::machine(
-                    product::product_version(),
-                    product::sys_vendor(),
-                    product::product_family(),
-                    product::product_name(),
-                ),
-            ),
+            machine: Pair::new(String::from("Mach"), format::machine()),
             terminal: Pair::new(String::from("Term"), read::terminal()),
-            cpu: Pair::new(
-                String::from("Proc"),
-                format::cpu(read::cpu_model_name(), num_cpus::get()),
-            ),
-            memory: Pair::new(
-                String::from("Memo"),
-                format::memory(memory::used(), memory::memtotal()),
-            ),
+            cpu: Pair::new(String::from("Proc"), format::cpu()),
+            memory: Pair::new(String::from("Memo"), format::memory()),
             uptime: Pair::new(String::from("Upti"), read::uptime()),
-            battery: Pair::new(
-                String::from("Batt"),
-                format::battery(read::battery_percentage(), read::battery_status()),
-            ),
+            battery: Pair::new(String::from("Batt"), format::battery()),
             format: Format::new(),
         }
     }
@@ -183,16 +161,19 @@ impl Elements {
     pub fn set_left_padding_to(&mut self, amount: usize) {
         self.format.padding = " ".repeat(amount)
     }
-    pub fn enable_bar(&mut self) {
-        self.format.bar = true;
-    }
     pub fn set_longest_key(&mut self) {
         self.format.longest_key = self.longest_key();
     }
     pub fn set_spacing(&mut self, v: usize) {
         self.format.spacing = v;
     }
+    pub fn enable_bar(&mut self) {
+        self.format.bar = true;
+    }
     pub fn longest_key(&self) -> String {
+        // Instead of manually declaring which key is the longest
+        // in order to satisfy auto-spacing's algorithm, let longest_key()
+        // determine the longest key
         let keys: Vec<String> = vec![
             self.host.key.clone(),
             self.machine.key.clone(),
@@ -234,6 +215,8 @@ trait Printing {
     fn print_uptime(&self);
     fn print_memory(&self);
     fn print_battery(&self);
+    fn print_bar(&self, bar: usize);
+    fn print_palette(&self);
 }
 
 impl Printing for Elements {
@@ -411,7 +394,7 @@ impl Printing for Elements {
                         .bold(),
                     " ".repeat(self.format.spacing),
                 );
-                show_bar(self, bars::memory());
+                Printing::print_bar(self, bars::memory());
             } else {
                 println!(
                     "{}{}{}{}{}{}",
@@ -442,7 +425,7 @@ impl Printing for Elements {
                         .bold(),
                     " ".repeat(self.format.spacing),
                 );
-                show_bar(self, bars::battery());
+                Printing::print_bar(self, bars::battery());
             } else {
                 println!(
                     "{}{}{}{}{}{}",
@@ -458,6 +441,42 @@ impl Printing for Elements {
                 );
             }
         }
+    }
+    /// Print a bar next to memory and battery keys:
+    /// it takes a function from the _bars crate_ as the first parameter
+    /// and the color of the keys as a second
+    fn print_bar(&self, bar: usize) {
+        match &self.format.color {
+            Color::White => println!(
+                "{} {} {} {}",
+                self.format.bracket_open,
+                colored_blocks(self, bar),
+                hidden_blocks(self, bar),
+                self.format.bracket_close
+            ),
+            _ => println!(
+                "{} {} {} {}",
+                self.format.bracket_open,
+                colored_blocks(self, bar),
+                colorless_blocks(self, bar),
+                self.format.bracket_close
+            ),
+        }
+    }
+    /// Print a palette using the terminal's colorscheme
+    fn print_palette(&self) {
+        println!(
+            "{}{}{}{}{}{}{}{}{}",
+            self.format.padding,
+            "   ".on_bright_black(),
+            "   ".on_bright_red(),
+            "   ".on_bright_green(),
+            "   ".on_bright_yellow(),
+            "   ".on_bright_blue(),
+            "   ".on_bright_purple(),
+            "   ".on_bright_cyan(),
+            "   ".on_bright_white()
+        );
     }
 }
 
@@ -485,25 +504,9 @@ pub fn print_info(mut elems: Elements, opts: Options) {
 
     if opts.palette_status {
         println!();
-        print_palette(&elems);
+        elems.print_palette();
         println!();
     }
-}
-
-/// Print a palette using the terminal's colorscheme
-pub fn print_palette(elems: &Elements) {
-    println!(
-        "{}{}{}{}{}{}{}{}{}",
-        elems.format.padding,
-        "   ".on_bright_black(),
-        "   ".on_bright_red(),
-        "   ".on_bright_green(),
-        "   ".on_bright_yellow(),
-        "   ".on_bright_blue(),
-        "   ".on_bright_purple(),
-        "   ".on_bright_cyan(),
-        "   ".on_bright_white()
-    );
 }
 
 /// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
@@ -634,28 +637,6 @@ pub fn help() {
     println!("{}", help_string);
 }
 
-/// Print a bar next to memory and battery keys:
-/// it takes a function from the _bars crate_ as the first parameter
-/// and the color of the keys as a second
-pub fn show_bar(elems: &Elements, bar: usize) {
-    match elems.format.color {
-        Color::White => println!(
-            "{} {} {} {}",
-            elems.format.bracket_open,
-            colored_blocks(elems, bar),
-            hidden_blocks(elems, bar),
-            elems.format.bracket_close
-        ),
-        _ => println!(
-            "{} {} {} {}",
-            elems.format.bracket_open,
-            colored_blocks(elems, bar),
-            colorless_blocks(elems, bar),
-            elems.format.bracket_close
-        ),
-    }
-}
-
 /// Return the correct amount of colored blocks: colored blocks are used blocks
 pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colored_blocks = elems.format.bar_glyph.repeat(block_count);
@@ -671,7 +652,7 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
 }
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks
-pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
         .trim()
@@ -681,7 +662,6 @@ pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
         .map(|c| c.iter().collect::<String>())
         .collect::<Vec<String>>()
         .join(" ")
-        .color(Color::White)
 }
 
 // Used to correctly format the bars when using `--no-color`:

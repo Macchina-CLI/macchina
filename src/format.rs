@@ -1,3 +1,4 @@
+use crate::{memory, product, read};
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -36,13 +37,15 @@ pub fn uptime(up: String) -> String {
 
 /// Construct a new _String_ from the values
 /// returned by `read::hostname` and `read::username`
-pub fn host(hostname: String, username: String) -> String {
-    username + "@" + &hostname
+pub fn host() -> String {
+    read::username() + "@" + &read::hostname()
 }
 
 /// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
-pub fn battery(percentage: String, status: String) -> String {
+pub fn battery() -> String {
+    let percentage = read::battery_percentage();
+    let status = read::battery_status();
     if !percentage.is_empty() && !status.is_empty() {
         if percentage != "100" {
             return String::from(percentage + "% - " + &status);
@@ -54,30 +57,31 @@ pub fn battery(percentage: String, status: String) -> String {
 
 /// Construct a new _String_ from the values
 /// returned by `memory::used` and `memory::memtotal`
-pub fn memory(used: u64, total: u64) -> String {
-    let total = ByteSize::kb(total);
-    let used = ByteSize::kb(used);
+pub fn memory() -> String {
+    let total = ByteSize::kb(memory::memtotal());
+    let used = ByteSize::kb(memory::used());
     String::from(used.to_string() + "/" + &total.to_string())
 }
 
 /// Construct a new _String_ from the values
 /// returned by `read::cpu_model_name` and `num_cpus::get`
-pub fn cpu(cpu_model_name: String, logical_cores: usize) -> String {
-    String::from(cpu_model_name + " (" + &logical_cores.to_string() + ")")
+pub fn cpu() -> String {
+    String::from(read::cpu_model_name() + " (" + &num_cpus::get().to_string() + ")")
 }
 
 /// Construct a new _String_ from the values
 /// returned by `machine::sys_vendor` and `machine::product_family` or `machine::product_version`
-pub fn machine(
-    product_version: String,
-    sys_vendor: String,
-    product_family: String,
-    product_name: String,
-) -> String {
-    if product_version.is_empty() || product_version.len() <= 15 {
-        return String::from(sys_vendor + " " + &product_family + " " + &product_name);
+pub fn machine() -> String {
+    if product::product_version().is_empty() || product::product_version().len() <= 15 {
+        return String::from(
+            product::sys_vendor()
+                + " "
+                + &product::product_family()
+                + " "
+                + &product::product_name(),
+        );
     }
-    product_version
+    product::product_version()
 }
 
 pub fn desktop_session(mut session_name: String) -> String {
