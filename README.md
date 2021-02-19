@@ -26,11 +26,8 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Hostname has now been renamed to "Host" as it now includes both: `username` and `hostname`
-- Renamed `giraffe` to `long` to avoid confusion
-- Auto-spacing has been implemented and is now applied to all themes, giving Macchina a cleaner look
-- Added the ability to change spacing using `--spacing / -S`
-- Changed default padding symbol
+- Fix extra whitespace in battery bar
+- Move relevant functions inside Elements struct
 
 ---
 
