@@ -26,10 +26,11 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-Instead of sleeping, I made some achievements:
-- Simplify Macchina's padding implementation
-- Simpler and more maintainable bar system:
-  - In order to implement a new feature, which is a different bar glyph and brackets for different themes, the old bar implementation had to be revised, because it was nothing short of a __mess__... It's now half as long, _probably_ faster, but the end result was, drumroll please... __clean code__.
+- Hostname has now been renamed to "Host" as it now includes both: `username` and `hostname`
+- Renamed `giraffe` to `long` to avoid confusion
+- Auto-spacing has been implemented and is now applied to all themes, giving Macchina a cleaner look
+- Added the ability to change spacing using `--spacing / -S`
+- Changed default padding symbol
 
 ---
 
@@ -51,7 +52,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 # Features <a name="features"></a>
 ## Macchina displays basic system information such as:
-- Hostname
+- Host
+  - Username
+  - Hostname
 - Product
   - Manufacturer
   - Model name
@@ -99,7 +102,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 `--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--help / -h` -  Display help menu
+`--spacing / -S <amount>` - Specify the amount of spacing to use
+
+`--help / -h` -  Print help text
 
 `--version / -v` - Print version
 

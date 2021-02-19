@@ -584,16 +584,19 @@ pub fn help() {
     let usage_string: &str = "
     USAGE: macchina [OPTIONS]
     OPTIONS:
-    -h, --help                      -   display the help menu
-    -p, --palette                   -   display the palette
-    -n, --no-color                  -   disable colors
-    -r, --random-color              -   let macchina pick a random color for you
-    -c, --color <color>             -   specify the key color
-    -C, --separator-color <color>   -   specify the separator color
-    -t, --theme <theme>             -   specify the theme
-    -H, --hide <element>            -   hide the specified elements
-    -P, --padding <amount>          -   specify the amount of left padding to use
-    -b, --bar                       -   display bars instead of values for battery and memory";
+    -h, --help                      -   Print help text
+    -v, --version                   -   Print Macchina's version
+    -p, --palette                   -   Display palette
+    -n, --no-color                  -   Disable colors
+    -r, --random-color              -   Let Macchina pick a random color for you
+    -c, --color <color>             -   Specify the key color
+    -C, --separator-color <color>   -   Specify the separator color
+    -t, --theme <theme>             -   Specify the theme to use
+    -P, --padding <amount>          -   Specify the amount of left padding to use
+    -S, --spacing <amount>          -   Specify the amount of spacing to use
+    -b, --bar                       -   Display bars instead of values for battery and memory
+    -s, --short-shell               -   Shorten shell output
+    -H, --hide <element>            -   Hide the specified elements";
     let help_string: &str = "
     Battery Information:
         Battery information might print an error if the file macchina is 
@@ -614,7 +617,7 @@ pub fn help() {
         using --color / -c <color>
         Supported colors (case-sensitive):
             red, green, blue, magenta, cyan, yellow, black and white.
-        To let macchina randomly pick a color for you, use --random-color / -r
+        To let Macchina randomly pick a color for you, use --random-color / -r
         To change the separator color, use --separator-color / -C <color>   
 
     Theming:

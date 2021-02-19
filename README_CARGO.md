@@ -37,7 +37,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 # Features
 ## Macchina displays basic system information such as:
-- Hostname
+- Host
+  - Username
+  - Hostname
 - Product
   - Manufacturer
   - Model name
@@ -61,7 +63,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 > Package count: __Pacman only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
 
-## Macchina supports the following arguments
+## Macchina supports the following arguments:
 
 `--no-color / -n` - Disable colors
 
@@ -81,11 +83,13 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 ![Preview of bar argument](screenshots/bars.png)
 
-`--theme / -t <theme_name>` - Specify the theme
+`--theme / -t <theme_name>` - Specify the theme to use
 
 `--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--help / -h` -  Display help menu
+`--spacing / -S <amount>` - Specify the amount of spacing to use
+
+`--help / -h` -  Print help text
 
 `--version / -v` - Print version
 

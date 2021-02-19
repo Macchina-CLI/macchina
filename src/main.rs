@@ -104,7 +104,7 @@ fn main() {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .possible_values(&["def", "alt", "giraffe"]),
+                .possible_values(&["def", "alt", "long"]),
         )
         .arg(
             Arg::with_name("short-sh")
