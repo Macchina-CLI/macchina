@@ -1,4 +1,5 @@
 use crate::{extra, format, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
+use extra::pop_newline;
 use nix::unistd;
 use std::{
     env, fs,
@@ -32,6 +33,15 @@ pub fn battery_status() -> String {
         Err(_e) => return String::new(),
     };
     extra::pop_newline(ret)
+}
+
+pub fn username() -> String {
+    let output = Command::new("whoami")
+        .output()
+        .expect("Failed to get username using 'whoami'");
+    let username =
+        String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
+    pop_newline(username)
 }
 
 /// Read current terminal instance name using `ps`
@@ -94,8 +104,8 @@ pub fn shell(shorthand: bool) -> String {
         .output()
         .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
 
-    let shell_name = String::from_utf8(output.stdout)
-        .expect("read_terminal: stdout to string conversion failed");
+    let shell_name =
+        String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
     String::from(shell_name.trim())
 }
 
