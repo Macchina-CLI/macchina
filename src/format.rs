@@ -36,8 +36,7 @@ pub fn uptime(up: String) -> String {
 
 /// Construct a new _String_ from the values
 /// returned by `read::hostname` and `read::username`
-pub fn host(hostname: String, username: String) -> String
-{
+pub fn host(hostname: String, username: String) -> String {
     username + "@" + &hostname
 }
 

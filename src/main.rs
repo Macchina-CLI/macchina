@@ -42,6 +42,14 @@ fn main() {
                 .multiple(false),
         )
         .arg(
+            Arg::with_name("spacing")
+                .short("-S")
+                .validator(extra::is_int)
+                .long("spacing")
+                .takes_value(true)
+                .multiple(false),
+        )
+        .arg(
             Arg::with_name("no-color")
                 .short("n")
                 .long("no-color")
@@ -85,8 +93,8 @@ fn main() {
                 .max_values(11)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "mach", "distro", "desk", "kern", "pkgs", "sh", "term", "cpu", "up", "mem",
-                    "bat",
+                    "host", "mach", "distro", "desk", "kern", "pkgs", "sh", "term", "cpu", "up",
+                    "mem", "bat",
                 ]),
         )
         .arg(
@@ -112,7 +120,7 @@ fn main() {
     let mut elems = Elements::new();
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
-    elems.format.longest_key = Elements::longest_key(&elems);
+    elems.set_longest_key();
 
     // Instantiate Macchina's default behavior, i.e:
     //   color: enabled
@@ -129,6 +137,9 @@ fn main() {
     }
     if matches.is_present("padding") {
         elems.set_left_padding_to(matches.value_of("padding").unwrap().parse().unwrap());
+    }
+    if matches.is_present("spacing") {
+        elems.set_spacing(matches.value_of("spacing").unwrap().parse().unwrap());
     }
     if matches.is_present("color") {
         let color: Color = choose_color(matches.value_of("color").unwrap());
@@ -163,8 +174,8 @@ fn main() {
     if matches.is_present("theme") {
         if matches.value_of("theme").unwrap() == "alt" {
             elems.set_theme_alt();
-        } else if matches.value_of("theme").unwrap() == "giraffe" {
-            elems.set_theme_giraffe();
+        } else if matches.value_of("theme").unwrap() == "long" {
+            elems.set_theme_long();
         }
     }
 

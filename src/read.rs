@@ -39,7 +39,8 @@ pub fn username() -> String {
     let output = Command::new("whoami")
         .output()
         .expect("Failed to get username using 'whoami'");
-    let username = String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
+    let username =
+        String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
     pop_newline(username)
 }
 
@@ -103,8 +104,8 @@ pub fn shell(shorthand: bool) -> String {
         .output()
         .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
 
-    let shell_name = String::from_utf8(output.stdout)
-        .expect("'ps' process stdout was not valid UTF-8");
+    let shell_name =
+        String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
     String::from(shell_name.trim())
 }
 

@@ -83,8 +83,8 @@ impl Format {
 /// __Elements__ encapsulates elements that are to be displayed,
 /// each element is a __Pair__
 pub struct Elements {
-    hostname: Pair,
-    os: Pair,
+    host: Pair,
+    distro: Pair,
     desktop_env: Pair,
     machine: Pair,
     kernel: Pair,
@@ -103,8 +103,11 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            hostname: Pair::new(String::from("Host"), format::host(read::hostname(), read::username())),
-            os: Pair::new(String::from("Dist"), read::operating_system()),
+            host: Pair::new(
+                String::from("Host"),
+                format::host(read::hostname(), read::username()),
+            ),
+            distro: Pair::new(String::from("Dist"), read::operating_system()),
             desktop_env: Pair::new(String::from("Desk"), read::desktop_session()),
             kernel: Pair::new(String::from("Kern"), read::kernel_version()),
             packages: Pair::new(String::from("Pkgs"), read::package_count()),
@@ -137,13 +140,12 @@ impl Elements {
     }
     pub fn set_theme_alt(&mut self) {
         self.format.separator = String::from("=>");
-        self.format.spacing = 2;
         self.format.bar_glyph = String::from("■");
         self.format.bracket_open = '[';
         self.format.bracket_close = ']';
-        self.hostname.update_key(String::from("Ho"));
+        self.host.update_key(String::from("Ho"));
         self.machine.update_key(String::from("Ma"));
-        self.os.update_key(String::from("Os"));
+        self.distro.update_key(String::from("Os"));
         self.desktop_env.update_key(String::from("De"));
         self.kernel.update_key(String::from("Ke"));
         self.packages.update_key(String::from("Pa"));
@@ -153,14 +155,13 @@ impl Elements {
         self.memory.update_key(String::from("Me"));
         self.uptime.update_key(String::from("Up"));
         self.battery.update_key(String::from("Ba"));
-        self.format.longest_key = self.longest_key();
+        self.set_longest_key();
     }
-    pub fn set_theme_giraffe(&mut self) {
+    pub fn set_theme_long(&mut self) {
         self.format.separator = String::from("~");
-        self.format.spacing = 2;
-        self.hostname.update_key(String::from("Hostname"));
+        self.host.update_key(String::from("Hostname"));
         self.machine.update_key(String::from("Machine"));
-        self.os.update_key(String::from("Distribution"));
+        self.distro.update_key(String::from("Distribution"));
         self.desktop_env
             .update_key(String::from("Desktop Environment"));
         self.kernel.update_key(String::from("Kernel"));
@@ -171,7 +172,7 @@ impl Elements {
         self.memory.update_key(String::from("Memory"));
         self.uptime.update_key(String::from("Uptime"));
         self.battery.update_key(String::from("Battery"));
-        self.format.longest_key = self.longest_key();
+        self.set_longest_key();
     }
     pub fn set_color(&mut self, c: Color) {
         self.format.color = c;
@@ -184,13 +185,18 @@ impl Elements {
     }
     pub fn enable_bar(&mut self) {
         self.format.bar = true;
-
+    }
+    pub fn set_longest_key(&mut self) {
+        self.format.longest_key = self.longest_key();
+    }
+    pub fn set_spacing(&mut self, v: usize) {
+        self.format.spacing = v;
     }
     pub fn longest_key(&self) -> String {
         let keys: Vec<String> = vec![
-            self.hostname.key.clone(),
+            self.host.key.clone(),
             self.machine.key.clone(),
-            self.os.key.clone(),
+            self.distro.key.clone(),
             self.desktop_env.key.clone(),
             self.kernel.key.clone(),
             self.packages.key.clone(),
@@ -216,7 +222,7 @@ impl Elements {
 }
 
 trait Printing {
-    fn print_hostname(&self);
+    fn print_host(&self);
     fn print_machine(&self);
     fn print_os(&self);
     fn print_desktop_env(&self);
@@ -231,19 +237,19 @@ trait Printing {
 }
 
 impl Printing for Elements {
-    fn print_hostname(&self) {
-        if !self.hostname.hidden {
+    fn print_host(&self) {
+        if !self.host.hidden {
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
-                self.hostname.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.hostname.key, &self.format.longest_key)),
+                self.host.key.color(self.format.color).bold(),
+                " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
                 self.format
                     .separator
                     .color(self.format.separator_color)
                     .bold(),
                 " ".repeat(self.format.spacing),
-                self.hostname.value
+                self.host.value
             );
         }
     }
@@ -264,18 +270,18 @@ impl Printing for Elements {
         }
     }
     fn print_os(&self) {
-        if !self.os.hidden {
+        if !self.distro.hidden {
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
-                self.os.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.os.key, &self.format.longest_key)),
+                self.distro.key.color(self.format.color).bold(),
+                " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
                 self.format
                     .separator
                     .color(self.format.separator_color)
                     .bold(),
                 " ".repeat(self.format.spacing),
-                self.os.value
+                self.distro.value
             );
         }
     }
@@ -464,7 +470,7 @@ pub fn print_info(mut elems: Elements, opts: Options) {
         elems.shell.modify(read::shell(false))
     }
 
-    elems.print_hostname();
+    elems.print_host();
     elems.print_machine();
     elems.print_os();
     elems.print_desktop_env();
@@ -503,13 +509,13 @@ pub fn print_palette(elems: &Elements) {
 /// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
 pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
-        elems.hostname.hidden = true;
+        elems.host.hidden = true;
     }
     if hide_parameters.contains(&"mach") {
         elems.machine.hidden = true;
     }
     if hide_parameters.contains(&"distro") {
-        elems.os.hidden = true;
+        elems.distro.hidden = true;
     }
     if hide_parameters.contains(&"desk") {
         elems.desktop_env.hidden = true;
@@ -615,7 +621,7 @@ pub fn help() {
         Macchina comes with multiple themes out of the box,
         to change the default theme, use --theme / -t <theme>
         Supported themes (case-sensitive):
-            def, alt and giraffe.
+            def, alt and long.
 
     Hiding elements:
         To hide an element (or more), use --hide / -H <element>
@@ -625,7 +631,7 @@ pub fn help() {
     println!("{}", help_string);
 }
 
-/// Prints a bar next to memory and battery keys:
+/// Print a bar next to memory and battery keys:
 /// it takes a function from the _bars crate_ as the first parameter
 /// and the color of the keys as a second
 pub fn show_bar(elems: &Elements, bar: usize) {
@@ -647,9 +653,11 @@ pub fn show_bar(elems: &Elements, bar: usize) {
     }
 }
 
+/// Return the correct amount of colored blocks: colored blocks are used blocks
 pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colored_blocks = elems.format.bar_glyph.repeat(block_count);
     colored_blocks
+        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
@@ -659,9 +667,11 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
         .color(elems.format.color)
 }
 
+/// Return the correct amount of colorless blocks: colorless blocks are unused blocks
 pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
+        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
@@ -676,6 +686,7 @@ pub fn colorless_blocks(elems: &Elements, block_count: usize) -> ColoredString {
 pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
+        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
