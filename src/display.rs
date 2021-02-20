@@ -215,7 +215,7 @@ trait Printing {
     fn print_uptime(&self);
     fn print_memory(&self);
     fn print_battery(&self);
-    fn print_bar(&self, bar: usize);
+    fn print_bar(&self, blocks: usize);
     fn print_palette(&self);
 }
 
@@ -445,20 +445,20 @@ impl Printing for Elements {
     /// Print a bar next to memory and battery keys:
     /// it takes a function from the _bars crate_ as the first parameter
     /// and the color of the keys as a second
-    fn print_bar(&self, bar: usize) {
+    fn print_bar(&self, blocks: usize) {
         match &self.format.color {
             Color::White => println!(
                 "{} {} {} {}",
                 self.format.bracket_open,
-                colored_blocks(self, bar),
-                hidden_blocks(self, bar),
+                colored_blocks(self, blocks),
+                hidden_blocks(self, blocks),
                 self.format.bracket_close
             ),
             _ => println!(
                 "{} {} {} {}",
                 self.format.bracket_open,
-                colored_blocks(self, bar),
-                colorless_blocks(self, bar),
+                colored_blocks(self, blocks),
+                colorless_blocks(self, blocks),
                 self.format.bracket_close
             ),
         }

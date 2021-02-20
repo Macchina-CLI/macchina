@@ -107,9 +107,9 @@ fn main() {
                 .possible_values(&["def", "alt", "long"]),
         )
         .arg(
-            Arg::with_name("short-sh")
+            Arg::with_name("short-shell")
                 .short("s")
-                .long("short-sh")
+                .long("short-shell")
                 .multiple(false),
         )
         .arg(Arg::with_name("help").short("h").long("help"))
@@ -149,7 +149,7 @@ fn main() {
         let color: Color = choose_color(matches.value_of("separator-color").unwrap());
         elems.set_separator_color(color);
     }
-    if matches.is_present("short-sh") {
+    if matches.is_present("short-shell") {
         opts.shell_shorthand = true;
     }
     if matches.is_present("no-color") {
