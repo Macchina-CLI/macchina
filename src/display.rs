@@ -1,5 +1,5 @@
 use crate::{bars, format, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
-use colored::{Color, ColoredString, Colorize};
+use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
 
@@ -101,18 +101,18 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            host: Pair::new(String::from("Host"), format::host()),
-            distro: Pair::new(String::from("Dist"), read::operating_system()),
-            desktop_env: Pair::new(String::from("Desk"), read::desktop_session()),
-            kernel: Pair::new(String::from("Kern"), read::kernel_version()),
-            packages: Pair::new(String::from("Pkgs"), read::package_count()),
+            host: Pair::new(String::from("Host"), String::new()),
+            distro: Pair::new(String::from("Dist"), String::new()),
+            desktop_env: Pair::new(String::from("Desk"), String::new()),
+            kernel: Pair::new(String::from("Kern"), String::new()),
+            packages: Pair::new(String::from("Pkgs"), String::new()),
             shell: Pair::new(String::from("Shll"), String::new()),
-            machine: Pair::new(String::from("Mach"), format::machine()),
-            terminal: Pair::new(String::from("Term"), read::terminal()),
-            cpu: Pair::new(String::from("Proc"), format::cpu()),
-            memory: Pair::new(String::from("Memo"), format::memory()),
-            uptime: Pair::new(String::from("Upti"), read::uptime()),
-            battery: Pair::new(String::from("Batt"), format::battery()),
+            machine: Pair::new(String::from("Mach"), String::new()),
+            terminal: Pair::new(String::from("Term"), String::new()),
+            cpu: Pair::new(String::from("Proc"), String::new()),
+            memory: Pair::new(String::from("Memo"), String::new()),
+            uptime: Pair::new(String::from("Upti"), String::new()),
+            battery: Pair::new(String::from("Batt"), String::new()),
             format: Format::new(),
         }
     }
@@ -203,25 +203,26 @@ impl Elements {
 }
 
 trait Printing {
-    fn print_host(&self);
-    fn print_machine(&self);
-    fn print_os(&self);
-    fn print_desktop_env(&self);
-    fn print_kernel_ver(&self);
-    fn print_package_count(&self);
-    fn print_shell(&self);
-    fn print_terminal(&self);
-    fn print_processor(&self);
-    fn print_uptime(&self);
-    fn print_memory(&self);
-    fn print_battery(&self);
+    fn print_host(&mut self);
+    fn print_machine(&mut self);
+    fn print_os(&mut self);
+    fn print_desktop_env(&mut self);
+    fn print_kernel_ver(&mut self);
+    fn print_package_count(&mut self);
+    fn print_shell(&mut self);
+    fn print_terminal(&mut self);
+    fn print_processor(&mut self);
+    fn print_uptime(&mut self);
+    fn print_memory(&mut self);
+    fn print_battery(&mut self);
     fn print_bar(&self, blocks: usize);
     fn print_palette(&self);
 }
 
 impl Printing for Elements {
-    fn print_host(&self) {
+    fn print_host(&mut self) {
         if !self.host.hidden {
+            self.host.modify(format::host());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -236,8 +237,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_machine(&self) {
+    fn print_machine(&mut self) {
         if !self.machine.hidden {
+            self.machine.modify(format::machine());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -252,8 +254,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_os(&self) {
+    fn print_os(&mut self) {
         if !self.distro.hidden {
+            self.distro.modify(read::operating_system());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -268,8 +271,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_desktop_env(&self) {
+    fn print_desktop_env(&mut self) {
         if !self.desktop_env.hidden {
+            self.desktop_env.modify(read::desktop_session());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -284,8 +288,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_kernel_ver(&self) {
+    fn print_kernel_ver(&mut self) {
         if !self.kernel.hidden {
+            self.kernel.modify(read::kernel_version());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -300,8 +305,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_package_count(&self) {
+    fn print_package_count(&mut self) {
         if !self.packages.hidden {
+            self.packages.modify(read::package_count());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -316,7 +322,7 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_shell(&self) {
+    fn print_shell(&mut self) {
         if !self.shell.hidden {
             println!(
                 "{}{}{}{}{}{}",
@@ -332,8 +338,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_terminal(&self) {
+    fn print_terminal(&mut self) {
         if !self.terminal.hidden {
+            self.terminal.modify(read::terminal());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -348,8 +355,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_processor(&self) {
+    fn print_processor(&mut self) {
         if !self.cpu.hidden {
+            self.cpu.modify(format::cpu());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -364,8 +372,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_uptime(&self) {
+    fn print_uptime(&mut self) {
         if !self.uptime.hidden {
+            self.uptime.modify(read::uptime());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -380,7 +389,7 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_memory(&self) {
+    fn print_memory(&mut self) {
         if !self.memory.hidden {
             if self.format.bar {
                 print!(
@@ -396,6 +405,7 @@ impl Printing for Elements {
                 );
                 Printing::print_bar(self, bars::memory());
             } else {
+                self.memory.modify(format::memory());
                 println!(
                     "{}{}{}{}{}{}",
                     self.format.padding,
@@ -411,7 +421,7 @@ impl Printing for Elements {
             }
         }
     }
-    fn print_battery(&self) {
+    fn print_battery(&mut self) {
         if !self.battery.hidden {
             if self.format.bar {
                 print!(
@@ -427,6 +437,7 @@ impl Printing for Elements {
                 );
                 Printing::print_bar(self, bars::battery());
             } else {
+                self.battery.modify(format::battery());
                 println!(
                     "{}{}{}{}{}{}",
                     self.format.padding,
@@ -447,20 +458,38 @@ impl Printing for Elements {
     /// and the color of the keys as a second
     fn print_bar(&self, blocks: usize) {
         match &self.format.color {
-            Color::White => println!(
-                "{} {} {} {}",
-                self.format.bracket_open,
-                colored_blocks(self, blocks),
-                hidden_blocks(self, blocks),
-                self.format.bracket_close
-            ),
-            _ => println!(
-                "{} {} {} {}",
-                self.format.bracket_open,
-                colored_blocks(self, blocks),
-                colorless_blocks(self, blocks),
-                self.format.bracket_close
-            ),
+            Color::White => match blocks {
+                10 => println!(
+                    "{} {}{} {}",
+                    self.format.bracket_open,
+                    colored_blocks(self, blocks).color(self.format.color),
+                    hidden_blocks(self, blocks).hidden(),
+                    self.format.bracket_close
+                ),
+                _ => println!(
+                    "{} {} {} {}",
+                    self.format.bracket_open,
+                    colored_blocks(self, blocks).color(self.format.color),
+                    hidden_blocks(self, blocks).hidden(),
+                    self.format.bracket_close
+                ),
+            },
+            _ => match blocks {
+                10 => println!(
+                    "{} {}{} {}",
+                    self.format.bracket_open,
+                    colored_blocks(self, blocks).color(self.format.color),
+                    colorless_blocks(self, blocks),
+                    self.format.bracket_close
+                ),
+                _ => println!(
+                    "{} {} {} {}",
+                    self.format.bracket_open,
+                    colored_blocks(self, blocks).color(self.format.color),
+                    colorless_blocks(self, blocks),
+                    self.format.bracket_close
+                ),
+            },
         }
     }
     /// Print a palette using the terminal's colorscheme
@@ -633,12 +662,11 @@ pub fn help() {
         To hide an element (or more), use --hide / -H <element>
         Hideable elements (case-sensitive):
             host, mach, distro, kern, pkgs, sh, term, cpu, up, mem, bat.";
-    println!("{}", usage_string);
-    println!("{}", help_string);
+    println!("{}\n{}\n", usage_string, help_string);
 }
 
 /// Return the correct amount of colored blocks: colored blocks are used blocks
-pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+pub fn colored_blocks(elems: &Elements, block_count: usize) -> String {
     let colored_blocks = elems.format.bar_glyph.repeat(block_count);
     colored_blocks
         .chars()
@@ -647,7 +675,6 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
         .map(|c| c.iter().collect::<String>())
         .collect::<Vec<String>>()
         .join(" ")
-        .color(elems.format.color)
 }
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks
@@ -662,9 +689,9 @@ pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
         .join(" ")
 }
 
-// Used to correctly format the bars when using `--no-color`:
+// Used to correctly format the bars when using `--no-color` or `--color white`:
 // Show the remaining unused blocks but they are hidden
-pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
+pub fn hidden_blocks(elems: &Elements, block_count: usize) -> String {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
         .chars()
@@ -673,5 +700,4 @@ pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
         .map(|c| c.iter().collect::<String>())
         .collect::<Vec<String>>()
         .join(" ")
-        .hidden()
 }

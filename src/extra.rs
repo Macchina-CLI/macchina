@@ -28,7 +28,7 @@ pub fn get_line_at(
 }
 
 /// Return `perc`% of 100%. This is used to determine
-/// how many blocks to display in the memory bar
+/// how many used blocks to display in the memory bar
 pub fn percent_of_total(perc: u64) -> u64 {
     let new_perc = (perc as f64 / 100.0) * memory::memtotal() as f64;
     new_perc as u64
