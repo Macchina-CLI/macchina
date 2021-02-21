@@ -641,7 +641,6 @@ pub fn help() {
 pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colored_blocks = elems.format.bar_glyph.repeat(block_count);
     colored_blocks
-        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
@@ -655,7 +654,6 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> ColoredString {
 pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
-        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
@@ -669,7 +667,6 @@ pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
 pub fn hidden_blocks(elems: &Elements, block_count: usize) -> ColoredString {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
-        .trim()
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
