@@ -25,8 +25,9 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Values are no longer assigned to their respective keys when instantiating `Elements` struct. Instead, these values are only assigned right before printing an element that is not hidden: this is done to improve speed when hiding elements.
-- Finally fixed the bar whitespace issue.
+- Changes to CPU output: 
+  - (TM) will be displayed as ™
+  - (R) will be displayed as ®
 
 ---
 

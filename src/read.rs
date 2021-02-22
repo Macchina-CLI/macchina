@@ -35,15 +35,6 @@ pub fn battery_status() -> String {
     extra::pop_newline(ret)
 }
 
-pub fn username() -> String {
-    let output = Command::new("whoami")
-        .output()
-        .expect("Failed to get username using 'whoami'");
-    let username =
-        String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
-    pop_newline(username)
-}
-
 /// Read current terminal instance name using `ps`
 pub fn terminal() -> String {
     //  ps -p $$ -o ppid=
@@ -163,6 +154,15 @@ pub fn hostname() -> String {
         Err(_e) => return String::from("Could not obtain hostname"),
     };
     ret
+}
+
+pub fn username() -> String {
+    let output = Command::new("whoami")
+        .output()
+        .expect("Failed to get username using 'whoami'");
+    let username =
+        String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
+    pop_newline(username)
 }
 
 /// Read distribution name from `/etc/os-release`

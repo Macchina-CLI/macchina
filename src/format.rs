@@ -67,6 +67,8 @@ pub fn memory() -> String {
 /// returned by `read::cpu_model_name` and `num_cpus::get`
 pub fn cpu() -> String {
     String::from(read::cpu_model_name() + " (" + &num_cpus::get().to_string() + ")")
+        .replace("(TM)", "™")
+        .replace("(R)", "®")
 }
 
 /// Construct a new _String_ from the values
