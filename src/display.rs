@@ -27,10 +27,10 @@ pub struct Pair {
 }
 
 impl Pair {
-    fn new(k: String, v: String) -> Pair {
+    fn new(k: String) -> Pair {
         Pair {
             key: k,
-            value: v,
+            value: String::new(),
             hidden: false,
         }
     }
@@ -101,18 +101,18 @@ pub struct Elements {
 impl Elements {
     pub fn new() -> Elements {
         Elements {
-            host: Pair::new(String::from("Host"), String::new()),
-            distro: Pair::new(String::from("Dist"), String::new()),
-            desktop_env: Pair::new(String::from("Desk"), String::new()),
-            kernel: Pair::new(String::from("Kern"), String::new()),
-            packages: Pair::new(String::from("Pkgs"), String::new()),
-            shell: Pair::new(String::from("Shll"), String::new()),
-            machine: Pair::new(String::from("Mach"), String::new()),
-            terminal: Pair::new(String::from("Term"), String::new()),
-            cpu: Pair::new(String::from("Proc"), String::new()),
-            memory: Pair::new(String::from("Memo"), String::new()),
-            uptime: Pair::new(String::from("Upti"), String::new()),
-            battery: Pair::new(String::from("Batt"), String::new()),
+            host: Pair::new(String::from("Host")),
+            distro: Pair::new(String::from("Dist")),
+            desktop_env: Pair::new(String::from("Desk")),
+            kernel: Pair::new(String::from("Kern")),
+            packages: Pair::new(String::from("Pkgs")),
+            shell: Pair::new(String::from("Shll")),
+            machine: Pair::new(String::from("Mach")),
+            terminal: Pair::new(String::from("Term")),
+            cpu: Pair::new(String::from("Proc")),
+            memory: Pair::new(String::from("Memo")),
+            uptime: Pair::new(String::from("Upti")),
+            battery: Pair::new(String::from("Batt")),
             format: Format::new(),
         }
     }
