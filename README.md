@@ -25,9 +25,8 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Changes to CPU output: 
-  - (TM) will be displayed as ™
-  - (R) will be displayed as ®
+- Bump dependency (nix) version
+- Add a preview of the available themes in both README files
 
 ---
 
@@ -48,6 +47,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 ---
 
 # Features <a name="features"></a>
+## Themes:
+![Theme preview](screenshots/theme_preview.png)
+
 ## Macchina displays basic system information such as:
 - Host
   - Username

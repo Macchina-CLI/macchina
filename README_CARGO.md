@@ -37,6 +37,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 ---
 
 # Features
+## Themes:
+![Theme preview](screenshots/theme_preview.png)
+
 ## Macchina displays basic system information such as:
 - Host
   - Username
