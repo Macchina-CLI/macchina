@@ -273,7 +273,7 @@ impl Printing for Elements {
     }
     fn print_desktop_env(&mut self) {
         if !self.desktop_env.hidden {
-            self.desktop_env.modify(read::desktop_session());
+            self.desktop_env.modify(read::desktop_environment());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,

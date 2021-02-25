@@ -86,22 +86,8 @@ pub fn machine() -> String {
     product::product_version()
 }
 
-pub fn desktop_session(mut session_name: String) -> String {
-    if !session_name.is_empty() {
-        let last_occurence_index = session_name.rfind("/").unwrap() + 1;
-        session_name.replace_range(0..last_occurence_index, "");
-        // Uppercase first letter
-        let first_letter = session_name
-            .chars()
-            .next()
-            .unwrap()
-            .to_uppercase()
-            .to_string();
-        // Remove first letter from original string
-        session_name.remove(0);
-        // Concatenate the first letter and
-        // the remainder of the original String
-        return first_letter + &session_name;
-    }
-    String::from("Unknown")
+pub fn desktop_environment(mut session_name: String) -> String {
+    let last_occurence_index = session_name.rfind("/").unwrap() + 1;
+    session_name.replace_range(0..last_occurence_index, "");
+    return session_name;
 }

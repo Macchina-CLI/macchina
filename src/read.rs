@@ -7,12 +7,26 @@ use std::{
 };
 
 /// Read desktop environment name from $DESKTOP_SESSION environment variable
-pub fn desktop_session() -> String {
-    let de = String::from(env!("DESKTOP_SESSION"));
-    if !de.contains("/") {
-        return de;
+/// or from the fallback environment variable $XDG_CURRENT_DESKTOP
+pub fn desktop_environment() -> String {
+    let desktop_env = env::var("DESKTOP_SESSION");
+    match desktop_env {
+        Ok(ret) => {
+            if !ret.contains("/") {
+                return ret.to_string();
+            }
+            format::desktop_environment(ret.to_string())
+        }
+        Err(_e) => {
+            let fallback = env::var("XDG_CURRENT_DESKTOP").ok();
+            let fallback = fallback
+                .as_ref()
+                .map(String::as_str)
+                .and_then(|s| if s.is_empty() { None } else { Some(s) })
+                .unwrap_or("Unknown");
+            return String::from(fallback);
+        }
     }
-    format::desktop_session(de)
 }
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`

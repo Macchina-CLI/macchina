@@ -25,8 +25,7 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Bump dependency (nix) version
-- Add a preview of the available themes in both README files
+- Add desktop environment environment variable fallback (XDG_CURRENT_DESKTOP) in case DESKTOP_SESSION is not set
 
 ---
 
