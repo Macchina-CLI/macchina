@@ -155,19 +155,24 @@ pub fn kernel_version() -> String {
     let output = fs::read_to_string("/proc/version");
     let ret = match output {
         Ok(ret) => ret.split_whitespace().nth(2).unwrap().to_string(),
-        Err(_e) => return String::from("Could not obtain kernel version"),
+        Err(_e) => return String::from("Unknown"),
     };
     ret
 }
 
-/// Read hostname from `/etc/hostname`
+/// Read hostname using nix::unistd::gethostname()
 pub fn hostname() -> String {
-    let output = fs::read_to_string("/etc/hostname");
-    let ret = match output {
-        Ok(ret) => extra::pop_newline(ret),
-        Err(_e) => return String::from("Could not obtain hostname"),
+    let mut buf = [0u8; 64];
+    let hostname_cstr = unistd::gethostname(&mut buf);
+    match hostname_cstr {
+        Ok(hostname_cstr) => {
+            let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
+            return String::from(hostname);
+        }
+        Err(_e) => {
+            return String::from("Unknown");
+        }
     };
-    ret
 }
 
 pub fn username() -> String {
@@ -181,9 +186,7 @@ pub fn username() -> String {
 
 /// Read distribution name from `/etc/os-release`
 pub fn operating_system() -> String {
-    let mut os = String::from(
-        extra::get_line_at("/etc/os-release", 0, "Could not obtain distribution name").unwrap(),
-    );
+    let mut os = String::from(extra::get_line_at("/etc/os-release", 0, "Unknown").unwrap());
     if !os.contains("NAME=\"") {
         return os.replace("NAME=", "");
     }
@@ -193,9 +196,7 @@ pub fn operating_system() -> String {
 
 /// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
-    let mut cpu = String::from(
-        extra::get_line_at("/proc/cpuinfo", 4, "Could not obtain processor information").unwrap(),
-    );
+    let mut cpu = String::from(extra::get_line_at("/proc/cpuinfo", 4, "Unknown").unwrap());
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")
@@ -209,7 +210,7 @@ pub fn uptime() -> String {
     let uptime = fs::read_to_string("/proc/uptime");
     let ret = match uptime {
         Ok(ret) => format::uptime(ret.split_whitespace().next().unwrap().to_string()),
-        Err(_e) => return String::from("Could not obtain uptime"),
+        Err(_e) => return String::from("Unknown"),
     };
     ret
 }

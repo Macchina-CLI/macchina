@@ -25,7 +25,7 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Add desktop environment environment variable fallback (XDG_CURRENT_DESKTOP) in case DESKTOP_SESSION is not set
+- Revert to reading hostname using nix::unistd::gethostname()
 
 ---
 
