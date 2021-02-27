@@ -1,4 +1,5 @@
 mod bars;
+mod battery;
 mod display;
 mod extra;
 mod format;
@@ -10,6 +11,10 @@ use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
 use display::{choose_color, Elements, Options};
 
+#[cfg(target_os = "netbsd")]
+pub const HIDE_DISTRIBUTION: bool = true;
+#[cfg(target_os = "netbsd")]
+pub const HIDE_PACKAGE_COUNT: bool = true;
 /// Macchina's version
 pub const VERSION: &str = crate_version!();
 /// Macchina's default color

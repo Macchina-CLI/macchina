@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use crate::{extra, format, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
 use extra::pop_newline;
 use nix::unistd;
@@ -8,7 +9,6 @@ use std::{
 
 /// Read desktop environment name from $DESKTOP_SESSION environment variable
 /// or from the fallback environment variable $XDG_CURRENT_DESKTOP
-#[cfg(target_os = "linux")]
 pub fn desktop_environment() -> String {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
@@ -28,28 +28,6 @@ pub fn desktop_environment() -> String {
             return extra::ucfirst(fallback);
         }
     }
-}
-
-/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
-#[cfg(target_os = "linux")]
-pub fn battery_percentage() -> String {
-    let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
-    let ret = match percentage {
-        Ok(ret) => ret,
-        Err(_e) => return String::new(),
-    };
-    extra::pop_newline(ret)
-}
-
-/// Read battery status from `/sys/class/power_supply/BAT0/status`
-#[cfg(target_os = "linux")]
-pub fn battery_status() -> String {
-    let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
-    let ret = match status {
-        Ok(ret) => ret,
-        Err(_e) => return String::new(),
-    };
-    extra::pop_newline(ret)
 }
 
 /// Read current terminal instance namethrough `ps`
@@ -119,7 +97,6 @@ pub fn shell(shorthand: bool) -> String {
 }
 
 /// Extract package count through `pacman -Qq | wc -l`
-#[cfg(target_os = "linux")]
 pub fn package_count() -> String {
     let wh = Command::new("which")
         .arg("pacman")
@@ -181,28 +158,57 @@ pub fn username() -> String {
 }
 
 /// Read distribution name through `lsb_release`
-#[cfg(target_os = "linux")]
+// NAME="Arch Linux"
 pub fn distribution() -> String {
-    let output = Command::new("lsb_release")
-        .args(&["-s", "-d"])
-        .output()
-        .expect("ERROR: Failed to obtain distribution name through \"lsb_release\"");
+    let grep = Command::new("cat")
+        .arg("/etc/os-release")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"cat\" process");
+
+    let grep_out = grep.stdout.expect("ERROR: failed to open \"cat\" stdout");
+
+    let head = Command::new("head")
+        .args(&["-n", "1"])
+        .stdin(Stdio::from(grep_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to start \"head\" process");
+
+    let output = head
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"head\" process to exit");
 
     let distribution =
         String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
-    pop_newline(String::from(distribution.replace("\"", "")))
+    pop_newline(String::from(
+        distribution.replace("\"", "").replace("NAME=", ""),
+    ))
 }
 
 /// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
-    let mut cpu = String::from(
-        extra::get_line_at(
-            "/proc/cpuinfo",
-            4,
-            "ERROR: Could not obtain processor model name",
-        )
-        .unwrap(),
-    );
+    let grep = Command::new("grep")
+        .arg("model name")
+        .arg("/proc/cpuinfo")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"grep\" process");
+
+    let grep_out = grep.stdout.expect("ERROR: failed to open \"grep\" stdout");
+
+    let head = Command::new("head")
+        .args(&["-n", "1"])
+        .stdin(Stdio::from(grep_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to start \"head\" process");
+
+    let output = head
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"head\" process to exit");
+    let mut cpu = String::from_utf8(output.stdout)
+        .expect("ERROR: \"head\" process output was not valid UTF-8");
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")

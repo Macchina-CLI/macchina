@@ -116,6 +116,11 @@ impl Elements {
             format: Format::new(),
         }
     }
+    #[cfg(target_os = "netbsd")]
+    pub fn init(&mut self) {
+        self.distro.hidden = HIDE_DISTRIBUTION;
+        self.packages.hidden = HIDE_PACKAGE_COUNT;
+    }
     pub fn set_theme_alt(&mut self) {
         self.format.separator = String::from("=>");
         self.format.bar_glyph = String::from("■");
@@ -517,7 +522,8 @@ pub fn print_info(mut elems: Elements, opts: Options) {
     } else {
         elems.shell.modify(read::shell(false))
     }
-
+    #[cfg(target_os = "netbsd")]
+    elems.init();
     elems.print_host();
     elems.print_machine();
     elems.print_os();

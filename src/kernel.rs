@@ -9,11 +9,12 @@ pub fn osrelease() -> String {
         .expect("ERROR: failed to get kernel.osrelease through \"sysctl\"");
 
     let osrelease = String::from_utf8(output.stdout)
-        .expect("\"sysctl -nb kernel.osrelease\" process stdout was not valid UTF-8");
+        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
     String::from(osrelease)
 }
 
 /// Linux: Read kernel type through `sysctl -nb kernel.ostype`
+#[cfg(target_os = "linux")]
 pub fn ostype() -> String {
     // sysctl -e -n -b kernel.osrelease
     let output = Command::new("sysctl")
@@ -22,7 +23,7 @@ pub fn ostype() -> String {
         .expect("ERROR: failed to get kernel.ostype through \"sysctl\"");
 
     let osrelease = String::from_utf8(output.stdout)
-        .expect("\"sysctl -nb kernel.ostype\" process stdout was not valid UTF-8");
+        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
     String::from(osrelease)
 }
 
@@ -35,7 +36,7 @@ pub fn osrelease() -> String {
         .expect("ERROR: failed to get kernel.osrelease through \"sysctl\"");
 
     let osrelease = String::from_utf8(output.stdout)
-        .expect("\"sysctl -nb kernel.osrelease\" process stdout was not valid UTF-8");
+        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
     String::from(osrelease)
 }
 
@@ -49,6 +50,6 @@ pub fn ostype() -> String {
         .expect("ERROR: failed to get kernel.ostype through \"sysctl\"");
 
     let osrelease = String::from_utf8(output.stdout)
-        .expect("\"sysctl -nb kernel.ostype\" process stdout was not valid UTF-8");
+        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
     String::from(osrelease)
 }

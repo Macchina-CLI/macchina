@@ -34,7 +34,12 @@ The thought of bringing Macchina to more than one system seems bigger than me, b
 
 - Added Cargo.lock as per the request of __voidpin__, and removed it `.gitignore`
 - Added kernel.rs: responsible for extracting information about the kernel
-- Kernel information now includes the kernel name `kernel.ostype / kern.ostype`, and both `kernel.ostype / kern.ostype` and `kernel.kernel.osrelease / kern.osrelease` are read through the `sysctl' interface. 
+- Kernel information now includes the kernel name `kernel.ostype / kern.ostype`, and both `kernel.ostype / kern.ostype` and `kernel.kernel.osrelease / kern.osrelease` are read through the `sysctl' interface
+- Product information should now appear on NetBSD systems
+- Simplify some error messages
+- Read CPU Information by running `grep "model name" /proc/cpuinfo | head -n1` instead of reading from file
+- Read Distribution name by running `cat /etc/os-release | head -n1` instead of through `lsb_release`__(~4ms difference)__
+- Make memory extraction more reliable by running `cat /proc/meminfo | grep KEY`, all memory functions have switched to this implementation to avoid getting their value from a specified line number, which can sometimes be very unreliable. This has however introduced slower execution time, but reliability and correct information is better than blazing fast speeds.
 
 ---
 

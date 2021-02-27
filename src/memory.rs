@@ -1,50 +1,57 @@
-use crate::extra;
+use std::process::Command;
+use std::process::Stdio;
+
+fn get_value(value: &str) -> u64 {
+    let cat = Command::new("cat")
+        .arg("/proc/meminfo")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"cat\" process");
+
+    let cat_out = cat.stdout.expect("ERROR: failed to open \"cat\" stdout");
+
+    let grep = Command::new("grep")
+        .arg(value)
+        .stdin(Stdio::from(cat_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to start \"grep\" process");
+
+    let mem = grep
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"grep\" process to exit");
+    // Collect only the value of MemTotal
+    let s_mem_kb: String = String::from_utf8(mem.stdout)
+        .expect("\"grep\" process stdout was not valid UTF-8")
+        .chars()
+        .filter(|c| c.is_digit(10))
+        .collect();
+    s_mem_kb.parse::<u64>().unwrap_or(0)
+}
 
 /// Read __MemTotal__ from `/proc/meminfo`
 pub fn memtotal() -> u64 {
-    let mem = String::from(
-        extra::get_line_at("/proc/meminfo", 0, "Could not extract used MemTotal!").unwrap(),
-    );
-    // Collect only the value of MemTotal
-    let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
-    s_mem_kb.parse::<u64>().unwrap()
+    get_value("MemTotal")
 }
 
 /// Read __MemFree__ from `/proc/meminfo`
 pub fn memfree() -> u64 {
-    let mem =
-        String::from(extra::get_line_at("/proc/meminfo", 1, "Could not extract MemFree!").unwrap());
-    // Collect only the value of MemFree
-    let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
-    s_mem_kb.parse::<u64>().unwrap()
+    get_value("MemFree")
 }
 
 /// Read __Buffers__ from `/proc/meminfo`
 pub fn buffers() -> u64 {
-    let mem =
-        String::from(extra::get_line_at("/proc/meminfo", 3, "Could not extract Buffers!").unwrap());
-    // Collect only the value of Buffers
-    let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
-    s_mem_kb.parse::<u64>().unwrap()
+    get_value("Buffers")
 }
 
 /// Read __Cached__ from `/proc/meminfo`
 pub fn cached() -> u64 {
-    let mem =
-        String::from(extra::get_line_at("/proc/meminfo", 4, "Could not extract Cached!").unwrap());
-    // Collect only the value of Cached
-    let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
-    s_mem_kb.parse::<u64>().unwrap()
+    get_value("^Cached")
 }
 
 /// Read __SReclaimable__ from `/proc/meminfo`
 pub fn sreclaimable() -> u64 {
-    let mem = String::from(
-        extra::get_line_at("/proc/meminfo", 23, "Could not extract SReclaimable!").unwrap(),
-    );
-    // Collect only the value of SReclaimable
-    let s_mem_kb: String = mem.chars().filter(|c| c.is_digit(10)).collect();
-    s_mem_kb.parse::<u64>().unwrap()
+    get_value("SReclaimable")
 }
 
 /// Calculate memory utilization,

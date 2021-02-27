@@ -1,4 +1,4 @@
-use crate::{extra, kernel, memory, product, read};
+use crate::{battery, extra, kernel, memory, product, read};
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -44,15 +44,15 @@ pub fn host() -> String {
 /// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery() -> String {
-    let percentage = read::battery_percentage();
-    let status = read::battery_status();
+    let percentage = battery::percentage();
+    let status = battery::status();
     if !percentage.is_empty() && !status.is_empty() {
         if percentage != "100" {
             return String::from(percentage + "% - " + &status);
         }
         return String::from(&status);
     }
-    String::from("Could not extract battery info")
+    String::from("nknown")
 }
 
 /// Construct a new _String_ from the values
@@ -72,7 +72,8 @@ pub fn cpu() -> String {
 }
 
 /// Construct a new _String_ from the values
-/// returned by `machine::sys_vendor` and `machine::product_family` or `machine::product_version`
+/// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
+#[cfg(target_os = "linux")]
 pub fn machine() -> String {
     if product::product_version().is_empty() || product::product_version().len() <= 15 {
         return String::from(
@@ -84,6 +85,13 @@ pub fn machine() -> String {
         );
     }
     product::product_version()
+}
+
+#[cfg(target_os = "netbsd")]
+/// Construct a new _String_ from the values
+/// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
+pub fn machine() -> String {
+    product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }
 
 pub fn desktop_environment(mut session_name: String) -> String {
