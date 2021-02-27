@@ -1,4 +1,6 @@
-use crate::{bars, format, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
+#[cfg(target_os = "netbsd")]
+use crate::HIDE_DISTRIBUTION;
+use crate::{bars, format, package, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
@@ -119,7 +121,6 @@ impl Elements {
     #[cfg(target_os = "netbsd")]
     pub fn init(&mut self) {
         self.distro.hidden = HIDE_DISTRIBUTION;
-        self.packages.hidden = HIDE_PACKAGE_COUNT;
     }
     pub fn set_theme_alt(&mut self) {
         self.format.separator = String::from("=>");
@@ -312,7 +313,7 @@ impl Printing for Elements {
     }
     fn print_package_count(&mut self) {
         if !self.packages.hidden {
-            self.packages.modify(read::package_count());
+            self.packages.modify(package::package_count());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,

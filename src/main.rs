@@ -8,6 +8,8 @@ mod format;
 mod kernel;
 #[path = "read/memory.rs"]
 mod memory;
+#[path = "read/package.rs"]
+mod package;
 #[path = "read/product.rs"]
 mod product;
 #[path = "read/read.rs"]
@@ -18,8 +20,6 @@ use display::{choose_color, Elements, Options};
 
 #[cfg(target_os = "netbsd")]
 pub const HIDE_DISTRIBUTION: bool = true;
-#[cfg(target_os = "netbsd")]
-pub const HIDE_PACKAGE_COUNT: bool = true;
 /// Macchina's version
 pub const VERSION: &str = crate_version!();
 /// Macchina's default color

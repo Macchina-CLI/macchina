@@ -40,6 +40,7 @@ The thought of bringing Macchina to more than one system seems bigger than me, b
 - Read CPU Information by running `grep "model name" /proc/cpuinfo | head -n1` instead of reading from file
 - Read Distribution name by running `cat /etc/os-release | head -n1` instead of through `lsb_release`__(~4ms difference)__
 - Make memory extraction more reliable by running `cat /proc/meminfo | grep KEY`, all memory functions have switched to this implementation to avoid getting their value from a specified line number, which can sometimes be very unreliable. This has however introduced slower execution time, but reliability and correct information is better than blazing fast speeds.
+- Added support for obtaining package count on apt systems and NetBSD
 
 ---
 
@@ -90,7 +91,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-> Package count: __Pacman only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
+> Package count: __pacman and dpkg only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
 
 ## Macchina supports the following arguments:
 

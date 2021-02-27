@@ -41,10 +41,10 @@ pub fn terminal() -> String {
         .arg("-o")
         .arg("ppid=")
         .output()
-        .expect("Failed to get current terminal instance PPID using 'ps -p <PID> o ppid='");
+        .expect("ERROR: failed to get current terminal instance PPID");
 
     let terminal_ppid = String::from_utf8(ppid.stdout)
-        .expect("'ps' process stdout was not valid UTF-8")
+        .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
         .trim()
         .to_string();
 
@@ -58,7 +58,7 @@ pub fn terminal() -> String {
 
     extra::ucfirst(
         String::from_utf8(name.stdout)
-            .expect("'ps' process stdout was not valid UTF-8")
+            .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
             .trim(),
     )
 }
@@ -75,7 +75,7 @@ pub fn shell(shorthand: bool) -> String {
             .arg("o")
             .arg("comm=")
             .output()
-            .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
+            .expect("ERROR: failed to get current shell instance name");
 
         let shell_name = String::from_utf8(output.stdout)
             .expect("read_terminal: stdout to string conversion failed");
@@ -89,47 +89,11 @@ pub fn shell(shorthand: bool) -> String {
         .arg("o")
         .arg("args=")
         .output()
-        .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
+        .expect("ERROR: failed to get current shell instance name");
 
     let shell_path =
-        String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
+        String::from_utf8(output.stdout).expect("ERROR: \"ps\" process stdout was not valid UTF-8");
     String::from(shell_path.trim())
-}
-
-/// Extract package count through `pacman -Qq | wc -l`
-pub fn package_count() -> String {
-    let wh = Command::new("which")
-        .arg("pacman")
-        .output()
-        .expect("Failed to start 'which' process");
-
-    let which = String::from_utf8(wh.stdout).expect("'which' process stdout was not valid UTF-8");
-    // Continue only if pacman exists
-    if !which.is_empty() {
-        let pacman = Command::new("pacman")
-            .arg("-Q")
-            .arg("-q")
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("Failed to start 'pacman' process");
-
-        let pac_out = pacman.stdout.expect("Failed to open pacman stdout");
-
-        let count = Command::new("wc")
-            .arg("-l")
-            .stdin(Stdio::from(pac_out))
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("Failed to start 'wc' process");
-
-        let output = count.wait_with_output().expect("Failed to wait on wc");
-        return String::from_utf8(output.stdout)
-            .expect("package_count: output was not valid UTF-8")
-            .trim()
-            .to_string();
-    }
-    // If pacman is not installed, return 0
-    return String::from("0");
 }
 
 /// Read hostname using nix::unistd::gethostname()
@@ -151,14 +115,13 @@ pub fn hostname() -> String {
 pub fn username() -> String {
     let output = Command::new("whoami")
         .output()
-        .expect("Failed to get username using 'whoami'");
-    let username =
-        String::from_utf8(output.stdout).expect("\"whoami\" process stdout was not proper UTF-8");
+        .expect("ERROR: failed to start \"whoami\"");
+    let username = String::from_utf8(output.stdout)
+        .expect("ERROR: \"whoami\" process stdout was not valid UTF-8");
     pop_newline(username)
 }
 
-/// Read distribution name through `lsb_release`
-// NAME="Arch Linux"
+/// Read distribution name through `cat /etc/os-release | head -n1`
 pub fn distribution() -> String {
     let grep = Command::new("cat")
         .arg("/etc/os-release")
