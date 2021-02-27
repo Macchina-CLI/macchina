@@ -2,6 +2,7 @@ mod bars;
 mod display;
 mod extra;
 mod format;
+mod kernel;
 mod memory;
 mod product;
 mod read;

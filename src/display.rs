@@ -290,7 +290,7 @@ impl Printing for Elements {
     }
     fn print_kernel_ver(&mut self) {
         if !self.kernel.hidden {
-            self.kernel.modify(read::kernel_version());
+            self.kernel.modify(format::kernel());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,

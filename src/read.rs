@@ -8,6 +8,7 @@ use std::{
 
 /// Read desktop environment name from $DESKTOP_SESSION environment variable
 /// or from the fallback environment variable $XDG_CURRENT_DESKTOP
+#[cfg(target_os = "linux")]
 pub fn desktop_environment() -> String {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
@@ -30,6 +31,7 @@ pub fn desktop_environment() -> String {
 }
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
+#[cfg(target_os = "linux")]
 pub fn battery_percentage() -> String {
     let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
     let ret = match percentage {
@@ -40,6 +42,7 @@ pub fn battery_percentage() -> String {
 }
 
 /// Read battery status from `/sys/class/power_supply/BAT0/status`
+#[cfg(target_os = "linux")]
 pub fn battery_status() -> String {
     let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
     let ret = match status {
@@ -116,6 +119,7 @@ pub fn shell(shorthand: bool) -> String {
 }
 
 /// Extract package count through `pacman -Qq | wc -l`
+#[cfg(target_os = "linux")]
 pub fn package_count() -> String {
     let wh = Command::new("which")
         .arg("pacman")
@@ -151,16 +155,6 @@ pub fn package_count() -> String {
     return String::from("0");
 }
 
-/// Read kernel version from `/proc/version`
-pub fn kernel_version() -> String {
-    let output = fs::read_to_string("/proc/version");
-    let ret = match output {
-        Ok(ret) => ret.split_whitespace().nth(2).unwrap().to_string(),
-        Err(_e) => return String::from("Unknown"),
-    };
-    ret
-}
-
 /// Read hostname using nix::unistd::gethostname()
 pub fn hostname() -> String {
     let mut buf = [0u8; 64];
@@ -187,6 +181,7 @@ pub fn username() -> String {
 }
 
 /// Read distribution name through `lsb_release`
+#[cfg(target_os = "linux")]
 pub fn distribution() -> String {
     let output = Command::new("lsb_release")
         .args(&["-s", "-d"])

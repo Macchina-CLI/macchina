@@ -1,4 +1,4 @@
-use crate::{extra, memory, product, read};
+use crate::{extra, kernel, memory, product, read};
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -90,4 +90,13 @@ pub fn desktop_environment(mut session_name: String) -> String {
     let last_occurence_index = session_name.rfind("/").unwrap() + 1;
     session_name.replace_range(0..last_occurence_index, "");
     return extra::ucfirst(&session_name);
+}
+
+pub fn kernel() -> String {
+    let ostype = kernel::ostype();
+    let osrelease = kernel::osrelease();
+    if !(ostype.is_empty() || osrelease.is_empty()) {
+        return ostype + " " + &osrelease;
+    }
+    String::from("Unknown")
 }

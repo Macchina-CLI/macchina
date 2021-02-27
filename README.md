@@ -25,11 +25,16 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-The most recent commits have focused primarily on supporting BSD systems, Macchina previously panicks at almost every step on a BSD system, because it obtained machine information through files that might not exist on non-Linux systems.
+The most recent commits have focused primarily on supporting __NetBSD__, Macchina previously panics at almost every step on a BSD system, because it obtained machine information through files that might not exist on non-Linux systems.
 Although the coming pushes to the repository might not be efficient, I will always work to keep Macchina under the 50ms threshold!
 
-- Read distribution name through `lsb_release` instead of reading the contents of `/etc/os-release`
-- Uppercase first letter of the terminal instance name and desktop environment
+Macchina will no longer read from different files to fetch your system information, it will soon start using `sysctl` as much as possible to keep the code _clean_ and _uniform_, and will allow the program to work on many different platforms other than Linux.
+
+The thought of bringing Macchina to more than one system seems bigger than me, but thanks to help of NetBSD package maintainer __voidpin__, I'm working towards that goal!
+
+- Added Cargo.lock as per the request of __voidpin__, and removed it `.gitignore`
+- Added kernel.rs: responsible for extracting information about the kernel
+- Kernel information now includes the kernel name `kernel.ostype / kern.ostype`, and both `kernel.ostype / kern.ostype` and `kernel.kernel.osrelease / kern.osrelease` are read through the `sysctl' interface. 
 
 ---
 
@@ -62,7 +67,9 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Model name
 - Distribution
 - Desktop Environment
-- Kernel version
+- Kernel
+  - Name
+  - Version
 - Package count
 - Shell
 - Terminal
