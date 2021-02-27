@@ -256,7 +256,7 @@ impl Printing for Elements {
     }
     fn print_os(&mut self) {
         if !self.distro.hidden {
-            self.distro.modify(read::operating_system());
+            self.distro.modify(read::distribution());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,

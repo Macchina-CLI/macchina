@@ -25,7 +25,11 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-- Revert to reading hostname using nix::unistd::gethostname()
+The most recent commits have focused primarily on supporting BSD systems, Macchina previously panicks at almost every step on a BSD system, because it obtained machine information through files that might not exist on non-Linux systems.
+Although the coming pushes to the repository might not be efficient, I will always work to keep Macchina under the 50ms threshold!
+
+- Read distribution name through `lsb_release` instead of reading the contents of `/etc/os-release`
+- Uppercase first letter of the terminal instance name and desktop environment
 
 ---
 

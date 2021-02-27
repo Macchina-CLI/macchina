@@ -24,7 +24,7 @@ pub fn desktop_environment() -> String {
                 .map(String::as_str)
                 .and_then(|s| if s.is_empty() { None } else { Some(s) })
                 .unwrap_or("Unknown");
-            return String::from(fallback);
+            return extra::ucfirst(fallback);
         }
     }
 }
@@ -49,7 +49,7 @@ pub fn battery_status() -> String {
     extra::pop_newline(ret)
 }
 
-/// Read current terminal instance name using `ps`
+/// Read current terminal instance namethrough `ps`
 pub fn terminal() -> String {
     //  ps -p $$ -o ppid=
     //  $$ doesn't work natively in rust but its value can be
@@ -75,13 +75,14 @@ pub fn terminal() -> String {
         .output()
         .expect("Failed to get current terminal instance name using 'ps -p <PID> o comm='");
 
-    String::from_utf8(name.stdout)
-        .expect("'ps' process stdout was not valid UTF-8")
-        .trim()
-        .to_string()
+    extra::ucfirst(
+        String::from_utf8(name.stdout)
+            .expect("'ps' process stdout was not valid UTF-8")
+            .trim(),
+    )
 }
 
-/// Read current shell instance name using `ps`
+/// Read current shell instance name through `ps`
 pub fn shell(shorthand: bool) -> String {
     //  ps -p $$ -o comm=
     //  $$ doesn't work natively in rust but its value can be
@@ -109,12 +110,12 @@ pub fn shell(shorthand: bool) -> String {
         .output()
         .expect("Failed to get current shell instance name 'ps -p <PID> o args='");
 
-    let shell_name =
+    let shell_path =
         String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
-    String::from(shell_name.trim())
+    String::from(shell_path.trim())
 }
 
-/// Extract package count using `pacman -Qq | wc -l`
+/// Extract package count through `pacman -Qq | wc -l`
 pub fn package_count() -> String {
     let wh = Command::new("which")
         .arg("pacman")
@@ -175,28 +176,38 @@ pub fn hostname() -> String {
     };
 }
 
+/// Read username through `whoami`
 pub fn username() -> String {
     let output = Command::new("whoami")
         .output()
         .expect("Failed to get username using 'whoami'");
     let username =
-        String::from_utf8(output.stdout).expect("'whoami' process stdout was not proper UTF-8");
+        String::from_utf8(output.stdout).expect("\"whoami\" process stdout was not proper UTF-8");
     pop_newline(username)
 }
 
-/// Read distribution name from `/etc/os-release`
-pub fn operating_system() -> String {
-    let mut os = String::from(extra::get_line_at("/etc/os-release", 0, "Unknown").unwrap());
-    if !os.contains("NAME=\"") {
-        return os.replace("NAME=", "");
-    }
-    os.pop();
-    os.replace("NAME=\"", "")
+/// Read distribution name through `lsb_release`
+pub fn distribution() -> String {
+    let output = Command::new("lsb_release")
+        .args(&["-s", "-d"])
+        .output()
+        .expect("ERROR: Failed to obtain distribution name through \"lsb_release\"");
+
+    let distribution =
+        String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
+    pop_newline(String::from(distribution.replace("\"", "")))
 }
 
 /// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
-    let mut cpu = String::from(extra::get_line_at("/proc/cpuinfo", 4, "Unknown").unwrap());
+    let mut cpu = String::from(
+        extra::get_line_at(
+            "/proc/cpuinfo",
+            4,
+            "ERROR: Could not obtain processor model name",
+        )
+        .unwrap(),
+    );
     cpu = cpu
         .replace("model name", "")
         .replace(":", "")

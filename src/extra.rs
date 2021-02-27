@@ -42,3 +42,12 @@ pub fn is_int(s: String) -> Result<(), String> {
     }
     Err(String::from("This argument only accepts integers"))
 }
+
+/// Uppercase first letter of a string of characters
+pub fn ucfirst(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+    }
+}
