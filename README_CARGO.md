@@ -20,6 +20,11 @@ If Macchina fails to display certain elements, or their output is incorrect, ple
 
 ---
 
+# Dependencies
+- [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
+
+---
+
 # Benchmarks
 Macchina is pretty fast, see for yourself:
 
@@ -73,7 +78,7 @@ Package Count supports the following package managers:
 - Debian-based distributions
 - NetBSD
 
-Macchina requires [wmctrl](https://linux.die.net/man/1/wmctrl) to be installed to print your Window Manager.
+Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Managern, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"
 
 ## Macchina supports the following arguments:
 
@@ -129,15 +134,11 @@ Macchina is available on:
 
 # Platform Support
 
+# Platform Support <a name="platform-support"></a>
+
 |  Platform     |      Support       |
 | :-:           |        :-:         |
-| Linux         | :heavy_check_mark: |
-| NetBSD        |     :question:     |
+| Linux         |        Yes         |
+| NetBSD        |      Partial       |
 | MacOS         |                    |
 | Windows       |                    |
-
-Cells containing :heavy_check_mark:: Macchina supports that platform
-
-Cells containing :question:: Macchina has partial support for that platform
-
-Empty cells: Macchina does not support that platform

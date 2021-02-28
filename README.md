@@ -13,6 +13,7 @@
 ## Table of Contents:
 - [About](#about)
 - [Changelog](#change)
+- [Dependencies](#deps)
 - [Benchmarks](#bench)
 - [Features](#features)
 - [Installation](#install)
@@ -43,6 +44,11 @@ The thought of bringing Macchina to more than one system seems bigger than me, b
 - Added support for obtaining package count on debian-based systems and NetBSD
 - Macchina now prints your window manager!
 - Hide unused import warnings
+
+---
+
+# Dependencies <a name="deps"></a>
+- [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
 
 ---
 
@@ -99,7 +105,7 @@ Package Count supports the following package managers:
 - Debian-based distributions
 - NetBSD
 
-Macchina requires [wmctrl](https://linux.die.net/man/1/wmctrl) to be installed to print your Window Manager.
+Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Managern, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"
 
 ## Macchina supports the following arguments:
 
@@ -157,13 +163,7 @@ Macchina is available on:
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |
-| Linux         | :heavy_check_mark: |
-| NetBSD        |     :question:     |
+| Linux         |        Yes         |
+| NetBSD        |      Partial       |
 | MacOS         |                    |
 | Windows       |                    |
-
-Cells containing :heavy_check_mark:: Macchina supports that platform
-
-Cells containing :question:: Macchina has partial support for that platform
-
-Empty cells: Macchina does not support that platform
