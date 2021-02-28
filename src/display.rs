@@ -125,7 +125,7 @@ impl Elements {
         }
     }
     #[cfg(target_os = "netbsd")]
-    pub fn init(&mut self) {
+    pub fn bsd_init(&mut self) {
         self.distro.hidden = HIDE_DISTRIBUTION;
     }
     pub fn is_running_wm_only(&mut self) -> bool {
@@ -295,7 +295,7 @@ trait Printing {
     fn print_memory(&mut self);
     fn print_battery(&mut self);
     fn print_bar(&self, blocks: usize);
-    fn print_palette(&self);
+    fn print_palette(&self, opts: &Options);
 }
 
 impl Printing for Elements {
@@ -591,19 +591,23 @@ impl Printing for Elements {
         }
     }
     /// Print a palette using the terminal's colorscheme
-    fn print_palette(&self) {
-        println!(
-            "{}{}{}{}{}{}{}{}{}",
-            self.format.padding,
-            "   ".on_bright_black(),
-            "   ".on_bright_red(),
-            "   ".on_bright_green(),
-            "   ".on_bright_yellow(),
-            "   ".on_bright_blue(),
-            "   ".on_bright_purple(),
-            "   ".on_bright_cyan(),
-            "   ".on_bright_white()
-        );
+    fn print_palette(&self, opts: &Options) {
+        if opts.palette_status {
+            println!();
+            println!(
+                "{}{}{}{}{}{}{}{}{}",
+                self.format.padding,
+                "   ".on_bright_black(),
+                "   ".on_bright_red(),
+                "   ".on_bright_green(),
+                "   ".on_bright_yellow(),
+                "   ".on_bright_blue(),
+                "   ".on_bright_purple(),
+                "   ".on_bright_cyan(),
+                "   ".on_bright_white()
+            );
+            println!();
+        }
     }
 }
 
@@ -612,8 +616,7 @@ impl Printing for Elements {
 pub fn print_info(mut elems: Elements, opts: &Options) {
     elems.verify_shorthand_status(opts);
     #[cfg(target_os = "netbsd")]
-    elems.init();
-
+    elems.bsd_init();
     elems.print_host();
     elems.print_machine();
     elems.print_kernel_ver();
@@ -623,16 +626,11 @@ pub fn print_info(mut elems: Elements, opts: &Options) {
     elems.print_package_count();
     elems.print_shell();
     elems.print_terminal();
+    elems.print_uptime();
     elems.print_processor();
     elems.print_memory();
-    elems.print_uptime();
     elems.print_battery();
-
-    if opts.palette_status {
-        println!();
-        elems.print_palette();
-        println!();
-    }
+    elems.print_palette(opts);
 }
 
 /// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
