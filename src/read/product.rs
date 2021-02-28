@@ -51,7 +51,7 @@ pub fn product_name() -> String {
 /// NetBSD: Read system vendor through `sysctl -nb machdep.dmi.system-vendor`
 pub fn system_vendor() -> String {
     let output = Command::new("sysctl")
-        .args(&["-n", "-b", "machdep.dmi.system-product"])
+        .args(&["-n", "-b", "machdep.dmi.system-vendor"])
         .output()
         .expect("ERROR: failed to get machdep.dmi.system-product through \"sysctl\"");
 
@@ -64,7 +64,7 @@ pub fn system_vendor() -> String {
 /// NetBSD: Read system version through `sysctl -nb machdep.dmi.system-version`
 pub fn system_version() -> String {
     let output = Command::new("sysctl")
-        .args(&["-n", "-b", "machdep.dmi.system-product"])
+        .args(&["-n", "-b", "machdep.dmi.system-version"])
         .output()
         .expect("ERROR: failed to get kernel.osrelease through \"sysctl\"");
 

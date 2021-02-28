@@ -12,6 +12,7 @@ use std::fmt;
 pub struct Options {
     pub palette_status: bool,
     pub shell_shorthand: bool,
+    pub uptime_shorthand: bool,
 }
 
 impl Options {
@@ -19,6 +20,7 @@ impl Options {
         Options {
             palette_status: false,
             shell_shorthand: false,
+            uptime_shorthand: false,
         }
     }
 }
@@ -263,6 +265,19 @@ impl Elements {
         self.memory.hidden = true;
         self.battery.hidden = true;
     }
+    pub fn verify_shorthand_status(&mut self, opts: &Options) {
+        if opts.shell_shorthand && !self.shell.hidden {
+            self.shell.modify(general::shell(true))
+        } else {
+            self.shell.modify(general::shell(false))
+        }
+
+        if opts.uptime_shorthand && !self.uptime.hidden {
+            self.uptime.modify(general::uptime(true))
+        } else {
+            self.uptime.modify(general::uptime(false))
+        }
+    }
 }
 
 trait Printing {
@@ -458,7 +473,6 @@ impl Printing for Elements {
     }
     fn print_uptime(&mut self) {
         if !self.uptime.hidden {
-            self.uptime.modify(general::uptime());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -595,13 +609,8 @@ impl Printing for Elements {
 
 /// Handles displaying each element (key and value pair) found in
 /// __Elements__ struct, as well as the palette.
-pub fn print_info(mut elems: Elements, opts: Options) {
-    if opts.shell_shorthand {
-        elems.shell.modify(general::shell(true))
-    } else {
-        elems.shell.modify(general::shell(false))
-    }
-
+pub fn print_info(mut elems: Elements, opts: &Options) {
+    elems.verify_shorthand_status(opts);
     #[cfg(target_os = "netbsd")]
     elems.init();
 
@@ -615,8 +624,8 @@ pub fn print_info(mut elems: Elements, opts: Options) {
     elems.print_shell();
     elems.print_terminal();
     elems.print_processor();
-    elems.print_uptime();
     elems.print_memory();
+    elems.print_uptime();
     elems.print_battery();
 
     if opts.palette_status {
@@ -668,7 +677,7 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
         elems.battery.hidden = true;
     }
     elems.set_longest_key();
-    print_info(elems, options);
+    print_info(elems, &options);
 }
 
 /// Unhide an element or more e.g. package count, uptime etc. _(--hide-all-but <element>)_
@@ -722,7 +731,7 @@ pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>)
         }
     }
     elems.set_longest_key();
-    print_info(elems, options);
+    print_info(elems, &options);
 }
 
 /// Colorize the keys using the user-specified color _(--color <color>)_
@@ -770,9 +779,10 @@ pub fn help() {
     -C, --separator-color <color>   -   Specify the separator color
     -t, --theme <theme>             -   Specify the theme to use
     -P, --padding <amount>          -   Specify the amount of left padding to use
-    -S, --spacing <amount>          -   Specify the amount of spacing to use
+    -s, --spacing <amount>          -   Specify the amount of spacing to use
     -b, --bar                       -   Display bars instead of values for battery and memory
-    -s, --short-shell               -   Shorten shell output
+    -S, --short-shell               -   Shorten shell output
+    -U, --short-uptime              -   Shorten uptime output
     -H, --hide <element>            -   Hide the specified elements";
     let help_string: &str = "
     Battery Information:

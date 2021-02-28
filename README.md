@@ -27,6 +27,10 @@ No one wants a slow fetcher, and Macchina's main goal is to provide you with han
 
 # Changelog <a name="change"></a>
 - Macchina will now check if only a Window Manager is present, and won't not show desktop environment information.
+- You now have the ability to change how uptime is displayed:
+  - running `macchina --short-uptime` or `macchina -U` will show the previously used uptime format e.g. __2d 8h 10m__
+  - running `macchina` will show the newly implemented uptime format e.g. __2 days 8 hours 10 minutes__
+- NetBSD: Fixed a bug which resulted in product name showing up three times in a row.
 
 ---
 

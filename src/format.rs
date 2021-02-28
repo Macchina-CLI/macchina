@@ -3,7 +3,7 @@ use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
 /// returned by `read::uptime`
-pub fn uptime(up: String) -> String {
+pub fn uptime(up: String, shorthand: bool) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = up.parse().unwrap();
     // Uptime is formatted to dd:hh:mm if the system has been up for longer than 60 seconds
@@ -11,17 +11,50 @@ pub fn uptime(up: String) -> String {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
         let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
         let up_minutes = (uptime / 60.0 % 60.0).floor();
-        if up_days != 0.0 {
-            formatted_uptime.push_str(&up_days.to_string());
-            formatted_uptime.push_str("d ");
-        }
-        if up_hours != 0.0 {
-            formatted_uptime.push_str(&up_hours.to_string());
-            formatted_uptime.push_str("h ");
-        }
-        if up_minutes != 0.0 {
-            formatted_uptime.push_str(&up_minutes.to_string());
-            formatted_uptime.push_str("m");
+        match shorthand {
+            true => {
+                if up_days != 0.0 {
+                    formatted_uptime.push_str(&up_days.to_string());
+                    formatted_uptime.push_str("d ");
+                }
+                if up_hours != 0.0 {
+                    formatted_uptime.push_str(&up_hours.to_string());
+                    formatted_uptime.push_str("h ");
+                }
+                if up_minutes != 0.0 {
+                    formatted_uptime.push_str(&up_minutes.to_string());
+                    formatted_uptime.push_str("m");
+                }
+            }
+            _ => {
+                if up_days != 0.0 {
+                    if up_days == 1.0 {
+                        formatted_uptime.push_str(&up_days.to_string());
+                        formatted_uptime.push_str(" day ");
+                    } else {
+                        formatted_uptime.push_str(&up_days.to_string());
+                        formatted_uptime.push_str(" days ");
+                    }
+                }
+                if up_hours != 0.0 {
+                    if up_hours == 1.0 {
+                        formatted_uptime.push_str(&up_hours.to_string());
+                        formatted_uptime.push_str(" hour ");
+                    } else {
+                        formatted_uptime.push_str(&up_hours.to_string());
+                        formatted_uptime.push_str(" hours ");
+                    }
+                }
+                if up_minutes != 0.0 {
+                    if up_minutes == 1.0 {
+                        formatted_uptime.push_str(&up_minutes.to_string());
+                        formatted_uptime.push_str(" minute");
+                    } else {
+                        formatted_uptime.push_str(&up_minutes.to_string());
+                        formatted_uptime.push_str(" minutes");
+                    }
+                }
+            }
         }
     }
     // Uptime is formatted to seconds only if the system has been up for fewer than 60 seconds
@@ -95,8 +128,10 @@ pub fn machine() -> String {
 /// Construct a new _String_ from the values
 /// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
 pub fn machine() -> String {
-    if product::system_version() == product::system_product() {
-        return product::system_vendor() + " " + &product::system_product();
+    if product::system_version() == product::system_product()
+        && product::system_version() == product::system_vendor()
+    {
+        return product::system_vendor();
     }
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }

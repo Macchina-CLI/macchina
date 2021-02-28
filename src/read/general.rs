@@ -217,10 +217,13 @@ pub fn cpu_model_name() -> String {
 }
 
 /// Read uptime (first float) from `/proc/uptime`
-pub fn uptime() -> String {
+pub fn uptime(time_shorthand: bool) -> String {
     let uptime = fs::read_to_string("/proc/uptime");
     let ret = match uptime {
-        Ok(ret) => format::uptime(ret.split_whitespace().next().unwrap().to_string()),
+        Ok(ret) => format::uptime(
+            ret.split_whitespace().next().unwrap().to_string(),
+            time_shorthand,
+        ),
         Err(_e) => return String::from("Unknown"),
     };
     ret

@@ -54,7 +54,7 @@ fn main() {
         )
         .arg(
             Arg::with_name("spacing")
-                .short("-S")
+                .short("-s")
                 .validator(extra::is_int)
                 .long("spacing")
                 .takes_value(true)
@@ -132,7 +132,13 @@ fn main() {
         )
         .arg(
             Arg::with_name("short-shell")
-                .short("s")
+                .short("S")
+                .long("short-shell")
+                .multiple(false),
+        )
+        .arg(
+            Arg::with_name("short-uptime")
+                .short("U")
                 .long("short-shell")
                 .multiple(false),
         )
@@ -177,6 +183,9 @@ fn main() {
     if matches.is_present("short-shell") {
         opts.shell_shorthand = true;
     }
+    if matches.is_present("short-uptime") {
+        opts.uptime_shorthand = true;
+    }
     if matches.is_present("no-color") {
         elems.set_color(Color::White);
         elems.set_separator_color(Color::White);
@@ -210,5 +219,5 @@ fn main() {
         }
     }
 
-    display::print_info(elems, opts);
+    display::print_info(elems, &opts);
 }
