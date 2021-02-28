@@ -46,10 +46,13 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Hostname
 - Product
   - Manufacturer
-  - Model name
+  - Model name & version
+- Kernel
+  - Name
+  - Version
 - Distribution
 - Desktop Environment
-- Kernel version
+- Window Manager
 - Package count
 - Shell
 - Terminal
@@ -65,7 +68,12 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-> Package count: __Pacman only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
+Package Count supports the following package managers:
+- Arch-based distributions
+- Debian-based distributions
+- NetBSD
+
+Macchina requires [wmctrl](https://linux.die.net/man/1/wmctrl) to be installed to print your Window Manager.
 
 ## Macchina supports the following arguments:
 
@@ -123,13 +131,13 @@ Macchina is available on:
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |
-| Linux         |         X          |
-| BSD           |         ?          |
+| Linux         | :heavy_check_mark: |
+| NetBSD        |     :question:     |
 | MacOS         |                    |
 | Windows       |                    |
 
-Cells containing X: Macchina supports that platform
+Cells containing :heavy_check_mark:: Macchina supports that platform
 
-Cells containing ?: Macchina has not been tested yet on that platform
+Cells containing :question:: Macchina has partial support for that platform
 
 Empty cells: Macchina does not support that platform

@@ -1,4 +1,4 @@
-use crate::{battery, extra, kernel, memory, product, read};
+use crate::{battery, extra, general, kernel, memory, product};
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -38,7 +38,7 @@ pub fn uptime(up: String) -> String {
 /// Construct a new _String_ from the values
 /// returned by `read::hostname` and `read::username`
 pub fn host() -> String {
-    read::username() + "@" + &read::hostname()
+    general::username() + "@" + &general::hostname()
 }
 
 /// Construct a new _String_ from the values
@@ -48,11 +48,11 @@ pub fn battery() -> String {
     let status = battery::status();
     if !percentage.is_empty() && !status.is_empty() {
         if percentage != "100" {
-            return String::from(percentage + "% - " + &status);
+            return String::from(percentage + "% & " + &status);
         }
         return String::from(&status);
     }
-    String::from("nknown")
+    String::from("Unknown")
 }
 
 /// Construct a new _String_ from the values
@@ -66,7 +66,7 @@ pub fn memory() -> String {
 /// Construct a new _String_ from the values
 /// returned by `read::cpu_model_name` and `num_cpus::get`
 pub fn cpu() -> String {
-    String::from(read::cpu_model_name() + " (" + &num_cpus::get().to_string() + ")")
+    String::from(general::cpu_model_name() + " (" + &num_cpus::get().to_string() + ")")
         .replace("(TM)", "™")
         .replace("(R)", "®")
 }
@@ -75,7 +75,11 @@ pub fn cpu() -> String {
 /// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
 #[cfg(target_os = "linux")]
 pub fn machine() -> String {
-    if product::product_version().is_empty() || product::product_version().len() <= 15 {
+    if product::product_family() == product::product_name()
+        && product::product_family() == product::product_version()
+    {
+        return product::product_family();
+    } else if product::product_version().is_empty() || product::product_version().len() <= 15 {
         return String::from(
             product::sys_vendor()
                 + " "
@@ -91,6 +95,11 @@ pub fn machine() -> String {
 /// Construct a new _String_ from the values
 /// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
 pub fn machine() -> String {
+    if product::system_vendor() == product::system_product()
+        && product::system_vendor() == product::system_version()
+    {
+        return product::system_vendor();
+    }
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }
 

@@ -40,7 +40,9 @@ The thought of bringing Macchina to more than one system seems bigger than me, b
 - Read CPU Information by running `grep "model name" /proc/cpuinfo | head -n1` instead of reading from file
 - Read Distribution name by running `cat /etc/os-release | head -n1` instead of through `lsb_release`__(~4ms difference)__
 - Make memory extraction more reliable by running `cat /proc/meminfo | grep KEY`, all memory functions have switched to this implementation to avoid getting their value from a specified line number, which can sometimes be very unreliable. This has however introduced slower execution time, but reliability and correct information is better than blazing fast speeds.
-- Added support for obtaining package count on apt systems and NetBSD
+- Added support for obtaining package count on debian-based systems and NetBSD
+- Macchina now prints your window manager!
+- Hide unused import warnings
 
 ---
 
@@ -70,12 +72,13 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Hostname
 - Product
   - Manufacturer
-  - Model name
-- Distribution
-- Desktop Environment
+  - Model name & version
 - Kernel
   - Name
   - Version
+- Distribution
+- Desktop Environment
+- Window Manager
 - Package count
 - Shell
 - Terminal
@@ -91,7 +94,12 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-> Package count: __pacman and dpkg only__, as it will print __0__ for distributions that use any other package manager. Support for other package managers is on its way.
+Package Count supports the following package managers:
+- Arch-based distributions
+- Debian-based distributions
+- NetBSD
+
+Macchina requires [wmctrl](https://linux.die.net/man/1/wmctrl) to be installed to print your Window Manager.
 
 ## Macchina supports the following arguments:
 
@@ -150,12 +158,12 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         | :heavy_check_mark: |
-| BSD           |     :question:     |
+| NetBSD        |     :question:     |
 | MacOS         |                    |
 | Windows       |                    |
 
 Cells containing :heavy_check_mark:: Macchina supports that platform
 
-Cells containing :question:: Macchina has not been tested yet on that platform
+Cells containing :question:: Macchina has partial support for that platform
 
 Empty cells: Macchina does not support that platform

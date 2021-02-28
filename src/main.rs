@@ -4,6 +4,8 @@ mod battery;
 mod display;
 mod extra;
 mod format;
+#[path = "read/general.rs"]
+mod general;
 #[path = "read/kernel.rs"]
 mod kernel;
 #[path = "read/memory.rs"]
@@ -12,8 +14,6 @@ mod memory;
 mod package;
 #[path = "read/product.rs"]
 mod product;
-#[path = "read/read.rs"]
-mod read;
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
 use display::{choose_color, Elements, Options};

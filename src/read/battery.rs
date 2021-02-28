@@ -1,5 +1,5 @@
+#![allow(unused_imports)]
 use crate::{extra, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
-#[allow(unused_imports)]
 use std::{fs, process::Command};
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`

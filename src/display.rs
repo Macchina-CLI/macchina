@@ -1,6 +1,8 @@
 #[cfg(target_os = "netbsd")]
 use crate::HIDE_DISTRIBUTION;
-use crate::{bars, format, package, read, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR};
+use crate::{
+    bars, format, general, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
+};
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
@@ -86,6 +88,7 @@ pub struct Elements {
     host: Pair,
     distro: Pair,
     desktop_env: Pair,
+    window_man: Pair,
     machine: Pair,
     kernel: Pair,
     packages: Pair,
@@ -104,17 +107,18 @@ impl Elements {
     pub fn new() -> Elements {
         Elements {
             host: Pair::new(String::from("Host")),
-            distro: Pair::new(String::from("Dist")),
-            desktop_env: Pair::new(String::from("Desk")),
+            distro: Pair::new(String::from("Distro")),
+            desktop_env: Pair::new(String::from("DE")),
+            window_man: Pair::new(String::from("WM")),
             kernel: Pair::new(String::from("Kern")),
             packages: Pair::new(String::from("Pkgs")),
-            shell: Pair::new(String::from("Shll")),
+            shell: Pair::new(String::from("Shell")),
             machine: Pair::new(String::from("Mach")),
             terminal: Pair::new(String::from("Term")),
             cpu: Pair::new(String::from("Proc")),
-            memory: Pair::new(String::from("Memo")),
-            uptime: Pair::new(String::from("Upti")),
-            battery: Pair::new(String::from("Batt")),
+            memory: Pair::new(String::from("Mem")),
+            uptime: Pair::new(String::from("Uptime")),
+            battery: Pair::new(String::from("Bat")),
             format: Format::new(),
         }
     }
@@ -131,6 +135,7 @@ impl Elements {
         self.machine.update_key(String::from("Ma"));
         self.distro.update_key(String::from("Os"));
         self.desktop_env.update_key(String::from("De"));
+        self.window_man.update_key(String::from("Wm"));
         self.kernel.update_key(String::from("Ke"));
         self.packages.update_key(String::from("Pa"));
         self.shell.update_key(String::from("Sh"));
@@ -148,6 +153,7 @@ impl Elements {
         self.distro.update_key(String::from("Distribution"));
         self.desktop_env
             .update_key(String::from("Desktop Environment"));
+        self.window_man.update_key(String::from("Window Manager"));
         self.kernel.update_key(String::from("Kernel"));
         self.packages.update_key(String::from("Packages"));
         self.shell.update_key(String::from("Shell"));
@@ -211,9 +217,10 @@ impl Elements {
 trait Printing {
     fn print_host(&mut self);
     fn print_machine(&mut self);
-    fn print_os(&mut self);
-    fn print_desktop_env(&mut self);
     fn print_kernel_ver(&mut self);
+    fn print_distribution(&mut self);
+    fn print_desktop_env(&mut self);
+    fn print_window_man(&mut self);
     fn print_package_count(&mut self);
     fn print_shell(&mut self);
     fn print_terminal(&mut self);
@@ -260,9 +267,9 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_os(&mut self) {
+    fn print_distribution(&mut self) {
         if !self.distro.hidden {
-            self.distro.modify(read::distribution());
+            self.distro.modify(general::distribution());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -279,7 +286,7 @@ impl Printing for Elements {
     }
     fn print_desktop_env(&mut self) {
         if !self.desktop_env.hidden {
-            self.desktop_env.modify(read::desktop_environment());
+            self.desktop_env.modify(general::desktop_environment());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -291,6 +298,23 @@ impl Printing for Elements {
                     .bold(),
                 " ".repeat(self.format.spacing),
                 self.desktop_env.value
+            );
+        }
+    }
+    fn print_window_man(&mut self) {
+        if !self.window_man.hidden {
+            self.window_man.modify(general::window_manager());
+            println!(
+                "{}{}{}{}{}{}",
+                self.format.padding,
+                self.window_man.key.color(self.format.color).bold(),
+                " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
+                self.format
+                    .separator
+                    .color(self.format.separator_color)
+                    .bold(),
+                " ".repeat(self.format.spacing),
+                self.window_man.value
             );
         }
     }
@@ -346,7 +370,7 @@ impl Printing for Elements {
     }
     fn print_terminal(&mut self) {
         if !self.terminal.hidden {
-            self.terminal.modify(read::terminal());
+            self.terminal.modify(general::terminal());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -380,7 +404,7 @@ impl Printing for Elements {
     }
     fn print_uptime(&mut self) {
         if !self.uptime.hidden {
-            self.uptime.modify(read::uptime());
+            self.uptime.modify(general::uptime());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -519,17 +543,20 @@ impl Printing for Elements {
 /// __Elements__ struct, as well as the palette.
 pub fn print_info(mut elems: Elements, opts: Options) {
     if opts.shell_shorthand {
-        elems.shell.modify(read::shell(true))
+        elems.shell.modify(general::shell(true))
     } else {
-        elems.shell.modify(read::shell(false))
+        elems.shell.modify(general::shell(false))
     }
+
     #[cfg(target_os = "netbsd")]
     elems.init();
+
     elems.print_host();
     elems.print_machine();
-    elems.print_os();
-    elems.print_desktop_env();
     elems.print_kernel_ver();
+    elems.print_distribution();
+    elems.print_desktop_env();
+    elems.print_window_man();
     elems.print_package_count();
     elems.print_shell();
     elems.print_terminal();

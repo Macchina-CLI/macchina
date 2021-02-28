@@ -149,6 +149,41 @@ pub fn distribution() -> String {
     ))
 }
 
+/// Read distribution name through `cat /etc/os-release | head -n1`
+pub fn window_manager() -> String {
+    let wh = Command::new("which")
+        .arg("wmctrl")
+        .output()
+        .expect("ERROR: failed to start \"which\" process");
+    let which =
+        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
+    if !which.is_empty() {
+        let grep = Command::new("wmctrl")
+            .arg("-m")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"wmctrl\" process");
+
+        let grep_out = grep.stdout.expect("ERROR: failed to open \"cat\" stdout");
+
+        let head = Command::new("grep")
+            .arg("Name:")
+            .stdin(Stdio::from(grep_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"head\" process");
+
+        let output = head
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"head\" process to exit");
+
+        let window_manager = String::from_utf8(output.stdout)
+            .expect("ERROR: \"wmctrl -m | grep Name:\" process stdout was not valid UTF-8");
+        return pop_newline(String::from(window_manager.replace("Name:", "").trim()));
+    }
+    String::from("Unknown")
+}
+
 /// Read processor information from `/proc/cpuinfo`
 pub fn cpu_model_name() -> String {
     let grep = Command::new("grep")

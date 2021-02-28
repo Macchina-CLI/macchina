@@ -1,8 +1,9 @@
+#![allow(unused_imports)]
 use crate::extra;
 use std::fs;
-#[allow(unused_imports)]
 use std::process::Command;
 
+#[cfg(target_os = "linux")]
 /// Read product version from `/sys/class/dmi/id/product_version`
 pub fn product_version() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_version");
@@ -13,6 +14,7 @@ pub fn product_version() -> String {
     extra::pop_newline(ret)
 }
 
+#[cfg(target_os = "linux")]
 /// Read system vendor from `/sys/class/dmi/id/sys_vendor`
 pub fn sys_vendor() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/sys_vendor");
@@ -23,6 +25,7 @@ pub fn sys_vendor() -> String {
     extra::pop_newline(ret)
 }
 
+#[cfg(target_os = "linux")]
 /// Read product family from `/sys/class/dmi/id/product_family`
 pub fn product_family() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_family");
@@ -33,6 +36,7 @@ pub fn product_family() -> String {
     extra::pop_newline(ret)
 }
 
+#[cfg(target_os = "linux")]
 /// Read product name from `/sys/class/dmi/id/product_name`
 pub fn product_name() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/product_name");
