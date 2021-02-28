@@ -126,6 +126,13 @@ impl Elements {
     pub fn init(&mut self) {
         self.distro.hidden = HIDE_DISTRIBUTION;
     }
+    pub fn is_running_wm_only(&mut self) -> bool {
+        if self.desktop_env.key == self.window_man.key {
+            self.desktop_env.hidden = true;
+            return true;
+        }
+        false
+    }
     pub fn set_theme_alt(&mut self) {
         self.format.separator = String::from("=>");
         self.format.bar_glyph = String::from("■");
@@ -182,7 +189,7 @@ impl Elements {
     pub fn enable_bar(&mut self) {
         self.format.bar = true;
     }
-    pub fn longest_key(&self) -> String {
+    pub fn longest_key(&mut self) -> String {
         // Instead of manually declaring which key is the longest
         // in order to satisfy auto-spacing's algorithm, let longest_key()
         // determine the longest key
@@ -198,12 +205,6 @@ impl Elements {
         }
         if !self.distro.hidden {
             keys.push(self.distro.key.clone());
-        }
-        if !self.desktop_env.hidden {
-            keys.push(self.desktop_env.key.clone());
-        }
-        if !self.window_man.hidden {
-            keys.push(self.window_man.key.clone());
         }
         if !self.packages.hidden {
             keys.push(self.packages.key.clone());
@@ -225,6 +226,16 @@ impl Elements {
         }
         if !self.battery.hidden {
             keys.push(self.battery.key.clone());
+        }
+        if self.is_running_wm_only() {
+            keys.push(self.window_man.key.clone());
+        } else {
+            if !self.desktop_env.hidden {
+                keys.push(self.desktop_env.key.clone());
+            }
+            if !self.window_man.hidden {
+                keys.push(self.desktop_env.key.clone());
+            }
         }
         let mut longest_key = keys[0].clone();
         for val in keys {
@@ -671,12 +682,6 @@ pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>)
     if hide_parameters.contains(&"distro") {
         elems.distro.hidden = false;
     }
-    if hide_parameters.contains(&"de") {
-        elems.desktop_env.hidden = false;
-    }
-    if hide_parameters.contains(&"wm") {
-        elems.window_man.hidden = false;
-    }
     if hide_parameters.contains(&"kernel") {
         elems.kernel.hidden = false;
     }
@@ -700,6 +705,21 @@ pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>)
     }
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = false;
+    }
+    if elems.is_running_wm_only() {
+        if hide_parameters.contains(&"de") {
+            elems.desktop_env.hidden = true;
+        }
+        if hide_parameters.contains(&"wm") {
+            elems.window_man.hidden = false;
+        }
+    } else {
+        if hide_parameters.contains(&"de") {
+            elems.desktop_env.hidden = false;
+        }
+        if hide_parameters.contains(&"wm") {
+            elems.window_man.hidden = false;
+        }
     }
     elems.set_longest_key();
     print_info(elems, options);

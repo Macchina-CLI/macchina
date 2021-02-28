@@ -26,11 +26,7 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-Macchina v0.4.0 brings a feature I've wanted to implement for a while and never got around to doing so:
-- Meet `--show-only / -X`: this argument allows you to show only the specified elements, go try it!
-- Fixed an issue where hiding elements doesn't affect auto-spacing. Well, now it does.
-- Added a condition to product information in case your computer manufacturer was lazy correctly filling the necessary fields of the hardware you're running.
-- Distribution is hidden by default on NetBSD, but showing the distribution element (with `--show-only / -X`) will display the same value as the kernel.
+- Macchina will now check if only a Window Manager is present, and won't not show desktop environment information.
 
 ---
 
