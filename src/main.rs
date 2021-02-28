@@ -101,11 +101,24 @@ fn main() {
                 .long("hide")
                 .takes_value(true)
                 .min_values(1)
-                .max_values(11)
+                .max_values(12)
                 .multiple(false)
                 .possible_values(&[
-                    "host", "mach", "distro", "desk", "kern", "pkgs", "sh", "term", "cpu", "up",
-                    "mem", "bat",
+                    "host", "mach", "distro", "de", "wm", "kernel", "pkgs", "shell", "term", "cpu",
+                    "up", "mem", "bat",
+                ]),
+        )
+        .arg(
+            Arg::with_name("show-only")
+                .short("X")
+                .long("show-only")
+                .takes_value(true)
+                .min_values(1)
+                .max_values(12)
+                .multiple(false)
+                .possible_values(&[
+                    "host", "mach", "distro", "de", "wm", "kernel", "pkgs", "shell", "term", "cpu",
+                    "up", "mem", "bat",
                 ]),
         )
         .arg(
@@ -173,6 +186,12 @@ fn main() {
     if matches.is_present("hide") {
         let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
         display::hide(elems, opts, elements_to_hide);
+        std::process::exit(0);
+    }
+    if matches.is_present("show-only") {
+        elems.hide_all();
+        let elements_to_unhide: Vec<&str> = matches.values_of("show-only").unwrap().collect();
+        display::unhide(elems, opts, elements_to_unhide);
         std::process::exit(0);
     }
     if matches.is_present("version") {

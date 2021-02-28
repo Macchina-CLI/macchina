@@ -95,10 +95,8 @@ pub fn machine() -> String {
 /// Construct a new _String_ from the values
 /// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
 pub fn machine() -> String {
-    if product::system_vendor() == product::system_product()
-        && product::system_vendor() == product::system_version()
-    {
-        return product::system_vendor();
+    if product::system_version() == product::system_product() {
+        return product::system_vendor() + " " + &product::system_product();
     }
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }

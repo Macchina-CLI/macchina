@@ -26,24 +26,11 @@ Macchina lets you view basic system information, like your hostname, your kernel
 No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
 # Changelog <a name="change"></a>
-The most recent commits have focused primarily on supporting __NetBSD__, Macchina previously panics at almost every step on a BSD system, because it obtained machine information through files that might not exist on non-Linux systems.
-Although the coming pushes to the repository might not be efficient, I will always work to keep Macchina under the 50ms threshold!
-
-Macchina will no longer read from different files to fetch your system information, it will soon start using `sysctl` as much as possible to keep the code _clean_ and _uniform_, and will allow the program to work on many different platforms other than Linux.
-
-The thought of bringing Macchina to more than one system seems bigger than me, but thanks to help of NetBSD package maintainer __voidpin__, I'm working towards that goal!
-
-- Added Cargo.lock as per the request of __voidpin__, and removed it `.gitignore`
-- Added kernel.rs: responsible for extracting information about the kernel
-- Kernel information now includes the kernel name `kernel.ostype / kern.ostype`, and both `kernel.ostype / kern.ostype` and `kernel.kernel.osrelease / kern.osrelease` are read through the `sysctl' interface
-- Product information should now appear on NetBSD systems
-- Simplify some error messages
-- Read CPU Information by running `grep "model name" /proc/cpuinfo | head -n1` instead of reading from file
-- Read Distribution name by running `cat /etc/os-release | head -n1` instead of through `lsb_release`__(~4ms difference)__
-- Make memory extraction more reliable by running `cat /proc/meminfo | grep KEY`, all memory functions have switched to this implementation to avoid getting their value from a specified line number, which can sometimes be very unreliable. This has however introduced slower execution time, but reliability and correct information is better than blazing fast speeds.
-- Added support for obtaining package count on debian-based systems and NetBSD
-- Macchina now prints your window manager!
-- Hide unused import warnings
+Macchina v0.4.0 brings a feature I've wanted to implement for a while and never got around to doing so:
+- Meet `--show-only / -X`: this argument allows you to show only the specified elements, go try it!
+- Fixed an issue where hiding elements doesn't affect auto-spacing. Well, now it does.
+- Added a condition to product information in case your computer manufacturer was lazy correctly filling the necessary fields of the hardware you're running.
+- Distribution is hidden by default on NetBSD, but showing the distribution element (with `--show-only / -X`) will display the same value as the kernel.
 
 ---
 
@@ -70,7 +57,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 # Features <a name="features"></a>
 ## Themes:
-![Theme preview](screenshots/theme_preview.png)
+![Theme preview](screenshots/themes.png)
 
 ## Macchina displays basic system information such as:
 - Host

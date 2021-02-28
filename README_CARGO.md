@@ -10,8 +10,7 @@
 ---
 
 # About Macchina
-Macchina is a fetching program, not a library. But you can use the 
-functions it relies on to extract system data in your own program.
+Macchina is a fetching program, not a library.
 
 It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
 No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
@@ -43,7 +42,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
 
 # Features
 ## Themes:
-![Theme preview](screenshots/theme_preview.png)
+![Theme preview](screenshots/themes.png)
 
 ## Macchina displays basic system information such as:
 - Host
@@ -78,7 +77,7 @@ Package Count supports the following package managers:
 - Debian-based distributions
 - NetBSD
 
-Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Managern, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"
+Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification".
 
 ## Macchina supports the following arguments:
 
@@ -95,6 +94,8 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 `--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
 
 `--hide / -H <element>` - Hide elements such as host, os, kern, etc.
+
+`--show-only / -X <element>` - Displays only the provided elements.
 
 `--bar / -b` - Display memory usage and battery percentage as bars
 

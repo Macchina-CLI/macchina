@@ -1,4 +1,5 @@
-#[allow(unused_imports)]
+#![allow(unused_imports)]
+#![allow(dead_code)]
 use crate::{extra, format, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
 use extra::pop_newline;
 use nix::unistd;
@@ -32,7 +33,7 @@ pub fn desktop_environment() -> String {
 
 /// Read current terminal instance namethrough `ps`
 pub fn terminal() -> String {
-    //  ps -p $$ -o ppid=
+    //  ps -p (ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
     //  accessed through nix::unistd::getppid()
     let ppid = Command::new("ps")
@@ -41,7 +42,7 @@ pub fn terminal() -> String {
         .arg("-o")
         .arg("ppid=")
         .output()
-        .expect("ERROR: failed to get current terminal instance PPID");
+        .expect("ERROR: failed to fetch PPID of the running terminal");
 
     let terminal_ppid = String::from_utf8(ppid.stdout)
         .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
@@ -54,7 +55,7 @@ pub fn terminal() -> String {
         .arg("o")
         .arg("comm=")
         .output()
-        .expect("Failed to get current terminal instance name using 'ps -p <PID> o comm='");
+        .expect("ERROR: failed to fetch the name of the running terminal");
 
     extra::ucfirst(
         String::from_utf8(name.stdout)
@@ -75,13 +76,13 @@ pub fn shell(shorthand: bool) -> String {
             .arg("o")
             .arg("comm=")
             .output()
-            .expect("ERROR: failed to get current shell instance name");
+            .expect("ERROR: failed to fetch the name of the running shell");
 
         let shell_name = String::from_utf8(output.stdout)
             .expect("read_terminal: stdout to string conversion failed");
         return shell_name.trim().to_string();
     }
-    // If shell shorthand is false, we use "args=" instead of "comm="
+    // If shell shorthand is false, we use "ps -p $$ -o args=" instead of "ps -p $$ -o comm="
     // to print the full path of the current shell instance name
     let output = Command::new("ps")
         .arg("-p")
@@ -89,7 +90,7 @@ pub fn shell(shorthand: bool) -> String {
         .arg("o")
         .arg("args=")
         .output()
-        .expect("ERROR: failed to get current shell instance name");
+        .expect("ERROR: failed to fetch the path of the running shell");
 
     let shell_path =
         String::from_utf8(output.stdout).expect("ERROR: \"ps\" process stdout was not valid UTF-8");
@@ -115,7 +116,7 @@ pub fn hostname() -> String {
 pub fn username() -> String {
     let output = Command::new("whoami")
         .output()
-        .expect("ERROR: failed to start \"whoami\"");
+        .expect("ERROR: failed to start \"whoami\" process");
     let username = String::from_utf8(output.stdout)
         .expect("ERROR: \"whoami\" process stdout was not valid UTF-8");
     pop_newline(username)
@@ -171,7 +172,7 @@ pub fn window_manager() -> String {
             .stdin(Stdio::from(grep_out))
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to start \"head\" process");
+            .expect("ERROR: failed to spawn \"head\" process");
 
         let output = head
             .wait_with_output()
@@ -200,7 +201,7 @@ pub fn cpu_model_name() -> String {
         .stdin(Stdio::from(grep_out))
         .stdout(Stdio::piped())
         .spawn()
-        .expect("ERROR: failed to start \"head\" process");
+        .expect("ERROR: failed to spawn \"head\" process");
 
     let output = head
         .wait_with_output()

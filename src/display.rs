@@ -107,18 +107,18 @@ impl Elements {
     pub fn new() -> Elements {
         Elements {
             host: Pair::new(String::from("Host")),
+            machine: Pair::new(String::from("Machine")),
             distro: Pair::new(String::from("Distro")),
             desktop_env: Pair::new(String::from("DE")),
             window_man: Pair::new(String::from("WM")),
-            kernel: Pair::new(String::from("Kern")),
-            packages: Pair::new(String::from("Pkgs")),
+            kernel: Pair::new(String::from("Kernel")),
+            packages: Pair::new(String::from("Packages")),
             shell: Pair::new(String::from("Shell")),
-            machine: Pair::new(String::from("Mach")),
-            terminal: Pair::new(String::from("Term")),
-            cpu: Pair::new(String::from("Proc")),
-            memory: Pair::new(String::from("Mem")),
+            terminal: Pair::new(String::from("Terminal")),
+            cpu: Pair::new(String::from("CPU")),
+            memory: Pair::new(String::from("Memory")),
             uptime: Pair::new(String::from("Uptime")),
-            battery: Pair::new(String::from("Bat")),
+            battery: Pair::new(String::from("Battery")),
             format: Format::new(),
         }
     }
@@ -133,7 +133,7 @@ impl Elements {
         self.format.bracket_close = ']';
         self.host.update_key(String::from("Ho"));
         self.machine.update_key(String::from("Ma"));
-        self.distro.update_key(String::from("Os"));
+        self.distro.update_key(String::from("Di"));
         self.desktop_env.update_key(String::from("De"));
         self.window_man.update_key(String::from("Wm"));
         self.kernel.update_key(String::from("Ke"));
@@ -186,21 +186,46 @@ impl Elements {
         // Instead of manually declaring which key is the longest
         // in order to satisfy auto-spacing's algorithm, let longest_key()
         // determine the longest key
-        let keys: Vec<String> = vec![
-            self.host.key.clone(),
-            self.machine.key.clone(),
-            self.distro.key.clone(),
-            self.desktop_env.key.clone(),
-            self.kernel.key.clone(),
-            self.packages.key.clone(),
-            self.shell.key.clone(),
-            self.terminal.key.clone(),
-            self.cpu.key.clone(),
-            self.uptime.key.clone(),
-            self.memory.key.clone(),
-            self.battery.key.clone(),
-        ];
-
+        let mut keys: Vec<String> = Vec::new();
+        if !self.host.hidden {
+            keys.push(self.host.key.clone());
+        }
+        if !self.machine.hidden {
+            keys.push(self.machine.key.clone());
+        }
+        if !self.kernel.hidden {
+            keys.push(self.kernel.key.clone());
+        }
+        if !self.distro.hidden {
+            keys.push(self.distro.key.clone());
+        }
+        if !self.desktop_env.hidden {
+            keys.push(self.desktop_env.key.clone());
+        }
+        if !self.window_man.hidden {
+            keys.push(self.window_man.key.clone());
+        }
+        if !self.packages.hidden {
+            keys.push(self.packages.key.clone());
+        }
+        if !self.shell.hidden {
+            keys.push(self.shell.key.clone());
+        }
+        if !self.terminal.hidden {
+            keys.push(self.terminal.key.clone());
+        }
+        if !self.cpu.hidden {
+            keys.push(self.cpu.key.clone());
+        }
+        if !self.uptime.hidden {
+            keys.push(self.uptime.key.clone());
+        }
+        if !self.memory.hidden {
+            keys.push(self.memory.key.clone());
+        }
+        if !self.battery.hidden {
+            keys.push(self.battery.key.clone());
+        }
         let mut longest_key = keys[0].clone();
         for val in keys {
             if val.len() > longest_key.len() {
@@ -211,6 +236,21 @@ impl Elements {
     }
     pub fn calc_spacing(&self, current_key: &String, longest_key: &String) -> usize {
         (longest_key.len() + self.format.spacing) - current_key.len()
+    }
+    pub fn hide_all(&mut self) {
+        self.host.hidden = true;
+        self.machine.hidden = true;
+        self.distro.hidden = true;
+        self.desktop_env.hidden = true;
+        self.window_man.hidden = true;
+        self.kernel.hidden = true;
+        self.packages.hidden = true;
+        self.shell.hidden = true;
+        self.terminal.hidden = true;
+        self.cpu.hidden = true;
+        self.uptime.hidden = true;
+        self.memory.hidden = true;
+        self.battery.hidden = true;
     }
 }
 
@@ -269,7 +309,10 @@ impl Printing for Elements {
     }
     fn print_distribution(&mut self) {
         if !self.distro.hidden {
+            #[cfg(target_os = "linux")]
             self.distro.modify(general::distribution());
+            #[cfg(target_os = "netbsd")]
+            self.distro.modify(format::kernel());
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -583,16 +626,19 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"distro") {
         elems.distro.hidden = true;
     }
-    if hide_parameters.contains(&"desk") {
+    if hide_parameters.contains(&"de") {
         elems.desktop_env.hidden = true;
     }
-    if hide_parameters.contains(&"kern") {
+    if hide_parameters.contains(&"wm") {
+        elems.window_man.hidden = true;
+    }
+    if hide_parameters.contains(&"kernel") {
         elems.kernel.hidden = true;
     }
     if hide_parameters.contains(&"pkgs") {
         elems.packages.hidden = true;
     }
-    if hide_parameters.contains(&"sh") {
+    if hide_parameters.contains(&"shell") {
         elems.shell.hidden = true;
     }
     if hide_parameters.contains(&"term") {
@@ -610,7 +656,52 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = true;
     }
+    elems.set_longest_key();
+    print_info(elems, options);
+}
 
+/// Unhide an element or more e.g. package count, uptime etc. _(--hide-all-but <element>)_
+pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
+    if hide_parameters.contains(&"host") {
+        elems.host.hidden = false;
+    }
+    if hide_parameters.contains(&"mach") {
+        elems.machine.hidden = false;
+    }
+    if hide_parameters.contains(&"distro") {
+        elems.distro.hidden = false;
+    }
+    if hide_parameters.contains(&"de") {
+        elems.desktop_env.hidden = false;
+    }
+    if hide_parameters.contains(&"wm") {
+        elems.window_man.hidden = false;
+    }
+    if hide_parameters.contains(&"kernel") {
+        elems.kernel.hidden = false;
+    }
+    if hide_parameters.contains(&"pkgs") {
+        elems.packages.hidden = false;
+    }
+    if hide_parameters.contains(&"shell") {
+        elems.shell.hidden = false;
+    }
+    if hide_parameters.contains(&"term") {
+        elems.terminal.hidden = false;
+    }
+    if hide_parameters.contains(&"cpu") {
+        elems.cpu.hidden = false;
+    }
+    if hide_parameters.contains(&"up") {
+        elems.uptime.hidden = false;
+    }
+    if hide_parameters.contains(&"mem") {
+        elems.memory.hidden = false;
+    }
+    if hide_parameters.contains(&"bat") {
+        elems.battery.hidden = false;
+    }
+    elems.set_longest_key();
     print_info(elems, options);
 }
 
@@ -693,9 +784,10 @@ pub fn help() {
             def, alt and long.
 
     Hiding elements:
-        To hide an element (or more), use --hide / -H <element>
-        Hideable elements (case-sensitive):
-            host, mach, distro, kern, pkgs, sh, term, cpu, up, mem, bat.";
+        To hide an element (or more), use --hide / -H <elements>
+        To display only the specified element (or more), use --show-only / -X <elements>    
+        Possible values (elements) (case-sensitive):
+            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem, bat.";
     println!("{}\n{}\n", usage_string, help_string);
 }
 
