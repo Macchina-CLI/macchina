@@ -87,7 +87,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-Package Count supports the following package managers:
+Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
 - NetBSD
@@ -109,6 +109,8 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 `--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
 
 `--hide / -H <element>` - Hide elements such as host, os, kern, etc.
+
+`--show-only / -X <element>` - Displays only the provided elements.
 
 `--bar / -b` - Display memory usage and battery percentage as bars
 

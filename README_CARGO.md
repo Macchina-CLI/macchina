@@ -72,7 +72,7 @@ __Summary__: `macchina` runs __11.01 ± 0.37__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-Package Count supports the following package managers:
+Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
 - NetBSD
