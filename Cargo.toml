@@ -1,10 +1,10 @@
 [package]
 name = "macchina"
-version = "0.4.5"
+version = "0.4.6"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>"]
 edition = "2018"
 description = "System information fetcher, written in Rust."
-keywords = ["system", "fetch", "command-line"]
+keywords = ["system", "fetch", "command-line", "linux"]
 
 repository = "https://github.com/grtcdr/macchina"
 

@@ -10,8 +10,8 @@
 # About Macchina
 Macchina is a fetching program, not a library.
 
-It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
-No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
+Macchina lets you view basic system information, like your hostname, kernel version, uptime, memory usage, and much more.
+No one wants a slow fetcher, and Macchina's selling point is providing you with convenient features while keeping performance a priority and minimalism a goal.
 
 ![Macchina preview image](screenshots/preview.png)
 
@@ -90,8 +90,6 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 `--palette / -p` - Display palette
 
 `--short-sh / -S` - Shorten shell output (/bin/zsh -> zsh)
-
-`--debug / -d` - Macchina hides unknown keys (or keys whose value extraction failed), and this argument lets you see what they are and how they are actually extracted from your system.
 
 `--short-uptime / -U` - Shorten shell output (/bin/zsh -> zsh)
 

@@ -91,7 +91,7 @@ Package count supports package managers of:
 - Debian-based distributions
 - NetBSD
 
-Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Managern, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"
+Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"
 
 ## Macchina supports the following arguments:
 
