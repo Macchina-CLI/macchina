@@ -903,6 +903,7 @@ pub fn help() {
     OPTIONS:
     -h, --help                      -   Print help text
     -v, --version                   -   Print Macchina's version
+    -d, --debug                     -   Print debug information
     -p, --palette                   -   Display palette
     -n, --no-color                  -   Disable colors
     -r, --random-color              -   Let Macchina pick a random color for you
@@ -927,8 +928,8 @@ pub fn help() {
         If one of the paths does not exist, macchina will print \"could not extract battery info\"
 
     Package information:
-        Package count will equal 0 if the system is not arch-based, as macchina queries pacman to
-        get a list of the installed packages and then return the package count.
+        Package count will equal 0 if the system is not arch-based, debian-based or NetBSD,
+        as only the package managers of these platforms are supported.
 
     Coloring:
         Macchina's default key color is blue, but this can be overriden

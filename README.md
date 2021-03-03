@@ -126,6 +126,8 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 
 `--spacing / -s <amount>` - Specify the amount of spacing to use
 
+`--debug / -d` - Print debug information, use when an element fails to display.
+
 `--help / -h` -  Print help text
 
 `--version / -v` - Print version
