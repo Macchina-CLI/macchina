@@ -160,7 +160,7 @@ pub fn terminal(fail: &mut Fail) -> String {
     let name = Command::new("ps")
         .arg("-p")
         .arg(terminal_ppid)
-        .arg("o")
+        .arg("-o")
         .arg("comm=")
         .output()
         .expect("ERROR: failed to fetch the name of the running terminal");
@@ -186,7 +186,7 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
         let output = Command::new("ps")
             .arg("-p")
             .arg(unistd::getppid().to_string())
-            .arg("o")
+            .arg("-o")
             .arg("comm=")
             .output()
             .expect("ERROR: failed to fetch the name of the running shell");
@@ -209,7 +209,7 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
     let output = Command::new("ps")
         .arg("-p")
         .arg(unistd::getppid().to_string())
-        .arg("o")
+        .arg("-o")
         .arg("args=")
         .output()
         .expect("ERROR: failed to fetch the path of the running shell");

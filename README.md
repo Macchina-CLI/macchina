@@ -25,13 +25,11 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Fixed incorrect memory usage on NetBSD
-- [x] Package count will now automatically hide/fail if your system isn't arch-based/debian-based or NetBSD, its error code can be found in `--debug` like any other failing element.
-- [x] Simplify `--help`: users don't need to know how macchina fetches your system, all they should worry about is how to use Macchina and its arguments.
+- [x] Fix shell and terminal failing to fetch for NetBSD
 
 # Todo <a name="todo"></a>
 - [ ] Implement battery fetching for NetBSD
-- [ ] Fix shell and terminal failing to fetch for NetBSD
+
 
 ---
 
