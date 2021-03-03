@@ -1,8 +1,9 @@
+use crate::Fail;
 use std::process::{Command, Stdio};
 
 #[cfg(target_os = "linux")]
 /// Extract package count for debian/arch based systems
-pub fn package_count() -> String {
+pub fn package_count(fail: &mut Fail) -> String {
     let wh = Command::new("which")
         .arg("pacman")
         .output()
@@ -69,13 +70,14 @@ pub fn package_count() -> String {
                 .to_string();
         }
     }
+    fail.packages.failed = true;
     // If neither pacman or dpkg is installed, return 0
     return String::from("0");
 }
 
 #[cfg(target_os = "netbsd")]
 /// Extract package count through `pacman -Qq | wc -l`
-pub fn package_count() -> String {
+pub fn package_count(fail: &mut Fail) -> String {
     let wh = Command::new("which")
         .arg("pkg_info")
         .output()
@@ -109,6 +111,7 @@ pub fn package_count() -> String {
             .trim()
             .to_string();
     }
+    fail.packages.failed = true;
     // If pkg_info is not installed, return 0
     return String::from("0");
 }

@@ -34,6 +34,7 @@ pub struct Fail {
     pub host: FailedComponent,
     pub shell: FailedComponent,
     pub terminal: FailedComponent,
+    pub packages: FailedComponent,
 }
 
 impl Fail {
@@ -42,7 +43,8 @@ impl Fail {
             window_man: FailedComponent::new(false, String::from("Window Manager -> Extracted using \"wmctrl -m\"")),
             desktop_env: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Desktop Environment -> Extracted from \"DESKTOP_SESSION\" or \"XDG_CURRENT_DESKTOP\" environment variables"),
+                String::from("(ERROR:DISABLED) Desktop Environment -> Obtained from \"DESKTOP_SESSION\" OR \"XDG_CURRENT_DESKTOP\" environment variables
+                            Ignore if not running a desktop environment."),
             ),
             uptime: FailedComponent::new(
                 false,
@@ -52,19 +54,28 @@ impl Fail {
                 false,
                 String::from("(ERROR:DISABLED) Battery -> Percentage extracted from /sys/class/power_supply/BAT0/capacity
                             Status extracted from /sys/class/power_supply/BAT0/status
+                            Ignore if on a desktop computer.
                 "),
             ),
             host: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Host -> Obtained from nix::unistd::gethostname() function")
+                String::from("(ERROR:DISABLED) Host -> Obtained from nix::unistd::gethostname()")
             ),
             shell: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Shell -> Extracted using ps -p $$ -o comm= OR ps -p $$ -o args=")
+                String::from("(ERROR:DISABLED) Shell -> Extracted using \"ps -p $$ -o comm=\" OR \"ps -p $$ -o args=\"")
             ),
             terminal: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Terminal -> Extracted using ps -p $$ -p")
+                String::from("(ERROR:DISABLED) Terminal -> Extracted using \"ps -p $$ -p\"")
+            ),
+            packages: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Packages -> 
+                            (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
+                            (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
+                            (NetBSD) Extracted using \"pkg_info | wc -l\"
+                "),
             ),
             #[cfg(target_os = "linux")]
             distro: FailedComponent::new(
@@ -94,6 +105,7 @@ impl Fail {
         num_fails = self.count_print_failed(&self.host, num_fails);
         num_fails = self.count_print_failed(&self.shell, num_fails);
         num_fails = self.count_print_failed(&self.terminal, num_fails);
+        num_fails = self.count_print_failed(&self.packages, num_fails);
         if num_fails == 0 {
             println!(
                 "Everything is displaying correctly!\nIf this is not true, please create an issue at https://github.com/grtcdr/macchina"
@@ -390,6 +402,7 @@ impl Elements {
         self.terminal.modify(general::terminal(fail));
         self.host.modify(format::host(fail));
         self.battery.modify(format::battery(fail));
+        self.packages.modify(package::package_count(fail));
     }
 }
 
@@ -400,7 +413,7 @@ trait Printing {
     fn print_distribution(&mut self, fail: &Fail);
     fn print_desktop_env(&mut self, fail: &mut Fail);
     fn print_window_man(&mut self, fail: &mut Fail);
-    fn print_package_count(&mut self);
+    fn print_package_count(&mut self, fail: &mut Fail);
     fn print_shell(&mut self, fail: &mut Fail);
     fn print_terminal(&mut self, fail: &mut Fail);
     fn print_processor(&mut self);
@@ -523,21 +536,23 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_package_count(&mut self) {
+    fn print_package_count(&mut self, fail: &mut Fail) {
         if !self.packages.hidden {
-            self.packages.modify(package::package_count());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.packages.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.packages.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.packages.value
-            );
+            self.packages.modify(package::package_count(fail));
+            if !fail.packages.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.packages.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.packages.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.packages.value
+                );
+            }
         }
     }
     fn print_shell(&mut self, fail: &mut Fail) {
@@ -751,7 +766,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_distribution(fail);
     elems.print_desktop_env(fail);
     elems.print_window_man(fail);
-    elems.print_package_count();
+    elems.print_package_count(fail);
     elems.print_shell(fail);
     elems.print_terminal(fail);
     elems.print_uptime(fail);
@@ -917,39 +932,31 @@ pub fn help() {
     -U, --short-uptime              -   Shorten uptime output
     -H, --hide <element>            -   Hide the specified elements";
     let help_string: &str = "
-    Battery Information:
-        Battery information might print an error if the file macchina is 
-        trying to read from does not exist.
-        Macchina reads battery information from two paths.
-        Each path is contained in a constant.
-        These two constants are defined in main.rs:
-            PATH_TO_BATTERY_PERCENTAGE = /sys/class/power_supply/BAT0/capacity
-            PATH_TO_BATTERY_STATUS = /sys/class/power_supply/BAT0/status
-        If one of the paths does not exist, macchina will print \"could not extract battery info\"
-
-    Package information:
-        Package count will equal 0 if the system is not arch-based, debian-based or NetBSD,
-        as only the package managers of these platforms are supported.
-
     Coloring:
-        Macchina's default key color is blue, but this can be overriden
-        using --color / -c <color>
+        Macchina's default key color is blue, to change the key color
+        use \"--color / -c <color>\".
+        Macchina's default separator color is white, to change the separator color
+        use \"--separator-color / -C <color>\".
+        To let Macchina pick a random color for you, use \"--random-color / -r\".
         Supported colors (case-sensitive):
             red, green, blue, magenta, cyan, yellow, black and white.
-        To let Macchina randomly pick a color for you, use --random-color / -r
-        To change the separator color, use --separator-color / -C <color>   
-
+        
     Theming:
         Macchina comes with multiple themes out of the box,
-        to change the default theme, use --theme / -t <theme>
+        to change the default theme, use \"--theme / -t <theme>\".
         Supported themes (case-sensitive):
             def, alt and long.
 
     Hiding elements:
-        To hide an element (or more), use --hide / -H <elements>
-        To display only the specified element (or more), use --show-only / -X <elements>    
-        Possible values (elements) (case-sensitive):
-            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem, bat.";
+        To hide an element (or more), use \"--hide / -H <element>\"
+        To display only the specified element (or more), use \"--show-only / -X <element>\" 
+        Elements (case-sensitive):
+            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem, bat.
+    
+    If one of the keys e.g. kernel, uptime etc. fails to display, then Macchina couldn't
+    fetch that piece of information, and therefore hides it from you.
+    To see failing elements run: \"macchina --debug\".
+    ";
     println!("{}\n{}\n", usage_string, help_string);
 }
 

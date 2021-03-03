@@ -8,6 +8,7 @@
 ## Table of Contents:
 - [About](#about)
 - [Changelog](#change)
+- [Todo](#todo)
 - [Dependencies](#deps)
 - [Benchmarks](#bench)
 - [Features](#features)
@@ -28,11 +29,13 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 This new update brings a lot of cool concepts that make Macchina a little more user-friendly, and more forgiving if something goes wrong in the system fetching phase, I'll be improving these new features more and more as time goes on, and will now focus mostly on providing NetBSD the experience that it deserves, fix nasty bugs that might occur on different kinds of hardware and give the code a clean-up!
 
 Here's a list of new changes:
-- Meet `Fail`, a cleaner implementation for taking care of value extraction errors, and his buddy `--debug`
-- `--debug / -d` helps you identify what elements have failed and how they're extracted from your system, if an error occured it'll print the status (__ERROR:DISABLED__ or __OK:DISABLED__), the element and the extraction method.
-- Add a condition for when SReclaimable memory isn't present in /proc/meminfo
-- Uppercase first letter of shorthand shell output e.g. `zsh` will be `Zsh`
-- Spice up README files with a new Macchina banner!
+- [x] Fixed incorrect memory usage on NetBSD
+- [x] Package count will now automatically hide/fail if your system isn't arch-based/debian-based or NetBSD, its error code can be found in `--debug` like any other failing element.
+- [x] Simplify `--help`: users don't need to know how macchina fetches your system, all they should worry about is how to use Macchina and its arguments.
+
+# Todo <a name="todo"></a>
+- [ ] Implement battery fetching for NetBSD
+- [ ] Fix shell and terminal failing to fetch for NetBSD
 
 ---
 

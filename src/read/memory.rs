@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::process::Command;
 use std::process::Stdio;
 
@@ -54,6 +55,7 @@ pub fn sreclaimable() -> u64 {
     get_value("SReclaimable")
 }
 
+#[cfg(target_os = "linux")]
 /// Calculate memory utilization,
 /// used = memtotal - memfree - cached - sreclaimable - buffers
 pub fn used() -> u64 {
@@ -61,4 +63,11 @@ pub fn used() -> u64 {
         return memtotal() - memfree() - cached() - sreclaimable() - buffers();
     }
     memtotal() - memfree() - cached() - buffers()
+}
+
+#[cfg(target_os = "netbsd")]
+/// Calculate memory utilization,
+/// used = memtotal - memfree - cached - sreclaimable - buffers
+pub fn used() -> u64 {
+    memfree()
 }
