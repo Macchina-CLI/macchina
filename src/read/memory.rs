@@ -69,5 +69,5 @@ pub fn used() -> u64 {
 /// Calculate memory utilization,
 /// used = memtotal - memfree - cached - sreclaimable - buffers
 pub fn used() -> u64 {
-    memfree()
+    memtotal() - memfree()
 }

@@ -25,9 +25,6 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-This new update brings a lot of cool concepts that make Macchina a little more user-friendly, and more forgiving if something goes wrong in the system fetching phase, I'll be improving these new features more and more as time goes on, and will now focus mostly on providing NetBSD the experience that it deserves, fix nasty bugs that might occur on different kinds of hardware and give the code a clean-up!
-
-Here's a list of new changes:
 - [x] Fixed incorrect memory usage on NetBSD
 - [x] Package count will now automatically hide/fail if your system isn't arch-based/debian-based or NetBSD, its error code can be found in `--debug` like any other failing element.
 - [x] Simplify `--help`: users don't need to know how macchina fetches your system, all they should worry about is how to use Macchina and its arguments.
