@@ -1,5 +1,3 @@
-<h1 align="center"> Macchina </h1>
-
 ![Macchina preview image](screenshots/banner.png)
 
 [![Crates.io](https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66)](https://crates.io/crates/macchina)
