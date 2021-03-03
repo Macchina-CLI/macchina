@@ -158,6 +158,6 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD        |      Partial       |
+| NetBSD        |        80%         |
 | MacOS         |                    |
 | Windows       |                    |
