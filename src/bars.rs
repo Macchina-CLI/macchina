@@ -1,12 +1,10 @@
-use crate::battery;
-use crate::extra;
-use crate::memory;
+use crate::{battery, extra, memory, Fail};
 
 /// Returns a usize (0 .. 10) based on the battery percentage,
 /// `display::show_bar` takes this function as a parameter to handle
 /// displaying the bar
-pub fn battery() -> usize {
-    match battery::percentage()
+pub fn battery(fail: &mut Fail) -> usize {
+    match battery::percentage(fail)
         .parse::<usize>()
         .expect("error: battery percentage could not be parsed")
     {

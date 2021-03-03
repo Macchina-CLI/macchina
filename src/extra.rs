@@ -25,8 +25,9 @@ pub fn is_int(s: String) -> Result<(), String> {
 }
 
 /// Uppercase first letter of a string of characters
-pub fn ucfirst(s: &str) -> String {
-    let mut c = s.chars();
+pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
+    let str_ref = s.as_ref();
+    let mut c = str_ref.chars();
     match c.next() {
         None => String::new(),
         Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),

@@ -1,11 +1,106 @@
-#[cfg(target_os = "netbsd")]
-use crate::HIDE_DISTRIBUTION;
 use crate::{
     bars, format, general, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
 };
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
+#[allow(dead_code)]
+pub struct FailedComponent {
+    pub failed: bool,
+    pub extraction_method: String,
+    pub reason: String,
+}
+
+impl FailedComponent {
+    fn new(f: bool, e: String) -> FailedComponent {
+        FailedComponent {
+            failed: f,
+            extraction_method: e,
+            reason: String::new(),
+        }
+    }
+}
+
+/// Elements struct interacts with Fail struct to hide any of its elements whose value is "Unknown".
+//  Fail also automatically fails certain elements in certain conditions:
+//  -  Automatically fail the distribution key if NetBSD is detected.
+//  -  Automatically fail the desktop environment key if only a WM is detected.
+pub struct Fail {
+    pub window_man: FailedComponent,
+    pub desktop_env: FailedComponent,
+    pub distro: FailedComponent,
+    pub uptime: FailedComponent,
+    pub battery: FailedComponent,
+    pub host: FailedComponent,
+    pub shell: FailedComponent,
+    pub terminal: FailedComponent,
+}
+
+impl Fail {
+    pub fn new() -> Fail {
+        Fail {
+            window_man: FailedComponent::new(false, String::from("Window Manager -> Extracted using \"wmctrl -m\"")),
+            desktop_env: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Desktop Environment -> Extracted from \"DESKTOP_SESSION\" or \"XDG_CURRENT_DESKTOP\" environment variables"),
+            ),
+            uptime: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Uptime -> Extracted from /proc/uptime"),
+            ),
+            battery: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Battery -> Percentage extracted from /sys/class/power_supply/BAT0/capacity
+                            Status extracted from /sys/class/power_supply/BAT0/status
+                "),
+            ),
+            host: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Host -> Obtained from nix::unistd::gethostname() function")
+            ),
+            shell: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Shell -> Extracted using ps -p $$ -o comm= OR ps -p $$ -o args=")
+            ),
+            terminal: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Terminal -> Extracted using ps -p $$ -p")
+            ),
+            #[cfg(target_os = "linux")]
+            distro: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Distribution -> Extracted using \"cat /etc/os-release | head -n 1\""),
+            ),
+            #[cfg(target_os = "netbsd")]
+            distro: FailedComponent::new(
+                true,
+                String::from("(OK:DISABLED) Distribution -> NetBSD system detected, so the distribution is automatically hidden."),
+            ),
+        }
+    }
+    pub fn count_print_failed(&self, failed_comp: &FailedComponent, mut num_fails: usize) -> usize {
+        if failed_comp.failed {
+            num_fails = num_fails + 1;
+            println!("{}", failed_comp.extraction_method);
+        }
+        num_fails
+    }
+    pub fn print_failed(&self) {
+        let mut num_fails: usize = 0;
+        num_fails = self.count_print_failed(&self.desktop_env, num_fails);
+        num_fails = self.count_print_failed(&self.battery, num_fails);
+        num_fails = self.count_print_failed(&self.window_man, num_fails);
+        num_fails = self.count_print_failed(&self.uptime, num_fails);
+        num_fails = self.count_print_failed(&self.host, num_fails);
+        num_fails = self.count_print_failed(&self.shell, num_fails);
+        num_fails = self.count_print_failed(&self.terminal, num_fails);
+        if num_fails == 0 {
+            println!(
+                "Everything is displaying correctly!\nIf this is not true, please create an issue at https://github.com/grtcdr/macchina"
+            )
+        }
+    }
+}
 
 /// __Options__ holds Macchina's behaviour that the user
 /// can alter using the program's arguments
@@ -87,19 +182,19 @@ impl Format {
 /// __Elements__ encapsulates elements that are to be displayed,
 /// each element is a __Pair__
 pub struct Elements {
-    host: Pair,
-    distro: Pair,
-    desktop_env: Pair,
-    window_man: Pair,
-    machine: Pair,
-    kernel: Pair,
-    packages: Pair,
-    shell: Pair,
-    terminal: Pair,
-    cpu: Pair,
-    memory: Pair,
-    uptime: Pair,
-    battery: Pair,
+    pub host: Pair,
+    pub distro: Pair,
+    pub desktop_env: Pair,
+    pub window_man: Pair,
+    pub machine: Pair,
+    pub kernel: Pair,
+    pub packages: Pair,
+    pub shell: Pair,
+    pub terminal: Pair,
+    pub cpu: Pair,
+    pub memory: Pair,
+    pub uptime: Pair,
+    pub battery: Pair,
     pub format: Format,
 }
 
@@ -113,7 +208,10 @@ impl Elements {
             distro: Pair::new(String::from("Distro")),
             desktop_env: Pair::new(String::from("DE")),
             window_man: Pair::new(String::from("WM")),
+            #[cfg(target_os = "linux")]
             kernel: Pair::new(String::from("Kernel")),
+            #[cfg(target_os = "netbsd")]
+            kernel: Pair::new(String::from("OS")),
             packages: Pair::new(String::from("Packages")),
             shell: Pair::new(String::from("Shell")),
             terminal: Pair::new(String::from("Terminal")),
@@ -124,18 +222,15 @@ impl Elements {
             format: Format::new(),
         }
     }
-    #[cfg(target_os = "netbsd")]
-    pub fn bsd_init(&mut self) {
-        self.distro.hidden = HIDE_DISTRIBUTION;
-    }
-    pub fn is_running_wm_only(&mut self) -> bool {
-        if self.desktop_env.key == self.window_man.key {
-            self.desktop_env.hidden = true;
+    pub fn is_running_wm_only(&mut self, fail: &mut Fail, apply: bool) -> bool {
+        if self.desktop_env.key == self.window_man.key && apply {
             return true;
+        } else {
+            fail.desktop_env.failed = false
         }
         false
     }
-    pub fn set_theme_alt(&mut self) {
+    pub fn set_theme_alt(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("=>");
         self.format.bar_glyph = String::from("■");
         self.format.bracket_open = '[';
@@ -145,7 +240,10 @@ impl Elements {
         self.distro.update_key(String::from("Di"));
         self.desktop_env.update_key(String::from("De"));
         self.window_man.update_key(String::from("Wm"));
+        #[cfg(target_os = "linux")]
         self.kernel.update_key(String::from("Ke"));
+        #[cfg(target_os = "netbsd")]
+        self.kernel.update_key(String::from("Os"));
         self.packages.update_key(String::from("Pa"));
         self.shell.update_key(String::from("Sh"));
         self.terminal.update_key(String::from("Te"));
@@ -153,9 +251,9 @@ impl Elements {
         self.memory.update_key(String::from("Me"));
         self.uptime.update_key(String::from("Up"));
         self.battery.update_key(String::from("Ba"));
-        self.set_longest_key();
+        self.set_longest_key(fail);
     }
-    pub fn set_theme_long(&mut self) {
+    pub fn set_theme_long(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("~");
         self.host.update_key(String::from("Hostname"));
         self.machine.update_key(String::from("Machine"));
@@ -163,7 +261,10 @@ impl Elements {
         self.desktop_env
             .update_key(String::from("Desktop Environment"));
         self.window_man.update_key(String::from("Window Manager"));
+        #[cfg(target_os = "linux")]
         self.kernel.update_key(String::from("Kernel"));
+        #[cfg(target_os = "netbsd")]
+        self.kernel.update_key(String::from("Operating System"));
         self.packages.update_key(String::from("Packages"));
         self.shell.update_key(String::from("Shell"));
         self.terminal.update_key(String::from("Terminal"));
@@ -171,7 +272,7 @@ impl Elements {
         self.memory.update_key(String::from("Memory"));
         self.uptime.update_key(String::from("Uptime"));
         self.battery.update_key(String::from("Battery"));
-        self.set_longest_key();
+        self.set_longest_key(fail);
     }
     pub fn set_color(&mut self, c: Color) {
         self.format.color = c;
@@ -182,8 +283,8 @@ impl Elements {
     pub fn set_left_padding_to(&mut self, amount: usize) {
         self.format.padding = " ".repeat(amount)
     }
-    pub fn set_longest_key(&mut self) {
-        self.format.longest_key = self.longest_key();
+    pub fn set_longest_key(&mut self, fail: &mut Fail) {
+        self.format.longest_key = self.longest_key(fail);
     }
     pub fn set_spacing(&mut self, v: usize) {
         self.format.spacing = v;
@@ -191,7 +292,7 @@ impl Elements {
     pub fn enable_bar(&mut self) {
         self.format.bar = true;
     }
-    pub fn longest_key(&mut self) -> String {
+    pub fn longest_key(&mut self, fail: &mut Fail) -> String {
         // Instead of manually declaring which key is the longest
         // in order to satisfy auto-spacing's algorithm, let longest_key()
         // determine the longest key
@@ -229,7 +330,7 @@ impl Elements {
         if !self.battery.hidden {
             keys.push(self.battery.key.clone());
         }
-        if self.is_running_wm_only() {
+        if self.is_running_wm_only(fail, false) {
             keys.push(self.window_man.key.clone());
         } else {
             if !self.desktop_env.hidden {
@@ -265,55 +366,69 @@ impl Elements {
         self.memory.hidden = true;
         self.battery.hidden = true;
     }
-    pub fn verify_shorthand_status(&mut self, opts: &Options) {
-        if opts.shell_shorthand && !self.shell.hidden {
-            self.shell.modify(general::shell(true))
+    pub fn apply_shorthand_values(&mut self, opts: &Options, fail: &mut Fail) {
+        if opts.shell_shorthand && !self.shell.hidden && !fail.shell.failed {
+            self.shell.modify(general::shell(true, fail))
         } else {
-            self.shell.modify(general::shell(false))
+            self.shell.modify(general::shell(false, fail))
         }
 
-        if opts.uptime_shorthand && !self.uptime.hidden {
-            self.uptime.modify(general::uptime(true))
+        if opts.uptime_shorthand && !self.uptime.hidden && !fail.shell.failed {
+            self.uptime.modify(general::uptime(true, fail))
         } else {
-            self.uptime.modify(general::uptime(false))
+            self.uptime.modify(general::uptime(false, fail))
         }
+    }
+    pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Options) {
+        self.uptime.modify(general::uptime(true, fail));
+        self.desktop_env.modify(general::desktop_environment(fail));
+        self.window_man.modify(general::window_manager(fail));
+        self.uptime
+            .modify(general::uptime(opts.uptime_shorthand, fail));
+        self.shell
+            .modify(general::shell(opts.shell_shorthand, fail));
+        self.terminal.modify(general::terminal(fail));
+        self.host.modify(format::host(fail));
+        self.battery.modify(format::battery(fail));
     }
 }
 
 trait Printing {
-    fn print_host(&mut self);
+    fn print_host(&mut self, fail: &mut Fail);
     fn print_machine(&mut self);
     fn print_kernel_ver(&mut self);
-    fn print_distribution(&mut self);
-    fn print_desktop_env(&mut self);
-    fn print_window_man(&mut self);
+    fn print_distribution(&mut self, fail: &Fail);
+    fn print_desktop_env(&mut self, fail: &mut Fail);
+    fn print_window_man(&mut self, fail: &mut Fail);
     fn print_package_count(&mut self);
-    fn print_shell(&mut self);
-    fn print_terminal(&mut self);
+    fn print_shell(&mut self, fail: &mut Fail);
+    fn print_terminal(&mut self, fail: &mut Fail);
     fn print_processor(&mut self);
-    fn print_uptime(&mut self);
+    fn print_uptime(&mut self, fail: &Fail);
     fn print_memory(&mut self);
-    fn print_battery(&mut self);
+    fn print_battery(&mut self, fail: &mut Fail);
     fn print_bar(&self, blocks: usize);
     fn print_palette(&self, opts: &Options);
 }
 
 impl Printing for Elements {
-    fn print_host(&mut self) {
+    fn print_host(&mut self, fail: &mut Fail) {
         if !self.host.hidden {
-            self.host.modify(format::host());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.host.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.host.value
-            );
+            self.host.modify(format::host(fail));
+            if !fail.host.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.host.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.host.value
+                );
+            }
         }
     }
     fn print_machine(&mut self) {
@@ -333,58 +448,62 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_distribution(&mut self) {
+    fn print_distribution(&mut self, fail: &Fail) {
         if !self.distro.hidden {
             #[cfg(target_os = "linux")]
             self.distro.modify(general::distribution());
-            #[cfg(target_os = "netbsd")]
-            self.distro.modify(format::kernel());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.distro.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.distro.value
-            );
+            if !fail.distro.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.distro.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.distro.value
+                );
+            }
         }
     }
-    fn print_desktop_env(&mut self) {
+    fn print_desktop_env(&mut self, fail: &mut Fail) {
         if !self.desktop_env.hidden {
-            self.desktop_env.modify(general::desktop_environment());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.desktop_env.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.desktop_env.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.desktop_env.value
-            );
+            self.desktop_env.modify(general::desktop_environment(fail));
+            if !fail.desktop_env.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.desktop_env.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.desktop_env.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.desktop_env.value
+                );
+            }
         }
     }
-    fn print_window_man(&mut self) {
+    fn print_window_man(&mut self, fail: &mut Fail) {
         if !self.window_man.hidden {
-            self.window_man.modify(general::window_manager());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.window_man.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.window_man.value
-            );
+            self.window_man.modify(general::window_manager(fail));
+            if !fail.window_man.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.window_man.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.window_man.value
+                );
+            }
         }
     }
     fn print_kernel_ver(&mut self) {
@@ -421,8 +540,8 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_shell(&mut self) {
-        if !self.shell.hidden {
+    fn print_shell(&mut self, fail: &mut Fail) {
+        if !self.shell.hidden && !fail.shell.failed {
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -437,21 +556,23 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_terminal(&mut self) {
+    fn print_terminal(&mut self, fail: &mut Fail) {
         if !self.terminal.hidden {
-            self.terminal.modify(general::terminal());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.terminal.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.terminal.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.terminal.value
-            );
+            self.terminal.modify(general::terminal(fail));
+            if !fail.terminal.failed {
+                println!(
+                    "{}{}{}{}{}{}",
+                    self.format.padding,
+                    self.terminal.key.color(self.format.color).bold(),
+                    " ".repeat(self.calc_spacing(&self.terminal.key, &self.format.longest_key)),
+                    self.format
+                        .separator
+                        .color(self.format.separator_color)
+                        .bold(),
+                    " ".repeat(self.format.spacing),
+                    self.terminal.value
+                );
+            }
         }
     }
     fn print_processor(&mut self) {
@@ -471,8 +592,8 @@ impl Printing for Elements {
             );
         }
     }
-    fn print_uptime(&mut self) {
-        if !self.uptime.hidden {
+    fn print_uptime(&mut self, fail: &Fail) {
+        if !fail.uptime.failed && !self.uptime.hidden {
             println!(
                 "{}{}{}{}{}{}",
                 self.format.padding,
@@ -519,35 +640,44 @@ impl Printing for Elements {
             }
         }
     }
-    fn print_battery(&mut self) {
+    fn print_battery(&mut self, fail: &mut Fail) {
         if !self.battery.hidden {
-            if self.format.bar {
-                print!(
-                    "{}{}{}{}{}",
-                    self.format.padding,
-                    self.battery.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                );
-                Printing::print_bar(self, bars::battery());
-            } else {
-                self.battery.modify(format::battery());
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.battery.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.battery.value
-                );
+            self.battery.modify(format::battery(fail));
+            if !fail.battery.failed {
+                match self.format.bar {
+                    true => {
+                        print!(
+                            "{}{}{}{}{}",
+                            self.format.padding,
+                            self.battery.key.color(self.format.color).bold(),
+                            " ".repeat(
+                                self.calc_spacing(&self.battery.key, &self.format.longest_key)
+                            ),
+                            self.format
+                                .separator
+                                .color(self.format.separator_color)
+                                .bold(),
+                            " ".repeat(self.format.spacing),
+                        );
+                        Printing::print_bar(self, bars::battery(fail));
+                    }
+                    false => {
+                        println!(
+                            "{}{}{}{}{}{}",
+                            self.format.padding,
+                            self.battery.key.color(self.format.color).bold(),
+                            " ".repeat(
+                                self.calc_spacing(&self.battery.key, &self.format.longest_key)
+                            ),
+                            self.format
+                                .separator
+                                .color(self.format.separator_color)
+                                .bold(),
+                            " ".repeat(self.format.spacing),
+                            self.battery.value
+                        );
+                    }
+                };
             }
         }
     }
@@ -613,28 +743,31 @@ impl Printing for Elements {
 
 /// Handles displaying each element (key and value pair) found in
 /// __Elements__ struct, as well as the palette.
-pub fn print_info(mut elems: Elements, opts: &Options) {
-    elems.verify_shorthand_status(opts);
-    #[cfg(target_os = "netbsd")]
-    elems.bsd_init();
-    elems.print_host();
+pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
+    elems.apply_shorthand_values(opts, fail);
+    elems.print_host(fail);
     elems.print_machine();
     elems.print_kernel_ver();
-    elems.print_distribution();
-    elems.print_desktop_env();
-    elems.print_window_man();
+    elems.print_distribution(fail);
+    elems.print_desktop_env(fail);
+    elems.print_window_man(fail);
     elems.print_package_count();
-    elems.print_shell();
-    elems.print_terminal();
-    elems.print_uptime();
+    elems.print_shell(fail);
+    elems.print_terminal(fail);
+    elems.print_uptime(fail);
     elems.print_processor();
     elems.print_memory();
-    elems.print_battery();
+    elems.print_battery(fail);
     elems.print_palette(opts);
 }
 
+/// Debug allows users to see if everything during the extraction phase went okay.
+pub fn debug(fail: &mut Fail) {
+    fail.print_failed();
+}
+
 /// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
-pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
+pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
         elems.host.hidden = true;
     }
@@ -674,12 +807,12 @@ pub fn hide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = true;
     }
-    elems.set_longest_key();
-    print_info(elems, &options);
+    elems.set_longest_key(fail);
+    print_info(elems, &options, fail);
 }
 
 /// Unhide an element or more e.g. package count, uptime etc. _(--hide-all-but <element>)_
-pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>) {
+pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
         elems.host.hidden = false;
     }
@@ -713,7 +846,7 @@ pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>)
     if hide_parameters.contains(&"bat") {
         elems.battery.hidden = false;
     }
-    if elems.is_running_wm_only() {
+    if elems.is_running_wm_only(fail, false) {
         if hide_parameters.contains(&"de") {
             elems.desktop_env.hidden = true;
         }
@@ -728,8 +861,8 @@ pub fn unhide(mut elems: Elements, options: Options, hide_parameters: Vec<&str>)
             elems.window_man.hidden = false;
         }
     }
-    elems.set_longest_key();
-    print_info(elems, &options);
+    elems.set_longest_key(fail);
+    print_info(elems, &options, fail);
 }
 
 /// Colorize the keys using the user-specified color _(--color <color>)_

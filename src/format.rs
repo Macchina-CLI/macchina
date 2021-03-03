@@ -1,4 +1,4 @@
-use crate::{battery, extra, general, kernel, memory, product};
+use crate::{battery, extra, general, kernel, memory, product, Fail};
 use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
@@ -26,7 +26,7 @@ pub fn uptime(up: String, shorthand: bool) -> String {
                     formatted_uptime.push_str("m");
                 }
             }
-            _ => {
+            false => {
                 if up_days != 0.0 {
                     if up_days == 1.0 {
                         formatted_uptime.push_str(&up_days.to_string());
@@ -70,15 +70,22 @@ pub fn uptime(up: String, shorthand: bool) -> String {
 
 /// Construct a new _String_ from the values
 /// returned by `read::hostname` and `read::username`
-pub fn host() -> String {
-    general::username() + "@" + &general::hostname()
+pub fn host(fail: &mut Fail) -> String {
+    let username = general::username();
+    let hostname = general::hostname();
+    if !username.is_empty() && hostname != "Unknown" {
+        return username + "@" + &hostname;
+    } else {
+        fail.host.failed = true;
+        return String::from("Unknown");
+    }
 }
 
 /// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
-pub fn battery() -> String {
-    let percentage = battery::percentage();
-    let status = battery::status();
+pub fn battery(fail: &mut Fail) -> String {
+    let percentage = battery::percentage(fail);
+    let status = battery::status(fail);
     if !percentage.is_empty() && !status.is_empty() {
         if percentage != "100" {
             return String::from(percentage + "% & " + &status);

@@ -1,6 +1,6 @@
 # Macchina
 
-![Macchina preview image](screenshots/preview.png)
+![Macchina preview image](screenshots/banner.png)
 
 [![Crates.io](https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66)](https://crates.io/crates/macchina)
 [![Crates.io](https://img.shields.io/crates/d/macchina?style=for-the-badge&label=DOWNLOADS&color=0D3B66)](https://crates.io/crates/macchina)
@@ -13,9 +13,9 @@
 Macchina is a fetching program, not a library.
 
 It lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
-No one wants a slow fetcher, and macchina's main goal is to provide you with handy features while keeping performance a priority.
+No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
 
-If Macchina fails to display certain elements, or their output is incorrect, please create an [issue](https://github.com/grtcdr/macchina/issues/new).
+![Macchina preview image](screenshots/preview.png)
 
 ---
 
@@ -91,21 +91,25 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 
 `--palette / -p` - Display palette
 
-`--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
+`--short-sh / -S` - Shorten shell output (/bin/zsh -> zsh)
+
+`--debug / -d` - Macchina hides unknown keys (or keys whose value extraction failed), and this argument lets you see what they are and how they are actually extracted from your system.
+
+`--short-uptime / -U` - Shorten shell output (/bin/zsh -> zsh)
 
 `--hide / -H <element>` - Hide elements such as host, os, kern, etc.
 
-`--show-only / -X <element>` - Displays only the provided elements.
+`--show-only / -X <element>` - Display only the provided elements
 
 `--bar / -b` - Display memory usage and battery percentage as bars
 
 ![Preview of bar argument](screenshots/bars.png)
 
-`--theme / -t <theme_name>` - Specify the theme to use
+`--theme / -t <theme>` - Specify the theme
 
 `--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--spacing / -S <amount>` - Specify the amount of spacing to use
+`--spacing / -s <amount>` - Specify the amount of spacing to use
 
 `--help / -h` -  Print help text
 

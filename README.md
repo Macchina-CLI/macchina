@@ -1,9 +1,6 @@
 <h1 align="center"> Macchina </h1>
 
-<p align="center">
-  <img src="screenshots/preview.png"/>
-  <a href="https://forthebadge.com/images/badges/made-with-rust.svg" alt="Made With Rust Badge"></a>
-</p>
+![Macchina preview image](screenshots/banner.png)
 
 [![Crates.io](https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66)](https://crates.io/crates/macchina)
 [![Crates.io](https://img.shields.io/crates/d/macchina?style=for-the-badge&label=DOWNLOADS&color=0D3B66)](https://crates.io/crates/macchina)
@@ -22,15 +19,22 @@
 ---
 
 # About Macchina <a name="about"></a>
+
 Macchina lets you view basic system information, like your hostname, your kernel version, memory usage, and much more.
-No one wants a slow fetcher, and Macchina's main goal is to provide you with handy features while keeping performance a priority.
+No one wants a slow fetcher, and Macchina's selling point is providing you with handy features while keeping performance a priority, and minimalism a goal.
+
+
+![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- Macchina will now check if only a Window Manager is present, and won't not show desktop environment information.
-- You now have the ability to change how uptime is displayed:
-  - running `macchina --short-uptime` or `macchina -U` will show the previously used uptime format e.g. __2d 8h 10m__
-  - running `macchina` will show the newly implemented uptime format e.g. __2 days 8 hours 10 minutes__
-- NetBSD: Fixed a bug which resulted in product name showing up three times in a row.
+This new update brings a lot of cool concepts that make Macchina a little more user-friendly, and more forgiving if something goes wrong in the system fetching phase, I'll be improving these new features more and more as time goes on, and will now focus mostly on providing NetBSD the experience that it deserves, fix nasty bugs that might occur on different kinds of hardware and give the code a clean-up!
+
+Here's a list of new changes:
+- Meet `Fail`, a cleaner implementation for taking care of value extraction errors, and his buddy `--debug`
+- `--debug / -d` helps you identify what elements have failed and how they're extracted from your system, if an error occured it'll print the status (__ERROR:DISABLED__ or __OK:DISABLED__), the element and the extraction method.
+- Add a condition for when SReclaimable memory isn't present in /proc/meminfo
+- Uppercase first letter of shorthand shell output e.g. `zsh` will be `Zsh`
+- Spice up README files with a new Macchina banner!
 
 ---
 
@@ -106,21 +110,23 @@ Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed 
 
 `--palette / -p` - Display palette
 
-`--short-sh / -s` - Shorten shell output (/bin/zsh -> zsh)
+`--short-sh / -S` - Shorten shell output (/bin/zsh -> zsh)
+
+`--short-uptime / -U` - Shorten shell output (/bin/zsh -> zsh)
 
 `--hide / -H <element>` - Hide elements such as host, os, kern, etc.
 
-`--show-only / -X <element>` - Displays only the provided elements.
+`--show-only / -X <element>` - Display only the provided elements
 
 `--bar / -b` - Display memory usage and battery percentage as bars
 
 ![Preview of bar argument](screenshots/bars.png)
 
-`--theme / -t <theme_name>` - Specify the theme to use
+`--theme / -t <theme>` - Specify the theme
 
 `--padding / -P <amount>` - Specify the amount of (left) padding to use
 
-`--spacing / -S <amount>` - Specify the amount of spacing to use
+`--spacing / -s <amount>` - Specify the amount of spacing to use
 
 `--help / -h` -  Print help text
 

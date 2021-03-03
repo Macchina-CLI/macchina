@@ -16,10 +16,8 @@ mod package;
 mod product;
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
-use display::{choose_color, Elements, Options};
+use display::{choose_color, Elements, Fail, Options};
 
-#[cfg(target_os = "netbsd")]
-pub const HIDE_DISTRIBUTION: bool = true;
 /// Macchina's version
 pub const VERSION: &str = crate_version!();
 /// Macchina's default color
@@ -37,7 +35,6 @@ fn main() {
     let matches = App::new("Macchina")
         .version(VERSION)
         .author(crate_authors!())
-        .about("System information fetcher")
         .arg(
             Arg::with_name("palette")
                 .short("p")
@@ -139,7 +136,13 @@ fn main() {
         .arg(
             Arg::with_name("short-uptime")
                 .short("U")
-                .long("short-shell")
+                .long("short-uptime")
+                .multiple(false),
+        )
+        .arg(
+            Arg::with_name("debug")
+                .short("d")
+                .long("debug")
                 .multiple(false),
         )
         .arg(Arg::with_name("help").short("h").long("help"))
@@ -148,10 +151,11 @@ fn main() {
 
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
-    elems.is_running_wm_only();
+    let mut fail = Fail::new();
+    elems.is_running_wm_only(&mut fail, true);
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
-    elems.set_longest_key();
+    elems.set_longest_key(&mut fail);
 
     // Instantiate Macchina's default behavior, i.e:
     //   color: enabled
@@ -159,6 +163,11 @@ fn main() {
     //   shell shorthand: disabled
     let mut opts = Options::new();
 
+    if matches.is_present("debug") {
+        elems.init_elements_for_debug(&mut fail, &opts);
+        display::debug(&mut fail);
+        std::process::exit(0);
+    }
     if matches.is_present("help") {
         display::help();
         std::process::exit(0);
@@ -195,13 +204,13 @@ fn main() {
     }
     if matches.is_present("hide") {
         let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
-        display::hide(elems, opts, elements_to_hide);
+        display::hide(elems, opts, &mut fail, elements_to_hide);
         std::process::exit(0);
     }
     if matches.is_present("show-only") {
         elems.hide_all();
         let elements_to_unhide: Vec<&str> = matches.values_of("show-only").unwrap().collect();
-        display::unhide(elems, opts, elements_to_unhide);
+        display::unhide(elems, opts, &mut fail, elements_to_unhide);
         std::process::exit(0);
     }
     if matches.is_present("version") {
@@ -213,11 +222,11 @@ fn main() {
     }
     if matches.is_present("theme") {
         if matches.value_of("theme").unwrap() == "alt" {
-            elems.set_theme_alt();
+            elems.set_theme_alt(&mut fail);
         } else if matches.value_of("theme").unwrap() == "long" {
-            elems.set_theme_long();
+            elems.set_theme_long(&mut fail);
         }
     }
 
-    display::print_info(elems, &opts);
+    display::print_info(elems, &opts, &mut fail);
 }

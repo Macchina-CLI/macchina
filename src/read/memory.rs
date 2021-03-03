@@ -57,5 +57,8 @@ pub fn sreclaimable() -> u64 {
 /// Calculate memory utilization,
 /// used = memtotal - memfree - cached - sreclaimable - buffers
 pub fn used() -> u64 {
-    memtotal() - memfree() - cached() - sreclaimable() - buffers()
+    if sreclaimable() != 0 {
+        return memtotal() - memfree() - cached() - sreclaimable() - buffers();
+    }
+    memtotal() - memfree() - cached() - buffers()
 }
