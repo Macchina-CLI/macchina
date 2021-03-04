@@ -40,7 +40,7 @@ pub struct Fail {
 impl Fail {
     pub fn new() -> Fail {
         Fail {
-            window_man: FailedComponent::new(false, String::from("Window Manager -> Extracted using \"wmctrl -m\"")),
+            window_man: FailedComponent::new(false, String::from("(ERROR:DISABLED) Window Manager -> Extracted using \"wmctrl -m | grep Name:\"")),
             desktop_env: FailedComponent::new(
                 false,
                 String::from("(ERROR:DISABLED) Desktop Environment -> Obtained from \"DESKTOP_SESSION\" OR \"XDG_CURRENT_DESKTOP\" environment variables
@@ -235,7 +235,11 @@ impl Elements {
         }
     }
     pub fn is_running_wm_only(&mut self, fail: &mut Fail, apply: bool) -> bool {
-        if self.desktop_env.key == self.window_man.key && apply {
+        if general::desktop_environment(fail).to_uppercase()
+            == general::window_manager(fail).to_uppercase()
+            && apply
+        {
+            fail.desktop_env.failed = true;
             return true;
         } else {
             fail.desktop_env.failed = false
@@ -484,6 +488,7 @@ impl Printing for Elements {
     fn print_desktop_env(&mut self, fail: &mut Fail) {
         if !self.desktop_env.hidden {
             self.desktop_env.modify(general::desktop_environment(fail));
+            self.is_running_wm_only(fail, true);
             if !fail.desktop_env.failed {
                 println!(
                     "{}{}{}{}{}{}",
@@ -773,6 +778,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_processor();
     elems.print_memory();
     elems.print_battery(fail);
+    general::shell_version(fail);
     elems.print_palette(opts);
 }
 

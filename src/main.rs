@@ -152,7 +152,6 @@ fn main() {
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
     let mut fail = Fail::new();
-    elems.is_running_wm_only(&mut fail, true);
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
     elems.set_longest_key(&mut fail);

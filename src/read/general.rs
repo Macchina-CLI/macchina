@@ -202,7 +202,7 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
             );
             return String::from("Unknown");
         }
-        return extra::ucfirst(shell_name);
+        return shell_name;
     }
     // If shell shorthand is false, we use "ps -p $$ -o args=" instead of "ps -p $$ -o comm="
     // to print the full path of the current shell instance name
@@ -274,4 +274,21 @@ pub fn uptime(time_shorthand: bool, fail: &mut Fail) -> String {
         }
     };
     ret
+}
+
+pub fn shell_version(fail: &mut Fail) -> String {
+    let shell = shell(true, fail);
+    match shell.as_str() {
+        "zsh" => {
+            let shell_ver = env::var("ZSH_VERSION");
+            match shell_ver {
+                Ok(ret) => {
+                    println!("{}", ret);
+                    return ret;
+                }
+                Err(_e) => return String::from("Unknown"),
+            }
+        }
+        _ => return String::from("Unknown"),
+    }
 }

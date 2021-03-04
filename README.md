@@ -25,7 +25,7 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Fix shell and terminal failing to fetch for NetBSD
+- [x] Fix [#13](https://github.com/grtcdr/macchina/issues/13)
 
 # Todo <a name="todo"></a>
 - [ ] Implement battery fetching for NetBSD
