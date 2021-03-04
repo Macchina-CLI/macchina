@@ -38,7 +38,7 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 
 ---
 
-# Benchmarks (OUTDATED) <a name="bench"></a>
+# Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
