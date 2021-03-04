@@ -25,7 +25,7 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Fix [#13](https://github.com/grtcdr/macchina/issues/13)
+- [x] Up-to-date documentation
 
 # Todo <a name="todo"></a>
 - [ ] Implement battery fetching for NetBSD
@@ -50,7 +50,7 @@ Macchina is pretty fast, see for yourself:
 
 __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 
-- Note that hiding elements using Macchina's __--hide <element>__ significantly improves speed
+- Note that hiding elements with __--hide <element>__ significantly improves speed
 
 ---
 

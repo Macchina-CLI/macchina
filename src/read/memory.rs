@@ -2,6 +2,7 @@
 use std::process::Command;
 use std::process::Stdio;
 
+/// `get_value()` will try and obtain the memory field needed for each variable found in `used()` formula
 fn get_value(value: &str) -> u64 {
     let cat = Command::new("cat")
         .arg("/proc/meminfo")
@@ -67,7 +68,7 @@ pub fn used() -> u64 {
 
 #[cfg(target_os = "netbsd")]
 /// Calculate memory utilization,
-/// used = memtotal - memfree - cached - sreclaimable - buffers
+/// used = memtotal - memfree
 pub fn used() -> u64 {
     memtotal() - memfree()
 }

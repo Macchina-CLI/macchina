@@ -18,7 +18,7 @@ pub fn username() -> String {
     pop_newline(username)
 }
 
-/// Read hostname using nix::unistd::gethostname()
+/// Read hostname using `nix::unistd::gethostname()`
 pub fn hostname() -> String {
     let mut buf = [0u8; 64];
     let hostname_cstr = unistd::gethostname(&mut buf);
@@ -61,8 +61,8 @@ pub fn distribution() -> String {
     ))
 }
 
-/// Read desktop environment name from $DESKTOP_SESSION environment variable
-/// or from the fallback environment variable $XDG_CURRENT_DESKTOP
+/// Read desktop environment name from `DESKTOP_SESSION` environment variable
+/// or from the fallback environment variable `XDG_CURRENT_DESKTOP`
 pub fn desktop_environment(fail: &mut Fail) -> String {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
@@ -89,7 +89,7 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
     }
 }
 
-/// Read distribution name through `cat /etc/os-release | head -n1`
+/// Read distribution name through `cat /etc/os-release | head -n 1`
 pub fn window_manager(fail: &mut Fail) -> String {
     let wh = Command::new("which")
         .arg("wmctrl")
@@ -134,7 +134,7 @@ pub fn window_manager(fail: &mut Fail) -> String {
     String::from("Unknown")
 }
 
-/// Read current terminal instance namethrough `ps`
+/// Read current terminal name using `ps`
 pub fn terminal(fail: &mut Fail) -> String {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
@@ -177,7 +177,7 @@ pub fn terminal(fail: &mut Fail) -> String {
     terminal_name
 }
 
-/// Read current shell instance name through `ps`
+/// Read current shell name/absolute path using `ps`
 pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
     //  ps -p $$ -o comm=
     //  $$ doesn't work natively in rust but its value can be

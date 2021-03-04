@@ -4,7 +4,12 @@ use crate::{
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
+
 #[allow(dead_code)]
+/// Elements only displays an element if it hasn't failed to be fetched,
+/// and this is the struct responsible for failing those elements.
+/// Works hand-in-hand with --debug to notify the user which element failed,
+/// and prints its extraction method for debugging reasons.
 pub struct FailedComponent {
     pub failed: bool,
     pub extraction_method: String,
@@ -192,7 +197,8 @@ impl Format {
 }
 
 /// __Elements__ encapsulates elements that are to be displayed,
-/// each element is a __Pair__
+/// each element is a __Pair__, it also contains miscellaneous fields
+/// such as the key color, separator color, bar glyph, etc.
 pub struct Elements {
     pub host: Pair,
     pub distro: Pair,
@@ -210,8 +216,8 @@ pub struct Elements {
     pub format: Format,
 }
 
-/// Initialize each pair of elements, assign them their key name and their value using functions
-/// found in the _read crate_
+/// Initialize each pair of elements but only assign key names, as key values
+//  are only assigned when an element that is about to be printed is not hidden.
 impl Elements {
     pub fn new() -> Elements {
         Elements {
@@ -831,7 +837,7 @@ pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_paramet
     print_info(elems, &options, fail);
 }
 
-/// Unhide an element or more e.g. package count, uptime etc. _(--hide-all-but <element>)_
+/// Unhide an element or more e.g. package count, uptime etc. _(--show-only <element>)_
 pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
         elems.host.hidden = false;

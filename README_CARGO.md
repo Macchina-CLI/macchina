@@ -34,7 +34,7 @@ Macchina is pretty fast, see for yourself:
 
 __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 
-- Note that hiding elements using Macchina's __--hide <element>__ significantly improves speed
+- Note that hiding elements with __--hide <element>__ significantly improves speed
 
 ---
 

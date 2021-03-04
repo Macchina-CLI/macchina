@@ -2,7 +2,7 @@ use crate::Fail;
 use std::process::{Command, Stdio};
 
 #[cfg(target_os = "linux")]
-/// Extract package count for debian/arch based systems
+/// Extract package count for debian-based, arch-based distros or NetBSD
 pub fn package_count(fail: &mut Fail) -> String {
     let wh = Command::new("which")
         .arg("pacman")
