@@ -778,7 +778,6 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_processor();
     elems.print_memory();
     elems.print_battery(fail);
-    general::shell_version(fail);
     elems.print_palette(opts);
 }
 
