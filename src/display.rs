@@ -49,7 +49,7 @@ impl Fail {
             desktop_env: FailedComponent::new(
                 false,
                 String::from("(ERROR:DISABLED) Desktop Environment -> Obtained from \"DESKTOP_SESSION\" OR \"XDG_CURRENT_DESKTOP\" environment variables
-                            Ignore if not running a desktop environment."),
+                 Ignore if not running a desktop environment."),
             ),
             uptime: FailedComponent::new(
                 false,
@@ -161,8 +161,8 @@ impl Pair {
     fn modify(&mut self, val: String) {
         self.value = val;
     }
-    fn update_key(&mut self, val: String) {
-        self.key = val;
+    fn update_key(&mut self, val: &str) {
+        self.key = val.to_string();
     }
 }
 
@@ -246,60 +246,47 @@ impl Elements {
             format: Format::new(),
         }
     }
-    pub fn is_running_wm_only(&mut self, fail: &mut Fail, apply: bool) -> bool {
-        if general::desktop_environment(fail).to_uppercase()
-            == general::window_manager(fail).to_uppercase()
-            && apply
-        {
-            fail.desktop_env.failed = true;
-            return true;
-        } else {
-            fail.desktop_env.failed = false
-        }
-        false
-    }
     pub fn set_theme_alt(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("=>");
         self.format.bar_glyph = String::from("■");
         self.format.bracket_open = '[';
         self.format.bracket_close = ']';
-        self.host.update_key(String::from("Ho"));
-        self.machine.update_key(String::from("Ma"));
-        self.distro.update_key(String::from("Di"));
-        self.desktop_env.update_key(String::from("De"));
-        self.window_man.update_key(String::from("Wm"));
+        self.host.update_key("Ho");
+        self.machine.update_key("Ma");
+        self.distro.update_key("Di");
+        self.desktop_env.update_key("De");
+        self.window_man.update_key("Wm");
         #[cfg(target_os = "linux")]
-        self.kernel.update_key(String::from("Ke"));
+        self.kernel.update_key("Ke");
         #[cfg(target_os = "netbsd")]
-        self.kernel.update_key(String::from("Os"));
-        self.packages.update_key(String::from("Pa"));
-        self.shell.update_key(String::from("Sh"));
-        self.terminal.update_key(String::from("Te"));
-        self.cpu.update_key(String::from("Cp"));
-        self.memory.update_key(String::from("Me"));
-        self.uptime.update_key(String::from("Up"));
-        self.battery.update_key(String::from("Ba"));
+        self.kernel.update_key("Os");
+        self.packages.update_key("Pa");
+        self.shell.update_key("Sh");
+        self.terminal.update_key("Te");
+        self.cpu.update_key("Cp");
+        self.memory.update_key("Me");
+        self.uptime.update_key("Up");
+        self.battery.update_key("Ba");
         self.set_longest_key(fail);
     }
     pub fn set_theme_long(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("~");
-        self.host.update_key(String::from("Hostname"));
-        self.machine.update_key(String::from("Machine"));
-        self.distro.update_key(String::from("Distribution"));
-        self.desktop_env
-            .update_key(String::from("Desktop Environment"));
-        self.window_man.update_key(String::from("Window Manager"));
+        self.host.update_key("Hostname");
+        self.machine.update_key("Machine");
+        self.distro.update_key("Distribution");
+        self.desktop_env.update_key("Desktop Environment");
+        self.window_man.update_key("Window Manager");
         #[cfg(target_os = "linux")]
-        self.kernel.update_key(String::from("Kernel"));
+        self.kernel.update_key("Kernel");
         #[cfg(target_os = "netbsd")]
-        self.kernel.update_key(String::from("Operating System"));
-        self.packages.update_key(String::from("Packages"));
-        self.shell.update_key(String::from("Shell"));
-        self.terminal.update_key(String::from("Terminal"));
-        self.cpu.update_key(String::from("Processor"));
-        self.memory.update_key(String::from("Memory"));
-        self.uptime.update_key(String::from("Uptime"));
-        self.battery.update_key(String::from("Battery"));
+        self.kernel.update_key("Operating System");
+        self.packages.update_key("Packages");
+        self.shell.update_key("Shell");
+        self.terminal.update_key("Terminal");
+        self.cpu.update_key("Processor");
+        self.memory.update_key("Memory");
+        self.uptime.update_key("Uptime");
+        self.battery.update_key("Battery");
         self.set_longest_key(fail);
     }
     pub fn set_color(&mut self, c: Color) {
@@ -411,6 +398,7 @@ impl Elements {
         self.uptime.modify(general::uptime(true, fail));
         self.desktop_env.modify(general::desktop_environment(fail));
         self.window_man.modify(general::window_manager(fail));
+        self.is_running_wm_only(fail, true);
         self.uptime
             .modify(general::uptime(opts.uptime_shorthand, fail));
         self.shell
@@ -419,6 +407,16 @@ impl Elements {
         self.host.modify(format::host(fail));
         self.battery.modify(format::battery(fail));
         self.packages.modify(package::package_count(fail));
+    }
+    pub fn is_running_wm_only(&mut self, fail: &mut Fail, apply: bool) -> bool {
+        if general::window_manager(fail).to_uppercase()
+            == general::desktop_environment(fail).to_uppercase()
+            && apply
+        {
+            fail.desktop_env.failed = true;
+            return true;
+        }
+        false
     }
 }
 
@@ -951,16 +949,16 @@ pub fn help() {
     let help_string: &str = "
     Coloring:
         Macchina's default key color is blue, to change the key color
-        use \"--color / -c <color>\".
+        use \"--color / -c <color>\"
         Macchina's default separator color is white, to change the separator color
-        use \"--separator-color / -C <color>\".
-        To let Macchina pick a random color for you, use \"--random-color / -r\".
+        use \"--separator-color / -C <color>\"
+        To let Macchina pick a random color for you, use \"--random-color / -r\"
         Supported colors (case-sensitive):
             red, green, blue, magenta, cyan, yellow, black and white.
         
     Theming:
         Macchina comes with multiple themes out of the box,
-        to change the default theme, use \"--theme / -t <theme>\".
+        to change the default theme, use \"--theme / -t <theme>\"
         Supported themes (case-sensitive):
             def, alt and long.
 
@@ -968,11 +966,11 @@ pub fn help() {
         To hide an element (or more), use \"--hide / -H <element>\"
         To display only the specified element (or more), use \"--show-only / -X <element>\" 
         Elements (case-sensitive):
-            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem, bat.
+            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem and bat.
     
     If one of the keys e.g. kernel, uptime etc. fails to display, then Macchina couldn't
     fetch that piece of information, and therefore hides it from you.
-    To see failing elements run: \"macchina --debug\".
+    To see failing elements run: \"macchina --debug\"
     ";
     println!("{}\n{}\n", usage_string, help_string);
 }

@@ -164,12 +164,14 @@ pub fn machine() -> String {
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }
 
+/// Similar to how basename works
 pub fn desktop_environment(mut session_name: String) -> String {
     let last_occurence_index = session_name.rfind("/").unwrap() + 1;
     session_name.replace_range(0..last_occurence_index, "");
     return extra::ucfirst(&session_name);
 }
 
+/// Returns a concatenated string of the kernel name and its release
 pub fn kernel() -> String {
     let ostype = kernel::ostype();
     let osrelease = kernel::osrelease();

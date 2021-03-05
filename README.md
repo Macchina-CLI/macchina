@@ -25,8 +25,8 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Package count now works for Gentoo
-- [x] Implement battery fetching for NetBSD
+- [x] Fixed a bug causing desktop environment not to appear in `--debug` in certain conditions.
+- [x] Fixed a bug causing desktop environment to still appear even though it is __"Unknown"__
 
 # Todo <a name="todo"></a>
 All done for now.

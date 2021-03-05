@@ -68,7 +68,7 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
     match desktop_env {
         Ok(ret) => {
             if !ret.contains("/") {
-                return ret.to_string();
+                return extra::ucfirst(ret.to_string());
             }
             format::desktop_environment(ret.to_string())
         }

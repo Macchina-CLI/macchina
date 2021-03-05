@@ -154,7 +154,9 @@ fn main() {
     let mut fail = Fail::new();
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
-    elems.set_longest_key(&mut fail);
+    if !matches.is_present("theme") {
+        elems.set_longest_key(&mut fail);
+    }
 
     // Instantiate Macchina's default behavior, i.e:
     //   color: enabled
