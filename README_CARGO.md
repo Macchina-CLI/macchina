@@ -19,6 +19,8 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 
 # Dependencies
 - [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
+- If you're on __NetBSD__, you'll want to install:
+  - [ripgrep](https://github.com/BurntSushi/ripgrep)
 
 ---
 
@@ -73,6 +75,7 @@ __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
+- Gentoo
 - NetBSD
 
 Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification".
@@ -142,6 +145,8 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD        |        90%         |
+| NetBSD [1]    |        Yes         |
 | MacOS         |                    |
 | Windows       |                    |
+
+[1]: Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
