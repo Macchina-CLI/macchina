@@ -35,10 +35,12 @@ All done for now.
 
 # Dependencies <a name="deps"></a>
 - [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
+- If you're on __NetBSD__, you'll want to install:
+  - [ripgrep](https://github.com/BurntSushi/ripgrep)
 
 ---
 
-# Benchmarks (OUTDATED) <a name="bench"></a>
+# Benchmarks <a name="bench"></a>
 Macchina is pretty fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
@@ -157,6 +159,6 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD        |        90%         |
+| NetBSD        |        Yes         |
 | MacOS         |                    |
 | Windows       |                    |

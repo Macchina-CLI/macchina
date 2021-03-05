@@ -35,8 +35,7 @@ pub fn status(fail: &mut Fail) -> String {
 #[cfg(target_os = "netbsd")]
 pub fn status(fail: &mut Fail) -> String {
     let envstat = Command::new("envstat")
-        .arg("-d")
-        .arg("acpibat0")
+        .args(&["-d", "acpibat0"])
         .stdout(Stdio::piped())
         .spawn()
         .expect("ERROR: failed to spawn \"envstat\" process");
@@ -45,32 +44,41 @@ pub fn status(fail: &mut Fail) -> String {
         .stdout
         .expect("ERROR: failed to open \"envstat\" stdout");
 
-    let grep = Command::new("grep")
-        .arg("charging:")
-        .stdin(Stdio::from(envstat_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"grep\" process");
+    let wh = Command::new("which")
+        .arg("rg")
+        .output()
+        .expect("ERROR: failed to start \"which\" process");
+    let which =
+        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
 
-    let output = grep
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"grep\" process to exit");
-    let mut status = String::from_utf8(output.stdout)
-        .expect("ERROR: \"grep\" process output was not valid UTF-8");
-    status = status.replace("charging:", "").trim().to_string();
-    if status.is_empty() {
-        fail.battery.failed = true;
-        return String::new();
+    if !which.is_empty() {
+        let grep = Command::new("rg")
+            .arg("charging:")
+            .stdin(Stdio::from(envstat_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"rg\" process");
+
+        let output = grep
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"rg\" process to exit");
+        let mut status = String::from_utf8(output.stdout)
+            .expect("ERROR: \"grep\" process output was not valid UTF-8");
+        status = status.replace("charging:", "").trim().to_string();
+        if status.is_empty() {
+            fail.battery.failed = true;
+            return String::new();
+        }
+        return status;
     }
-    status
+    String::new()
 }
 
 /// Read battery status through `envstat -d acpibat0 | grep -oP '(?<=\().*(?=\))'`
 #[cfg(target_os = "netbsd")]
 pub fn percentage(fail: &mut Fail) -> String {
     let envstat = Command::new("envstat")
-        .arg("-d")
-        .arg("acpibat0")
+        .args(&["-d", "acpibat0"])
         .stdout(Stdio::piped())
         .spawn()
         .expect("ERROR: failed to spawn \"envstat\" process");
@@ -79,24 +87,30 @@ pub fn percentage(fail: &mut Fail) -> String {
         .stdout
         .expect("ERROR: failed to open \"envstat\" stdout");
 
-    let grep = Command::new("grep")
-        .arg("-o")
-        .arg("-P")
-        .arg(r"(?<=\().*(?=\))")
-        .stdin(Stdio::from(envstat_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"grep\" process");
+    let wh = Command::new("which")
+        .arg("rg")
+        .output()
+        .expect("ERROR: failed to start \"which\" process");
+    let which =
+        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
+    if !which.is_empty() {
+        let grep = Command::new("rg")
+            .args(&["-o", "-P", r"(?<=\().*(?=\))"])
+            .stdin(Stdio::from(envstat_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"rg\" process");
+        let output = grep
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"rg\" process to exit");
+        let perc_str = String::from_utf8(output.stdout)
+            .expect("ERROR: \"rg\" process output was not valid UTF-8");
+        let percentage = perc_str.trim().split(".").next().unwrap_or("").to_string();
 
-    let output = grep
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"grep\" process to exit");
-    let perc_str = String::from_utf8(output.stdout)
-        .expect("ERROR: \"grep\" process output was not valid UTF-8");
-    let percentage = perc_str.trim().split(".").next().unwrap_or("").to_string();
-
-    if percentage.is_empty() {
-        fail.battery.failed = true;
+        if percentage.is_empty() {
+            fail.battery.failed = true;
+        }
+        return percentage;
     }
-    percentage
+    String::new()
 }

@@ -19,6 +19,8 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 
 # Dependencies
 - [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
+- If you're on __NetBSD__, you'll want to install:
+  - [ripgrep](https://github.com/BurntSushi/ripgrep)
 
 ---
 
@@ -143,6 +145,6 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD        |        90%         |
+| NetBSD        |        Yes         |
 | MacOS         |                    |
 | Windows       |                    |

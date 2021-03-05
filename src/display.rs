@@ -57,9 +57,14 @@ impl Fail {
             ),
             battery: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Battery -> Percentage extracted from /sys/class/power_supply/BAT0/capacity
+                String::from("(ERROR:DISABLED) Battery -> 
+                            (Linux) 
+                            Percentage extracted from /sys/class/power_supply/BAT0/capacity
                             Status extracted from /sys/class/power_supply/BAT0/status
-                            Ignore if on a desktop computer.
+                            (NetBSD) (ripgrep required)
+                            Percentage extracted using envstat -d acpibat0 and rg (ripgrep)
+                            Status extracted using envstat -d acpibat0 and rg (ripgrep)
+                            -> Ignore if on a desktop computer.
                 "),
             ),
             host: FailedComponent::new(
