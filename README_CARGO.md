@@ -73,6 +73,7 @@ __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
+- Gentoo
 - NetBSD
 
 Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification".

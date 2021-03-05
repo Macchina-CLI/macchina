@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 use crate::{extra, Fail, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
-use std::{fs, process::Command};
+use std::fs;
+use std::process::{Command, Stdio};
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 #[cfg(target_os = "linux")]
@@ -30,38 +31,72 @@ pub fn status(fail: &mut Fail) -> String {
     extra::pop_newline(ret)
 }
 
-/// Read battery percentage through `sysctl -nb hw.acpi.battery.life`
-#[cfg(target_os = "netbsd")]
-pub fn percentage(fail: &mut Fail) -> String {
-    let output = Command::new("sysctl")
-        .args(&["-n", "-b", "hw.acpi.battery.life"])
-        .output()
-        .expect("ERROR: failed to start \"sysctl\" process");
-
-    let percentage = String::from_utf8(output.stdout)
-        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-    let percentage_string = String::from(percentage);
-    if percentage_string.is_empty() {
-        fail.battery.failed = true;
-        return String::new();
-    }
-    percentage_string
-}
-
-/// Read battery status through `sysctl -nb hw.acpi.battery.state`
+/// Read battery percentage using `envstat -d acpibat0 | grep charging:`
 #[cfg(target_os = "netbsd")]
 pub fn status(fail: &mut Fail) -> String {
-    let output = Command::new("sysctl")
-        .args(&["-n", "-b", "hw.acpi.battery.state"])
-        .output()
-        .expect("ERROR: failed to start \"sysctl\" process");
+    let envstat = Command::new("envstat")
+        .arg("-d")
+        .arg("acpibat0")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"envstat\" process");
 
-    let status = String::from_utf8(output.stdout)
-        .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-    let status_string = String::from(status);
-    if status_string.is_empty() {
+    let envstat_out = envstat
+        .stdout
+        .expect("ERROR: failed to open \"envstat\" stdout");
+
+    let grep = Command::new("grep")
+        .arg("charging:")
+        .stdin(Stdio::from(envstat_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"grep\" process");
+
+    let output = grep
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"grep\" process to exit");
+    let mut status = String::from_utf8(output.stdout)
+        .expect("ERROR: \"grep\" process output was not valid UTF-8");
+    status = status.replace("charging:", "").trim().to_string();
+    if status.is_empty() {
         fail.battery.failed = true;
         return String::new();
     }
-    status_string
+    status
+}
+
+/// Read battery status through `envstat -d acpibat0 | grep -oP '(?<=\().*(?=\))'`
+#[cfg(target_os = "netbsd")]
+pub fn percentage(fail: &mut Fail) -> String {
+    let envstat = Command::new("envstat")
+        .arg("-d")
+        .arg("acpibat0")
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"envstat\" process");
+
+    let envstat_out = envstat
+        .stdout
+        .expect("ERROR: failed to open \"envstat\" stdout");
+
+    let grep = Command::new("grep")
+        .arg("-o")
+        .arg("-P")
+        .arg(r"(?<=\().*(?=\))")
+        .stdin(Stdio::from(envstat_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to spawn \"grep\" process");
+
+    let output = grep
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"grep\" process to exit");
+    let perc_str = String::from_utf8(output.stdout)
+        .expect("ERROR: \"grep\" process output was not valid UTF-8");
+    let percentage = perc_str.trim().split(".").next().unwrap_or("").to_string();
+
+    if percentage.is_empty() {
+        fail.battery.failed = true;
+    }
+    percentage
 }

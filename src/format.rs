@@ -81,6 +81,7 @@ pub fn host(fail: &mut Fail) -> String {
     }
 }
 
+#[cfg(target_os = "linaux")]
 /// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery(fail: &mut Fail) -> String {
@@ -90,7 +91,27 @@ pub fn battery(fail: &mut Fail) -> String {
         if percentage != "100" {
             return String::from(percentage + "% & " + &status);
         }
-        return String::from(&status);
+        return status;
+    }
+    String::from("Unknown")
+}
+
+/// Construct a new _String_ from the values
+/// returned by `read::battery_percentage` and `read::battery_status`
+pub fn battery(fail: &mut Fail) -> String {
+    let percentage = battery::percentage(fail);
+    let status_from_read_func = battery::status(fail);
+    if !percentage.is_empty() && !status_from_read_func.is_empty() {
+        // Holds either "Charging" or "Discharging" values
+        if percentage != "100" {
+            if status_from_read_func == "TRUE" {
+                return String::from(percentage + "% & " + "Charging");
+            } else {
+                return String::from(percentage + "% & " + "Discharging");
+            }
+        } else {
+            return String::from("Full");
+        }
     }
     String::from("Unknown")
 }

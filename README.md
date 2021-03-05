@@ -25,11 +25,11 @@ No one wants a slow fetcher, and Macchina's selling point is providing you with 
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Up-to-date documentation
+- [x] Package count now works for Gentoo
+- [x] Implement battery fetching for NetBSD
 
 # Todo <a name="todo"></a>
-- [ ] Implement battery fetching for NetBSD
-
+All done for now.
 
 ---
 
@@ -89,6 +89,7 @@ __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
+- Gentoo
 - NetBSD
 
 Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification"

@@ -57,8 +57,8 @@ pub fn sreclaimable() -> u64 {
 }
 
 #[cfg(target_os = "linux")]
-/// Calculate memory utilization,
-/// used = memtotal - memfree - cached - sreclaimable - buffers
+/// Calculate memory utilization:
+/// Used = MemTotal - MemFree - Cached - SReclaimable - Buffers
 pub fn used() -> u64 {
     if sreclaimable() != 0 {
         return memtotal() - memfree() - cached() - sreclaimable() - buffers();
@@ -67,8 +67,8 @@ pub fn used() -> u64 {
 }
 
 #[cfg(target_os = "netbsd")]
-/// Calculate memory utilization,
-/// used = memtotal - memfree
+/// Calculate memory utilization:
+/// Used = MemTotal - MemFree
 pub fn used() -> u64 {
     memtotal() - memfree()
 }
