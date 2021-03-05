@@ -159,6 +159,8 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD        |        Yes         |
+| NetBSD [1]    |        Yes         |
 | MacOS         |                    |
 | Windows       |                    |
+
+[1]: Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
