@@ -1,4 +1,5 @@
 use crate::memory;
+use std::path::Path;
 
 /// Pop '__\n__' from the end of a string if it is found
 pub fn pop_newline(mut string: String) -> String {
@@ -31,5 +32,21 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     match c.next() {
         None => String::new(),
         Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+    }
+}
+
+/// Similar to how which works: returns `true` if a program exists on the system.
+/// Searches through: `/usr/bin`, `/usr/sbin`, `/bin` and `/usr/pkg/bin`
+pub fn which(program_name: &str) -> bool {
+    if Path::new(&String::from("/bin/".to_owned() + &program_name)).exists() {
+        true
+    } else if Path::new(&String::from("/usr/bin/".to_owned() + &program_name)).exists() {
+        true
+    } else if Path::new(&String::from("/usr/sbin/".to_owned() + &program_name)).exists() {
+        true
+    } else if Path::new(&String::from("/usr/pkg/bin/".to_owned() + &program_name)).exists() {
+        true
+    } else {
+        false
     }
 }

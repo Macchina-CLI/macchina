@@ -164,15 +164,6 @@ fn main() {
     //   shell shorthand: disabled
     let mut opts = Options::new();
 
-    if matches.is_present("debug") {
-        elems.init_elements_for_debug(&mut fail, &opts);
-        display::debug(&mut fail);
-        std::process::exit(0);
-    }
-    if matches.is_present("help") {
-        display::help();
-        std::process::exit(0);
-    }
     if matches.is_present("palette") {
         opts.palette_status = true;
     }
@@ -212,6 +203,15 @@ fn main() {
         elems.hide_all();
         let elements_to_unhide: Vec<&str> = matches.values_of("show-only").unwrap().collect();
         display::unhide(elems, opts, &mut fail, elements_to_unhide);
+        std::process::exit(0);
+    }
+    if matches.is_present("debug") {
+        elems.init_elements_for_debug(&mut fail, &opts);
+        display::debug(&mut fail);
+        std::process::exit(0);
+    }
+    if matches.is_present("help") {
+        display::help();
         std::process::exit(0);
     }
     if matches.is_present("version") {

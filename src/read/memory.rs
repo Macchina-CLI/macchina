@@ -1,57 +1,58 @@
 #![allow(dead_code)]
+use std::fs;
 use std::process::Command;
 use std::process::Stdio;
 
-/// `get_value()` will try and obtain the memory field needed for each variable found in `used()` formula
+/// `get_value()` will try and obtain the memory field from `/proc/meminfo` needed for each variable found in `used()` formula
 fn get_value(value: &str) -> u64 {
-    let cat = Command::new("cat")
-        .arg("/proc/meminfo")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"cat\" process");
+    let file = fs::File::open("/proc/meminfo");
+    match file {
+        Ok(content) => {
+            let grep = Command::new("grep")
+                .arg(value)
+                .stdin(Stdio::from(content))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"grep\" process");
 
-    let cat_out = cat.stdout.expect("ERROR: failed to open \"cat\" stdout");
-
-    let grep = Command::new("grep")
-        .arg(value)
-        .stdin(Stdio::from(cat_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to start \"grep\" process");
-
-    let mem = grep
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"grep\" process to exit");
-    // Collect only the value of MemTotal
-    let s_mem_kb: String = String::from_utf8(mem.stdout)
-        .expect("\"grep\" process stdout was not valid UTF-8")
-        .chars()
-        .filter(|c| c.is_digit(10))
-        .collect();
-    s_mem_kb.parse::<u64>().unwrap_or(0)
+            let mem = grep
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"grep\" process to exit");
+            // Collect only the value of MemTotal
+            let s_mem_kb: String = String::from_utf8(mem.stdout)
+                .expect("\"grep\" process stdout was not valid UTF-8")
+                .chars()
+                .filter(|c| c.is_digit(10))
+                .collect();
+            s_mem_kb.parse::<u64>().unwrap_or(0)
+        }
+        Err(_e) => {
+            return 0;
+        }
+    }
 }
 
-/// Read __MemTotal__ from `/proc/meminfo`
+/// Read __MemTotal__ using `get_value()`
 pub fn memtotal() -> u64 {
     get_value("MemTotal")
 }
 
-/// Read __MemFree__ from `/proc/meminfo`
+/// Read __MemFree__ using `get_value()`
 pub fn memfree() -> u64 {
     get_value("MemFree")
 }
 
-/// Read __Buffers__ from `/proc/meminfo`
+/// Read __Buffers__ using `get_value()`
 pub fn buffers() -> u64 {
     get_value("Buffers")
 }
 
-/// Read __Cached__ from `/proc/meminfo`
+/// Read __Cached__ using `get_value()`
 pub fn cached() -> u64 {
     get_value("^Cached")
 }
 
-/// Read __SReclaimable__ from `/proc/meminfo`
+/// Read __SReclaimable__ using `get_value()`
 pub fn sreclaimable() -> u64 {
     get_value("SReclaimable")
 }

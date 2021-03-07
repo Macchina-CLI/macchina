@@ -91,7 +91,7 @@ impl Fail {
             #[cfg(target_os = "linux")]
             distro: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Distribution -> Extracted using \"cat /etc/os-release | head -n 1\""),
+                String::from("(ERROR:DISABLED) Distribution -> Extracted from \"/etc/os-release\""),
             ),
             #[cfg(target_os = "netbsd")]
             distro: FailedComponent::new(
@@ -968,10 +968,9 @@ pub fn help() {
         Elements (case-sensitive):
             host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem and bat.
     
-    If one of the keys e.g. kernel, uptime etc. fails to display, then Macchina couldn't
+    If an element e.g. kernel, uptime etc. fails to display, then Macchina couldn't
     fetch that piece of information, and therefore hides it from you.
-    To see failing elements run: \"macchina --debug\"
-    ";
+    To see failing elements run: \"macchina --debug\"";
     println!("{}\n{}\n", usage_string, help_string);
 }
 

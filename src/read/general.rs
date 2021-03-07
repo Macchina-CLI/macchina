@@ -33,32 +33,32 @@ pub fn hostname() -> String {
     };
 }
 
-/// Read distribution name through `cat /etc/os-release | head -n1`
+/// Read distribution name
 pub fn distribution() -> String {
-    let grep = Command::new("cat")
-        .arg("/etc/os-release")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"cat\" process");
+    let file = fs::File::open("/etc/os-release");
+    match file {
+        Ok(content) => {
+            let head = Command::new("head")
+                .args(&["-n", "1"])
+                .stdin(Stdio::from(content))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"head\" process");
 
-    let grep_out = grep.stdout.expect("ERROR: failed to open \"cat\" stdout");
+            let output = head
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"head\" process to exit");
 
-    let head = Command::new("head")
-        .args(&["-n", "1"])
-        .stdin(Stdio::from(grep_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to start \"head\" process");
-
-    let output = head
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"head\" process to exit");
-
-    let distribution =
-        String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
-    pop_newline(String::from(
-        distribution.replace("\"", "").replace("NAME=", ""),
-    ))
+            let distribution =
+                String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
+            return pop_newline(String::from(
+                distribution.replace("\"", "").replace("NAME=", ""),
+            ));
+        }
+        Err(_e) => {
+            return String::from("Unknown");
+        }
+    }
 }
 
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable
@@ -89,26 +89,22 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
     }
 }
 
-/// Read distribution name through `cat /etc/os-release | head -n 1`
+/// Read window manager through `wmctrl -m | grep Name:`
 pub fn window_manager(fail: &mut Fail) -> String {
-    let wh = Command::new("which")
-        .arg("wmctrl")
-        .output()
-        .expect("ERROR: failed to start \"which\" process");
-    let which =
-        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
-    if !which.is_empty() {
-        let grep = Command::new("wmctrl")
+    if extra::which("wmctrl") {
+        let wmctrl = Command::new("wmctrl")
             .arg("-m")
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to spawn \"wmctrl\" process");
 
-        let grep_out = grep.stdout.expect("ERROR: failed to open \"cat\" stdout");
+        let wmctrl_out = wmctrl
+            .stdout
+            .expect("ERROR: failed to open \"wmctrl\" stdout");
 
         let head = Command::new("grep")
             .arg("Name:")
-            .stdin(Stdio::from(grep_out))
+            .stdin(Stdio::from(wmctrl_out))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to spawn \"head\" process");
@@ -127,10 +123,7 @@ pub fn window_manager(fail: &mut Fail) -> String {
         }
         return window_man_name;
     }
-    // Fail element if wmctrl isn't installed
-    if which.is_empty() {
-        fail.window_man.failed = true;
-    }
+    fail.window_man.failed = true;
     String::from("Unknown")
 }
 

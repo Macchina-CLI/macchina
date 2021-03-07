@@ -31,27 +31,20 @@ pub fn status(fail: &mut Fail) -> String {
     extra::pop_newline(ret)
 }
 
-/// Read battery percentage using `envstat -d acpibat0 | grep charging:`
+/// Read battery percentage using `envstat -d acpibat0 | rg charging:`
 #[cfg(target_os = "netbsd")]
 pub fn status(fail: &mut Fail) -> String {
-    let envstat = Command::new("envstat")
-        .args(&["-d", "acpibat0"])
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"envstat\" process");
+    if extra::which("rg") {
+        let envstat = Command::new("envstat")
+            .args(&["-d", "acpibat0"])
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"envstat\" process");
 
-    let envstat_out = envstat
-        .stdout
-        .expect("ERROR: failed to open \"envstat\" stdout");
+        let envstat_out = envstat
+            .stdout
+            .expect("ERROR: failed to open \"envstat\" stdout");
 
-    let wh = Command::new("which")
-        .arg("rg")
-        .output()
-        .expect("ERROR: failed to start \"which\" process");
-    let which =
-        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
-
-    if !which.is_empty() {
         let grep = Command::new("rg")
             .arg("charging:")
             .stdin(Stdio::from(envstat_out))
@@ -71,29 +64,24 @@ pub fn status(fail: &mut Fail) -> String {
         }
         return status;
     }
+    fail.battery.failed = true;
     String::new()
 }
 
-/// Read battery status through `envstat -d acpibat0 | grep -oP '(?<=\().*(?=\))'`
+/// Read battery status through `envstat -d acpibat0 | rg -oP '(?<=\().*(?=\))'`
 #[cfg(target_os = "netbsd")]
 pub fn percentage(fail: &mut Fail) -> String {
-    let envstat = Command::new("envstat")
-        .args(&["-d", "acpibat0"])
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"envstat\" process");
+    if extra::which("rg") {
+        let envstat = Command::new("envstat")
+            .args(&["-d", "acpibat0"])
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"envstat\" process");
 
-    let envstat_out = envstat
-        .stdout
-        .expect("ERROR: failed to open \"envstat\" stdout");
+        let envstat_out = envstat
+            .stdout
+            .expect("ERROR: failed to open \"envstat\" stdout");
 
-    let wh = Command::new("which")
-        .arg("rg")
-        .output()
-        .expect("ERROR: failed to start \"which\" process");
-    let which =
-        String::from_utf8(wh.stdout).expect("ERROR: \"which\" process stdout was not valid UTF-8");
-    if !which.is_empty() {
         let grep = Command::new("rg")
             .args(&["-o", "-P", r"(?<=\().*(?=\))"])
             .stdin(Stdio::from(envstat_out))
@@ -112,5 +100,6 @@ pub fn percentage(fail: &mut Fail) -> String {
         }
         return percentage;
     }
+    fail.battery.failed = true;
     String::new()
 }
