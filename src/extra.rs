@@ -1,7 +1,7 @@
 use crate::memory;
 use std::path::Path;
 
-/// Pop '__\n__' from the end of a string if it is found
+/// Pop '\n' from the end of a string if it is found
 pub fn pop_newline(mut string: String) -> String {
     if string.ends_with('\n') {
         string.pop();
@@ -16,7 +16,7 @@ pub fn percent_of_total(perc: u64) -> u64 {
     new_perc as u64
 }
 
-/// Check if a _String_ is a valid integer
+/// Check if a `String` is a valid integer
 pub fn is_int(s: String) -> Result<(), String> {
     let b = s.chars().all(char::is_numeric);
     if b == true {
@@ -27,16 +27,16 @@ pub fn is_int(s: String) -> Result<(), String> {
 
 /// Uppercase first letter of a string of characters
 pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
-    let str_ref = s.as_ref();
-    let mut c = str_ref.chars();
+    let mut c = s.as_ref().chars();
     match c.next() {
         None => String::new(),
         Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
     }
 }
 
-/// Similar to how which works: returns `true` if a program exists on the system.
-/// Searches through: `/usr/bin`, `/usr/sbin`, `/bin` and `/usr/pkg/bin`
+/// Similar to how GNU's `which` works, but it returns __true__ if a program, such as `ps`,
+/// exists on the system, and __false__ if it doesn't.
+/// It searches through: `/bin`, `/usr/bin`, `/usr/sbin` and `/usr/pkg/bin`
 pub fn which(program_name: &str) -> bool {
     if Path::new(&String::from("/bin/".to_owned() + &program_name)).exists() {
         true

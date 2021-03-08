@@ -1,16 +1,16 @@
 #![allow(unused_imports)]
-use crate::{extra, Fail, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
+use crate::{extra, Fail};
 use std::fs;
 use std::process::{Command, Stdio};
 
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 #[cfg(target_os = "linux")]
 pub fn percentage(fail: &mut Fail) -> String {
-    let percentage = fs::read_to_string(PATH_TO_BATTERY_PERCENTAGE);
+    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
     let ret = match percentage {
         Ok(ret) => ret,
         Err(_e) => {
-            fail.battery.failed = true;
+            fail.battery.fail_component();
             return String::new();
         }
     };
@@ -20,11 +20,11 @@ pub fn percentage(fail: &mut Fail) -> String {
 /// Read battery status from `/sys/class/power_supply/BAT0/status`
 #[cfg(target_os = "linux")]
 pub fn status(fail: &mut Fail) -> String {
-    let status = fs::read_to_string(PATH_TO_BATTERY_STATUS);
+    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
     let ret = match status {
         Ok(ret) => ret,
         Err(_e) => {
-            fail.battery.failed = true;
+            fail.battery.fail_component();
             return String::new();
         }
     };
@@ -59,16 +59,16 @@ pub fn status(fail: &mut Fail) -> String {
             .expect("ERROR: \"grep\" process output was not valid UTF-8");
         status = status.replace("charging:", "").trim().to_string();
         if status.is_empty() {
-            fail.battery.failed = true;
+            fail.battery.fail_component();
             return String::new();
         }
         return status;
     }
-    fail.battery.failed = true;
+    fail.battery.fail_component();
     String::new()
 }
 
-/// Read battery status through `envstat -d acpibat0 | rg -oP '(?<=\().*(?=\))'`
+/// Read battery status using `envstat -d acpibat0 | rg -oP '(?<=\().*(?=\))'`
 #[cfg(target_os = "netbsd")]
 pub fn percentage(fail: &mut Fail) -> String {
     if extra::which("rg") {
@@ -82,13 +82,13 @@ pub fn percentage(fail: &mut Fail) -> String {
             .stdout
             .expect("ERROR: failed to open \"envstat\" stdout");
 
-        let grep = Command::new("rg")
+        let rg = Command::new("rg")
             .args(&["-o", "-P", r"(?<=\().*(?=\))"])
             .stdin(Stdio::from(envstat_out))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to spawn \"rg\" process");
-        let output = grep
+        let output = rg
             .wait_with_output()
             .expect("ERROR: failed to wait for \"rg\" process to exit");
         let perc_str = String::from_utf8(output.stdout)
@@ -96,10 +96,10 @@ pub fn percentage(fail: &mut Fail) -> String {
         let percentage = perc_str.trim().split(".").next().unwrap_or("").to_string();
 
         if percentage.is_empty() {
-            fail.battery.failed = true;
+            fail.battery.fail_component();
         }
         return percentage;
     }
-    fail.battery.failed = true;
+    fail.battery.fail_component();
     String::new()
 }

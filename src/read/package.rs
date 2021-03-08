@@ -12,15 +12,13 @@ pub fn package_count(fail: &mut Fail) -> String {
             .args(&["-Q", "-q"])
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to start \"pacman\" process");
-
-        let pac_out = pacman
+            .expect("ERROR: failed to start \"pacman\" process")
             .stdout
             .expect("ERROR: failed to open \"pacman\" stdout");
 
         let count = Command::new("wc")
             .arg("-l")
-            .stdin(Stdio::from(pac_out))
+            .stdin(Stdio::from(pacman))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"wc\" process");
@@ -37,13 +35,13 @@ pub fn package_count(fail: &mut Fail) -> String {
             .arg("-l")
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to start \"dpkg\" process");
-
-        let dpkg_out = dpkg.stdout.expect("ERROR: failed to open \"dpkg\" stdout");
+            .expect("ERROR: failed to start \"dpkg\" process")
+            .stdout
+            .expect("ERROR: failed to open \"dpkg\" stdout");
 
         let count = Command::new("wc")
             .arg("-l")
-            .stdin(Stdio::from(dpkg_out))
+            .stdin(Stdio::from(dpkg))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"wc\" process");
@@ -79,12 +77,12 @@ pub fn package_count(fail: &mut Fail) -> String {
             .trim()
             .to_string();
     }
-    fail.packages.failed = true;
+    fail.packages.fail_component();
     return String::from("0");
 }
 
 #[cfg(target_os = "netbsd")]
-/// Extract package count through `pacman -Qq | wc -l`
+/// Extract package count using `pkg_info | wc -l`
 pub fn package_count(fail: &mut Fail) -> String {
     if extra::which("pkg_info") {
         let pkg_info = Command::new("pkg_info")
@@ -111,7 +109,6 @@ pub fn package_count(fail: &mut Fail) -> String {
             .trim()
             .to_string();
     }
-    fail.packages.failed = true;
-    // If pkg_info is not installed, return 0
+    fail.battery.fail_component();
     return String::from("0");
 }

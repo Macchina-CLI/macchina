@@ -16,7 +16,7 @@ pub fn product_version() -> String {
 
 #[cfg(target_os = "linux")]
 /// Read system vendor from `/sys/class/dmi/id/sys_vendor`
-pub fn sys_vendor() -> String {
+pub fn product_vendor() -> String {
     let name = fs::read_to_string("/sys/class/dmi/id/sys_vendor");
     let ret = match name {
         Ok(ret) => ret,
@@ -48,12 +48,12 @@ pub fn product_name() -> String {
 }
 
 #[cfg(target_os = "netbsd")]
-/// NetBSD: Read system vendor through `sysctl -nb machdep.dmi.system-vendor`
+/// NetBSD: Read system vendor using `sysctl -nb machdep.dmi.system-vendor`
 pub fn system_vendor() -> String {
     let output = Command::new("sysctl")
         .args(&["-n", "-b", "machdep.dmi.system-vendor"])
         .output()
-        .expect("ERROR: failed to get machdep.dmi.system-product through \"sysctl\"");
+        .expect("ERROR: failed to start \"sysctl\" process");
 
     let sysven = String::from_utf8(output.stdout)
         .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
@@ -61,12 +61,12 @@ pub fn system_vendor() -> String {
 }
 
 #[cfg(target_os = "netbsd")]
-/// NetBSD: Read system version through `sysctl -nb machdep.dmi.system-version`
+/// NetBSD: Read system version using `sysctl -nb machdep.dmi.system-version`
 pub fn system_version() -> String {
     let output = Command::new("sysctl")
         .args(&["-n", "-b", "machdep.dmi.system-version"])
         .output()
-        .expect("ERROR: failed to get kernel.osrelease through \"sysctl\"");
+        .expect("ERROR: failed to start \"sysctl\" process");
 
     let sysver = String::from_utf8(output.stdout)
         .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
@@ -74,12 +74,12 @@ pub fn system_version() -> String {
 }
 
 #[cfg(target_os = "netbsd")]
-/// NetBSD: Read system product through `sysctl -nb machdep.dmi.system-product`
+/// NetBSD: Read system product using `sysctl -nb machdep.dmi.system-product`
 pub fn system_product() -> String {
     let output = Command::new("sysctl")
         .args(&["-n", "-b", "machdep.dmi.system-product"])
         .output()
-        .expect("ERROR: failed to get kernel.osrelease through \"sysctl\"");
+        .expect("ERROR: failed to start \"sysctl\" process");
 
     let sysprod = String::from_utf8(output.stdout)
         .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");

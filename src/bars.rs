@@ -1,6 +1,6 @@
 use crate::{battery, extra, memory, Fail};
 
-/// Returns a usize (0 .. 10) based on the battery percentage,
+/// Returns a usize [0..10] based on the battery percentage,
 /// `display::show_bar` takes this function as a parameter to handle
 /// displaying the bar
 pub fn battery(fail: &mut Fail) -> usize {
@@ -18,11 +18,12 @@ pub fn battery(fail: &mut Fail) -> usize {
         71..=80 => 8,
         81..=90 => 9,
         91..=100 => 10,
+        // 0 is reserved for errors
         _ => 0,
     }
 }
 
-/// Returns a usize (0 .. 10) based on the memory usage,
+/// Returns a usize [0..10] based on the memory usage,
 /// `display::show_bar` takes this function as a parameter to handle
 /// displaying the bar
 pub fn memory() -> usize {
@@ -49,6 +50,6 @@ pub fn memory() -> usize {
     } else if u <= extra::percent_of_total(100) {
         return 10;
     }
-
+    // 0 is reserved for errors
     0
 }

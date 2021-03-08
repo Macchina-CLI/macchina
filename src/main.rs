@@ -26,10 +26,6 @@ pub const DEFAULT_COLOR: Color = Color::Blue;
 pub const DEFAULT_SEPARATOR_COLOR: Color = Color::White;
 /// Macchina's default padding value
 pub const DEFAULT_PADDING: usize = 4;
-/// The path that Macchina reads battery percentage from
-pub const PATH_TO_BATTERY_PERCENTAGE: &str = "/sys/class/power_supply/BAT0/capacity";
-/// The path that Macchina reads battery status from
-pub const PATH_TO_BATTERY_STATUS: &str = "/sys/class/power_supply/BAT0/status";
 
 fn main() {
     let matches = App::new("Macchina")
@@ -152,6 +148,7 @@ fn main() {
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
     let mut fail = Fail::new();
+
     // longest_key() is used to determine how to
     // automatically space the keys, separator and values
     if !matches.is_present("theme") {

@@ -10,8 +10,8 @@
 # About Macchina
 Macchina is a fetching program, not a library.
 
-Macchina lets you view basic system information, like your hostname, kernel version, uptime, memory usage, and much more.
-No one wants a slow fetcher, and Macchina's selling point is providing you with convenient features while keeping performance a priority and minimalism a goal.
+Macchina lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
+No one wants a slow fetcher, and Macchina's selling point is providing you with convenient features while keeping performance and minimalism a priority.
 
 ![Macchina preview image](screenshots/preview.png)
 
@@ -31,12 +31,12 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 46.7 ± 2.9 | 45.3 | 62.5 | 1.00 |
-| `neofetch` | 398.2 ± 22.8 | 373.8 | 435.7 | 8.53 ± 0.72 |
+| `macchina` | 43.9 ± 3.6 | 42.2 | 61.2 | 1.00 |
+| `neofetch` | 393.6 ± 20.2 | 368.5 | 454.1 | 8.97 ± 0.86 |
 
-__Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __8.97 ± 0.86__ times __faster__ than `neofetch`
 
-- Note that hiding elements with __--hide <element>__ significantly improves speed
+- Note that hiding elements with __--hide__ significantly improves speed
 
 ---
 
@@ -49,11 +49,7 @@ __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
   - Username
   - Hostname
 - Product
-  - Manufacturer
-  - Model name & version
 - Kernel
-  - Name
-  - Version
 - Distribution
 - Desktop Environment
 - Window Manager
@@ -61,8 +57,7 @@ __Summary__: `macchina` runs __8.53 ± 0.72__ times __faster__ than `neofetch`
 - Shell
 - Terminal
 - Processor
-  - Model name
-  - Frequency
+  - Model
   - Thread count
 - Uptime
 - Memory
@@ -77,8 +72,6 @@ Package count supports package managers of:
 - Debian-based distributions
 - Gentoo
 - NetBSD
-
-Macchina requires [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to be installed to print your Window Manager, and only some window managers will be displayed as wmctrl "only works with window managers which implement the EWMH specification".
 
 ## Macchina supports the following arguments:
 

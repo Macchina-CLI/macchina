@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
-use crate::{extra, format, Fail, PATH_TO_BATTERY_PERCENTAGE, PATH_TO_BATTERY_STATUS};
+use crate::{extra, format, Fail};
 use extra::{pop_newline, ucfirst};
 use nix::unistd;
 use std::{
@@ -8,18 +8,22 @@ use std::{
     process::{Command, Stdio},
 };
 
-/// Read username through `whoami`
-pub fn username() -> String {
+/// Read username using `whoami`
+pub fn username(fail: &mut Fail) -> String {
     let output = Command::new("whoami")
         .output()
         .expect("ERROR: failed to start \"whoami\" process");
     let username = String::from_utf8(output.stdout)
         .expect("ERROR: \"whoami\" process stdout was not valid UTF-8");
-    pop_newline(username)
+    if !username.is_empty() {
+        return pop_newline(username);
+    }
+    fail.host.fail_component();
+    return String::new();
 }
 
 /// Read hostname using `nix::unistd::gethostname()`
-pub fn hostname() -> String {
+pub fn hostname(fail: &mut Fail) -> String {
     let mut buf = [0u8; 64];
     let hostname_cstr = unistd::gethostname(&mut buf);
     match hostname_cstr {
@@ -28,12 +32,13 @@ pub fn hostname() -> String {
             return String::from(hostname);
         }
         Err(_e) => {
+            fail.host.fail_component();
             return String::from("Unknown");
         }
     };
 }
 
-/// Read distribution name
+/// Read distribution name from `/etc/os-release`
 pub fn distribution() -> String {
     let file = fs::File::open("/etc/os-release");
     match file {
@@ -49,8 +54,8 @@ pub fn distribution() -> String {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"head\" process to exit");
 
-            let distribution =
-                String::from_utf8(output.stdout).expect("'ps' process stdout was not valid UTF-8");
+            let distribution = String::from_utf8(output.stdout)
+                .expect("ERROR: \"ps\" process stdout was not valid UTF-8");
             return pop_newline(String::from(
                 distribution.replace("\"", "").replace("NAME=", ""),
             ));
@@ -67,10 +72,10 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
         Ok(ret) => {
-            if !ret.contains("/") {
-                return extra::ucfirst(ret.to_string());
+            if ret.contains("/") {
+                return format::desktop_environment(ret.to_string());
             }
-            format::desktop_environment(ret.to_string())
+            extra::ucfirst(ret.to_string())
         }
         Err(_e) => {
             let fallback = env::var("XDG_CURRENT_DESKTOP").ok();
@@ -79,17 +84,15 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
                 .map(String::as_str)
                 .and_then(|s| if s.is_empty() { None } else { Some(s) })
                 .unwrap_or("Unknown");
-
-            // Checks if the desktop environment couldn't be extracted, and fails the component if true.
             if fallback == "Unknown" {
-                fail.desktop_env.failed = true;
+                fail.desktop_env.fail_component();
             }
             return extra::ucfirst(fallback);
         }
     }
 }
 
-/// Read window manager through `wmctrl -m | grep Name:`
+/// Read window manager using `wmctrl -m | grep Name:`
 pub fn window_manager(fail: &mut Fail) -> String {
     if extra::which("wmctrl") {
         let wmctrl = Command::new("wmctrl")
@@ -102,28 +105,27 @@ pub fn window_manager(fail: &mut Fail) -> String {
             .stdout
             .expect("ERROR: failed to open \"wmctrl\" stdout");
 
-        let head = Command::new("grep")
+        let grep = Command::new("grep")
             .arg("Name:")
             .stdin(Stdio::from(wmctrl_out))
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to spawn \"head\" process");
+            .expect("ERROR: failed to spawn \"grep\" process");
 
-        let output = head
+        let output = grep
             .wait_with_output()
-            .expect("ERROR: failed to wait for \"head\" process to exit");
+            .expect("ERROR: failed to wait for \"grep\" process to exit");
 
         let window_manager = String::from_utf8(output.stdout)
             .expect("ERROR: \"wmctrl -m | grep Name:\" process stdout was not valid UTF-8");
 
         let window_man_name = pop_newline(String::from(window_manager.replace("Name:", "").trim()));
-        // Fail element if it isn't detected
         if window_man_name == "N/A" {
-            fail.window_man.failed = true;
+            fail.window_man.fail_component();
         }
         return window_man_name;
     }
-    fail.window_man.failed = true;
+    fail.window_man.fail_component();
     String::from("Unknown")
 }
 
@@ -143,7 +145,7 @@ pub fn terminal(fail: &mut Fail) -> String {
         .arg("-o")
         .arg("ppid=")
         .output()
-        .expect("ERROR: failed to fetch PPID of the running terminal");
+        .expect("ERROR: failed to start \"ps\" process");
 
     let terminal_ppid = String::from_utf8(ppid.stdout)
         .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
@@ -156,7 +158,7 @@ pub fn terminal(fail: &mut Fail) -> String {
         .arg("-o")
         .arg("comm=")
         .output()
-        .expect("ERROR: failed to fetch the name of the running terminal");
+        .expect("ERROR: failed to start \"ps\" output");
 
     let terminal_name = extra::ucfirst(
         String::from_utf8(name.stdout)
@@ -164,7 +166,7 @@ pub fn terminal(fail: &mut Fail) -> String {
             .trim(),
     );
     if terminal_name.is_empty() {
-        fail.terminal.failed = true;
+        fail.terminal.fail_component();
         return String::from("Unknown");
     }
     terminal_name
@@ -182,22 +184,22 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
             .arg("-o")
             .arg("comm=")
             .output()
-            .expect("ERROR: failed to fetch the name of the running shell");
+            .expect("ERROR: failed to start \"ps\" process");
 
         let shell_name = String::from_utf8(output.stdout)
             .expect("read_terminal: stdout to string conversion failed")
             .trim()
             .to_string();
         if shell_name.is_empty() {
-            fail.shell.failed = true;
+            fail.shell.fail_component();
             fail.shell.extraction_method = String::from(
                 "(ERROR:DISABLED) Uptime (Shorthand:ON) -> Extracted using ps -p $$ -o comm=",
             );
             return String::from("Unknown");
         }
-        return shell_name;
+        return extra::ucfirst(shell_name);
     }
-    // If shell shorthand is false, we use "ps -p $$ -o args=" instead of "ps -p $$ -o comm="
+    // If shell shorthand is false, run "ps -p $$ -o args=" instead of "ps -p $$ -o comm="
     // to print the full path of the current shell instance name
     let output = Command::new("ps")
         .arg("-p")
@@ -205,7 +207,7 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
         .arg("-o")
         .arg("args=")
         .output()
-        .expect("ERROR: failed to fetch the path of the running shell");
+        .expect("ERROR: failed to start \"ps\" process");
 
     let shell_path = String::from_utf8(output.stdout)
         .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
@@ -213,7 +215,7 @@ pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
         .to_string();
 
     if shell_path.is_empty() {
-        fail.shell.failed = true;
+        fail.shell.fail_component();
         fail.shell.extraction_method = String::from(
             "(ERROR:DISABLED) Uptime (Shorthand:OFF) -> Extracted using ps -p $$ -o args=",
         );
@@ -253,18 +255,14 @@ pub fn cpu_model_name() -> String {
     cpu
 }
 
-/// Read uptime (first float) from `/proc/uptime`
-pub fn uptime(time_shorthand: bool, fail: &mut Fail) -> String {
+/// Read uptime from `/proc/uptime`
+pub fn uptime(fail: &mut Fail) -> String {
     let uptime = fs::read_to_string("/proc/uptime");
-    let ret = match uptime {
-        Ok(ret) => format::uptime(
-            ret.split_whitespace().next().unwrap().to_string(),
-            time_shorthand,
-        ),
+    match uptime {
+        Ok(ret) => return ret.split_whitespace().next().unwrap().to_string(),
         Err(_e) => {
-            fail.uptime.failed = true;
+            fail.uptime.fail_component();
             return String::from("Unknown");
         }
     };
-    ret
 }

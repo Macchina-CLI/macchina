@@ -3,7 +3,7 @@ use std::fs;
 use std::process::Command;
 use std::process::Stdio;
 
-/// `get_value()` will try and obtain the memory field from `/proc/meminfo` needed for each variable found in `used()` formula
+/// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
 fn get_value(value: &str) -> u64 {
     let file = fs::File::open("/proc/meminfo");
     match file {
@@ -59,7 +59,7 @@ pub fn sreclaimable() -> u64 {
 
 #[cfg(target_os = "linux")]
 /// Calculate memory utilization:
-/// Used = MemTotal - MemFree - Cached - SReclaimable - Buffers
+/// `Used = MemTotal - MemFree - Cached - SReclaimable - Buffers`
 pub fn used() -> u64 {
     if sreclaimable() != 0 {
         return memtotal() - memfree() - cached() - sreclaimable() - buffers();
@@ -69,7 +69,7 @@ pub fn used() -> u64 {
 
 #[cfg(target_os = "netbsd")]
 /// Calculate memory utilization:
-/// Used = MemTotal - MemFree
+/// `Used = MemTotal - MemFree`
 pub fn used() -> u64 {
     memtotal() - memfree()
 }

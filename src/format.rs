@@ -3,9 +3,9 @@ use bytesize::ByteSize;
 
 /// Construct a new _String_ from the value
 /// returned by `read::uptime`
-pub fn uptime(up: String, shorthand: bool) -> String {
+pub fn uptime(shorthand: bool, fail: &mut Fail) -> String {
     let mut formatted_uptime = String::new();
-    let uptime: f32 = up.parse().unwrap();
+    let uptime: f32 = general::uptime(fail).parse().unwrap();
     // Uptime is formatted to dd:hh:mm if the system has been up for longer than 60 seconds
     if uptime > 60.0 {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
@@ -71,14 +71,9 @@ pub fn uptime(up: String, shorthand: bool) -> String {
 /// Construct a new _String_ from the values
 /// returned by `read::hostname` and `read::username`
 pub fn host(fail: &mut Fail) -> String {
-    let username = general::username();
-    let hostname = general::hostname();
-    if !username.is_empty() && hostname != "Unknown" {
-        return username + "@" + &hostname;
-    } else {
-        fail.host.failed = true;
-        return String::from("Unknown");
-    }
+    let username = general::username(fail);
+    let hostname = general::hostname(fail);
+    username + "@" + &hostname
 }
 
 #[cfg(target_os = "linaux")]
@@ -142,7 +137,7 @@ pub fn machine() -> String {
         return product::product_family();
     } else if product::product_version().is_empty() || product::product_version().len() <= 15 {
         return String::from(
-            product::sys_vendor()
+            product::product_vendor()
                 + " "
                 + &product::product_family()
                 + " "

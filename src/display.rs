@@ -6,14 +6,11 @@ use rand::Rng;
 use std::fmt;
 
 #[allow(dead_code)]
-/// Elements only displays an element if it hasn't failed to be fetched,
-/// and this is the struct responsible for failing those elements.
-/// Works hand-in-hand with --debug to notify the user which element failed,
-/// and prints its extraction method for debugging reasons.
+/// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
+/// Failed elements can be listed using `--debug`, their extraction method is also printed.
 pub struct FailedComponent {
-    pub failed: bool,
+    failed: bool,
     pub extraction_method: String,
-    pub reason: String,
 }
 
 impl FailedComponent {
@@ -21,15 +18,14 @@ impl FailedComponent {
         FailedComponent {
             failed: f,
             extraction_method: e,
-            reason: String::new(),
         }
+    }
+    pub fn fail_component(&mut self) -> () {
+        self.failed = true;
     }
 }
 
-/// Elements struct interacts with Fail struct to hide any of its elements whose value is "Unknown".
-//  Fail also automatically fails certain elements in certain conditions:
-//  -  Automatically fail the distribution key if NetBSD is detected.
-//  -  Automatically fail the desktop environment key if only a WM is detected.
+/// `Fail` holds `FailedComponent` fields e.g. host, kernel, battery, etc.
 pub struct Fail {
     pub window_man: FailedComponent,
     pub desktop_env: FailedComponent,
@@ -49,7 +45,7 @@ impl Fail {
             desktop_env: FailedComponent::new(
                 false,
                 String::from("(ERROR:DISABLED) Desktop Environment -> Obtained from \"DESKTOP_SESSION\" OR \"XDG_CURRENT_DESKTOP\" environment variables
-                 Ignore if not running a desktop environment."),
+                -> Ignore if not running a desktop environment."),
             ),
             uptime: FailedComponent::new(
                 false,
@@ -58,18 +54,20 @@ impl Fail {
             battery: FailedComponent::new(
                 false,
                 String::from("(ERROR:DISABLED) Battery -> 
-                            (Linux) 
-                            Percentage extracted from /sys/class/power_supply/BAT0/capacity
-                            Status extracted from /sys/class/power_supply/BAT0/status
-                            (NetBSD) (ripgrep required)
-                            Percentage extracted using envstat -d acpibat0 and rg (ripgrep)
-                            Status extracted using envstat -d acpibat0 and rg (ripgrep)
-                            -> Ignore if on a desktop computer.
+                (Linux) 
+                Percentage extracted from /sys/class/power_supply/BAT0/capacity
+                Status extracted from /sys/class/power_supply/BAT0/status
+                (NetBSD) (ripgrep required)
+                Percentage extracted using envstat -d acpibat0 and rg (ripgrep)
+                Status extracted using envstat -d acpibat0 and rg (ripgrep)
+                -> Ignore if on a desktop computer.
                 "),
             ),
             host: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Host -> Obtained from nix::unistd::gethostname()")
+                String::from("(ERROR:DISABLED) Host -> 
+                Hostname: Obtained from nix::unistd::gethostname()
+                Username: Obtained from whoami")
             ),
             shell: FailedComponent::new(
                 false,
@@ -82,10 +80,10 @@ impl Fail {
             packages: FailedComponent::new(
                 false,
                 String::from("(ERROR:DISABLED) Packages -> 
-                            (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
-                            (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
-                            (Gentoo) Extracted using \"ls /var/db/pkg/* | wc -l\"
-                            (NetBSD) Extracted using \"pkg_info | wc -l\"
+                (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
+                (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
+                (Gentoo) Extracted using \"ls /var/db/pkg/* | wc -l\"
+                (NetBSD) Extracted using \"pkg_info | wc -l\"
                 "),
             ),
             #[cfg(target_os = "linux")]
@@ -126,7 +124,8 @@ impl Fail {
 }
 
 /// __Options__ holds Macchina's behaviour that the user
-/// can alter using the program's arguments
+/// can alter using the program's arguments like displaying
+/// the palette and enabling shell and uptime shorthand.
 pub struct Options {
     pub palette_status: bool,
     pub shell_shorthand: bool,
@@ -143,7 +142,7 @@ impl Options {
     }
 }
 
-/// A __Pair__ is simply two strings: key and value (and the pair's visibility)
+/// A `Pair` is simply two strings: `key` and `value` (and the pair's visibility: boolean)
 pub struct Pair {
     key: String,
     value: String,
@@ -171,7 +170,9 @@ impl fmt::Display for Pair {
         write!(f, "{}", self.key)
     }
 }
-
+/// `Format` contains any visible element that is not a `Pair`,
+/// such as the separator and bar glyph.
+/// It also contains several other components, e.g. color, spacing, padding, etc.
 pub struct Format {
     separator: String,
     bar: bool,
@@ -188,7 +189,7 @@ pub struct Format {
 impl Format {
     fn new() -> Format {
         Format {
-            separator: String::from("-"),
+            separator: String::from("—"),
             bar: false,
             bar_glyph: String::from("●"),
             bracket_open: '(',
@@ -202,7 +203,7 @@ impl Format {
     }
 }
 
-/// __Elements__ encapsulates elements that are to be displayed,
+/// __Elements__ encapsulates any element that is a `Pair`,
 /// each element is a __Pair__, it also contains miscellaneous fields
 /// such as the key color, separator color, bar glyph, etc.
 pub struct Elements {
@@ -251,27 +252,27 @@ impl Elements {
         self.format.bar_glyph = String::from("■");
         self.format.bracket_open = '[';
         self.format.bracket_close = ']';
-        self.host.update_key("Ho");
-        self.machine.update_key("Ma");
-        self.distro.update_key("Di");
-        self.desktop_env.update_key("De");
-        self.window_man.update_key("Wm");
+        self.host.update_key("Hos");
+        self.machine.update_key("Mac");
+        self.distro.update_key("Dis");
+        self.desktop_env.update_key("Des");
+        self.window_man.update_key("Win");
         #[cfg(target_os = "linux")]
-        self.kernel.update_key("Ke");
+        self.kernel.update_key("Ker");
         #[cfg(target_os = "netbsd")]
-        self.kernel.update_key("Os");
-        self.packages.update_key("Pa");
-        self.shell.update_key("Sh");
-        self.terminal.update_key("Te");
-        self.cpu.update_key("Cp");
-        self.memory.update_key("Me");
-        self.uptime.update_key("Up");
-        self.battery.update_key("Ba");
+        self.kernel.update_key("Ope");
+        self.packages.update_key("Pac");
+        self.shell.update_key("She");
+        self.terminal.update_key("Ter");
+        self.cpu.update_key("Pro");
+        self.memory.update_key("Mem");
+        self.uptime.update_key("Upt");
+        self.battery.update_key("Bat");
         self.set_longest_key(fail);
     }
     pub fn set_theme_long(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("~");
-        self.host.update_key("Hostname");
+        self.host.update_key("Host");
         self.machine.update_key("Machine");
         self.distro.update_key("Distribution");
         self.desktop_env.update_key("Desktop Environment");
@@ -389,18 +390,18 @@ impl Elements {
         }
 
         if opts.uptime_shorthand && !self.uptime.hidden && !fail.shell.failed {
-            self.uptime.modify(general::uptime(true, fail))
+            self.uptime.modify(format::uptime(true, fail))
         } else {
-            self.uptime.modify(general::uptime(false, fail))
+            self.uptime.modify(format::uptime(false, fail))
         }
     }
     pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Options) {
-        self.uptime.modify(general::uptime(true, fail));
+        self.uptime.modify(format::uptime(true, fail));
         self.desktop_env.modify(general::desktop_environment(fail));
         self.window_man.modify(general::window_manager(fail));
         self.is_running_wm_only(fail, true);
         self.uptime
-            .modify(general::uptime(opts.uptime_shorthand, fail));
+            .modify(format::uptime(opts.uptime_shorthand, fail));
         self.shell
             .modify(general::shell(opts.shell_shorthand, fail));
         self.terminal.modify(general::terminal(fail));
@@ -711,9 +712,7 @@ impl Printing for Elements {
             }
         }
     }
-    /// Print a bar next to memory and battery keys:
-    /// it takes a function from the _bars crate_ as the first parameter
-    /// and the color of the keys as a second
+    /// Print a bar next to memory and battery keys
     fn print_bar(&self, blocks: usize) {
         match &self.format.color {
             Color::White => match blocks {
@@ -721,14 +720,14 @@ impl Printing for Elements {
                     "{} {}{} {}",
                     self.format.bracket_open,
                     colored_blocks(self, blocks).color(self.format.color),
-                    hidden_blocks(self, blocks).hidden(),
+                    colorless_blocks(self, blocks).hidden(),
                     self.format.bracket_close
                 ),
                 _ => println!(
                     "{} {} {} {}",
                     self.format.bracket_open,
                     colored_blocks(self, blocks).color(self.format.color),
-                    hidden_blocks(self, blocks).hidden(),
+                    colorless_blocks(self, blocks).hidden(),
                     self.format.bracket_close
                 ),
             },
@@ -750,7 +749,7 @@ impl Printing for Elements {
             },
         }
     }
-    /// Print a palette using the terminal's colorscheme
+    /// Print an eight color palette
     fn print_palette(&self, opts: &Options) {
         if opts.palette_status {
             println!();
@@ -771,8 +770,7 @@ impl Printing for Elements {
     }
 }
 
-/// Handles displaying each element (key and value pair) found in
-/// __Elements__ struct, as well as the palette.
+/// Calls all print functions found in the `Printing` trait
 pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.apply_shorthand_values(opts, fail);
     elems.print_host(fail);
@@ -791,12 +789,12 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_palette(opts);
 }
 
-/// Debug allows users to see if everything during the extraction phase went okay.
+/// List elements that failed to fetch `using --debug`
 pub fn debug(fail: &mut Fail) {
     fail.print_failed();
 }
 
-/// Hide an element or more e.g. package count, uptime etc. _(--hide <element>)_
+/// Hide an element or more e.g. package count, uptime etc. when `--hide <element>` is present
 pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
         elems.host.hidden = true;
@@ -841,7 +839,7 @@ pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_paramet
     print_info(elems, &options, fail);
 }
 
-/// Unhide an element or more e.g. package count, uptime etc. _(--show-only <element>)_
+/// Display only the specified elements e.g. package count, uptime etc. when `--show-only <element>` is present
 pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
     if hide_parameters.contains(&"host") {
         elems.host.hidden = false;
@@ -895,7 +893,7 @@ pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_param
     print_info(elems, &options, fail);
 }
 
-/// Colorize the keys using the user-specified color _(--color <color>)_
+/// Converts arguments passed to `--color` to their respective color
 pub fn choose_color(color: &str) -> Color {
     match color {
         "black" => Color::Black,
@@ -910,7 +908,7 @@ pub fn choose_color(color: &str) -> Color {
     }
 }
 
-/// Using the _rand crate_, pick a random color for the keys _(--random-color)_
+/// Pick a random color for the keys when `--random-color` is present
 pub fn randomize_color() -> Color {
     let mut rng = rand::thread_rng();
     let rand: usize = rng.gen_range(0..8);
@@ -926,7 +924,7 @@ pub fn randomize_color() -> Color {
     }
 }
 
-/// Prints a help message
+/// Print a usage and help message
 pub fn help() {
     let usage_string: &str = "
     USAGE: macchina [OPTIONS]
@@ -975,6 +973,7 @@ pub fn help() {
 }
 
 /// Return the correct amount of colored blocks: colored blocks are used blocks
+/// (Battery and Memory)
 pub fn colored_blocks(elems: &Elements, block_count: usize) -> String {
     let colored_blocks = elems.format.bar_glyph.repeat(block_count);
     colored_blocks
@@ -987,20 +986,8 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> String {
 }
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks
+/// (Battery and Memory)
 pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
-    let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
-    colorless_blocks
-        .chars()
-        .collect::<Vec<char>>()
-        .chunks(1)
-        .map(|c| c.iter().collect::<String>())
-        .collect::<Vec<String>>()
-        .join(" ")
-}
-
-// Used to correctly format the bars when using `--no-color` or `--color white`:
-// Show the remaining unused blocks but they are hidden
-pub fn hidden_blocks(elems: &Elements, block_count: usize) -> String {
     let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
     colorless_blocks
         .chars()
