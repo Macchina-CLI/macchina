@@ -20,7 +20,7 @@
 # About Macchina <a name="about"></a>
 
 Macchina lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
-No one wants a slow fetcher, and Macchina's selling point is providing you with convenient features while keeping performance and minimalism a priority.
+It provides you with convenient features and customization options but doesn't lose sight of its two main priorities: minimalism and performance.
 
 ![Macchina preview image](screenshots/preview.png)
 
