@@ -31,10 +31,10 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 43.9 ± 3.6 | 42.2 | 61.2 | 1.00 |
-| `neofetch` | 393.6 ± 20.2 | 368.5 | 454.1 | 8.97 ± 0.86 |
+| `macchina` | 42.6 ± 0.5 | 41.8 | 45.2 | 1.00 |
+| `neofetch` | 371.1 ± 3.0 | 366.4 | 379.9 | 8.71 ± 0.13 |
 
-__Summary__: `macchina` runs __8.97 ± 0.86__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 
 - Note that hiding elements with __--hide__ significantly improves speed
 
@@ -132,9 +132,7 @@ Macchina is available on:
   
 ---
 
-# Platform Support
-
-# Platform Support <a name="platform-support"></a>
+# Platform Support	
 
 |  Platform     |      Support       |
 | :-:           |        :-:         |

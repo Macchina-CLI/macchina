@@ -25,13 +25,12 @@ It provides you with convenient features and customization options but doesn't l
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] Small under the hood tweaks
-- [x] Update documentation
-- [x] Changes to default and alt theme
-- [x] Capitalize first letter of shell (shorthand:ON)
+This version (v0.5.2) does not bring any new changes to Macchina:
+- Update README benchmarks
+- Remove a repetition in README_CARGO.md
 
 # Todo <a name="todo"></a>
-- [ ] Shell version
+- Shell version: this is kind of tricky...
 
 ---
 
@@ -49,10 +48,10 @@ Macchina is pretty fast, see for yourself:
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 43.9 ± 3.6 | 42.2 | 61.2 | 1.00 |
-| `neofetch` | 393.6 ± 20.2 | 368.5 | 454.1 | 8.97 ± 0.86 |
+| `macchina` | 42.6 ± 0.5 | 41.8 | 45.2 | 1.00 |
+| `neofetch` | 371.1 ± 3.0 | 366.4 | 379.9 | 8.71 ± 0.13 |
 
-__Summary__: `macchina` runs __8.97 ± 0.86__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 
 - Note that hiding elements with __--hide__ significantly improves speed
 
