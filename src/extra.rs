@@ -46,6 +46,10 @@ pub fn which(program_name: &str) -> bool {
         true
     } else if Path::new(&String::from("/usr/pkg/bin/".to_owned() + &program_name)).exists() {
         true
+    } else if Path::new(&String::from("/usr/local/bin/".to_owned() + &program_name)).exists() {
+        true
+    } else if Path::new(&String::from("/usr/local/sbin/".to_owned() + &program_name)).exists() {
+        true
     } else {
         false
     }
