@@ -34,9 +34,9 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     }
 }
 
-/// Similar to how GNU's `which` works, but it returns __true__ if a program, such as `ps`,
-/// exists on the system, and __false__ if it doesn't.
-/// It searches through: `/bin`, `/usr/bin`, `/usr/sbin` and `/usr/pkg/bin`
+/// Similar to how GNU's __which__ works.
+/// Returns `true` if a program, such as __ps__,
+/// exists on the system, and `false` if it doesn't.
 pub fn which(program_name: &str) -> bool {
     if Path::new(&String::from("/bin/".to_owned() + &program_name)).exists() {
         true

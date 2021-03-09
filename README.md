@@ -25,9 +25,9 @@ It provides you with convenient features and customization options but doesn't l
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-This version (v0.5.2) does not bring any new changes to Macchina:
-- Update README benchmarks
-- Remove a repetition in README_CARGO.md
+- extra::which() searches through two more paths:
+  - `/usr/local/bin`
+  - `/usr/local/sbin`
 
 # Todo <a name="todo"></a>
 - Shell version: this is kind of tricky...
