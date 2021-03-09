@@ -109,6 +109,6 @@ pub fn package_count(fail: &mut Fail) -> String {
             .trim()
             .to_string();
     }
-    fail.battery.fail_component();
+    fail.packages.fail_component();
     return String::from("0");
 }
