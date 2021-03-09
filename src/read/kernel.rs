@@ -1,5 +1,15 @@
 use std::process::Command;
 
+#[cfg(target_os = "macos")]
+pub fn osrelease() -> String {
+    String::new()
+}
+
+#[cfg(target_os = "macos")]
+pub fn ostype() -> String {
+    String::new()
+}
+
 /// Linux: Read kernel release using `sysctl -nb kernel.osrelease`
 #[cfg(target_os = "linux")]
 pub fn osrelease() -> String {

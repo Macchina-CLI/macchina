@@ -1,5 +1,6 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
+
 use crate::{extra, format, Fail};
 use extra::{pop_newline, ucfirst};
 use nix::unistd;
@@ -255,7 +256,43 @@ pub fn cpu_model_name() -> String {
     cpu
 }
 
+
+#[cfg(target_os = "macos")]
+pub fn uptime(fail: &mut Fail) -> String {
+    use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
+    const KERN_BOOTTIME: i32 = 21;
+    const CTL_KERN: i32 = 1;
+
+    let mut name = [CTL_KERN, KERN_BOOTTIME];
+    let mut time = libc::timeval { tv_sec: 0, tv_usec: 0 };
+    let ptr: *mut libc::timeval = &mut time;
+    let mut size = std::mem::size_of::<libc::timeval>();
+
+    let result = unsafe {
+        libc::sysctl(name.as_mut_ptr().into(), name.len() as u32,
+                     ptr as *mut libc::c_void, &mut size,
+                     std::ptr::null_mut(), 0)
+    };
+
+    if result == 0 {
+        let duration = Duration::new(time.tv_sec as u64, (time.tv_usec * 1000) as
+            u32);
+
+        let bootup_timestamp = UNIX_EPOCH + duration;
+
+        if let Ok(duration) = SystemTime::now().duration_since(bootup_timestamp) {
+            let seconds_since_boot = duration.as_secs_f64();
+            return seconds_since_boot.to_string();
+        }
+    }
+
+    fail.uptime.fail_component();
+    String::from("0")
+}
+
 /// Read uptime from `/proc/uptime`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn uptime(fail: &mut Fail) -> String {
     let uptime = fs::read_to_string("/proc/uptime");
     match uptime {

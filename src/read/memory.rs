@@ -73,3 +73,8 @@ pub fn used() -> u64 {
 pub fn used() -> u64 {
     memtotal() - memfree()
 }
+
+#[cfg(target_os = "macos")]
+pub fn used() -> u64 {
+    0
+}

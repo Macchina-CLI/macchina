@@ -112,3 +112,8 @@ pub fn package_count(fail: &mut Fail) -> String {
     fail.battery.fail_component();
     return String::from("0");
 }
+
+#[cfg(target_os = "macos")]
+pub fn package_count(fail: &mut Fail) -> String {
+    String::new()
+}

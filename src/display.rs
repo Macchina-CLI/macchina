@@ -96,6 +96,11 @@ impl Fail {
                 true,
                 String::from("(OK:DISABLED) Distribution -> NetBSD system detected, so the distribution is automatically hidden."),
             ),
+            #[cfg(target_os = "macos")]
+            distro: FailedComponent::new(
+                true,
+                String::from("oh no :(")
+            ),
         }
     }
     pub fn count_print_failed(&self, failed_comp: &FailedComponent, mut num_fails: usize) -> usize {
@@ -237,6 +242,8 @@ impl Elements {
             kernel: Pair::new(String::from("Kernel")),
             #[cfg(target_os = "netbsd")]
             kernel: Pair::new(String::from("OS")),
+            #[cfg(target_os = "macos")]
+            kernel: Pair::new(String::from("Kernel")),
             packages: Pair::new(String::from("Packages")),
             shell: Pair::new(String::from("Shell")),
             terminal: Pair::new(String::from("Terminal")),

@@ -159,6 +159,11 @@ pub fn machine() -> String {
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }
 
+#[cfg(target_os = "macos")]
+pub fn machine() -> String {
+    String::new()
+}
+
 /// Similar to how basename works
 pub fn desktop_environment(mut session_name: String) -> String {
     let last_occurence_index = session_name.rfind("/").unwrap() + 1;
