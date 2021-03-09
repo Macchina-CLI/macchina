@@ -161,6 +161,33 @@ pub fn machine() -> String {
 
 #[cfg(target_os = "macos")]
 pub fn machine() -> String {
+    let name = "hw.model";
+    let mut len = 0;
+
+    unsafe {
+        libc::sysctlbyname(name.as_ptr() as *const libc::c_char, std::ptr::null_mut(), &mut len,
+                           std::ptr::null_mut(), 0);
+    }
+
+    if len > 0 {
+        let layout = std::alloc::Layout::from_size_align(len, std::mem::size_of::<libc::c_char>()).unwrap();
+        let mut buf = unsafe { std::alloc::alloc(layout) };
+
+        let ret_val = unsafe {
+            libc::sysctlbyname(name.as_ptr() as *const libc::c_char, buf as
+                *mut libc::c_void, &mut
+                len, std::ptr::null_mut(), 0)
+        };
+
+        if ret_val != 0 {
+            unsafe { std::alloc::dealloc(buf, layout) };
+        } else {
+            //String::from_raw_parts() takes ownership of previously allocated 'buf' buffer, no need
+            //to dealloc manually since String deals with it.
+            return unsafe { String::from_raw_parts(buf, len - 1, len - 1) };
+        }
+    }
+
     String::new()
 }
 
