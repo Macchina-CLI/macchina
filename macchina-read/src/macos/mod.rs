@@ -3,10 +3,12 @@ use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use mach::vm_statistics::{vm_statistics_data_t};
 use crate::macos::mach_ffi::{IOPSCopyPowerSourcesInfo, IOPSGetProvidingPowerSourceType, IOPSCopyPowerSourcesList, IOPSGetPowerSourceDescription};
-use core_foundation::base::{CFRelease, CFTypeRef, TCFTypeRef};
-use core_foundation::string::{CFStringGetCStringPtr, kCFStringEncodingUTF8};
+use core_foundation::base::{CFRelease, CFTypeRef, TCFTypeRef, ToVoid};
+use core_foundation::string::{CFStringGetCStringPtr, kCFStringEncodingUTF8, CFString, CFStringRef};
 use core_foundation::array::{CFArrayRef, CFArrayGetCount, CFArrayGetValueAtIndex};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, CFDictionaryGetValueIfPresent};
+use std::ffi::CStr;
+use core_foundation::base::TCFType;
 
 mod mach_ffi;
 
@@ -81,10 +83,11 @@ impl MacOSPowerSourcesInfo {
         let mut vec = Vec::with_capacity(array_length as usize);
 
         for i in 0..array_length {
-            let description = unsafe {
-                IOPSGetPowerSourceDescription(self.ptr,
-                                              CFArrayGetValueAtIndex(self.array_ref, i))
+            let dict = unsafe {
+                CFArrayGetValueAtIndex(self.array_ref, i as isize) as CFTypeRef
             };
+
+            let description = unsafe { IOPSGetPowerSourceDescription(self.ptr, dict) };
 
             vec.push(description);
         }
@@ -112,6 +115,43 @@ impl BatteryReadout for MacOSBatteryReadout {
         let power_sources = power_info.get_power_sources();
 
         println!("size of power source vector: {}", power_sources.len());
+
+        for dict in power_sources {
+            unsafe {
+                let charging_key = CFString::new(mach_ffi::kIOPSIsChargingKey);
+                let current_capacity_key = CFString::new(mach_ffi::kIOPSCurrentCapacityKey);
+                let max_capacity_key = CFString::new(mach_ffi::kIOPSMaxCapacityKey);
+
+                let mut charging = std::ptr::null();
+                let mut current_capacity = std::ptr::null();
+                let mut max_capacity = std::ptr::null();
+
+                println!("Getting values for dictionary at {:?}", dict);
+
+                if CFDictionaryGetValueIfPresent(dict, charging_key.to_void(), &mut charging) != 0 {
+                    let cf_ref = charging as CFStringRef;
+                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
+
+                    println!("We have charging value: {}", c_ptr.to_string());
+                }
+
+                if CFDictionaryGetValueIfPresent(dict, current_capacity_key.to_void(),
+                                                 &mut current_capacity) != 0 {
+                    let cf_ref = current_capacity as CFStringRef;
+                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
+
+                    println!("We have current capacity value: {}", c_ptr.to_string());
+                }
+
+                if CFDictionaryGetValueIfPresent(dict, max_capacity_key.to_void(), &mut
+                    max_capacity) != 0 {
+                    let cf_ref = current_capacity as CFStringRef;
+                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
+
+                    println!("We have max capacity value: {}", c_ptr.to_string());
+                }
+            }
+        }
 
         if Some(MacOSPowerSource::Battery) != power_info.get_providing_power_source() {
             return Err(MetricNotAvailable);

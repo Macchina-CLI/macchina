@@ -10,6 +10,7 @@ use core_foundation::string::{CFStringRef};
 
 pub(crate) const kIOPSCurrentCapacityKey: &str = "Current Capacity";
 pub(crate) const kIOPSIsChargingKey: &str = "Is Charging";
+pub(crate) const kIOPSMaxCapacityKey: &str = "Max Capacity";
 
 pub(crate) const kIOPMUPSPowerKey: &str = "UPS Power";
 pub(crate) const kIOPMBatteryPowerKey: &str = "Battery Power";
