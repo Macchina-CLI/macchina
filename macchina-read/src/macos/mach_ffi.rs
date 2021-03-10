@@ -8,6 +8,9 @@ use core_foundation::dictionary::{CFDictionaryRef};
 use core_foundation::array::{CFArrayRef};
 use core_foundation::string::{CFStringRef};
 
+pub(crate) const kIOPSCurrentCapacityKey: &str = "Current Capacity";
+pub(crate) const kIOPSIsChargingKey: &str = "Is Charging";
+
 pub(crate) const kIOPMUPSPowerKey: &str = "UPS Power";
 pub(crate) const kIOPMBatteryPowerKey: &str = "Battery Power";
 pub(crate) const kIOPMACPowerKey: &str = "AC Power";

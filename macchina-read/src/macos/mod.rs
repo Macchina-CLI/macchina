@@ -2,9 +2,11 @@ use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use mach::vm_statistics::{vm_statistics_data_t};
-use crate::macos::mach_ffi::{IOPSCopyPowerSourcesInfo, IOPSGetProvidingPowerSourceType};
-use core_foundation::base::CFRelease;
+use crate::macos::mach_ffi::{IOPSCopyPowerSourcesInfo, IOPSGetProvidingPowerSourceType, IOPSCopyPowerSourcesList, IOPSGetPowerSourceDescription};
+use core_foundation::base::{CFRelease, CFTypeRef, TCFTypeRef};
 use core_foundation::string::{CFStringGetCStringPtr, kCFStringEncodingUTF8};
+use core_foundation::array::{CFArrayRef, CFArrayGetCount, CFArrayGetValueAtIndex};
+use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
 
 mod mach_ffi;
 
@@ -16,10 +18,11 @@ impl From<SysctlError> for ReadoutError {
 
 pub struct MacOSBatteryReadout;
 
+#[derive(Debug, PartialEq)]
 enum MacOSPowerSource {
     Battery,
     AC,
-    UPS
+    UPS,
 }
 
 pub struct MacOSProductReadout;
@@ -42,40 +45,91 @@ pub struct MacOSMemoryReadout {
 
 pub struct MacOSPackageReadout;
 
+struct MacOSPowerSourcesInfo {
+    ptr: CFTypeRef,
+    array_ref: CFArrayRef,
+}
+
+impl MacOSPowerSourcesInfo {
+    fn retrieve() -> Self {
+        let power_info = unsafe { IOPSCopyPowerSourcesInfo() };
+        let array_ref = unsafe { IOPSCopyPowerSourcesList(power_info) };
+
+        MacOSPowerSourcesInfo {
+            ptr: power_info,
+            array_ref,
+        }
+    }
+
+    fn get_providing_power_source(&self) -> Option<MacOSPowerSource> {
+        let providing_power_cfstr = unsafe { IOPSGetProvidingPowerSourceType(self.ptr) };
+        let cstr_ptr = unsafe { CFStringGetCStringPtr(providing_power_cfstr, kCFStringEncodingUTF8) };
+        let power_source = unsafe {
+            match std::ffi::CStr::from_ptr(cstr_ptr).to_str() {
+                Ok(mach_ffi::kIOPMBatteryPowerKey) => Some(MacOSPowerSource::Battery),
+                Ok(mach_ffi::kIOPMACPowerKey) => Some(MacOSPowerSource::AC),
+                Ok(mach_ffi::kIOPMUPSPowerKey) => Some(MacOSPowerSource::UPS),
+                Err(_) | Ok(_) => None
+            }
+        };
+
+        power_source
+    }
+
+    fn get_power_sources(&self) -> Vec<CFDictionaryRef> {
+        let array_length = unsafe { CFArrayGetCount(self.array_ref) };
+        let mut vec = Vec::with_capacity(array_length as usize);
+
+        for i in 0..array_length {
+            let description = unsafe {
+                IOPSGetPowerSourceDescription(self.ptr,
+                                              CFArrayGetValueAtIndex(self.array_ref, i))
+            };
+
+            vec.push(description);
+        }
+
+        vec
+    }
+}
+
+impl Drop for MacOSPowerSourcesInfo {
+    fn drop(&mut self) {
+        unsafe {
+            CFRelease(self.array_ref.as_void_ptr());
+            CFRelease(self.ptr);
+        };
+    }
+}
+
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
         MacOSBatteryReadout
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-        if self.get_power_source() != MacOSPowerSource::Battery { return Err(MetricNotAvailable); }
+        let power_info = MacOSPowerSourcesInfo::retrieve();
+        let power_sources = power_info.get_power_sources();
+
+        println!("size of power source vector: {}", power_sources.len());
+
+        if Some(MacOSPowerSource::Battery) != power_info.get_providing_power_source() {
+            return Err(MetricNotAvailable);
+        }
+
 
         Ok(String::new())
     }
 
     fn status(&self) -> Result<String, ReadoutError> {
-        if self.get_power_source() != MacOSPowerSource::Battery { return Err(MetricNotAvailable); }
+        let power_info = MacOSPowerSourcesInfo::retrieve();
+
+        if Some(MacOSPowerSource::Battery) != power_info.get_providing_power_source() {
+            return Err(MetricNotAvailable);
+        }
+
 
         Ok(String::new())
-    }
-}
-
-impl MacOSBatteryReadout {
-    fn get_power_source(&self) -> MacOSPowerSource {
-        let power_info = unsafe { IOPSCopyPowerSourcesInfo() };
-        let providing_power_cfstr = unsafe { IOPSGetProvidingPowerSourceType(power_info) };
-        let cstr_ptr = unsafe { CFStringGetCStringPtr(providing_power_cfstr, kCFStringEncodingUTF8) };
-        let mut power_source = unsafe {
-            match std::ffi::CStr::from_ptr(cstr_ptr).to_str() {
-                Some(mach_ffi::kIOPMBatteryPowerKey) => MacOSPowerSource::Battery,
-                Some(mach_ffi::kIOPMACPowerKey) => MacOSPowerSource::AC,
-                Some(mach_ffi::kIOPMUPSPowerKey) => MacOSPowerSource::UPS,
-            }
-        };
-
-        unsafe { CFRelease(power_info); };
-
-        power_source
     }
 }
 
@@ -159,9 +213,6 @@ impl GeneralReadout for MacOSGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         Ok(self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?)
     }
-
-
-
 }
 
 impl MemoryReadout for MacOSMemoryReadout {
