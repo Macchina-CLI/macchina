@@ -3,34 +3,6 @@ use crate::{extra, Fail};
 use std::fs;
 use std::process::{Command, Stdio};
 
-/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
-#[cfg(target_os = "linux")]
-pub fn percentage(fail: &mut Fail) -> String {
-    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
-    let ret = match percentage {
-        Ok(ret) => ret,
-        Err(_e) => {
-            fail.battery.fail_component();
-            return String::new();
-        }
-    };
-    extra::pop_newline(ret)
-}
-
-/// Read battery status from `/sys/class/power_supply/BAT0/status`
-#[cfg(target_os = "linux")]
-pub fn status(fail: &mut Fail) -> String {
-    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
-    let ret = match status {
-        Ok(ret) => ret,
-        Err(_e) => {
-            fail.battery.fail_component();
-            return String::new();
-        }
-    };
-    extra::pop_newline(ret)
-}
-
 /// Read battery percentage using `envstat -d acpibat0 | rg charging:`
 #[cfg(target_os = "netbsd")]
 pub fn status(fail: &mut Fail) -> String {

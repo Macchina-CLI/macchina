@@ -1,8 +1,10 @@
 use ReadoutError::MetricNotAvailable;
 
+#[derive(Debug)]
 pub enum ReadoutError {
     MetricNotAvailable,
     SysctlError(String),
+    IoError(String),
     Other(String),
 }
 
@@ -34,7 +36,7 @@ pub trait MemoryReadout {
 pub trait PackageReadout {
     fn new() -> Self;
 
-    fn count(&self) -> Result<u32, ReadoutError> { Err(MetricNotAvailable) }
+    fn count_pkgs(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
 }
 
 pub trait ProductReadout {

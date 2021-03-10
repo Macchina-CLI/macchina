@@ -1,4 +1,4 @@
-use crate::traits::{BatteryReadout, KernelReadout, ReadoutError, GeneralReadout, MemoryReadout};
+use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use mach::vm_statistics::{vm_statistics_data_t};
@@ -7,7 +7,6 @@ use mach::vm_statistics::{vm_statistics_data_t};
 
 mod mach_ffi;
 
-#[cfg(target_os = "macos")]
 impl From<SysctlError> for ReadoutError {
     fn from(e: SysctlError) -> Self {
         ReadoutError::SysctlError(format!("Error while accessing system control: {:?}", e))
@@ -15,6 +14,8 @@ impl From<SysctlError> for ReadoutError {
 }
 
 pub struct MacOSBatteryReadout;
+
+pub struct MacOSProductReadout;
 
 pub struct MacOSKernelReadout {
     os_type_ctl: Option<Ctl>,
@@ -31,6 +32,8 @@ pub struct MacOSGeneralReadout {
 pub struct MacOSMemoryReadout {
     page_size_ctl: Option<Ctl>,
 }
+
+pub struct MacOSPackageReadout;
 
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
@@ -195,5 +198,17 @@ impl MacOSMemoryReadout {
         }
 
         Err(ReadoutError::SysctlError(String::from("Could not read page size from system control")))
+    }
+}
+
+impl ProductReadout for MacOSProductReadout {
+    fn new() -> Self {
+        MacOSProductReadout
+    }
+}
+
+impl PackageReadout for MacOSPackageReadout {
+    fn new() -> Self {
+        MacOSPackageReadout
     }
 }

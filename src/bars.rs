@@ -1,4 +1,3 @@
-use crate::{battery, Fail};
 use macchina_read::traits::{MemoryReadout, ReadoutError, BatteryReadout};
 
 /// Returns a usize [0..10] based on the battery percentage,

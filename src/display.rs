@@ -2,7 +2,7 @@ use crate::{bars, format, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPAR
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
-use macchina_read::traits::{GeneralReadout, ReadoutError, MemoryReadout};
+use macchina_read::traits::{GeneralReadout, PackageReadout};
 
 #[allow(dead_code)]
 /// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
@@ -651,7 +651,7 @@ impl Printing for Elements {
     fn print_package_count(&mut self, fail: &mut Fail) {
         if self.packages.hidden { return; }
 
-        match package::package_count() {
+        match crate::READOUTS.packages.count_pkgs() {
             Ok(pc) => self.packages.modify(Some(pc)),
             Err(_) => {
                 fail.packages.fail_component();
@@ -757,7 +757,7 @@ impl Printing for Elements {
         if self.memory.hidden { return; }
 
         if self.format.bar {
-            match READOUTS.memory.used() {
+            match bars::memory() {
                 Ok(mem) => self.memory.modify(Some(mem.to_string())),
                 Err(_) => self.memory.modify(Some(String::from("0")))
             }

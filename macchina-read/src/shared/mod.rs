@@ -1,19 +1,21 @@
 use crate::traits::ReadoutError;
 use crate::extra;
 use std::ffi::CStr;
-use std::process::Command;
 use nix::unistd;
+use std::{fs, env};
+use std::process::{Command, Stdio};
+use crate::traits::ReadoutError::MetricNotAvailable;
+use std::io::Error;
+
+impl From<std::io::Error> for ReadoutError {
+    fn from(e: Error) -> Self {
+        ReadoutError::IoError(e.to_string())
+    }
+}
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn uptime(fail: &mut Fail) -> String {
-    let uptime = fs::read_to_string("/proc/uptime");
-    match uptime {
-        Ok(ret) => return ret.split_whitespace().next().unwrap().to_string(),
-        Err(_e) => {
-            fail.uptime.fail_component();
-            return String::from("Unknown");
-        }
-    };
+pub(crate) fn uptime() -> Result<String, ReadoutError> {
+    Ok(fs::read_to_string("/proc/uptime")?.split_whitespace().next().unwrap().to_string())
 }
 
 /// Read distribution name from `/etc/os-release`
@@ -35,7 +37,7 @@ pub(crate) fn distribution() -> String {
 
             let distribution = String::from_utf8(output.stdout)
                 .expect("ERROR: \"ps\" process stdout was not valid UTF-8");
-            return pop_newline(String::from(
+            return extra::pop_newline(String::from(
                 distribution.replace("\"", "").replace("NAME=", ""),
             ));
         }
@@ -48,33 +50,43 @@ pub(crate) fn distribution() -> String {
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable
 /// or from the fallback environment variable `XDG_CURRENT_DESKTOP`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn desktop_environment(fail: &mut Fail) -> String {
+pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
         Ok(ret) => {
             if ret.contains("/") {
-                return format::desktop_environment(ret.to_string());
+                return Ok(format_desktop_environment(ret.to_string()));
             }
-            extra::ucfirst(ret.to_string())
+            Ok(extra::ucfirst(ret.to_string()))
         }
-        Err(_e) => {
+        Err(_) => {
             let fallback = env::var("XDG_CURRENT_DESKTOP").ok();
             let fallback = fallback
                 .as_ref()
                 .map(String::as_str)
                 .and_then(|s| if s.is_empty() { None } else { Some(s) })
                 .unwrap_or("Unknown");
+
             if fallback == "Unknown" {
-                fail.desktop_env.fail_component();
+                return Err(ReadoutError::MetricNotAvailable);
             }
-            return extra::ucfirst(fallback);
+
+            Ok(extra::ucfirst(fallback))
         }
     }
 }
 
+/// Similar to how basename works
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+fn format_desktop_environment(mut session_name: String) -> String {
+    let last_occurence_index = session_name.rfind("/").unwrap() + 1;
+    session_name.replace_range(0..last_occurence_index, "");
+    return extra::ucfirst(&session_name);
+}
+
 /// Read window manager using `wmctrl -m | grep Name:`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn window_manager(fail: &mut Fail) -> String {
+pub(crate) fn window_manager() -> Result<String, ReadoutError> {
     if extra::which("wmctrl") {
         let wmctrl = Command::new("wmctrl")
             .arg("-m")
@@ -100,14 +112,15 @@ pub(crate) fn window_manager(fail: &mut Fail) -> String {
         let window_manager = String::from_utf8(output.stdout)
             .expect("ERROR: \"wmctrl -m | grep Name:\" process stdout was not valid UTF-8");
 
-        let window_man_name = pop_newline(String::from(window_manager.replace("Name:", "").trim()));
+        let window_man_name = extra::pop_newline(String::from(window_manager.replace("Name:", "")
+            .trim()));
         if window_man_name == "N/A" {
-            fail.window_man.fail_component();
+            return Err(MetricNotAvailable);
         }
-        return window_man_name;
+        return Ok(window_man_name);
     }
-    fail.window_man.fail_component();
-    String::from("Unknown")
+
+    Err(MetricNotAvailable)
 }
 
 /// Read current terminal name using `ps`
@@ -222,4 +235,34 @@ pub(crate) fn cpu_model_name() -> String {
         .trim()
         .to_string();
     cpu
+}
+
+/// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn get_meminfo_value(value: &str) -> u64 {
+    let file = fs::File::open("/proc/meminfo");
+    match file {
+        Ok(content) => {
+            let grep = Command::new("grep")
+                .arg(value)
+                .stdin(Stdio::from(content))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"grep\" process");
+
+            let mem = grep
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"grep\" process to exit");
+            // Collect only the value of MemTotal
+            let s_mem_kb: String = String::from_utf8(mem.stdout)
+                .expect("\"grep\" process stdout was not valid UTF-8")
+                .chars()
+                .filter(|c| c.is_digit(10))
+                .collect();
+            s_mem_kb.parse::<u64>().unwrap_or(0)
+        }
+        Err(_e) => {
+            return 0;
+        }
+    }
 }

@@ -36,7 +36,9 @@ lazy_static! {
     battery: macchina_read::BatteryReadout::new(),
     kernel: macchina_read::KernelReadout::new(),
     memory: macchina_read::MemoryReadout::new(),
-    general: macchina_read::GeneralReadout::new()
+    general: macchina_read::GeneralReadout::new(),
+    product: macchina_read::ProductReadout::new(),
+    packages: macchina_read::PackageReadout::new()
 };
 }
 

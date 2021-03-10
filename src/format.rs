@@ -1,6 +1,6 @@
-use crate::{battery, extra, Fail, READOUTS};
+use crate::{extra, READOUTS};
 use bytesize::ByteSize;
-use macchina_read::traits::{KernelReadout, GeneralReadout, MemoryReadout, ReadoutError, BatteryReadout};
+use macchina_read::traits::{KernelReadout, GeneralReadout, MemoryReadout, ReadoutError, BatteryReadout, ProductReadout};
 
 /// Construct a new _String_ from the value
 /// returned by `read::uptime`
@@ -134,26 +134,6 @@ pub fn cpu() -> Result<String, ReadoutError> {
         .replace("(R)", "®"))
 }
 
-/// Construct a new _String_ from the values
-/// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
-#[cfg(target_os = "linux")]
-pub fn machine() -> String {
-    if product::product_family() == product::product_name()
-        && product::product_family() == product::product_version()
-    {
-        return product::product_family();
-    } else if product::product_version().is_empty() || product::product_version().len() <= 15 {
-        return String::from(
-            product::product_vendor()
-                + " "
-                + &product::product_family()
-                + " "
-                + &product::product_name(),
-        );
-    }
-    product::product_version()
-}
-
 #[cfg(target_os = "netbsd")]
 /// Construct a new _String_ from the values
 /// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
@@ -164,13 +144,6 @@ pub fn machine() -> String {
         return product::system_vendor();
     }
     product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
-}
-
-/// Similar to how basename works
-pub fn desktop_environment(mut session_name: String) -> String {
-    let last_occurence_index = session_name.rfind("/").unwrap() + 1;
-    session_name.replace_range(0..last_occurence_index, "");
-    return extra::ucfirst(&session_name);
 }
 
 /// Returns a concatenated string of the kernel name and its release
