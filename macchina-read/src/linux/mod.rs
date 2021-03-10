@@ -100,7 +100,7 @@ impl GeneralReadout for LinuxGeneralReadout {
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> { 
-        Ok(crate::shared::distribution())   
+        crate::shared::distribution()
     }
 
     fn desktop_environment(&self) -> Result<String, ReadoutError> { 
@@ -116,7 +116,7 @@ impl GeneralReadout for LinuxGeneralReadout {
     }
 
     fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> { 
-        crate::shared::shell()
+        crate::shared::shell(shorthand)
     }
 
     fn cpu_model_name(&self) -> Result<String, ReadoutError> { 

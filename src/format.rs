@@ -1,6 +1,6 @@
-use crate::{extra, READOUTS};
+use crate::READOUTS;
 use bytesize::ByteSize;
-use macchina_read::traits::{KernelReadout, GeneralReadout, MemoryReadout, ReadoutError, BatteryReadout, ProductReadout};
+use macchina_read::traits::{KernelReadout, GeneralReadout, MemoryReadout, ReadoutError, BatteryReadout};
 
 /// Construct a new _String_ from the value
 /// returned by `read::uptime`
@@ -79,21 +79,6 @@ pub fn host() -> Result<String, ReadoutError> {
     Ok(format!("{}@{}", username, hostname))
 }
 
-#[cfg(target_os = "linaux")]
-/// Construct a new _String_ from the values
-/// returned by `read::battery_percentage` and `read::battery_status`
-pub fn battery(fail: &mut Fail) -> String {
-    let percentage = battery::percentage(fail);
-    let status = battery::status(fail);
-    if !percentage.is_empty() && !status.is_empty() {
-        if percentage != "100" {
-            return String::from(percentage + "% & " + &status);
-        }
-        return status;
-    }
-    String::from("Unknown")
-}
-
 /// Construct a new _String_ from the values
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery() -> Result<String, ReadoutError> {
@@ -132,18 +117,6 @@ pub fn cpu() -> Result<String, ReadoutError> {
     Ok(format!("{} ({})", cpu_model, num_cpus::get())
         .replace("(TM)", "™")
         .replace("(R)", "®"))
-}
-
-#[cfg(target_os = "netbsd")]
-/// Construct a new _String_ from the values
-/// returned by `product::sys_vendor` and `product::product_family` or `product::product_version`
-pub fn machine() -> String {
-    if product::system_version() == product::system_product()
-        && product::system_version() == product::system_vendor()
-    {
-        return product::system_vendor();
-    }
-    product::system_vendor() + " " + &product::system_product() + " " + &product::system_version()
 }
 
 /// Returns a concatenated string of the kernel name and its release

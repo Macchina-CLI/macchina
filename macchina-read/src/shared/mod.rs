@@ -6,6 +6,7 @@ use std::{fs, env};
 use std::process::{Command, Stdio};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use std::io::Error;
+use std::path::Path;
 
 impl From<std::io::Error> for ReadoutError {
     fn from(e: Error) -> Self {
@@ -20,31 +21,26 @@ pub(crate) fn uptime() -> Result<String, ReadoutError> {
 
 /// Read distribution name from `/etc/os-release`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn distribution() -> String {
-    let file = fs::File::open("/etc/os-release");
-    match file {
-        Ok(content) => {
-            let head = Command::new("head")
-                .args(&["-n", "1"])
-                .stdin(Stdio::from(content))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"head\" process");
+pub(crate) fn distribution() -> Result<String, ReadoutError> {
+    let content = fs::File::open("/etc/os-release")?;
 
-            let output = head
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"head\" process to exit");
+    let head = Command::new("head")
+        .args(&["-n", "1"])
+        .stdin(Stdio::from(content))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to start \"head\" process");
 
-            let distribution = String::from_utf8(output.stdout)
-                .expect("ERROR: \"ps\" process stdout was not valid UTF-8");
-            return extra::pop_newline(String::from(
-                distribution.replace("\"", "").replace("NAME=", ""),
-            ));
-        }
-        Err(_e) => {
-            return String::from("Unknown");
-        }
-    }
+    let output = head
+        .wait_with_output()
+        .expect("ERROR: failed to wait for \"head\" process to exit");
+
+    let distribution = String::from_utf8(output.stdout)
+        .expect("ERROR: \"ps\" process stdout was not valid UTF-8");
+
+    Ok(extra::pop_newline(String::from(
+        distribution.replace("\"", "").replace("NAME=", ""),
+    )))
 }
 
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable
@@ -194,12 +190,19 @@ pub(crate) fn whoami() -> Result<String, ReadoutError> {
 }
 
 #[cfg(target_family = "unix")]
-pub(crate) fn shell() -> Result<String, ReadoutError> {
+pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
     let passwd = get_passwd_struct()?;
 
     let shell_name = unsafe { CStr::from_ptr((*passwd).pw_shell) };
     if let Ok(str) = shell_name.to_str() {
-        return Ok(String::from(str));
+        let path = String::from(str);
+
+        if shorthand {
+            let path = Path::new(&path);
+            return Ok(path.file_stem().unwrap().to_str().unwrap().into())
+        }
+
+        return Ok(path);
     }
 
     Err(ReadoutError::Other(String::from("Unable to read default shell for current uid.")))

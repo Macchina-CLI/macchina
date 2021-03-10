@@ -2,8 +2,9 @@ use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use mach::vm_statistics::{vm_statistics_data_t};
-
-//iokit
+use crate::macos::mach_ffi::{IOPSCopyPowerSourcesInfo, IOPSGetProvidingPowerSourceType};
+use core_foundation::base::CFRelease;
+use core_foundation::string::{CFStringGetCStringPtr, kCFStringEncodingUTF8};
 
 mod mach_ffi;
 
@@ -14,6 +15,12 @@ impl From<SysctlError> for ReadoutError {
 }
 
 pub struct MacOSBatteryReadout;
+
+enum MacOSPowerSource {
+    Battery,
+    AC,
+    UPS
+}
 
 pub struct MacOSProductReadout;
 
@@ -37,7 +44,38 @@ pub struct MacOSPackageReadout;
 
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
-        MacOSBatteryReadout {} //todo
+        MacOSBatteryReadout
+    }
+
+    fn percentage(&self) -> Result<String, ReadoutError> {
+        if self.get_power_source() != MacOSPowerSource::Battery { return Err(MetricNotAvailable); }
+
+        Ok(String::new())
+    }
+
+    fn status(&self) -> Result<String, ReadoutError> {
+        if self.get_power_source() != MacOSPowerSource::Battery { return Err(MetricNotAvailable); }
+
+        Ok(String::new())
+    }
+}
+
+impl MacOSBatteryReadout {
+    fn get_power_source(&self) -> MacOSPowerSource {
+        let power_info = unsafe { IOPSCopyPowerSourcesInfo() };
+        let providing_power_cfstr = unsafe { IOPSGetProvidingPowerSourceType(power_info) };
+        let cstr_ptr = unsafe { CFStringGetCStringPtr(providing_power_cfstr, kCFStringEncodingUTF8) };
+        let mut power_source = unsafe {
+            match std::ffi::CStr::from_ptr(cstr_ptr).to_str() {
+                Some(mach_ffi::kIOPMBatteryPowerKey) => MacOSPowerSource::Battery,
+                Some(mach_ffi::kIOPMACPowerKey) => MacOSPowerSource::AC,
+                Some(mach_ffi::kIOPMUPSPowerKey) => MacOSPowerSource::UPS,
+            }
+        };
+
+        unsafe { CFRelease(power_info); };
+
+        power_source
     }
 }
 
@@ -76,12 +114,24 @@ impl GeneralReadout for MacOSGeneralReadout {
         Ok(self.hostname_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?)
     }
 
+    fn desktop_environment(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Aqua"))
+    }
+
+    fn window_manager(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Quartz Compositor"))
+    }
+
     fn terminal(&self) -> Result<String, ReadoutError> {
+        if let Some(terminal_env) = std::env::var("TERM").ok() {
+            return Ok(terminal_env);
+        }
+
         crate::shared::terminal()
     }
 
     fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> {
-        crate::shared::shell()
+        crate::shared::shell(shorthand)
     }
 
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
@@ -109,6 +159,7 @@ impl GeneralReadout for MacOSGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         Ok(self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?)
     }
+
 
 
 }

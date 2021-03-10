@@ -46,6 +46,7 @@ pub trait ProductReadout {
     fn vendor(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn family(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn product(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
 }
 
 pub trait GeneralReadout {

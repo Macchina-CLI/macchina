@@ -1,16 +1,6 @@
 mod bars;
-#[path = "read/battery.rs"]
-mod battery;
 mod display;
 mod format;
-#[path = "read/kernel.rs"]
-mod kernel;
-#[path = "read/memory.rs"]
-mod memory;
-#[path = "read/package.rs"]
-mod package;
-#[path = "read/product.rs"]
-mod product;
 
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;

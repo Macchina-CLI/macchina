@@ -1,4 +1,4 @@
-use crate::{bars, format, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, READOUTS};
+use crate::{bars, format, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, READOUTS};
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
