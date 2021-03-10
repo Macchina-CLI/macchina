@@ -1,9 +1,11 @@
 #![allow(dead_code)]
+
 use std::fs;
 use std::process::Command;
 use std::process::Stdio;
 
 /// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 fn get_value(value: &str) -> u64 {
     let file = fs::File::open("/proc/meminfo");
     match file {
@@ -33,26 +35,31 @@ fn get_value(value: &str) -> u64 {
 }
 
 /// Read __MemTotal__ using `get_value()`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn memtotal() -> u64 {
     get_value("MemTotal")
 }
 
 /// Read __MemFree__ using `get_value()`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn memfree() -> u64 {
     get_value("MemFree")
 }
 
 /// Read __Buffers__ using `get_value()`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn buffers() -> u64 {
     get_value("Buffers")
 }
 
 /// Read __Cached__ using `get_value()`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn cached() -> u64 {
     get_value("^Cached")
 }
 
 /// Read __SReclaimable__ using `get_value()`
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub fn sreclaimable() -> u64 {
     get_value("SReclaimable")
 }
@@ -72,9 +79,4 @@ pub fn used() -> u64 {
 /// `Used = MemTotal - MemFree`
 pub fn used() -> u64 {
     memtotal() - memfree()
-}
-
-#[cfg(target_os = "macos")]
-pub fn used() -> u64 {
-    0
 }

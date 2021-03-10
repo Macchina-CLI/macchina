@@ -3,16 +3,6 @@ use crate::{extra, Fail};
 use std::fs;
 use std::process::{Command, Stdio};
 
-#[cfg(target_os = "macos")]
-pub fn percentage(fail: &mut Fail) -> String {
-    String::new()
-}
-
-#[cfg(target_os = "macos")]
-pub fn status(fail: &mut Fail) -> String {
-    String::new()
-}
-
 /// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
 #[cfg(target_os = "linux")]
 pub fn percentage(fail: &mut Fail) -> String {

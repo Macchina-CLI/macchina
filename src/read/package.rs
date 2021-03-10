@@ -1,5 +1,5 @@
-use crate::{extra, Fail};
 use std::process::{Command, Stdio};
+use macchina_read::traits::ReadoutError;
 
 #[cfg(target_os = "linux")]
 /// Extract package count for debian-based, arch-based distros or NetBSD
@@ -114,6 +114,7 @@ pub fn package_count(fail: &mut Fail) -> String {
 }
 
 #[cfg(target_os = "macos")]
-pub fn package_count(fail: &mut Fail) -> String {
-    String::new()
+pub fn package_count() -> Result<String, ReadoutError> {
+    //todo
+    Ok(String::from("0"))
 }

@@ -1,9 +1,8 @@
-use crate::{
-    bars, format, general, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR,
-};
+use crate::{bars, format, package, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, READOUTS};
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
+use macchina_read::traits::{GeneralReadout, ReadoutError, MemoryReadout};
 
 #[allow(dead_code)]
 /// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
@@ -67,15 +66,15 @@ impl Fail {
                 false,
                 String::from("(ERROR:DISABLED) Host -> 
                 Hostname: Obtained from nix::unistd::gethostname()
-                Username: Obtained from whoami")
+                Username: Obtained from whoami"),
             ),
             shell: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Shell -> Extracted using \"ps -p $$ -o comm=\" OR \"ps -p $$ -o args=\"")
+                String::from("(ERROR:DISABLED) Shell -> Extracted using \"ps -p $$ -o comm=\" OR \"ps -p $$ -o args=\""),
             ),
             terminal: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Terminal -> Extracted using \"ps -p $$ -p\"")
+                String::from("(ERROR:DISABLED) Terminal -> Extracted using \"ps -p $$ -p\""),
             ),
             packages: FailedComponent::new(
                 false,
@@ -99,7 +98,7 @@ impl Fail {
             #[cfg(target_os = "macos")]
             distro: FailedComponent::new(
                 true,
-                String::from("oh no :(")
+                String::from("oh no :("),
             ),
         }
     }
@@ -162,8 +161,11 @@ impl Pair {
             hidden: false,
         }
     }
-    fn modify(&mut self, val: String) {
-        self.value = val;
+
+    fn modify(&mut self, val: Option<String>) {
+        if let Some(value) = val {
+            self.value = value;
+        }
     }
     fn update_key(&mut self, val: &str) {
         self.key = val.to_string();
@@ -175,6 +177,7 @@ impl fmt::Display for Pair {
         write!(f, "{}", self.key)
     }
 }
+
 /// `Format` contains any visible element that is not a `Pair`,
 /// such as the separator and bar glyph.
 /// It also contains several other components, e.g. color, spacing, padding, etc.
@@ -229,7 +232,7 @@ pub struct Elements {
 }
 
 /// Initialize each pair of elements but only assign key names, as key values
-//  are only assigned when an element that is about to be printed is not hidden.
+///  are only assigned when an element that is about to be printed is not hidden.
 impl Elements {
     pub fn new() -> Elements {
         Elements {
@@ -265,9 +268,9 @@ impl Elements {
         self.desktop_env.update_key("Des");
         self.window_man.update_key("Win");
         #[cfg(target_os = "linux")]
-        self.kernel.update_key("Ker");
+            self.kernel.update_key("Ker");
         #[cfg(target_os = "netbsd")]
-        self.kernel.update_key("Ope");
+            self.kernel.update_key("Ope");
         self.packages.update_key("Pac");
         self.shell.update_key("She");
         self.terminal.update_key("Ter");
@@ -285,9 +288,9 @@ impl Elements {
         self.desktop_env.update_key("Desktop Environment");
         self.window_man.update_key("Window Manager");
         #[cfg(target_os = "linux")]
-        self.kernel.update_key("Kernel");
+            self.kernel.update_key("Kernel");
         #[cfg(target_os = "netbsd")]
-        self.kernel.update_key("Operating System");
+            self.kernel.update_key("Operating System");
         self.packages.update_key("Packages");
         self.shell.update_key("Shell");
         self.terminal.update_key("Terminal");
@@ -353,7 +356,7 @@ impl Elements {
         if !self.battery.hidden {
             keys.push(self.battery.key.clone());
         }
-        if self.is_running_wm_only(fail, false) {
+        if let Some(true) = self.is_running_wm_only(fail, false) {
             keys.push(self.window_man.key.clone());
         } else {
             if !self.desktop_env.hidden {
@@ -371,9 +374,11 @@ impl Elements {
         }
         longest_key
     }
+
     pub fn calc_spacing(&self, current_key: &String, longest_key: &String) -> usize {
         (longest_key.len() + self.format.spacing) - current_key.len()
     }
+
     pub fn hide_all(&mut self) {
         self.host.hidden = true;
         self.machine.hidden = true;
@@ -389,42 +394,92 @@ impl Elements {
         self.memory.hidden = true;
         self.battery.hidden = true;
     }
+
     pub fn apply_shorthand_values(&mut self, opts: &Options, fail: &mut Fail) {
-        if opts.shell_shorthand && !self.shell.hidden && !fail.shell.failed {
-            self.shell.modify(general::shell(true, fail))
-        } else {
-            self.shell.modify(general::shell(false, fail))
+        let shell_shorthand = opts.shell_shorthand && !self.shell.hidden && !fail.shell.failed;
+        let uptime_shorthand = opts.uptime_shorthand && !self.uptime.hidden && !fail.shell.failed;
+
+        match READOUTS.general.shell(shell_shorthand) {
+            Ok(shell) => self.shell.modify(Some(shell)),
+            Err(_) => fail.shell.fail_component()
         }
 
-        if opts.uptime_shorthand && !self.uptime.hidden && !fail.shell.failed {
-            self.uptime.modify(format::uptime(true, fail))
-        } else {
-            self.uptime.modify(format::uptime(false, fail))
+        match format::uptime(uptime_shorthand) {
+            Ok(uptime) => self.uptime.modify(Some(uptime)),
+            Err(_) => fail.uptime.fail_component()
         }
     }
+
     pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Options) {
-        self.uptime.modify(format::uptime(true, fail));
-        self.desktop_env.modify(general::desktop_environment(fail));
-        self.window_man.modify(general::window_manager(fail));
+        match format::uptime(true) {
+            Ok(uptime) => self.uptime.modify(Some(uptime)),
+            Err(_) => fail.uptime.fail_component()
+        }
+
+        match READOUTS.general.desktop_environment() {
+            Ok(env) => self.desktop_env.modify(Some(env)),
+            Err(_) => fail.desktop_env.fail_component()
+        }
+
+        match READOUTS.general.window_manager() {
+            Ok(wm) => self.window_man.modify(Some(wm)),
+            Err(_) => fail.window_man.fail_component()
+        }
+
         self.is_running_wm_only(fail, true);
-        self.uptime
-            .modify(format::uptime(opts.uptime_shorthand, fail));
-        self.shell
-            .modify(general::shell(opts.shell_shorthand, fail));
-        self.terminal.modify(general::terminal(fail));
-        self.host.modify(format::host(fail));
-        self.battery.modify(format::battery(fail));
-        self.packages.modify(package::package_count(fail));
+
+        match format::uptime(opts.uptime_shorthand) {
+            Ok(uptime) => self.uptime.modify(Some(uptime)),
+            Err(_) => fail.uptime.fail_component()
+        }
+
+        match READOUTS.general.shell(opts.shell_shorthand) {
+            Ok(shell) => self.shell.modify(Some(shell)),
+            Err(_) => fail.shell.fail_component()
+        }
+
+        match READOUTS.general.terminal() {
+            Ok(terminal) => self.terminal.modify(Some(terminal)),
+            Err(_) => fail.terminal.fail_component()
+        }
+
+        match format::host() {
+            Ok(host) => self.host.modify(Some(host)),
+            Err(_) => fail.host.fail_component()
+        }
+
+        match format::battery() {
+            Ok(battery) => self.battery.modify(Some(battery)),
+            Err(_) => fail.battery.fail_component()
+        }
+
+        self.packages.modify(Some(String::from("0"))); //TODO: package count
     }
-    pub fn is_running_wm_only(&mut self, fail: &mut Fail, apply: bool) -> bool {
-        if general::window_manager(fail).to_uppercase()
-            == general::desktop_environment(fail).to_uppercase()
-            && apply
+
+    pub fn is_running_wm_only(&self, fail: &mut Fail, apply: bool) -> Option<bool> {
+        let window_manager = match READOUTS.general.window_manager() {
+            Ok(wm) => wm,
+            Err(_) => {
+                fail.window_man.fail_component();
+                return None;
+            }
+        };
+
+        let desktop_env = match READOUTS.general.desktop_environment() {
+            Ok(de) => de,
+            Err(_) => {
+                fail.desktop_env.fail_component();
+                return None;
+            }
+        };
+
+        if window_manager.to_uppercase() == desktop_env.to_uppercase() && apply
         {
             fail.desktop_env.failed = true;
-            return true;
+            return Some(true);
         }
-        false
+
+        Some(false)
     }
 }
 
@@ -432,11 +487,11 @@ trait Printing {
     fn print_host(&mut self, fail: &mut Fail);
     fn print_machine(&mut self);
     fn print_kernel_ver(&mut self);
-    fn print_distribution(&mut self, fail: &Fail);
+    fn print_distribution(&mut self, fail: &mut Fail);
     fn print_desktop_env(&mut self, fail: &mut Fail);
     fn print_window_man(&mut self, fail: &mut Fail);
     fn print_package_count(&mut self, fail: &mut Fail);
-    fn print_shell(&mut self, fail: &mut Fail);
+    fn print_shell(&mut self, fail: &Fail);
     fn print_terminal(&mut self, fail: &mut Fail);
     fn print_processor(&mut self);
     fn print_uptime(&mut self, fail: &Fail);
@@ -448,275 +503,343 @@ trait Printing {
 
 impl Printing for Elements {
     fn print_host(&mut self, fail: &mut Fail) {
-        if !self.host.hidden {
-            self.host.modify(format::host(fail));
-            if !fail.host.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.host.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.host.value
-                );
+        if self.host.hidden { return; }
+
+        match format::host() {
+            Ok(host) => self.host.modify(Some(host)),
+            Err(_) => {
+                fail.host.fail_component();
+                return;
             }
         }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.host.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.host.value
+        );
     }
+
     fn print_machine(&mut self) {
-        if !self.machine.hidden {
-            self.machine.modify(format::machine());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.machine.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.machine.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.machine.value
-            );
+        if self.machine.hidden { return; }
+
+        match READOUTS.general.machine() {
+            Ok(machine) => self.machine.modify(Some(machine)),
+            Err(_) => self.machine.modify(None)
         }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.machine.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.machine.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.machine.value
+        );
     }
-    fn print_distribution(&mut self, fail: &Fail) {
-        if !self.distro.hidden {
-            #[cfg(target_os = "linux")]
-            self.distro.modify(general::distribution());
-            if !fail.distro.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.distro.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.distro.value
-                );
-            }
-        }
-    }
-    fn print_desktop_env(&mut self, fail: &mut Fail) {
-        if !self.desktop_env.hidden {
-            self.desktop_env.modify(general::desktop_environment(fail));
-            self.is_running_wm_only(fail, true);
-            if !fail.desktop_env.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.desktop_env.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.desktop_env.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.desktop_env.value
-                );
-            }
-        }
-    }
-    fn print_window_man(&mut self, fail: &mut Fail) {
-        if !self.window_man.hidden {
-            self.window_man.modify(general::window_manager(fail));
-            if !fail.window_man.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.window_man.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.window_man.value
-                );
-            }
-        }
-    }
+
     fn print_kernel_ver(&mut self) {
-        if !self.kernel.hidden {
-            self.kernel.modify(format::kernel());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.kernel.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.kernel.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.kernel.value
-            );
+        if self.kernel.hidden { return; }
+
+        match format::kernel() {
+            Ok(kernel) => self.kernel.modify(Some(kernel)),
+            Err(_) => self.kernel.modify(None)
         }
+
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.kernel.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.kernel.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.kernel.value
+        );
     }
+    fn print_distribution(&mut self, fail: &mut Fail) {
+        if self.distro.hidden { return; }
+
+        match READOUTS.general.distribution() {
+            Ok(dist) => self.distro.modify(Some(dist)),
+            Err(_) => {
+                fail.distro.fail_component();
+                return;
+            }
+        }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.distro.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.distro.value
+        );
+    }
+
+    fn print_desktop_env(&mut self, fail: &mut Fail) {
+        if self.desktop_env.hidden { return; }
+
+        match READOUTS.general.desktop_environment() {
+            Ok(env) => self.desktop_env.modify(Some(env)),
+            Err(_) => {
+                fail.desktop_env.fail_component();
+                return;
+            }
+        }
+
+        if self.is_running_wm_only(fail, true) == None { return; }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.desktop_env.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.desktop_env.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.desktop_env.value
+        );
+    }
+
+    fn print_window_man(&mut self, fail: &mut Fail) {
+        if self.window_man.hidden { return; }
+
+        match READOUTS.general.window_manager() {
+            Ok(wm) => self.window_man.modify(Some(wm)),
+            Err(_) => {
+                fail.window_man.fail_component();
+                return;
+            }
+        }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.window_man.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.window_man.value
+        );
+    }
+
     fn print_package_count(&mut self, fail: &mut Fail) {
-        if !self.packages.hidden {
-            self.packages.modify(package::package_count(fail));
-            if !fail.packages.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.packages.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.packages.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.packages.value
-                );
+        if self.packages.hidden { return; }
+
+        match package::package_count() {
+            Ok(pc) => self.packages.modify(Some(pc)),
+            Err(_) => {
+                fail.packages.fail_component();
+                return;
             }
         }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.packages.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.packages.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.packages.value
+        );
     }
-    fn print_shell(&mut self, fail: &mut Fail) {
-        if !self.shell.hidden && !fail.shell.failed {
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.shell.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.shell.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.shell.value
-            );
-        }
+
+    fn print_shell(&mut self, fail: &Fail) {
+        if self.shell.hidden || fail.shell.failed { return; }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.shell.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.shell.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.shell.value
+        );
     }
+
     fn print_terminal(&mut self, fail: &mut Fail) {
-        if !self.terminal.hidden {
-            self.terminal.modify(general::terminal(fail));
-            if !fail.terminal.failed {
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.terminal.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.terminal.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.terminal.value
-                );
+        if self.terminal.hidden { return; }
+
+        match READOUTS.general.terminal() {
+            Ok(terminal) => self.terminal.modify(Some(terminal)),
+            Err(_) => {
+                fail.terminal.fail_component();
+                return;
             }
         }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.terminal.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.terminal.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.terminal.value
+        );
     }
     fn print_processor(&mut self) {
-        if !self.cpu.hidden {
-            self.cpu.modify(format::cpu());
-            println!(
-                "{}{}{}{}{}{}",
-                self.format.padding,
-                self.cpu.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.cpu.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
-                self.cpu.value
-            );
+        if self.cpu.hidden { return; }
+
+        match format::cpu() {
+            Ok(cpu) => self.cpu.modify(Some(cpu)),
+            Err(_) => self.cpu.modify(Some(String::from("Unknown")))
         }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.cpu.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.cpu.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.cpu.value
+        );
     }
+
     fn print_uptime(&mut self, fail: &Fail) {
-        if !fail.uptime.failed && !self.uptime.hidden {
-            println!(
-                "{}{}{}{}{}{}",
+        if self.uptime.hidden || fail.uptime.failed { return; }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.uptime.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.uptime.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.uptime.value
+        );
+    }
+
+    fn print_memory(&mut self) {
+        if self.memory.hidden { return; }
+
+        if self.format.bar {
+            match READOUTS.memory.used() {
+                Ok(mem) => self.memory.modify(Some(mem.to_string())),
+                Err(_) => self.memory.modify(Some(String::from("0")))
+            }
+        } else {
+            match format::memory() {
+                Ok(mem) => self.memory.modify(Some(mem)),
+                Err(_) => self.memory.modify(Some(String::from("Unknown")))
+            }
+        }
+
+
+        if self.format.bar {
+            print!(
+                "{}{}{}{}{}",
                 self.format.padding,
-                self.uptime.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.uptime.key, &self.format.longest_key)),
+                self.memory.key.color(self.format.color).bold(),
+                " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
                 self.format
                     .separator
                     .color(self.format.separator_color)
                     .bold(),
                 " ".repeat(self.format.spacing),
-                self.uptime.value
+            );
+            Printing::print_bar(self, self.memory.value.parse().unwrap());
+        } else {
+            println!(
+                "{}{}{}{}{}{}",
+                self.format.padding,
+                self.memory.key.color(self.format.color).bold(),
+                " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
+                self.format
+                    .separator
+                    .color(self.format.separator_color)
+                    .bold(),
+                " ".repeat(self.format.spacing),
+                self.memory.value
             );
         }
     }
-    fn print_memory(&mut self) {
-        if !self.memory.hidden {
-            if self.format.bar {
-                print!(
-                    "{}{}{}{}{}",
-                    self.format.padding,
-                    self.memory.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                );
-                Printing::print_bar(self, bars::memory());
-            } else {
-                self.memory.modify(format::memory());
-                println!(
-                    "{}{}{}{}{}{}",
-                    self.format.padding,
-                    self.memory.key.color(self.format.color).bold(),
-                    " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
-                    self.format
-                        .separator
-                        .color(self.format.separator_color)
-                        .bold(),
-                    " ".repeat(self.format.spacing),
-                    self.memory.value
-                );
+
+    fn print_battery(&mut self, fail: &mut Fail) {
+        if self.battery.hidden { return; }
+
+        match format::battery() {
+            Ok(bat) => self.battery.modify(Some(bat)),
+            Err(_) => {
+                fail.battery.fail_component();
+                return;
             }
         }
-    }
-    fn print_battery(&mut self, fail: &mut Fail) {
-        if !self.battery.hidden {
-            self.battery.modify(format::battery(fail));
-            if !fail.battery.failed {
-                match self.format.bar {
-                    true => {
-                        print!(
-                            "{}{}{}{}{}",
-                            self.format.padding,
-                            self.battery.key.color(self.format.color).bold(),
-                            " ".repeat(
-                                self.calc_spacing(&self.battery.key, &self.format.longest_key)
-                            ),
-                            self.format
-                                .separator
-                                .color(self.format.separator_color)
-                                .bold(),
-                            " ".repeat(self.format.spacing),
-                        );
-                        Printing::print_bar(self, bars::battery(fail));
-                    }
-                    false => {
-                        println!(
-                            "{}{}{}{}{}{}",
-                            self.format.padding,
-                            self.battery.key.color(self.format.color).bold(),
-                            " ".repeat(
-                                self.calc_spacing(&self.battery.key, &self.format.longest_key)
-                            ),
-                            self.format
-                                .separator
-                                .color(self.format.separator_color)
-                                .bold(),
-                            " ".repeat(self.format.spacing),
-                            self.battery.value
-                        );
-                    }
-                };
-            }
+
+        if self.format.bar {
+            print!(
+                "{}{}{}{}{}",
+                self.format.padding,
+                self.battery.key.color(self.format.color).bold(),
+                " ".repeat(
+                    self.calc_spacing(&self.battery.key, &self.format.longest_key)
+                ),
+                self.format
+                    .separator
+                    .color(self.format.separator_color)
+                    .bold(),
+                " ".repeat(self.format.spacing),
+            );
+
+            Printing::print_bar(self, bars::battery().unwrap_or(0));
+        } else {
+            println!(
+                "{}{}{}{}{}{}",
+                self.format.padding,
+                self.battery.key.color(self.format.color).bold(),
+                " ".repeat(
+                    self.calc_spacing(&self.battery.key, &self.format.longest_key)
+                ),
+                self.format
+                    .separator
+                    .color(self.format.separator_color)
+                    .bold(),
+                " ".repeat(self.format.spacing),
+                self.battery.value
+            );
         }
     }
     /// Print a bar next to memory and battery keys
@@ -803,98 +926,44 @@ pub fn debug(fail: &mut Fail) {
 
 /// Hide an element or more e.g. package count, uptime etc. when `--hide <element>` is present
 pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
-    if hide_parameters.contains(&"host") {
-        elems.host.hidden = true;
-    }
-    if hide_parameters.contains(&"mach") {
-        elems.machine.hidden = true;
-    }
-    if hide_parameters.contains(&"distro") {
-        elems.distro.hidden = true;
-    }
-    if hide_parameters.contains(&"de") {
-        elems.desktop_env.hidden = true;
-    }
-    if hide_parameters.contains(&"wm") {
-        elems.window_man.hidden = true;
-    }
-    if hide_parameters.contains(&"kernel") {
-        elems.kernel.hidden = true;
-    }
-    if hide_parameters.contains(&"pkgs") {
-        elems.packages.hidden = true;
-    }
-    if hide_parameters.contains(&"shell") {
-        elems.shell.hidden = true;
-    }
-    if hide_parameters.contains(&"term") {
-        elems.terminal.hidden = true;
-    }
-    if hide_parameters.contains(&"cpu") {
-        elems.cpu.hidden = true;
-    }
-    if hide_parameters.contains(&"up") {
-        elems.uptime.hidden = true;
-    }
-    if hide_parameters.contains(&"mem") {
-        elems.memory.hidden = true;
-    }
-    if hide_parameters.contains(&"bat") {
-        elems.battery.hidden = true;
-    }
+    elems.host.hidden = hide_parameters.contains(&"host");
+    elems.machine.hidden = hide_parameters.contains(&"mach");
+    elems.distro.hidden = hide_parameters.contains(&"distro");
+    elems.desktop_env.hidden = hide_parameters.contains(&"de");
+    elems.window_man.hidden = hide_parameters.contains(&"wm");
+    elems.kernel.hidden = hide_parameters.contains(&"kernel");
+    elems.packages.hidden = hide_parameters.contains(&"pkgs");
+    elems.shell.hidden = hide_parameters.contains(&"shell");
+    elems.terminal.hidden = hide_parameters.contains(&"term");
+    elems.cpu.hidden = hide_parameters.contains(&"cpu");
+    elems.uptime.hidden = hide_parameters.contains(&"up");
+    elems.memory.hidden = hide_parameters.contains(&"mem");
+    elems.battery.hidden = hide_parameters.contains(&"bat");
+
     elems.set_longest_key(fail);
     print_info(elems, &options, fail);
 }
 
 /// Display only the specified elements e.g. package count, uptime etc. when `--show-only <element>` is present
 pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
-    if hide_parameters.contains(&"host") {
-        elems.host.hidden = false;
-    }
-    if hide_parameters.contains(&"mach") {
-        elems.machine.hidden = false;
-    }
-    if hide_parameters.contains(&"distro") {
-        elems.distro.hidden = false;
-    }
-    if hide_parameters.contains(&"kernel") {
-        elems.kernel.hidden = false;
-    }
-    if hide_parameters.contains(&"pkgs") {
-        elems.packages.hidden = false;
-    }
-    if hide_parameters.contains(&"shell") {
-        elems.shell.hidden = false;
-    }
-    if hide_parameters.contains(&"term") {
-        elems.terminal.hidden = false;
-    }
-    if hide_parameters.contains(&"cpu") {
-        elems.cpu.hidden = false;
-    }
-    if hide_parameters.contains(&"up") {
-        elems.uptime.hidden = false;
-    }
-    if hide_parameters.contains(&"mem") {
-        elems.memory.hidden = false;
-    }
-    if hide_parameters.contains(&"bat") {
-        elems.battery.hidden = false;
-    }
-    if elems.is_running_wm_only(fail, false) {
-        if hide_parameters.contains(&"de") {
-            elems.desktop_env.hidden = true;
-        }
-        if hide_parameters.contains(&"wm") {
-            elems.window_man.hidden = false;
-        }
+    elems.host.hidden = !hide_parameters.contains(&"host");
+    elems.machine.hidden = !hide_parameters.contains(&"mach");
+    elems.distro.hidden = !hide_parameters.contains(&"distro");
+    elems.kernel.hidden = !hide_parameters.contains(&"kernel");
+    elems.packages.hidden = !hide_parameters.contains(&"pkgs");
+    elems.shell.hidden = !hide_parameters.contains(&"shell");
+    elems.terminal.hidden = !hide_parameters.contains(&"term");
+    elems.cpu.hidden = !hide_parameters.contains(&"cpu");
+    elems.uptime.hidden = !hide_parameters.contains(&"up");
+    elems.memory.hidden = !hide_parameters.contains(&"mem");
+    elems.battery.hidden = !hide_parameters.contains(&"bat");
+
+    if let Some(true) = elems.is_running_wm_only(fail, false) {
+        elems.desktop_env.hidden = hide_parameters.contains(&"de");
+        elems.window_man.hidden = !hide_parameters.contains(&"wm");
     } else {
-        if hide_parameters.contains(&"de") {
-            elems.desktop_env.hidden = false;
-        }
-        if hide_parameters.contains(&"wm") {
-            elems.window_man.hidden = false;
-        }
+        elems.desktop_env.hidden = !hide_parameters.contains(&"de");
+        elems.window_man.hidden = !hide_parameters.contains(&"wm");
     }
     elems.set_longest_key(fail);
     print_info(elems, &options, fail);
@@ -919,16 +988,16 @@ pub fn choose_color(color: &str) -> Color {
 pub fn randomize_color() -> Color {
     let mut rng = rand::thread_rng();
     let rand: usize = rng.gen_range(0..8);
-    match rand {
-        0 => return Color::Red,
-        1 => return Color::Green,
-        2 => return Color::Blue,
-        3 => return Color::Magenta,
-        4 => return Color::Yellow,
-        5 => return Color::Cyan,
-        6 => return Color::Black,
-        _ => return Color::White,
-    }
+    return match rand {
+        0 => Color::Red,
+        1 => Color::Green,
+        2 => Color::Blue,
+        3 => Color::Magenta,
+        4 => Color::Yellow,
+        5 => Color::Cyan,
+        6 => Color::Black,
+        _ => Color::White,
+    };
 }
 
 /// Print a usage and help message

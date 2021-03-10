@@ -1,4 +1,3 @@
-use crate::memory;
 use std::path::Path;
 
 /// Pop '\n' from the end of a string if it is found
@@ -11,8 +10,8 @@ pub fn pop_newline(mut string: String) -> String {
 
 /// Return `perc`% of 100%. This is used to determine
 /// how many used blocks to display in the memory bar
-pub fn percent_of_total(perc: u64) -> u64 {
-    let new_perc = (perc as f64 / 100.0) * memory::memtotal() as f64;
+pub fn percent_of_total(perc: u64, total: u64) -> u64 {
+    let new_perc = (perc as f64 / 100.0) * total as f64;
     new_perc as u64
 }
 

@@ -2,10 +2,7 @@ mod bars;
 #[path = "read/battery.rs"]
 mod battery;
 mod display;
-mod extra;
 mod format;
-#[path = "read/general.rs"]
-mod general;
 #[path = "read/kernel.rs"]
 mod kernel;
 #[path = "read/memory.rs"]
@@ -14,9 +11,16 @@ mod memory;
 mod package;
 #[path = "read/product.rs"]
 mod product;
+
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
 use display::{choose_color, Elements, Fail, Options};
+use macchina_read::{extra, Readouts};
+
+#[macro_use]
+extern crate lazy_static;
+
+use macchina_read::traits::*;
 
 /// Macchina's version
 pub const VERSION: &str = crate_version!();
@@ -26,6 +30,15 @@ pub const DEFAULT_COLOR: Color = Color::Blue;
 pub const DEFAULT_SEPARATOR_COLOR: Color = Color::White;
 /// Macchina's default padding value
 pub const DEFAULT_PADDING: usize = 4;
+
+lazy_static! {
+ pub(crate) static ref READOUTS: Readouts = Readouts {
+    battery: macchina_read::BatteryReadout::new(),
+    kernel: macchina_read::KernelReadout::new(),
+    memory: macchina_read::MemoryReadout::new(),
+    general: macchina_read::GeneralReadout::new()
+};
+}
 
 fn main() {
     let matches = App::new("Macchina")

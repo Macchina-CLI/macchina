@@ -1,46 +1,24 @@
-#![allow(unused_imports)]
-#![allow(dead_code)]
-
-use crate::{extra, format, Fail};
-use extra::{pop_newline, ucfirst};
+use crate::traits::ReadoutError;
+use crate::extra;
+use std::ffi::CStr;
+use std::process::Command;
 use nix::unistd;
-use std::{
-    env, fs,
-    process::{Command, Stdio},
-};
 
-/// Read username using `whoami`
-pub fn username(fail: &mut Fail) -> String {
-    let output = Command::new("whoami")
-        .output()
-        .expect("ERROR: failed to start \"whoami\" process");
-    let username = String::from_utf8(output.stdout)
-        .expect("ERROR: \"whoami\" process stdout was not valid UTF-8");
-    if !username.is_empty() {
-        return pop_newline(username);
-    }
-    fail.host.fail_component();
-    return String::new();
-}
-
-/// Read hostname using `nix::unistd::gethostname()`
-pub fn hostname(fail: &mut Fail) -> String {
-    let mut buf = [0u8; 64];
-    let hostname_cstr = unistd::gethostname(&mut buf);
-    match hostname_cstr {
-        Ok(hostname_cstr) => {
-            let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
-            return String::from(hostname);
-        }
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn uptime(fail: &mut Fail) -> String {
+    let uptime = fs::read_to_string("/proc/uptime");
+    match uptime {
+        Ok(ret) => return ret.split_whitespace().next().unwrap().to_string(),
         Err(_e) => {
-            fail.host.fail_component();
+            fail.uptime.fail_component();
             return String::from("Unknown");
         }
     };
 }
 
 /// Read distribution name from `/etc/os-release`
-pub fn distribution() -> String {
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn distribution() -> String {
     let file = fs::File::open("/etc/os-release");
     match file {
         Ok(content) => {
@@ -69,7 +47,8 @@ pub fn distribution() -> String {
 
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable
 /// or from the fallback environment variable `XDG_CURRENT_DESKTOP`
-pub fn desktop_environment(fail: &mut Fail) -> String {
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn desktop_environment(fail: &mut Fail) -> String {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
         Ok(ret) => {
@@ -94,7 +73,8 @@ pub fn desktop_environment(fail: &mut Fail) -> String {
 }
 
 /// Read window manager using `wmctrl -m | grep Name:`
-pub fn window_manager(fail: &mut Fail) -> String {
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn window_manager(fail: &mut Fail) -> String {
     if extra::which("wmctrl") {
         let wmctrl = Command::new("wmctrl")
             .arg("-m")
@@ -131,7 +111,8 @@ pub fn window_manager(fail: &mut Fail) -> String {
 }
 
 /// Read current terminal name using `ps`
-pub fn terminal(fail: &mut Fail) -> String {
+#[cfg(target_family = "unix")]
+pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
     //  accessed through nix::unistd::getppid()
@@ -166,67 +147,54 @@ pub fn terminal(fail: &mut Fail) -> String {
             .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
             .trim(),
     );
+
     if terminal_name.is_empty() {
-        fail.terminal.fail_component();
-        return String::from("Unknown");
+        return Err(ReadoutError::Other(String::from("Terminal name was empty.")));
     }
-    terminal_name
+
+    Ok(terminal_name)
 }
 
-/// Read current shell name/absolute path using `ps`
-pub fn shell(shorthand: bool, fail: &mut Fail) -> String {
-    //  ps -p $$ -o comm=
-    //  $$ doesn't work natively in rust but its value can be
-    //  accessed through nix::unistd::getppid()
-    if shorthand {
-        let output = Command::new("ps")
-            .arg("-p")
-            .arg(unistd::getppid().to_string())
-            .arg("-o")
-            .arg("comm=")
-            .output()
-            .expect("ERROR: failed to start \"ps\" process");
+fn get_passwd_struct() -> Result<*mut libc::passwd, ReadoutError> {
+    let uid: libc::uid_t = unsafe { libc::geteuid() };
 
-        let shell_name = String::from_utf8(output.stdout)
-            .expect("read_terminal: stdout to string conversion failed")
-            .trim()
-            .to_string();
-        if shell_name.is_empty() {
-            fail.shell.fail_component();
-            fail.shell.extraction_method = String::from(
-                "(ERROR:DISABLED) Uptime (Shorthand:ON) -> Extracted using ps -p $$ -o comm=",
-            );
-            return String::from("Unknown");
-        }
-        return extra::ucfirst(shell_name);
+    //do not call free on passwd pointer according to man page.
+    let passwd = unsafe { libc::getpwuid(uid) };
+
+    if passwd != std::ptr::null_mut() {
+        return Ok(passwd);
     }
-    // If shell shorthand is false, run "ps -p $$ -o args=" instead of "ps -p $$ -o comm="
-    // to print the full path of the current shell instance name
-    let output = Command::new("ps")
-        .arg("-p")
-        .arg(unistd::getppid().to_string())
-        .arg("-o")
-        .arg("args=")
-        .output()
-        .expect("ERROR: failed to start \"ps\" process");
 
-    let shell_path = String::from_utf8(output.stdout)
-        .expect("ERROR: \"ps\" process stdout was not valid UTF-8")
-        .trim()
-        .to_string();
+    Err(ReadoutError::Other(String::from("Reading the account information failed.")))
+}
 
-    if shell_path.is_empty() {
-        fail.shell.fail_component();
-        fail.shell.extraction_method = String::from(
-            "(ERROR:DISABLED) Uptime (Shorthand:OFF) -> Extracted using ps -p $$ -o args=",
-        );
-        return String::from("Unknown");
+#[cfg(target_family = "unix")]
+pub(crate) fn whoami() -> Result<String, ReadoutError> {
+    let passwd = get_passwd_struct()?;
+
+    let name = unsafe { CStr::from_ptr((*passwd).pw_name) };
+    if let Ok(str) = name.to_str() {
+        return Ok(String::from(str));
     }
-    shell_path
+
+    Err(ReadoutError::Other(String::from("Unable to read username for current uid.")))
+}
+
+#[cfg(target_family = "unix")]
+pub(crate) fn shell() -> Result<String, ReadoutError> {
+    let passwd = get_passwd_struct()?;
+
+    let shell_name = unsafe { CStr::from_ptr((*passwd).pw_shell) };
+    if let Ok(str) = shell_name.to_str() {
+        return Ok(String::from(str));
+    }
+
+    Err(ReadoutError::Other(String::from("Unable to read default shell for current uid.")))
 }
 
 /// Read processor information from `/proc/cpuinfo`
-pub fn cpu_model_name() -> String {
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+pub(crate) fn cpu_model_name() -> String {
     let grep = Command::new("grep")
         .arg("model name")
         .arg("/proc/cpuinfo")
@@ -254,52 +222,4 @@ pub fn cpu_model_name() -> String {
         .trim()
         .to_string();
     cpu
-}
-
-
-#[cfg(target_os = "macos")]
-pub fn uptime(fail: &mut Fail) -> String {
-    use std::time::{Duration, SystemTime, UNIX_EPOCH};
-
-    const KERN_BOOTTIME: i32 = 21;
-    const CTL_KERN: i32 = 1;
-
-    let mut name = [CTL_KERN, KERN_BOOTTIME];
-    let mut time = libc::timeval { tv_sec: 0, tv_usec: 0 };
-    let ptr: *mut libc::timeval = &mut time;
-    let mut size = std::mem::size_of::<libc::timeval>();
-
-    let result = unsafe {
-        libc::sysctl(name.as_mut_ptr().into(), name.len() as u32,
-                     ptr as *mut libc::c_void, &mut size,
-                     std::ptr::null_mut(), 0)
-    };
-
-    if result == 0 {
-        let duration = Duration::new(time.tv_sec as u64, (time.tv_usec * 1000) as
-            u32);
-
-        let bootup_timestamp = UNIX_EPOCH + duration;
-
-        if let Ok(duration) = SystemTime::now().duration_since(bootup_timestamp) {
-            let seconds_since_boot = duration.as_secs_f64();
-            return seconds_since_boot.to_string();
-        }
-    }
-
-    fail.uptime.fail_component();
-    String::from("0")
-}
-
-/// Read uptime from `/proc/uptime`
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub fn uptime(fail: &mut Fail) -> String {
-    let uptime = fs::read_to_string("/proc/uptime");
-    match uptime {
-        Ok(ret) => return ret.split_whitespace().next().unwrap().to_string(),
-        Err(_e) => {
-            fail.uptime.fail_component();
-            return String::from("Unknown");
-        }
-    };
 }
