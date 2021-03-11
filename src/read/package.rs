@@ -85,9 +85,18 @@ pub fn package_count(fail: &mut Fail) -> String {
 
         let xbps_out = xbps.stdout.expect("ERROR: failed to open \"xbps-query\" stdout");
 
+        let grep = Command::new("grep")
+        .arg("ii")
+        .stdin(Stdio::from(xbps_out))
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("ERROR: failed to start \"grep\" process");
+
+        let grep_out = grep.stdout.expect("ERROR: failed to read \"grep\" stdout");
+
         let count = Command::new("wc")
             .arg("-l")
-            .stdin(Stdio::from(xbps_out))
+            .stdin(Stdio::from(grep_out))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"wc\" process");
