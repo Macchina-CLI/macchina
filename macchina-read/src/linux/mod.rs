@@ -193,8 +193,8 @@ impl PackageReadout for LinuxPackageReadout {
     }
 
     fn count_pkgs(&self) -> Result<String, ReadoutError> {
-        // Instead of having a condition for the millions of distros.
-        // This function will try and extract package count by checking
+        // Instead of having a condition for each distribution.
+        // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
             let pacman = Command::new("pacman")
@@ -262,7 +262,40 @@ impl PackageReadout for LinuxPackageReadout {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
             return Ok(String::from_utf8(output.stdout)
-                .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
+                .expect("ERROR: \"ls /var/db/pkg | wc -l\" output was not valid UTF-8")
+                .trim()
+                .to_string());
+        } else if extra::which("xbps-query") {
+            let xbps = Command::new("xbps-query")
+                .arg("-l")
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"xbps-query\" process");
+
+            let xbps_out = xbps.stdout.expect("ERROR: failed to open \"xbps-query\" stdout");
+
+            let grep = Command::new("grep")
+                .arg("ii")
+                .stdin(Stdio::from(xbps_out))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"grep\" process");
+
+            let grep_out = grep.stdout.expect("ERROR: failed to read \"grep\" stdout");
+
+            let count = Command::new("wc")
+                .arg("-l")
+                .stdin(Stdio::from(grep_out))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"wc\" process");
+
+            let output = count
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+            return Ok(String::from_utf8(output.stdout)
+                .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         }
