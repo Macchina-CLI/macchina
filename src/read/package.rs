@@ -55,7 +55,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .to_string();
     } else if extra::which("qlist") {
         let qlist = Command::new("qlist")
-            .arg("-l")
+            .arg("-I")
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"qlist\" process");
