@@ -1,7 +1,7 @@
 use std::env;
 use std::path::Path;
 
-/// Pop '\n' from the end of a string if it is found
+/// Pop `\n` from the end of a string if it is found.
 pub fn pop_newline(mut string: String) -> String {
     if string.ends_with('\n') {
         string.pop();
@@ -9,14 +9,16 @@ pub fn pop_newline(mut string: String) -> String {
     String::from(string)
 }
 
-/// Return `perc`% of 100%. This is used to determine
-/// how many used glyphs to display in the memory bar
+/// Return `perc`% of 100%. \
+/// This is used to determine how many used
+/// glyphs to display in the memory bar.
 pub fn percent_of_total(perc: u64, total: u64) -> u64 {
     let new_perc = (perc as f64 / 100.0) * total as f64;
     new_perc as u64
 }
 
-/// Check if a `String` is a valid integer
+/// Check if the `String` that is passed
+/// to this function is a valid integer.
 pub fn is_int(s: String) -> Result<(), String> {
     let b = s.chars().all(char::is_numeric);
     if b == true {
@@ -25,7 +27,7 @@ pub fn is_int(s: String) -> Result<(), String> {
     Err(String::from("this argument only accepts integers."))
 }
 
-/// Uppercase first letter of a string of characters
+/// Uppercase the first letter of a `String` or `&str`.
 pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     let mut c = s.as_ref().chars();
     match c.next() {
@@ -34,7 +36,22 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     }
 }
 
-/// Search all directories in PATH for a program e.g. `ps`
+/// Search all directories in PATH for a program e.g. `ps`.
+///
+/// It is used mainly to check if a program exists before running a command
+/// that could possibly return an error in case that program is not installed.
+///
+/// # Example
+/// ```
+/// if extra::which("ps") {
+/// // Do something
+/// }
+/// ```
+/// This means we can run commands, do what we need to do, and only worry about the return value of `extra::which` \
+/// that will return `true` if the program passed to it is installed, and `false` if it isn't.
+///
+/// __Do not__ use absolute paths to check if a program is installed, as programs can be installed
+/// in non-traditional paths.
 pub fn which<P>(program_name: P) -> bool
 where
     P: AsRef<Path>,

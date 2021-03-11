@@ -1,9 +1,9 @@
-use crate::traits::*;
 use crate::extra;
-use std::fs;
-use std::process::{Command, Stdio};
+use crate::traits::*;
 use nix::unistd;
+use std::fs;
 use std::path::Path;
+use std::process::{Command, Stdio};
 
 pub struct LinuxBatteryReadout;
 
@@ -109,7 +109,9 @@ impl GeneralReadout for LinuxGeneralReadout {
                 let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
                 return Ok(String::from(hostname));
             }
-            Err(_e) => Err(ReadoutError::Other(String::from("Failed to retrieve hostname from 'gethostname'.")))
+            Err(_e) => Err(ReadoutError::Other(String::from(
+                "ERROR: failed to fetch hostname from \"unistd::gethostname()\"",
+            ))),
         }
     }
 
@@ -188,19 +190,27 @@ impl ProductReadout for LinuxProductReadout {
     }
 
     fn version(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/product_version")?))
+        Ok(extra::pop_newline(fs::read_to_string(
+            "/sys/class/dmi/id/product_version",
+        )?))
     }
 
     fn vendor(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/sys_vendor")?))
+        Ok(extra::pop_newline(fs::read_to_string(
+            "/sys/class/dmi/id/sys_vendor",
+        )?))
     }
 
     fn family(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/product_family")?))
+        Ok(extra::pop_newline(fs::read_to_string(
+            "/sys/class/dmi/id/product_family",
+        )?))
     }
 
     fn name(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/product_name")?))
+        Ok(extra::pop_newline(fs::read_to_string(
+            "/sys/class/dmi/id/product_name",
+        )?))
     }
 }
 
@@ -291,7 +301,9 @@ impl PackageReadout for LinuxPackageReadout {
                 .spawn()
                 .expect("ERROR: failed to start \"xbps-query\" process");
 
-            let xbps_out = xbps.stdout.expect("ERROR: failed to open \"xbps-query\" stdout");
+            let xbps_out = xbps
+                .stdout
+                .expect("ERROR: failed to open \"xbps-query\" stdout");
 
             let grep = Command::new("grep")
                 .arg("ii")
