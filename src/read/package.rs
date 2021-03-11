@@ -4,8 +4,8 @@ use std::process::{Command, Stdio};
 #[cfg(target_os = "linux")]
 /// Extract package count for debian-based, arch-based distros or NetBSD
 pub fn package_count(fail: &mut Fail) -> String {
-    // Instead of having a condition for the millions of distros.
-    // This function will try and extract package count by checking
+    // Instead of having a condition for each distribution,
+    // we will try and extract package count by checking
     // if a certain package manager is installed
     if extra::which("pacman") {
         let pacman = Command::new("pacman")
@@ -55,7 +55,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .to_string();
     } else if extra::which("emerge") {
         let ls = Command::new("ls")
-            .arg("/var/db/pkg/*")
+            .arg("/var/db/pkg")
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"ls\" process");
@@ -73,7 +73,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .wait_with_output()
             .expect("ERROR: failed to wait for \"wc\" process to exit");
         return String::from_utf8(output.stdout)
-            .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
+            .expect("ERROR: \"ls /var/db/pkg | wc -l\" output was not valid UTF-8")
             .trim()
             .to_string();
     } else if extra::which("xbps-query") {
@@ -105,7 +105,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .wait_with_output()
             .expect("ERROR: failed to wait for \"wc\" process to exit");
         return String::from_utf8(output.stdout)
-            .expect("ERROR: \"xbps-query -l | wc -l\" output was not valid UTF-8")
+            .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
             .trim()
             .to_string();
         }
