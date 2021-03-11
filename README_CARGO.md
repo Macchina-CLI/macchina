@@ -56,7 +56,7 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 - Distribution
 - Desktop Environment
 - Window Manager
-- Package count
+- Package count ¹
 - Shell
 - Terminal
 - Processor
@@ -69,10 +69,13 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
   - Status
 - Palette
 
-Package count supports package managers of:
+---
+
+1. Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
-- Gentoo
+- Gentoo (prints incorrect value, see [#19](https://github.com/grtcdr/macchina/issues/19))
+- Void Linux
 - NetBSD
 
 ---
@@ -111,8 +114,8 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD [1]    |        Yes         |
-| MacOS         |                    |
+| NetBSD ¹      |        Yes         |
+| MacOS         |        Soon        |
 | Windows       |                    |
 
-[1]: Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
+1. Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
