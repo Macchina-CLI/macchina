@@ -9,6 +9,21 @@ pub fn pop_newline(mut string: String) -> String {
     }
     String::from(string)
 }
+pub fn pop_percent(mut string: String) -> String {
+    if string.ends_with('%') {
+        string.pop();
+    }
+    String::from(string)
+}
+pub fn pop_whitespace(mut string: String) -> String {
+    while string.ends_with(' ') {
+        string.pop();
+    }
+    while string.starts_with(' ') {
+        string.remove(0);
+    }
+    String::from(string)
+}
 
 /// Return `perc`% of 100%. This is used to determine
 /// how many used blocks to display in the memory bar

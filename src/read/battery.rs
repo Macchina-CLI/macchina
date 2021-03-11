@@ -3,32 +3,72 @@ use crate::{extra, Fail};
 use std::fs;
 use std::process::{Command, Stdio};
 
-/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
+/// Read battery percentage from `acpi` command
 #[cfg(target_os = "linux")]
 pub fn percentage(fail: &mut Fail) -> String {
-    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
-    let ret = match percentage {
-        Ok(ret) => ret,
-        Err(_e) => {
+    if extra::which("acpi") {
+        let acpi = Command::new("acpi")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"acpi\" process");
+        let acpi_out = acpi.stdout.expect("Error: failed to open \"acpi\" stdout");
+        let awk = Command::new("awk")
+            .arg("-F:|,")
+            .arg("{print $3}")
+            .stdin(Stdio::from(acpi_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"awk\" process");
+        let output = awk
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"acpi\" process to exit");
+        let mut percentage =
+            String::from_utf8(output.stdout).expect("\"awk\" process output was not valid uff8");
+        if percentage.is_empty() {
             fail.battery.fail_component();
             return String::new();
         }
-    };
-    extra::pop_newline(ret)
+        percentage = extra::pop_newline(percentage);
+        percentage = extra::pop_percent(percentage);
+        percentage = extra::pop_whitespace(percentage);
+
+        return percentage;
+    }
+    fail.battery.fail_component();
+    String::new()
 }
 
-/// Read battery status from `/sys/class/power_supply/BAT0/status`
+/// Read battery status from `acpi` command.
 #[cfg(target_os = "linux")]
 pub fn status(fail: &mut Fail) -> String {
-    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
-    let ret = match status {
-        Ok(ret) => ret,
-        Err(_e) => {
+    if extra::which("acpi") {
+        let acpi = Command::new("acpi")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"acpi\" process");
+        let acpi_out = acpi.stdout.expect("Error: failed to open \"acpi\" stdout");
+        let awk = Command::new("awk")
+            .arg("-F:|,")
+            .arg("{print $2}")
+            .stdin(Stdio::from(acpi_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"awk\" process");
+        let output = awk
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"acpi\" process to exit");
+        let mut status =
+            String::from_utf8(output.stdout).expect("\"awk\" process output was not valid uff8");
+        if status.is_empty() {
             fail.battery.fail_component();
             return String::new();
         }
-    };
-    extra::pop_newline(ret)
+        status = extra::pop_newline(status);
+        status = extra::pop_whitespace(status);
+        return status;
+    }
+    fail.battery.fail_component();
+    String::new()
 }
 
 /// Read battery percentage using `envstat -d acpibat0 | rg charging:`
