@@ -1,9 +1,9 @@
 use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
-use mach::vm_statistics::{vm_statistics_data_t};
 use objc::runtime::Object;
 use objc_foundation::{INSString, NSString};
+use crate::macos::mach_ffi::vm_statistics64;
 
 mod mach_ffi;
 
@@ -30,7 +30,8 @@ pub struct MacOSGeneralReadout {
 }
 
 pub struct MacOSMemoryReadout {
-    page_size_ctl: Option<Ctl>,
+    page_size: u64,
+    physical_memory: u64,
 }
 
 pub struct MacOSPackageReadout;
@@ -140,89 +141,75 @@ impl GeneralReadout for MacOSGeneralReadout {
 
 impl MemoryReadout for MacOSMemoryReadout {
     fn new() -> Self {
+        let page_size = match Ctl::new("hw.pagesize").unwrap().value().unwrap() {
+            sysctl::CtlValue::S64(s) => s,
+            _ => panic!("Could not get vm page size.")
+        };
+
+        let physical_mem = match Ctl::new("hw.memsize").unwrap().value().unwrap() {
+            sysctl::CtlValue::S64(s) => s,
+            _ => panic!("Could not get physical memory size.")
+        };
+
         MacOSMemoryReadout {
-            page_size_ctl: Ctl::new("hw.pagesize").ok()
+            page_size,
+            physical_memory: physical_mem,
         }
     }
 
     fn total(&self) -> Result<u64, ReadoutError> {
-        let vm_stats = MacOSMemoryReadout::mach_vm_stats()?;
-        let page_size = self.mach_hw_pagesize()?;
-
-        let total = ((vm_stats.wire_count + vm_stats.active_count + vm_stats.inactive_count + vm_stats
-            .free_count + vm_stats.speculative_count) as u64) * page_size / 1024;
-
-        Ok(total)
+        Ok(self.physical_memory / 1024)
     }
 
     fn free(&self) -> Result<u64, ReadoutError> {
         let vm_stats = MacOSMemoryReadout::mach_vm_stats()?;
-        let page_size = self.mach_hw_pagesize()?;
+        let free_count: u64 = (vm_stats.free_count + vm_stats.inactive_count - vm_stats.speculative_count) as u64;
 
-        Ok((vm_stats.free_count as u64) * page_size / 1024)
-    }
-
-    fn buffers(&self) -> Result<u64, ReadoutError> {
-        //todo
-        Ok(0)
-    }
-
-    fn cached(&self) -> Result<u64, ReadoutError> {
-        //todo
-        Ok(0)
+        Ok(((free_count * self.page_size) / 1024) as u64)
     }
 
     fn reclaimable(&self) -> Result<u64, ReadoutError> {
-        //todo
-        Ok(0)
+        let vm_stats = MacOSMemoryReadout::mach_vm_stats()?;
+        Ok((vm_stats.purgeable_count as u64 * self.page_size / 1024) as u64)
     }
 
     fn used(&self) -> Result<u64, ReadoutError> {
-        let total = self.total()?;
-        let free = self.free()?;
+        let vm_stats = MacOSMemoryReadout::mach_vm_stats()?;
+        let used: u64 = ((vm_stats.active_count + vm_stats.wire_count) as u64 * self.page_size /
+            1024) as u64;
 
-        Ok(total - free)
+        Ok(used)
     }
 }
 
 impl MacOSMemoryReadout {
-    fn mach_vm_stats() -> Result<vm_statistics_data_t, ReadoutError> {
+    fn mach_vm_stats() -> Result<vm_statistics64, ReadoutError> {
         use mach::message::{mach_msg_type_number_t};
         use mach::kern_return::KERN_SUCCESS;
         use mach::vm_types::{integer_t};
         use mach_ffi::*;
 
         const HOST_VM_INFO_COUNT: mach_msg_type_number_t =
-            (std::mem::size_of::<vm_statistics_data_t>() /
+            (std::mem::size_of::<vm_statistics64>() /
                 std::mem::size_of::<integer_t>()) as u32;
 
-        const HOST_VM_INFO: integer_t = 2;
+        const HOST_VM_INFO64: integer_t = 4;
 
-        let mut vmstat: vm_statistics_data_t = std::default::Default::default();
-        let vmstat_ptr: *mut vm_statistics_data_t = &mut vmstat;
+        let mut vm_stat: vm_statistics64 = std::default::Default::default();
+        let vm_stat_ptr: *mut vm_statistics64 = &mut vm_stat;
         let mut count: mach_msg_type_number_t = HOST_VM_INFO_COUNT;
 
         let ret_val = unsafe {
-            host_statistics(mach_host_self(), HOST_VM_INFO, vmstat_ptr as *mut integer_t, &mut
-                count as *mut mach_msg_type_number_t)
+            host_statistics64(mach_host_self(), HOST_VM_INFO64, vm_stat_ptr as *mut integer_t,
+                              &mut
+                                  count as *mut mach_msg_type_number_t)
         };
 
         if ret_val == KERN_SUCCESS {
-            return Ok(vmstat);
+            return Ok(vm_stat);
         }
 
         Err(ReadoutError::Other(String::from("Could not retrieve vm statistics from host.")))
-    }
-
-    fn mach_hw_pagesize(&self) -> Result<u64, ReadoutError> {
-        if let Some(ctl) = &self.page_size_ctl {
-            match ctl.value()? {
-                sysctl::CtlValue::S64(x) => return Ok(x),
-                _ => ()
-            }
-        }
-
-        Err(ReadoutError::SysctlError(String::from("Could not read page size from system control")))
     }
 }
 

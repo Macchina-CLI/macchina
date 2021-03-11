@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types, dead_code, unused)]
 
 use mach::mach_types::{host_t, host_name_port_t};
-use mach::vm_types::integer_t;
+use mach::vm_types::{integer_t, natural_t};
 use mach::message::mach_msg_type_number_t;
 use mach::kern_return;
 use mach::kern_return::kern_return_t;
@@ -14,11 +14,43 @@ use libc::c_char;
 use core_foundation::string::{CFStringRef};
 use objc_foundation::NSString;
 
+type host_flavor_t = integer_t;
+type host_info64_t = *mut integer_t;
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Default)]
+pub(crate) struct vm_statistics64 {
+    pub free_count: natural_t,
+    pub active_count: natural_t,
+    pub inactive_count: natural_t,
+    pub wire_count: natural_t,
+    pub zero_fill_count: u64,
+    pub reactivations: u64,
+    pub pageins: u64,
+    pub pageouts: u64,
+    pub faults: u64,
+    pub cow_faults: u64,
+    pub lookups: u64,
+    pub hits: u64,
+    pub purges: u64,
+    pub purgeable_count: natural_t,
+    pub speculative_count: natural_t,
+    pub decompressions: u64,
+    pub compressions: u64,
+    pub swapins: u64,
+    pub swapouts: u64,
+    pub compressor_page_count: natural_t,
+    pub throttled_count: natural_t,
+    pub external_page_count: natural_t,
+    pub internal_page_count: natural_t,
+    pub total_uncompressed_pages_in_compressor: u64,
+}
+
 extern "C" {
-    pub fn host_statistics(host_priv: host_t,
-                           flavor: integer_t,
-                           host_info_out: *mut integer_t,
-                           host_info_out_cnt: *mut mach_msg_type_number_t) -> kern_return_t;
+    pub fn host_statistics64(host_priv: host_t,
+                             flavor: host_flavor_t,
+                             host_info64_out: host_info64_t,
+                             host_info64_out_cnt: *mut mach_msg_type_number_t) -> kern_return_t;
 
     pub fn mach_host_self() -> host_name_port_t;
 }
