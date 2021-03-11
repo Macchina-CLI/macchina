@@ -54,10 +54,10 @@ impl KernelReadout for LinuxKernelReadout {
 
         let osrelease = String::from_utf8(output.stdout)
             .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-        
+
         Ok(String::from(osrelease))
-    }   
-    
+    }
+
     fn os_type(&self) -> Result<String, ReadoutError> {
         // sysctl -e -n -b kernel.osrelease
         let output = Command::new("sysctl")
@@ -67,7 +67,7 @@ impl KernelReadout for LinuxKernelReadout {
 
         let osrelease = String::from_utf8(output.stdout)
             .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-        
+
         Ok(String::from(osrelease))
     }
 }
@@ -94,11 +94,11 @@ impl GeneralReadout for LinuxGeneralReadout {
         Ok(version)
     }
 
-    fn username(&self) -> Result<String, ReadoutError> { 
+    fn username(&self) -> Result<String, ReadoutError> {
         crate::shared::whoami()
     }
 
-    fn hostname(&self) -> Result<String, ReadoutError> { 
+    fn hostname(&self) -> Result<String, ReadoutError> {
         let mut buf = [0u8; 64];
         let hostname_cstr = unistd::gethostname(&mut buf);
         match hostname_cstr {
@@ -110,31 +110,31 @@ impl GeneralReadout for LinuxGeneralReadout {
         }
     }
 
-    fn distribution(&self) -> Result<String, ReadoutError> { 
+    fn distribution(&self) -> Result<String, ReadoutError> {
         crate::shared::distribution()
     }
 
-    fn desktop_environment(&self) -> Result<String, ReadoutError> { 
+    fn desktop_environment(&self) -> Result<String, ReadoutError> {
         crate::shared::desktop_environment()
     }
 
-    fn window_manager(&self) -> Result<String, ReadoutError> { 
+    fn window_manager(&self) -> Result<String, ReadoutError> {
         crate::shared::window_manager()
     }
 
-    fn terminal(&self) -> Result<String, ReadoutError> { 
+    fn terminal(&self) -> Result<String, ReadoutError> {
         crate::shared::terminal()
     }
 
-    fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> { 
+    fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> {
         crate::shared::shell(shorthand)
     }
 
-    fn cpu_model_name(&self) -> Result<String, ReadoutError> { 
+    fn cpu_model_name(&self) -> Result<String, ReadoutError> {
         Ok(crate::shared::cpu_model_name())
     }
 
-    fn uptime(&self) -> Result<String, ReadoutError> { 
+    fn uptime(&self) -> Result<String, ReadoutError> {
         crate::shared::uptime()
     }
 }
@@ -144,7 +144,7 @@ impl MemoryReadout for LinuxMemoryReadout {
         LinuxMemoryReadout
     }
 
-    fn total(&self) -> Result<u64, ReadoutError> { 
+    fn total(&self) -> Result<u64, ReadoutError> {
         Ok(crate::shared::get_meminfo_value("MemTotal"))
     }
 
@@ -152,19 +152,19 @@ impl MemoryReadout for LinuxMemoryReadout {
         Ok(crate::shared::get_meminfo_value("MemFree"))
     }
 
-    fn buffers(&self) -> Result<u64, ReadoutError> { 
+    fn buffers(&self) -> Result<u64, ReadoutError> {
         Ok(crate::shared::get_meminfo_value("Buffers"))
     }
 
-    fn cached(&self) -> Result<u64, ReadoutError> { 
+    fn cached(&self) -> Result<u64, ReadoutError> {
         Ok(crate::shared::get_meminfo_value("^Cached"))
     }
 
-    fn reclaimable(&self) -> Result<u64, ReadoutError> { 
+    fn reclaimable(&self) -> Result<u64, ReadoutError> {
         Ok(crate::shared::get_meminfo_value("SReclaimable"))
     }
 
-    fn used(&self) -> Result<u64, ReadoutError> { 
+    fn used(&self) -> Result<u64, ReadoutError> {
         let total = self.total().unwrap();
         let free = self.free().unwrap();
         let cached = self.cached().unwrap();
@@ -177,7 +177,6 @@ impl MemoryReadout for LinuxMemoryReadout {
 
         Ok(total - free - cached - buffers)
     }
-
 }
 
 impl ProductReadout for LinuxProductReadout {
@@ -253,18 +252,20 @@ impl PackageReadout for LinuxPackageReadout {
                 .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
-        } else if extra::which("emerge") {
-            let ls = Command::new("ls")
-                .arg("/var/db/pkg")
+        } else if extra::which("qlist") {
+            let qlist = Command::new("qlist")
+                .arg("-I")
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"ls\" process");
+                .expect("ERROR: failed to start \"qlist\" process");
 
-            let ls_out = ls.stdout.expect("ERROR: failed to open \"ls\" stdout");
+            let qlist_out = qlist
+                .stdout
+                .expect("ERROR: failed to open \"qlist\" stdout");
 
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(ls_out))
+                .stdin(Stdio::from(qlist_out))
                 .stdout(Stdio::piped())
                 .spawn()
                 .expect("ERROR: failed to start \"wc\" process");
@@ -272,10 +273,10 @@ impl PackageReadout for LinuxPackageReadout {
             let output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(output.stdout)
+            return String::from_utf8(output.stdout)
                 .expect("ERROR: \"ls /var/db/pkg | wc -l\" output was not valid UTF-8")
                 .trim()
-                .to_string());
+                .to_string();
         } else if extra::which("xbps-query") {
             let xbps = Command::new("xbps-query")
                 .arg("-l")
@@ -313,5 +314,4 @@ impl PackageReadout for LinuxPackageReadout {
 
         Err(ReadoutError::MetricNotAvailable)
     }
-
 }
