@@ -53,5 +53,5 @@ pub fn which<P>(program_name: P) -> bool
     return match exists {
         Some(_p) => true,
         None => false,
-    }
+    };
 }

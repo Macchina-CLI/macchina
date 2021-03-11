@@ -13,9 +13,14 @@ use core_foundation::array::{CFArrayRef};
 use libc::c_char;
 use core_foundation::string::{CFStringRef};
 use objc_foundation::NSString;
+use std::os::raw::c_uint;
 
 type host_flavor_t = integer_t;
 type host_info64_t = *mut integer_t;
+pub type io_object_t = mach_port_t;
+pub type io_service_t = io_object_t;
+pub type IOOptionBits = c_uint;
+pub type io_registry_entry_t = io_object_t;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Default)]
@@ -53,4 +58,23 @@ extern "C" {
                              host_info64_out_cnt: *mut mach_msg_type_number_t) -> kern_return_t;
 
     pub fn mach_host_self() -> host_name_port_t;
+
+    #[link_name = "kIOMasterPortDefault"]
+    pub static kIOMasterPortDefault: mach_port_t;
+
+    pub fn IOServiceMatching(name: *const c_char) -> CFMutableDictionaryRef;
+
+    pub fn IOServiceGetMatchingService(
+        masterPort: mach_port_t,
+        matching: CFDictionaryRef,
+    ) -> io_service_t;
+
+    pub fn IORegistryEntryCreateCFProperties(
+        entry: io_registry_entry_t,
+        properties: *mut CFMutableDictionaryRef,
+        allocator: CFAllocatorRef,
+        options: IOOptionBits,
+    ) -> kern_return_t;
+
+    pub fn IOObjectRelease(object: io_object_t) -> kern_return_t;
 }

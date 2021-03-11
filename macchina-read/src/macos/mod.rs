@@ -3,7 +3,13 @@ use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use objc::runtime::Object;
 use objc_foundation::{INSString, NSString};
-use crate::macos::mach_ffi::vm_statistics64;
+use crate::macos::mach_ffi::{vm_statistics64, IOServiceGetMatchingService, IOServiceMatching, kIOMasterPortDefault, IORegistryEntryCreateCFProperties};
+use std::os::raw::c_char;
+use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef, CFDictionaryRef};
+use core_foundation::base::{TCFType, TCFTypeRef, CFRelease};
+use crate::macos::mach_ffi::{io_registry_entry_t, IOObjectRelease};
+use mach::kern_return::KERN_SUCCESS;
+use std::ffi::{CStr, CString};
 
 mod mach_ffi;
 
@@ -42,6 +48,29 @@ impl BatteryReadout for MacOSBatteryReadout {
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
+        let io_service_name = CString::new("IOUSBDevice").expect("Unable to create c string");
+
+        let service = unsafe {
+            IOServiceMatching(io_service_name.as_ptr())
+        };
+
+        let entry: io_registry_entry_t = unsafe { IOServiceGetMatchingService(kIOMasterPortDefault, service) };
+
+        println!("Entry is: {}", entry);
+        if entry != 0 {
+            let mut dict: CFMutableDictionaryRef = std::ptr::null_mut();
+            let dict_ptr = (&mut dict) as *mut CFMutableDictionaryRef;
+
+            let kern_return = unsafe {
+                IORegistryEntryCreateCFProperties(entry, dict_ptr, std::ptr::null(), 0)
+            };
+
+            unsafe { println!("We got dictionary: {:?}", CFMutableDictionary::wrap_under_get_rule(dict)); }
+            unsafe { CFRelease(dict.as_void_ptr()); }
+            unsafe { IOObjectRelease(entry); }
+            println!("We released dict");
+        }
+
         Err(MetricNotAvailable)
     }
 
