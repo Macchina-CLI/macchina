@@ -19,8 +19,10 @@ It provides you with convenient features and customization options but doesn't l
 
 # Dependencies
 - [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
+- If you're on __Gentoo__, you'll want to install:
+  - [portage-utils](https://packages.gentoo.org/packages/app-portage/portage-utils) to see package count
 - If you're on __NetBSD__, you'll want to install:
-  - [ripgrep](https://github.com/BurntSushi/ripgrep)
+  - [ripgrep](https://github.com/BurntSushi/ripgrep) to see battery information
 
 ---
 
@@ -74,7 +76,7 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 1. Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
-- Gentoo (prints incorrect value, see [#19](https://github.com/grtcdr/macchina/issues/19))
+- Gentoo
 - Void Linux
 - NetBSD
 

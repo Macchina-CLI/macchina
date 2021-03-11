@@ -1,12 +1,17 @@
 #![allow(unused_imports)]
 use crate::{extra, Fail};
 use std::fs;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
-/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity`
+/// Read battery percentage from `/sys/class/power_supply/BAT0/capacity` or `/sys/class/power_supply/BAT1/capacity`
 #[cfg(target_os = "linux")]
 pub fn percentage(fail: &mut Fail) -> String {
-    let percentage = fs::read_to_string("/sys/class/power_supply/BAT0/capacity");
+    let mut bat_path = Path::new("/sys/class/power_supply/BAT0/capacity");
+    if !Path::exists(bat_path) {
+        bat_path = Path::new("/sys/class/power_supply/BAT1/capacity");
+    }
+    let percentage = fs::read_to_string(bat_path);
     let ret = match percentage {
         Ok(ret) => ret,
         Err(_e) => {
@@ -17,10 +22,14 @@ pub fn percentage(fail: &mut Fail) -> String {
     extra::pop_newline(ret)
 }
 
-/// Read battery status from `/sys/class/power_supply/BAT0/status`
+/// Read battery status from `/sys/class/power_supply/BAT0/status` or `/sys/class/power_supply/BAT1/status`
 #[cfg(target_os = "linux")]
 pub fn status(fail: &mut Fail) -> String {
-    let status = fs::read_to_string("/sys/class/power_supply/BAT0/status");
+    let mut bat_path = Path::new("/sys/class/power_supply/BAT0/status");
+    if !Path::exists(bat_path) {
+        bat_path = Path::new("/sys/class/power_supply/BAT1/status");
+    }
+    let status = fs::read_to_string(bat_path);
     let ret = match status {
         Ok(ret) => ret,
         Err(_e) => {

@@ -53,18 +53,20 @@ pub fn package_count(fail: &mut Fail) -> String {
             .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
             .trim()
             .to_string();
-    } else if extra::which("emerge") {
-        let ls = Command::new("ls")
-            .arg("/var/db/pkg")
+    } else if extra::which("qlist") {
+        let qlist = Command::new("qlist")
+            .arg("-l")
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to start \"ls\" process");
+            .expect("ERROR: failed to start \"qlist\" process");
 
-        let ls_out = ls.stdout.expect("ERROR: failed to open \"ls\" stdout");
+        let qlist_out = qlist
+            .stdout
+            .expect("ERROR: failed to open \"qlist\" stdout");
 
         let count = Command::new("wc")
             .arg("-l")
-            .stdin(Stdio::from(ls_out))
+            .stdin(Stdio::from(qlist_out))
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"wc\" process");
@@ -78,19 +80,21 @@ pub fn package_count(fail: &mut Fail) -> String {
             .to_string();
     } else if extra::which("xbps-query") {
         let xbps = Command::new("xbps-query")
-        .arg("-l")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to start \"xbps-query\" process");
+            .arg("-l")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"xbps-query\" process");
 
-        let xbps_out = xbps.stdout.expect("ERROR: failed to open \"xbps-query\" stdout");
+        let xbps_out = xbps
+            .stdout
+            .expect("ERROR: failed to open \"xbps-query\" stdout");
 
         let grep = Command::new("grep")
-        .arg("ii")
-        .stdin(Stdio::from(xbps_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to start \"grep\" process");
+            .arg("ii")
+            .stdin(Stdio::from(xbps_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"grep\" process");
 
         let grep_out = grep.stdout.expect("ERROR: failed to read \"grep\" stdout");
 
@@ -108,9 +112,9 @@ pub fn package_count(fail: &mut Fail) -> String {
             .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
             .trim()
             .to_string();
-        }
-        fail.packages.fail_component();
-        return String::from("0");
+    }
+    fail.packages.fail_component();
+    return String::from("0");
 }
 
 #[cfg(target_os = "netbsd")]

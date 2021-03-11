@@ -943,7 +943,8 @@ pub fn help() {
     -b, --bar                       -   Display bars instead of values for battery and memory
     -S, --short-shell               -   Shorten shell output
     -U, --short-uptime              -   Shorten uptime output
-    -H, --hide <element>            -   Hide the specified elements";
+    -H, --hide <element>            -   Hide the specified elements
+    -X, --show-only <element>       -   Display only the specified elements";
     let help_string: &str = "
     Coloring:
         Macchina's default key color is blue, to change the key color
@@ -958,7 +959,7 @@ pub fn help() {
         Macchina comes with multiple themes out of the box,
         to change the default theme, use \"--theme / -t <theme>\"
         Supported themes (case-sensitive):
-            def, alt and long.
+            alt and long.
 
     Hiding elements:
         To hide an element (or more), use \"--hide / -H <element>\"

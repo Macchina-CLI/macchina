@@ -121,7 +121,7 @@ fn main() {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .possible_values(&["def", "alt", "long"]),
+                .possible_values(&["alt", "long"]),
         )
         .arg(
             Arg::with_name("short-shell")
@@ -159,6 +159,7 @@ fn main() {
     //   color: enabled
     //   palette: disabled
     //   shell shorthand: disabled
+    //   uptime shorthand: disabled
     let mut opts = Options::new();
 
     if matches.is_present("palette") {
