@@ -98,7 +98,8 @@ impl Fail {
             #[cfg(target_os = "macos")]
             distro: FailedComponent::new(
                 true,
-                String::from("oh no :("),
+                String::from("(OK:DISABLED) Distribution -> macOS system detected, so the \
+                distribution is automatically hidden."),
             ),
         }
     }

@@ -48,7 +48,7 @@ impl BatteryReadout for MacOSBatteryReadout {
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-        let io_service_name = CString::new("IOUSBDevice").expect("Unable to create c string");
+       /*let io_service_name = CString::new("IOUSBDevice").expect("Unable to create c string");
 
         let service = unsafe {
             IOServiceMatching(io_service_name.as_ptr())
@@ -69,7 +69,7 @@ impl BatteryReadout for MacOSBatteryReadout {
             unsafe { CFRelease(dict.as_void_ptr()); }
             unsafe { IOObjectRelease(entry); }
             println!("We released dict");
-        }
+        }*/
 
         Err(MetricNotAvailable)
     }
