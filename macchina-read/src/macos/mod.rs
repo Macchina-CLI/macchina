@@ -155,20 +155,7 @@ impl KernelReadout for MacOSKernelReadout {
     }
 
     fn pretty_kernel(&self) -> Result<String, ReadoutError> {
-        let product_readout = MacOSProductReadout;
-
-        let version = product_readout.version()?;
-        let name = product_readout.product()?;
-        let major_version_name = unsafe { macos_version_to_name() };
-
-        Ok(
-            format!("{} {} {} ({} {})",
-                    name,
-                    version,
-                    major_version_name,
-                    self.os_type()?,
-                    self.os_release()?)
-        )
+        Ok(format!("{} {}", self.os_type()?, self.os_release()?))
     }
 }
 
@@ -237,6 +224,16 @@ impl GeneralReadout for MacOSGeneralReadout {
         let mac_model = self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?;
 
         Ok(mac_model)
+    }
+
+    fn os_name(&self) -> Result<String, ReadoutError> {
+        let product_readout = MacOSProductReadout;
+
+        let version = product_readout.version()?;
+        let name = product_readout.product()?;
+        let major_version_name = unsafe { macos_version_to_name() };
+
+        Ok(format!("{} {} {}", name, version, major_version_name))
     }
 }
 

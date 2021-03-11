@@ -124,6 +124,8 @@ impl KernelReadout for NetBSDKernelReadout {
         Ok(String::from(osrelease))
     }
 
+    fn pretty_kernel(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+
 }
 
 impl GeneralReadout for NetBSDGeneralReadout {
@@ -190,6 +192,18 @@ impl GeneralReadout for NetBSDGeneralReadout {
         crate::shared::uptime()
     }
 
+    fn os_name(&self) -> Result<String, ReadoutError> {
+        let kernel_readout = KernelReadout::new();
+
+        let os_type = kernel_readout.os_type()?;
+        let os_release = kernel_readout.os_release()?;
+
+        if !(os_type.is_empty() || os_release.is_empty()) {
+            return Ok(format!("{} {}", os_type, os_release));
+        }
+
+        Err(ReadoutError::MetricNotAvailable)
+    }
 }
 
 impl MemoryReadout for NetBSDMemoryReadout {

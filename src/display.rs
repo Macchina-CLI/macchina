@@ -224,6 +224,7 @@ pub struct Elements {
     pub window_man: Pair,
     pub machine: Pair,
     pub kernel: Pair,
+    pub os: Pair,
     pub packages: Pair,
     pub shell: Pair,
     pub terminal: Pair,
@@ -244,10 +245,8 @@ impl Elements {
             distro: Pair::new(String::from("Distro")),
             desktop_env: Pair::new(String::from("DE")),
             window_man: Pair::new(String::from("WM")),
-            #[cfg(target_os = "linux")]
             kernel: Pair::new(String::from("Kernel")),
-            #[cfg(any(target_os = "netbsd", target_os = "macos"))]
-            kernel: Pair::new(String::from("OS")),
+            os: Pair::new(String::from("OS")),
             packages: Pair::new(String::from("Packages")),
             shell: Pair::new(String::from("Shell")),
             terminal: Pair::new(String::from("Terminal")),
@@ -268,10 +267,7 @@ impl Elements {
         self.distro.update_key("Dis");
         self.desktop_env.update_key("Des");
         self.window_man.update_key("Win");
-        #[cfg(target_os = "linux")]
-            self.kernel.update_key("Ker");
-        #[cfg(target_os = "netbsd")]
-            self.kernel.update_key("Ope");
+        self.kernel.update_key("Ker");
         self.packages.update_key("Pac");
         self.shell.update_key("She");
         self.terminal.update_key("Ter");
@@ -288,10 +284,8 @@ impl Elements {
         self.distro.update_key("Distribution");
         self.desktop_env.update_key("Desktop Environment");
         self.window_man.update_key("Window Manager");
-        #[cfg(target_os = "linux")]
-            self.kernel.update_key("Kernel");
-        #[cfg(target_os = "netbsd")]
-            self.kernel.update_key("Operating System");
+        self.kernel.update_key("Kernel");
+        self.os.update_key("Operating System");
         self.packages.update_key("Packages");
         self.shell.update_key("Shell");
         self.terminal.update_key("Terminal");
@@ -332,6 +326,9 @@ impl Elements {
         }
         if !self.kernel.hidden {
             keys.push(self.kernel.key.clone());
+        }
+        if !self.os.hidden {
+            keys.push(self.os.key.clone());
         }
         if !self.distro.hidden {
             keys.push(self.distro.key.clone());
@@ -387,6 +384,7 @@ impl Elements {
         self.desktop_env.hidden = true;
         self.window_man.hidden = true;
         self.kernel.hidden = true;
+        self.os.hidden = true;
         self.packages.hidden = true;
         self.shell.hidden = true;
         self.terminal.hidden = true;
@@ -454,7 +452,7 @@ impl Elements {
             Err(_) => fail.battery.fail_component()
         }
 
-        self.packages.modify(Some(String::from("0"))); //TODO: package count
+        self.packages.modify(READOUTS.packages.count_pkgs().ok());
     }
 
     pub fn is_running_wm_only(&self, fail: &mut Fail, apply: bool) -> Option<bool> {
@@ -488,6 +486,7 @@ trait Printing {
     fn print_host(&mut self, fail: &mut Fail);
     fn print_machine(&mut self);
     fn print_kernel_ver(&mut self);
+    fn print_os(&mut self);
     fn print_distribution(&mut self, fail: &mut Fail);
     fn print_desktop_env(&mut self, fail: &mut Fail);
     fn print_window_man(&mut self, fail: &mut Fail);
@@ -558,7 +557,6 @@ impl Printing for Elements {
             Err(_) => self.kernel.modify(None)
         }
 
-
         println!(
             "{}{}{}{}{}{}",
             self.format.padding,
@@ -572,6 +570,31 @@ impl Printing for Elements {
             self.kernel.value
         );
     }
+
+    fn print_os(&mut self) {
+        if self.os.hidden { return; }
+
+        match READOUTS.general.os_name() {
+            Ok(os) => self.os.modify(Some(os)),
+            Err(_) => {
+                return;
+            }
+        }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.format.padding,
+            self.os.key.color(self.format.color).bold(),
+            " ".repeat(self.calc_spacing(&self.os.key, &self.format.longest_key)),
+            self.format
+                .separator
+                .color(self.format.separator_color)
+                .bold(),
+            " ".repeat(self.format.spacing),
+            self.os.value
+        );
+    }
+
     fn print_distribution(&mut self, fail: &mut Fail) {
         if self.distro.hidden { return; }
 
@@ -907,6 +930,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_host(fail);
     elems.print_machine();
     elems.print_kernel_ver();
+    elems.print_os();
     elems.print_distribution(fail);
     elems.print_desktop_env(fail);
     elems.print_window_man(fail);
@@ -933,6 +957,7 @@ pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_paramet
     elems.desktop_env.hidden = hide_parameters.contains(&"de");
     elems.window_man.hidden = hide_parameters.contains(&"wm");
     elems.kernel.hidden = hide_parameters.contains(&"kernel");
+    elems.os.hidden = hide_parameters.contains(&"os");
     elems.packages.hidden = hide_parameters.contains(&"pkgs");
     elems.shell.hidden = hide_parameters.contains(&"shell");
     elems.terminal.hidden = hide_parameters.contains(&"term");
@@ -951,6 +976,7 @@ pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_param
     elems.machine.hidden = !hide_parameters.contains(&"mach");
     elems.distro.hidden = !hide_parameters.contains(&"distro");
     elems.kernel.hidden = !hide_parameters.contains(&"kernel");
+    elems.os.hidden = !hide_parameters.contains(&"os");
     elems.packages.hidden = !hide_parameters.contains(&"pkgs");
     elems.shell.hidden = !hide_parameters.contains(&"shell");
     elems.terminal.hidden = !hide_parameters.contains(&"term");
@@ -1042,7 +1068,7 @@ pub fn help() {
         To hide an element (or more), use \"--hide / -H <element>\"
         To display only the specified element (or more), use \"--show-only / -X <element>\" 
         Elements (case-sensitive):
-            host, mach, kernel, distro, de, wm, pkgs, shell, term, cpu, up, mem and bat.
+            host, mach, kernel, os, distro, de, wm, pkgs, shell, term, cpu, up, mem and bat.
     
     If an element e.g. kernel, uptime etc. fails to display, then Macchina couldn't
     fetch that piece of information, and therefore hides it from you.

@@ -94,7 +94,7 @@ impl GeneralReadout for LinuxGeneralReadout {
             }
         }
 
-        Ok(name)
+        Ok(version)
     }
 
     fn username(&self) -> Result<String, ReadoutError> {

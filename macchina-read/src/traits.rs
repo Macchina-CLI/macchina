@@ -73,4 +73,5 @@ pub trait GeneralReadout {
     fn cpu_model_name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn uptime(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn machine(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn os_name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
 }
