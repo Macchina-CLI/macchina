@@ -124,7 +124,7 @@ impl KernelReadout for NetBSDKernelReadout {
         Ok(String::from(osrelease))
     }
 
-    fn pretty_kernel(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn pretty_kernel(&self) -> Result<String, ReadoutError> { Err(ReadoutError::MetricNotAvailable) }
 
 }
 
@@ -193,7 +193,7 @@ impl GeneralReadout for NetBSDGeneralReadout {
     }
 
     fn os_name(&self) -> Result<String, ReadoutError> {
-        let kernel_readout = KernelReadout::new();
+        let kernel_readout = NetBSDKernelReadout::new();
 
         let os_type = kernel_readout.os_type()?;
         let os_release = kernel_readout.os_release()?;

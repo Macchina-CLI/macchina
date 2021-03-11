@@ -554,7 +554,7 @@ impl Printing for Elements {
 
         match READOUTS.kernel.pretty_kernel() {
             Ok(kernel) => self.kernel.modify(Some(kernel)),
-            Err(_) => self.kernel.modify(None)
+            Err(_) => return
         }
 
         println!(
