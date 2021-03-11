@@ -220,18 +220,6 @@ impl MemoryReadout for NetBSDMemoryReadout {
         Ok(crate::shared::get_meminfo_value("MemFree"))
     }
 
-    fn buffers(&self) -> Result<u64, ReadoutError> { 
-        Ok(crate::shared::get_meminfo_value("Buffers"))
-    }
-
-    fn cached(&self) -> Result<u64, ReadoutError> { 
-        Ok(crate::shared::get_meminfo_value("^Cached"))
-    }
-
-    fn reclaimable(&self) -> Result<u64, ReadoutError> { 
-        Ok(crate::shared::get_meminfo_value("SReclaimable"))
-    }
-
     fn used(&self) -> Result<u64, ReadoutError> { 
         let total = self.total().unwrap();
         let free = self.free().unwrap();
