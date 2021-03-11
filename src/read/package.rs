@@ -75,7 +75,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .wait_with_output()
             .expect("ERROR: failed to wait for \"wc\" process to exit");
         return String::from_utf8(output.stdout)
-            .expect("ERROR: \"ls /var/db/pkg | wc -l\" output was not valid UTF-8")
+            .expect("ERROR: \"qlist -I | wc -l\" output was not valid UTF-8")
             .trim()
             .to_string();
     } else if extra::which("xbps-query") {
