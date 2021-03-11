@@ -3,6 +3,7 @@ use crate::extra;
 use std::fs;
 use std::process::{Command, Stdio};
 use nix::unistd;
+use std::path::Path;
 
 pub struct LinuxBatteryReadout;
 
@@ -22,11 +23,21 @@ impl BatteryReadout for LinuxBatteryReadout {
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/power_supply/BAT0/capacity")?))
+        let mut bat_path = Path::new("/sys/class/power_supply/BAT0/capacity");
+        if !Path::exists(bat_path) {
+            bat_path = Path::new("/sys/class/power_supply/BAT1/capacity");
+        }
+
+        Ok(extra::pop_newline(fs::read_to_string(bat_path)?))
     }
 
     fn status(&self) -> Result<String, ReadoutError> {
-        Ok(extra::pop_newline(fs::read_to_string("/sys/class/power_supply/BAT0/status")?))
+        let mut bat_path = Path::new("/sys/class/power_supply/BAT0/status");
+        if !Path::exists(bat_path) {
+            bat_path = Path::new("/sys/class/power_supply/BAT1/status");
+        }
+
+        Ok(extra::pop_newline(fs::read_to_string(bat_path)?))
     }
 }
 

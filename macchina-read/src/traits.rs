@@ -20,6 +20,17 @@ pub trait KernelReadout {
 
     fn os_release(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn os_type(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+
+    fn pretty_kernel(&self) -> Result<String, ReadoutError> {
+        let os_type = self.os_type().unwrap_or(String::new());
+        let os_release = self.os_release().unwrap_or(String::new());
+
+        if !(os_type.is_empty() || os_release.is_empty()) {
+            return Ok(format!("{} {}", os_type, os_release));
+        }
+
+        Err(ReadoutError::MetricNotAvailable)
+    }
 }
 
 pub trait MemoryReadout {

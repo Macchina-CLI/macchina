@@ -153,6 +153,23 @@ impl KernelReadout for MacOSKernelReadout {
     fn os_type(&self) -> Result<String, ReadoutError> {
         Ok(self.os_type_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?)
     }
+
+    fn pretty_kernel(&self) -> Result<String, ReadoutError> {
+        let product_readout = MacOSProductReadout;
+
+        let version = product_readout.version()?;
+        let name = product_readout.product()?;
+        let major_version_name = unsafe { macos_version_to_name() };
+
+        Ok(
+            format!("{} {} {} ({} {})",
+                    name,
+                    version,
+                    major_version_name,
+                    self.os_type()?,
+                    self.os_release()?)
+        )
+    }
 }
 
 impl GeneralReadout for MacOSGeneralReadout {
@@ -186,7 +203,8 @@ impl GeneralReadout for MacOSGeneralReadout {
             return Ok(terminal_env);
         }
 
-        crate::shared::terminal()
+        //TODO check common macos terminal software such as iTerm2.
+        Err(MetricNotAvailable)
     }
 
     fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> {
@@ -216,14 +234,9 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
-        let product_readout = MacOSProductReadout;
-
-        let version = product_readout.version()?;
-        let name = product_readout.product()?;
-        let major_version_name = unsafe { macos_version_to_name() };
         let mac_model = self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?;
 
-        Ok(format!("{} ({} {} {})", mac_model, name, version, major_version_name))
+        Ok(mac_model)
     }
 }
 

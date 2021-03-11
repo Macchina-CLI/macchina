@@ -118,15 +118,3 @@ pub fn cpu() -> Result<String, ReadoutError> {
         .replace("(TM)", "™")
         .replace("(R)", "®"))
 }
-
-/// Returns a concatenated string of the kernel name and its release
-pub fn kernel() -> Result<String, ReadoutError> {
-    let os_type = READOUTS.kernel.os_type().unwrap_or(String::new());
-    let os_release = READOUTS.kernel.os_release().unwrap_or(String::new());
-
-    if !(os_type.is_empty() || os_release.is_empty()) {
-        return Ok(format!("{} {}", os_type, os_release));
-    }
-
-    Err(ReadoutError::MetricNotAvailable)
-}

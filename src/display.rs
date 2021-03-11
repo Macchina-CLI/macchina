@@ -2,7 +2,7 @@ use crate::{bars, format, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLO
 use colored::{Color, Colorize};
 use rand::Rng;
 use std::fmt;
-use macchina_read::traits::{GeneralReadout, PackageReadout};
+use macchina_read::traits::{GeneralReadout, PackageReadout, KernelReadout};
 
 #[allow(dead_code)]
 /// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
@@ -246,10 +246,8 @@ impl Elements {
             window_man: Pair::new(String::from("WM")),
             #[cfg(target_os = "linux")]
             kernel: Pair::new(String::from("Kernel")),
-            #[cfg(target_os = "netbsd")]
+            #[cfg(any(target_os = "netbsd", target_os = "macos"))]
             kernel: Pair::new(String::from("OS")),
-            #[cfg(target_os = "macos")]
-            kernel: Pair::new(String::from("Kernel")),
             packages: Pair::new(String::from("Packages")),
             shell: Pair::new(String::from("Shell")),
             terminal: Pair::new(String::from("Terminal")),
@@ -535,7 +533,7 @@ impl Printing for Elements {
 
         match READOUTS.general.machine() {
             Ok(machine) => self.machine.modify(Some(machine)),
-            Err(_) => self.machine.modify(None)
+            Err(_) => return
         }
 
         println!(
@@ -555,7 +553,7 @@ impl Printing for Elements {
     fn print_kernel_ver(&mut self) {
         if self.kernel.hidden { return; }
 
-        match format::kernel() {
+        match READOUTS.kernel.pretty_kernel() {
             Ok(kernel) => self.kernel.modify(Some(kernel)),
             Err(_) => self.kernel.modify(None)
         }
