@@ -16,7 +16,7 @@ mod mach_ffi;
 
 impl From<SysctlError> for ReadoutError {
     fn from(e: SysctlError) -> Self {
-        ReadoutError::SysctlError(format!("Error while accessing system control: {:?}", e))
+        ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
     }
 }
 

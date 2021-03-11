@@ -3,8 +3,6 @@ use ReadoutError::MetricNotAvailable;
 #[derive(Debug)]
 pub enum ReadoutError {
     MetricNotAvailable,
-    SysctlError(String),
-    IoError(String),
     Other(String),
 }
 

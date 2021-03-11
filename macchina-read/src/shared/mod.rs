@@ -1,17 +1,22 @@
 use crate::traits::ReadoutError;
-use crate::extra;
+
 use std::ffi::CStr;
-use std::{fs, env};
-use std::process::{Command, Stdio};
 use std::io::Error;
 use std::path::Path;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use nix::unistd;
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+use crate::extra;
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+use std::{fs, env};
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+use std::process::{Command, Stdio};
+
 
 impl From<std::io::Error> for ReadoutError {
     fn from(e: Error) -> Self {
-        ReadoutError::IoError(e.to_string())
+        ReadoutError::Other(e.to_string())
     }
 }
 
