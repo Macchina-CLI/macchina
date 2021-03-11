@@ -1,6 +1,6 @@
 use crate::READOUTS;
 use bytesize::ByteSize;
-use macchina_read::traits::{KernelReadout, GeneralReadout, MemoryReadout, ReadoutError, BatteryReadout};
+use macchina_read::traits::{BatteryReadout, GeneralReadout, MemoryReadout, ReadoutError};
 
 /// Construct a new _String_ from the value
 /// returned by `read::uptime`
@@ -94,7 +94,7 @@ pub fn battery() -> Result<String, ReadoutError> {
             }
         } else {
             Ok(String::from("Full"))
-        }
+        };
     }
 
     Err(ReadoutError::MetricNotAvailable)
