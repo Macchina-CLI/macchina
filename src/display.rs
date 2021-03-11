@@ -1,8 +1,8 @@
 use crate::{bars, format, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, READOUTS};
 use colored::{Color, Colorize};
+use macchina_read::traits::{GeneralReadout, KernelReadout, PackageReadout};
 use rand::Rng;
 use std::fmt;
-use macchina_read::traits::{GeneralReadout, PackageReadout, KernelReadout};
 
 #[allow(dead_code)]
 /// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
@@ -54,9 +54,9 @@ impl Fail {
                 false,
                 String::from("(ERROR:DISABLED) Battery -> 
                 (Linux) 
-                Percentage extracted from /sys/class/power_supply/BAT0/capacity
-                Status extracted from /sys/class/power_supply/BAT0/status
-                (NetBSD) (ripgrep required)
+                Percentage extracted from /sys/class/power_supply/BATx/capacity
+                Status extracted from /sys/class/power_supply/BATx/status
+                (NetBSD) (ripgrep is required)
                 Percentage extracted using envstat -d acpibat0 and rg (ripgrep)
                 Status extracted using envstat -d acpibat0 and rg (ripgrep)
                 (macOS)
@@ -83,7 +83,7 @@ impl Fail {
                 String::from("(ERROR:DISABLED) Packages -> 
                 (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
                 (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
-                (Gentoo) Extracted using \"ls /var/db/pkg | wc -l\"
+                (Gentoo) Extracted using \"qlist -I | wc -l\"
                 (NetBSD) Extracted using \"pkg_info | wc -l\"
                 "),
             ),
@@ -235,8 +235,8 @@ pub struct Elements {
     pub format: Format,
 }
 
-/// Initialize each pair of elements but only assign key names, as key values
-///  are only assigned when an element that is about to be printed is not hidden.
+/// Initialize each pair of elements but only assign the pair's key,
+/// as the value is assigned to an element when it is about to be printed
 impl Elements {
     pub fn new() -> Elements {
         Elements {
@@ -400,56 +400,56 @@ impl Elements {
 
         match READOUTS.general.shell(shell_shorthand) {
             Ok(shell) => self.shell.modify(Some(shell)),
-            Err(_) => fail.shell.fail_component()
+            Err(_) => fail.shell.fail_component(),
         }
 
         match format::uptime(uptime_shorthand) {
             Ok(uptime) => self.uptime.modify(Some(uptime)),
-            Err(_) => fail.uptime.fail_component()
+            Err(_) => fail.uptime.fail_component(),
         }
     }
 
     pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Options) {
         match format::uptime(true) {
             Ok(uptime) => self.uptime.modify(Some(uptime)),
-            Err(_) => fail.uptime.fail_component()
+            Err(_) => fail.uptime.fail_component(),
         }
 
         match READOUTS.general.desktop_environment() {
             Ok(env) => self.desktop_env.modify(Some(env)),
-            Err(_) => fail.desktop_env.fail_component()
+            Err(_) => fail.desktop_env.fail_component(),
         }
 
         match READOUTS.general.window_manager() {
             Ok(wm) => self.window_man.modify(Some(wm)),
-            Err(_) => fail.window_man.fail_component()
+            Err(_) => fail.window_man.fail_component(),
         }
 
         self.is_running_wm_only(fail, true);
 
         match format::uptime(opts.uptime_shorthand) {
             Ok(uptime) => self.uptime.modify(Some(uptime)),
-            Err(_) => fail.uptime.fail_component()
+            Err(_) => fail.uptime.fail_component(),
         }
 
         match READOUTS.general.shell(opts.shell_shorthand) {
             Ok(shell) => self.shell.modify(Some(shell)),
-            Err(_) => fail.shell.fail_component()
+            Err(_) => fail.shell.fail_component(),
         }
 
         match READOUTS.general.terminal() {
             Ok(terminal) => self.terminal.modify(Some(terminal)),
-            Err(_) => fail.terminal.fail_component()
+            Err(_) => fail.terminal.fail_component(),
         }
 
         match format::host() {
             Ok(host) => self.host.modify(Some(host)),
-            Err(_) => fail.host.fail_component()
+            Err(_) => fail.host.fail_component(),
         }
 
         match format::battery() {
             Ok(battery) => self.battery.modify(Some(battery)),
-            Err(_) => fail.battery.fail_component()
+            Err(_) => fail.battery.fail_component(),
         }
 
         self.packages.modify(READOUTS.packages.count_pkgs().ok());
@@ -472,8 +472,7 @@ impl Elements {
             }
         };
 
-        if window_manager.to_uppercase() == desktop_env.to_uppercase() && apply
-        {
+        if window_manager.to_uppercase() == desktop_env.to_uppercase() && apply {
             fail.desktop_env.failed = true;
             return Some(true);
         }
@@ -482,6 +481,7 @@ impl Elements {
     }
 }
 
+/// Contains the functions used to print each element to the terminal
 trait Printing {
     fn print_host(&mut self, fail: &mut Fail);
     fn print_machine(&mut self);
@@ -503,7 +503,9 @@ trait Printing {
 
 impl Printing for Elements {
     fn print_host(&mut self, fail: &mut Fail) {
-        if self.host.hidden { return; }
+        if self.host.hidden {
+            return;
+        }
 
         match format::host() {
             Ok(host) => self.host.modify(Some(host)),
@@ -528,11 +530,13 @@ impl Printing for Elements {
     }
 
     fn print_machine(&mut self) {
-        if self.machine.hidden { return; }
+        if self.machine.hidden {
+            return;
+        }
 
         match READOUTS.general.machine() {
             Ok(machine) => self.machine.modify(Some(machine)),
-            Err(_) => return
+            Err(_) => return,
         }
 
         println!(
@@ -550,11 +554,13 @@ impl Printing for Elements {
     }
 
     fn print_kernel_ver(&mut self) {
-        if self.kernel.hidden { return; }
+        if self.kernel.hidden {
+            return;
+        }
 
         match READOUTS.kernel.pretty_kernel() {
             Ok(kernel) => self.kernel.modify(Some(kernel)),
-            Err(_) => return
+            Err(_) => return,
         }
 
         println!(
@@ -572,7 +578,9 @@ impl Printing for Elements {
     }
 
     fn print_os(&mut self) {
-        if self.os.hidden { return; }
+        if self.os.hidden {
+            return;
+        }
 
         match READOUTS.general.os_name() {
             Ok(os) => self.os.modify(Some(os)),
@@ -596,7 +604,9 @@ impl Printing for Elements {
     }
 
     fn print_distribution(&mut self, fail: &mut Fail) {
-        if self.distro.hidden { return; }
+        if self.distro.hidden {
+            return;
+        }
 
         match READOUTS.general.distribution() {
             Ok(dist) => self.distro.modify(Some(dist)),
@@ -621,7 +631,9 @@ impl Printing for Elements {
     }
 
     fn print_desktop_env(&mut self, fail: &mut Fail) {
-        if self.desktop_env.hidden { return; }
+        if self.desktop_env.hidden {
+            return;
+        }
 
         match READOUTS.general.desktop_environment() {
             Ok(env) => self.desktop_env.modify(Some(env)),
@@ -631,7 +643,9 @@ impl Printing for Elements {
             }
         }
 
-        if self.is_running_wm_only(fail, true) == None { return; }
+        if self.is_running_wm_only(fail, true) == None {
+            return;
+        }
 
         println!(
             "{}{}{}{}{}{}",
@@ -648,7 +662,9 @@ impl Printing for Elements {
     }
 
     fn print_window_man(&mut self, fail: &mut Fail) {
-        if self.window_man.hidden { return; }
+        if self.window_man.hidden {
+            return;
+        }
 
         match READOUTS.general.window_manager() {
             Ok(wm) => self.window_man.modify(Some(wm)),
@@ -673,7 +689,9 @@ impl Printing for Elements {
     }
 
     fn print_package_count(&mut self, fail: &mut Fail) {
-        if self.packages.hidden { return; }
+        if self.packages.hidden {
+            return;
+        }
 
         match crate::READOUTS.packages.count_pkgs() {
             Ok(pc) => self.packages.modify(Some(pc)),
@@ -698,7 +716,9 @@ impl Printing for Elements {
     }
 
     fn print_shell(&mut self, fail: &Fail) {
-        if self.shell.hidden || fail.shell.failed { return; }
+        if self.shell.hidden || fail.shell.failed {
+            return;
+        }
 
         println!(
             "{}{}{}{}{}{}",
@@ -715,7 +735,9 @@ impl Printing for Elements {
     }
 
     fn print_terminal(&mut self, fail: &mut Fail) {
-        if self.terminal.hidden { return; }
+        if self.terminal.hidden {
+            return;
+        }
 
         match READOUTS.general.terminal() {
             Ok(terminal) => self.terminal.modify(Some(terminal)),
@@ -739,11 +761,13 @@ impl Printing for Elements {
         );
     }
     fn print_processor(&mut self) {
-        if self.cpu.hidden { return; }
+        if self.cpu.hidden {
+            return;
+        }
 
         match format::cpu() {
             Ok(cpu) => self.cpu.modify(Some(cpu)),
-            Err(_) => self.cpu.modify(Some(String::from("Unknown")))
+            Err(_) => self.cpu.modify(Some(String::from("Unknown"))),
         }
 
         println!(
@@ -761,7 +785,9 @@ impl Printing for Elements {
     }
 
     fn print_uptime(&mut self, fail: &Fail) {
-        if self.uptime.hidden || fail.uptime.failed { return; }
+        if self.uptime.hidden || fail.uptime.failed {
+            return;
+        }
 
         println!(
             "{}{}{}{}{}{}",
@@ -778,20 +804,21 @@ impl Printing for Elements {
     }
 
     fn print_memory(&mut self) {
-        if self.memory.hidden { return; }
+        if self.memory.hidden {
+            return;
+        }
 
         if self.format.bar {
             match bars::memory() {
                 Ok(mem) => self.memory.modify(Some(mem.to_string())),
-                Err(_) => self.memory.modify(Some(String::from("0")))
+                Err(_) => self.memory.modify(Some(String::from("0"))),
             }
         } else {
             match format::memory() {
                 Ok(mem) => self.memory.modify(Some(mem)),
-                Err(_) => self.memory.modify(Some(String::from("Unknown")))
+                Err(_) => self.memory.modify(Some(String::from("Unknown"))),
             }
         }
-
 
         if self.format.bar {
             print!(
@@ -823,7 +850,9 @@ impl Printing for Elements {
     }
 
     fn print_battery(&mut self, fail: &mut Fail) {
-        if self.battery.hidden { return; }
+        if self.battery.hidden {
+            return;
+        }
 
         match format::battery() {
             Ok(bat) => self.battery.modify(Some(bat)),
@@ -838,9 +867,7 @@ impl Printing for Elements {
                 "{}{}{}{}{}",
                 self.format.padding,
                 self.battery.key.color(self.format.color).bold(),
-                " ".repeat(
-                    self.calc_spacing(&self.battery.key, &self.format.longest_key)
-                ),
+                " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
                 self.format
                     .separator
                     .color(self.format.separator_color)
@@ -854,9 +881,7 @@ impl Printing for Elements {
                 "{}{}{}{}{}{}",
                 self.format.padding,
                 self.battery.key.color(self.format.color).bold(),
-                " ".repeat(
-                    self.calc_spacing(&self.battery.key, &self.format.longest_key)
-                ),
+                " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
                 self.format
                     .separator
                     .color(self.format.separator_color)
@@ -944,7 +969,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_palette(opts);
 }
 
-/// List elements that failed to fetch `using --debug`
+/// List elements that failed to fetch when `--debug` is present
 pub fn debug(fail: &mut Fail) {
     fail.print_failed();
 }
@@ -996,7 +1021,7 @@ pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_param
     print_info(elems, &options, fail);
 }
 
-/// Converts arguments passed to `--color` to their respective color
+/// Convert arguments passed to `--color` to their respective color
 pub fn choose_color(color: &str) -> Color {
     match color {
         "black" => Color::Black,
@@ -1027,7 +1052,7 @@ pub fn randomize_color() -> Color {
     };
 }
 
-/// Print a usage and help message
+/// Print usage and help text
 pub fn help() {
     let usage_string: &str = "
     USAGE: macchina [OPTIONS]
