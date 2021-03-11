@@ -89,7 +89,9 @@ impl MacOSIOPMPowerSource {
 
         if let Some(battery_installed) = power_source_dict.find(&CFString::new("BatteryInstalled").to_void()) {
             let value = (*battery_installed) as *const integer_t;
-            unsafe { instance.battery_installed = Some((*value) != 0); }
+            if !value.is_null() {
+                unsafe { instance.battery_installed = Some((*value) != 0); }
+            }
         } else {
             return Err(Other(String::from("No information available regarding installation status \
             of battery.")));
@@ -97,14 +99,18 @@ impl MacOSIOPMPowerSource {
 
         if let Some(state_of_charge) = power_source_dict.find(&CFString::new("StateOfCharge").to_void()) {
             let value = (*state_of_charge) as *const integer_t;
-            unsafe { instance.state_of_charge = Some((*value) as usize); }
+            if !value.is_null() {
+                unsafe { instance.state_of_charge = Some((*value) as usize); }
+            }
         } else {
             return Err(Other(String::from("No information available regarding state of charge.")));
         }
 
         if let Some(charging) = power_source_dict.find(&CFString::new("IsCharging").to_void()) {
             let value = (*charging) as *const integer_t;
-            unsafe { instance.charging = Some((*value) != 0); }
+            if !value.is_null() {
+                unsafe { instance.charging = Some((*value) != 0); }
+            }
         } else {
             return Err(Other(String::from("No information available regarding charging state.")));
         }
