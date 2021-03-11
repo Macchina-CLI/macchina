@@ -26,10 +26,13 @@ It provides you with convenient features and customization options but doesn't l
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- [x] A bug was fixed by @123marvin123 which would fail the `battery` element when the `packages` element fails to fetch.
+- [x] Fix an issue that caused fetching installed packages to fail on Gentoo
+- [x] extra::which() now searches through all directories listed in PATH instead of hardcoded directories.
 
-# T	odo <a name="todo"></a>
+# Todo <a name="todo"></a>
+- [ ] @123marvin123 is working on macOS support!
 - [ ] Shell version: this is kind of tricky...
+
 
 ---
 

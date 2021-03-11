@@ -4,7 +4,7 @@ use std::process::{Command, Stdio};
 #[cfg(target_os = "linux")]
 /// Extract package count for debian-based, arch-based distros or NetBSD
 pub fn package_count(fail: &mut Fail) -> String {
-    // Instead of having a condition for the millions of distros.
+    // Instead of having a condition for each distribution.
     // This function will try and extract package count by checking
     // if a certain package manager is installed
     if extra::which("pacman") {
@@ -55,7 +55,7 @@ pub fn package_count(fail: &mut Fail) -> String {
             .to_string();
     } else if extra::which("emerge") {
         let ls = Command::new("ls")
-            .arg("/var/db/pkg/*")
+            .arg("/var/db/pkg")
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to start \"ls\" process");
