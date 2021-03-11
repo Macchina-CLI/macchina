@@ -5,13 +5,14 @@
 ![reposize](https://img.shields.io/github/repo-size/grtcdr/macchina?color=0D3B66&logo=github&style=for-the-badge)
 ![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=0D3B66&label=Lines%20of%20Code&logo=rust&style=for-the-badge)
 
-## Table of Contents:
+# Table of Contents
 - [About](#about)
 - [Changelog](#change)
 - [Todo](#todo)
 - [Dependencies](#deps)
 - [Benchmarks](#bench)
 - [Features](#features)
+- [Usage](#usage)
 - [Installation](#install)
 - [Platform Support](#platform-support)
 
@@ -25,12 +26,12 @@ It provides you with convenient features and customization options but doesn't l
 ![Macchina preview image](screenshots/preview.png)
 
 # Changelog <a name="change"></a>
-- extra::which() searches through two more paths:
-  - `/usr/local/bin`
-  - `/usr/local/sbin`
+- [x] Merged a patch that added support for displaying package count for Void Linux.
 
 # Todo <a name="todo"></a>
-- Shell version: this is kind of tricky...
+- [ ] @123marvin123 is working on macOS support!
+- [ ] ASCII Art
+
 
 ---
 
@@ -42,7 +43,7 @@ It provides you with convenient features and customization options but doesn't l
 ---
 
 # Benchmarks <a name="bench"></a>
-Macchina is pretty fast, see for yourself:
+Macchina is pretty fast, see for yourself!
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
@@ -58,10 +59,13 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 ---
 
 # Features <a name="features"></a>
-## Themes:
+### Themes
 ![Theme preview](screenshots/themes.png)
 
-## Macchina displays basic system information such as:
+### Bars
+![Preview of bar argument](screenshots/bars.png)
+
+### What it fetches
 - Host
   - Username
   - Hostname
@@ -70,61 +74,34 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 - Distribution
 - Desktop Environment
 - Window Manager
-- Package count
+- Package count ¹
 - Shell
 - Terminal
 - Processor
   - Model
   - Thread count
 - Uptime
-- Memory
-  - Used / Total
+- Memory Usage
 - Battery
   - Percentage
   - Status
 - Palette
 
-Package count supports package managers of:
+---
+
+1. Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
-- Gentoo
+- Gentoo (prints incorrect value, see [#19](https://github.com/grtcdr/macchina/issues/19))
+- Void Linux
 - NetBSD
 
-## Macchina supports the following arguments:
+---
 
-`--no-color / -n` - Disable colors
+# Usage <a name="usage"></a>
+Macchina comes packed with arguments that let you customize Macchina's output and its behavior.
 
-`--color / -c <color>` - Specify the key color
-
-`--separator-color / -C <color>` - Specify the separator color
-
-`--random-color / -r` - Let Macchina pick a random color for you
-
-`--palette / -p` - Display palette
-
-`--short-sh / -S` - Shorten shell output (/bin/zsh -> zsh)
-
-`--short-uptime / -U` - Shorten shell output (/bin/zsh -> zsh)
-
-`--hide / -H <element>` - Hide elements such as host, os, kern, etc.
-
-`--show-only / -X <element>` - Display only the provided elements
-
-`--bar / -b` - Display memory usage and battery percentage as bars
-
-![Preview of bar argument](screenshots/bars.png)
-
-`--theme / -t <theme>` - Specify the theme
-
-`--padding / -P <amount>` - Specify the amount of (left) padding to use
-
-`--spacing / -s <amount>` - Specify the amount of spacing to use
-
-`--debug / -d` - Print debug information, use when an element fails to display.
-
-`--help / -h` -  Print help text
-
-`--version / -v` - Print version
+The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell you all about them and how they work.
 
 ---
 
@@ -155,8 +132,8 @@ Macchina is available on:
 |  Platform     |      Support       |
 | :-:           |        :-:         |
 | Linux         |        Yes         |
-| NetBSD [1]    |        Yes         |
-| MacOS         |                    |
+| NetBSD ¹      |        Yes         |
+| MacOS         |        Soon        |
 | Windows       |                    |
 
-[1]: Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
+1. Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!

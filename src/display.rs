@@ -83,7 +83,7 @@ impl Fail {
                 String::from("(ERROR:DISABLED) Packages -> 
                 (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
                 (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
-                (Gentoo) Extracted using \"ls /var/db/pkg/* | wc -l\"
+                (Gentoo) Extracted using \"ls /var/db/pkg | wc -l\"
                 (NetBSD) Extracted using \"pkg_info | wc -l\"
                 "),
             ),
