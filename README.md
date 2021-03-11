@@ -27,9 +27,9 @@ It provides you with convenient features and customization options but doesn't l
 
 # Changelog <a name="change"></a>
 - [x] Merged a patch that added support for displaying package count for Void Linux.
+- [x] macOS Support
 
 # Todo <a name="todo"></a>
-- [ ] @123marvin123 is working on macOS support!
 - [ ] ASCII Art
 
 
@@ -95,6 +95,7 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 - Gentoo (prints incorrect value, see [#19](https://github.com/grtcdr/macchina/issues/19))
 - Void Linux
 - NetBSD
+- Homebrew
 
 ---
 
@@ -133,7 +134,7 @@ Macchina is available on:
 | :-:           |        :-:         |
 | Linux         |        Yes         |
 | NetBSD ¹      |        Yes         |
-| MacOS         |        Soon        |
+| MacOS         |        Yes         |
 | Windows       |                    |
 
 1. Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
