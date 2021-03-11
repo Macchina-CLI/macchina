@@ -76,9 +76,9 @@ impl BatteryReadout for MacOSBatteryReadout {
                     };
                 }
                 Err(MetricNotAvailable)
-            },
+            }
             None => Err(MetricNotAvailable)
-        }
+        };
     }
 }
 
@@ -360,6 +360,33 @@ impl MacOSProductReadout {
 impl PackageReadout for MacOSPackageReadout {
     fn new() -> Self {
         MacOSPackageReadout
+    }
+
+    /// This methods check the `/usr/local/Cellar` and `/usr/local/Caskroom` folders which will
+    /// contain all installed packages when using the Homebrew package manager. A manually call via
+    /// `homebrew list` would be too expensive, since it is pretty slow.
+    fn count_pkgs(&self) -> Result<String, ReadoutError> {
+        use std::fs::read_dir;
+        use std::path::Path;
+
+        let homebrew_root = Path::new("/usr/local");
+        let cellar_folder = homebrew_root.join("Cellar");
+        let caskroom_folder = homebrew_root.join("Caskroom");
+
+        let cellar_count = match read_dir(cellar_folder) {
+            Ok(read_dir) => read_dir.count(),
+            Err(_) => 0
+        };
+
+        let caskroom_count = match read_dir(caskroom_folder) {
+            Ok(read_dir) => read_dir.count(),
+            Err(_) => 0
+        };
+
+        let total = cellar_count + caskroom_count;
+        if total == 0 { return Err(MetricNotAvailable); }
+
+        Ok(format!("{}", total))
     }
 }
 
