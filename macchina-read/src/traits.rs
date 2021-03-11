@@ -1,3 +1,7 @@
+//! This module contains all the traits and types for creating a cross-platform api to query
+//! different readouts from various operating systems. For each operating system, there must be an
+//! implementation of these traits.
+
 use ReadoutError::MetricNotAvailable;
 
 /// This enum contains possible error types when doing sensor & variable readouts.
@@ -15,6 +19,33 @@ pub enum ReadoutError {
 /// This trait provides the necessary functions for querying battery statistics from the host
 /// computer. A desktop computer might not be able to provide values such as `percentage` and
 /// `status`, which means a `ReadoutError` can be returned.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::BatteryReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// //You can add fields to this struct which will then need to be initialized in the
+/// //BatteryReadout::new() function.
+/// pub struct MacOSBatteryReadout;
+///
+/// impl BatteryReadout for MacOSBatteryReadout {
+///     fn new() -> Self {
+///         MacOSBatteryReadout {}
+///     }
+///
+///     fn percentage(&self) -> Result<String, ReadoutError> {
+///         //get the battery percentage somehow...
+///         Ok(String::from("100")) //always fully charged
+///     }
+///
+///     fn status(&self) -> Result<String, ReadoutError> {
+///         //check if battery is being charged...
+///         Ok(String::from("TRUE")) //always charging.
+///     }
+/// }
+/// ```
 pub trait BatteryReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
@@ -30,6 +61,30 @@ pub trait BatteryReadout {
 
 /// This trait is used for implementing common functions for reading kernel properties, such as
 /// kernel name and version.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::KernelReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// pub struct MacOSKernelReadout;
+///
+/// impl KernelReadout for MacOSKernelReadout {
+///     fn new() -> Self {
+///         MacOSKernelReadout {}
+///     }
+///
+///     fn os_release(&self) -> Result<String, ReadoutError> {
+///         //get kernel version...
+///         Ok(String::from("20.0.1"))
+///     }
+///
+///     fn os_type(&self) -> Result<String, ReadoutError> {
+///         Ok(String::from("Darwin"))
+///     }
+/// }
+/// ```
 pub trait KernelReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
@@ -55,6 +110,32 @@ pub trait KernelReadout {
 
 /// This trait provides common functions for querying the current memory state of the host
 /// device, most notably `free` and `used`.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::MemoryReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// pub struct MacOSMemoryReadout;
+///
+/// impl MemoryReadout for MacOSMemoryReadout {
+///     fn new() -> Self {
+///         MacOSMemoryReadout {}
+///     }
+///
+///     fn total(&self) -> Result<u64, ReadoutError> {
+///         //get the total physical memory for the machine
+///         Ok(512 * 1024) //return 512mb in kilobytes.
+///     }
+///
+///     fn used(&self) -> Result<u64, ReadoutError> {
+///         //get the currently used memory.
+///         Ok(256 * 1024) //return 256mb in kilobytes.
+///     }
+/// }
+///
+/// ```
 pub trait MemoryReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
@@ -80,6 +161,26 @@ pub trait MemoryReadout {
 
 /// This trait provides the interface for implementing functionality used for counting packages on
 /// the host system. Almost all modern operating systems use some kind of package managers.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::PackageReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// pub struct MacOSPackageReadout;
+///
+/// impl PackageReadout for MacOSPackageReadout {
+///     fn new() -> Self {
+///         MacOSPackageReadout {}
+///     }
+///
+///     fn count_pkgs(&self) -> Result<String, ReadoutError> {
+///         //check if homebrew 🍻 is installed and count installed pkgs...
+///         Ok(String::from("100"))
+///     }
+/// }
+/// ```
 pub trait PackageReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
@@ -90,6 +191,38 @@ pub trait PackageReadout {
 
 /// This trait provides the interface for implementing functionality used for getting information
 /// about the hosts operating system.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::ProductReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// pub struct MacOSProductReadout;
+///
+/// impl ProductReadout for MacOSProductReadout {
+///     fn new() -> Self {
+///         MacOSProductReadout {}
+///     }
+///
+///     fn vendor(&self) -> Result<String, ReadoutError> {
+///         Ok(String::from("Apple"))
+///     }
+///
+///     fn family(&self) -> Result<String, ReadoutError> {
+///         Ok(String::from("Unix, Macintosh"))
+///     }
+///
+///     fn name(&self) -> Result<String, ReadoutError> {
+///         //get name of os release...
+///         Ok(String::from("Big Sur"))
+///     }
+///
+///     fn product(&self) -> Result<String, ReadoutError> {
+///         Ok(String::from("macOS"))
+///     }
+/// }
+/// ```
 pub trait ProductReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
@@ -112,6 +245,30 @@ pub trait ProductReadout {
 
 /// This trait provides the interface for implementing functionality used for querying general
 /// information about the running operating system and current user.
+///
+/// # Example
+///
+/// ```
+/// use macchina_read::traits::GeneralReadout;
+/// use macchina_read::traits::ReadoutError;
+///
+/// pub struct MacOSGeneralReadout;
+///
+/// impl GeneralReadout for MacOSGeneralReadout {
+///
+///     fn new() -> Self {
+///         MacOSGeneralReadout {}
+///     }
+///
+///     fn username(&self) -> Result<String, ReadoutError> {
+///         //let username = NSUserName();
+///         Ok(String::from("johndoe"))
+///     }
+///
+///     //implement other trait functions...
+/// }
+///
+/// ```
 pub trait GeneralReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
