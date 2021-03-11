@@ -1,6 +1,6 @@
 use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
-use crate::traits::ReadoutError::{MetricNotAvailable, Other};
+use crate::traits::ReadoutError::{MetricNotAvailable};
 use objc::runtime::Object;
 use objc_foundation::{INSString, NSString};
 use crate::macos::mach_ffi::{vm_statistics64, IOServiceGetMatchingService, IOServiceMatching, kIOMasterPortDefault, IORegistryEntryCreateCFProperties};
@@ -10,7 +10,7 @@ use crate::macos::mach_ffi::{io_registry_entry_t, IOObjectRelease};
 use mach::kern_return::KERN_SUCCESS;
 use std::ffi::{CString};
 use core_foundation::string::{CFString};
-use mach::vm_types::integer_t;
+use core_foundation::number::{CFNumberRef, CFNumber};
 
 mod mach_ffi;
 
@@ -85,34 +85,31 @@ impl BatteryReadout for MacOSBatteryReadout {
 impl MacOSIOPMPowerSource {
     fn new() -> Result<Self, ReadoutError> {
         let power_source_dict = MacOSIOPMPowerSource::get_power_source_dict()?;
+        let battery_data_dict = (*power_source_dict.get(&CFString::new("BatteryData").to_void())) as
+            CFMutableDictionaryRef;
+
+        let battery_data_dict: CFMutableDictionary<_> = unsafe {
+            CFMutableDictionary::wrap_under_get_rule
+                (battery_data_dict)
+        };
+
         let mut instance: MacOSIOPMPowerSource = std::default::Default::default();
 
-        if let Some(battery_installed) = power_source_dict.find(&CFString::new("BatteryInstalled").to_void()) {
-            let value = (*battery_installed) as *const integer_t;
-            if !value.is_null() {
-                unsafe { instance.battery_installed = Some((*value) != 0); }
+        unsafe {
+            if let Some(battery_installed) = power_source_dict.find(&CFString::new("BatteryInstalled").to_void()) {
+                let number = CFNumber::wrap_under_get_rule((*battery_installed) as CFNumberRef);
+                instance.battery_installed = Some(number.to_i32() != Some(0));
             }
-        } else {
-            return Err(Other(String::from("No information available regarding installation status \
-            of battery.")));
-        }
 
-        if let Some(state_of_charge) = power_source_dict.find(&CFString::new("StateOfCharge").to_void()) {
-            let value = (*state_of_charge) as *const integer_t;
-            if !value.is_null() {
-                unsafe { instance.state_of_charge = Some((*value) as usize); }
+            if let Some(state_of_charge) = battery_data_dict.find(&CFString::new("StateOfCharge").to_void()) {
+                let number = CFNumber::wrap_under_get_rule((*state_of_charge) as CFNumberRef);
+                instance.state_of_charge = Some(number.to_i32().unwrap() as usize);
             }
-        } else {
-            return Err(Other(String::from("No information available regarding state of charge.")));
-        }
 
-        if let Some(charging) = power_source_dict.find(&CFString::new("IsCharging").to_void()) {
-            let value = (*charging) as *const integer_t;
-            if !value.is_null() {
-                unsafe { instance.charging = Some((*value) != 0); }
+            if let Some(charging) = power_source_dict.find(&CFString::new("IsCharging").to_void()) {
+                let number = CFNumber::wrap_under_get_rule((*charging) as CFNumberRef);
+                instance.charging = Some(number.to_i32() != Some(0));
             }
-        } else {
-            return Err(Other(String::from("No information available regarding charging state.")));
         }
 
         Ok(instance)
