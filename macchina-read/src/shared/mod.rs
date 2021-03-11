@@ -4,7 +4,6 @@ use std::ffi::CStr;
 use nix::unistd;
 use std::{fs, env};
 use std::process::{Command, Stdio};
-use crate::traits::ReadoutError::MetricNotAvailable;
 use std::io::Error;
 use std::path::Path;
 
@@ -111,12 +110,12 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
         let window_man_name = extra::pop_newline(String::from(window_manager.replace("Name:", "")
             .trim()));
         if window_man_name == "N/A" {
-            return Err(MetricNotAvailable);
+            return Err(ReadoutError::MetricNotAvailable);
         }
         return Ok(window_man_name);
     }
 
-    Err(MetricNotAvailable)
+    Err(ReadoutError::MetricNotAvailable)
 }
 
 /// Read current terminal name using `ps`

@@ -58,7 +58,7 @@ pub trait GeneralReadout {
     fn desktop_environment(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn window_manager(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn terminal(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
-    fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn shell(&self, _shorthand: bool) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn cpu_model_name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn uptime(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
     fn machine(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }

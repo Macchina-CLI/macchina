@@ -2,13 +2,8 @@ use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
 use crate::traits::ReadoutError::MetricNotAvailable;
 use mach::vm_statistics::{vm_statistics_data_t};
-use crate::macos::mach_ffi::{IOPSCopyPowerSourcesInfo, IOPSGetProvidingPowerSourceType, IOPSCopyPowerSourcesList, IOPSGetPowerSourceDescription};
-use core_foundation::base::{CFRelease, CFTypeRef, TCFTypeRef, ToVoid};
-use core_foundation::string::{CFStringGetCStringPtr, kCFStringEncodingUTF8, CFString, CFStringRef};
-use core_foundation::array::{CFArrayRef, CFArrayGetCount, CFArrayGetValueAtIndex};
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef, CFDictionaryGetValueIfPresent};
-use std::ffi::CStr;
-use core_foundation::base::TCFType;
+use objc::runtime::Object;
+use objc_foundation::{INSString, NSString};
 
 mod mach_ffi;
 
@@ -19,13 +14,6 @@ impl From<SysctlError> for ReadoutError {
 }
 
 pub struct MacOSBatteryReadout;
-
-#[derive(Debug, PartialEq)]
-enum MacOSPowerSource {
-    Battery,
-    AC,
-    UPS,
-}
 
 pub struct MacOSProductReadout;
 
@@ -47,129 +35,17 @@ pub struct MacOSMemoryReadout {
 
 pub struct MacOSPackageReadout;
 
-struct MacOSPowerSourcesInfo {
-    ptr: CFTypeRef,
-    array_ref: CFArrayRef,
-}
-
-impl MacOSPowerSourcesInfo {
-    fn retrieve() -> Self {
-        let power_info = unsafe { IOPSCopyPowerSourcesInfo() };
-        let array_ref = unsafe { IOPSCopyPowerSourcesList(power_info) };
-
-        MacOSPowerSourcesInfo {
-            ptr: power_info,
-            array_ref,
-        }
-    }
-
-    fn get_providing_power_source(&self) -> Option<MacOSPowerSource> {
-        let providing_power_cfstr = unsafe { IOPSGetProvidingPowerSourceType(self.ptr) };
-        let cstr_ptr = unsafe { CFStringGetCStringPtr(providing_power_cfstr, kCFStringEncodingUTF8) };
-        let power_source = unsafe {
-            match std::ffi::CStr::from_ptr(cstr_ptr).to_str() {
-                Ok(mach_ffi::kIOPMBatteryPowerKey) => Some(MacOSPowerSource::Battery),
-                Ok(mach_ffi::kIOPMACPowerKey) => Some(MacOSPowerSource::AC),
-                Ok(mach_ffi::kIOPMUPSPowerKey) => Some(MacOSPowerSource::UPS),
-                Err(_) | Ok(_) => None
-            }
-        };
-
-        power_source
-    }
-
-    fn get_power_sources(&self) -> Vec<CFDictionaryRef> {
-        let array_length = unsafe { CFArrayGetCount(self.array_ref) };
-        let mut vec = Vec::with_capacity(array_length as usize);
-
-        for i in 0..array_length {
-            let dict = unsafe {
-                CFArrayGetValueAtIndex(self.array_ref, i as isize) as CFTypeRef
-            };
-
-            let description = unsafe { IOPSGetPowerSourceDescription(self.ptr, dict) };
-
-            vec.push(description);
-        }
-
-        vec
-    }
-}
-
-impl Drop for MacOSPowerSourcesInfo {
-    fn drop(&mut self) {
-        unsafe {
-            CFRelease(self.array_ref.as_void_ptr());
-            CFRelease(self.ptr);
-        };
-    }
-}
-
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
         MacOSBatteryReadout
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-        let power_info = MacOSPowerSourcesInfo::retrieve();
-        let power_sources = power_info.get_power_sources();
-
-        println!("size of power source vector: {}", power_sources.len());
-
-        for dict in power_sources {
-            unsafe {
-                let charging_key = CFString::new(mach_ffi::kIOPSIsChargingKey);
-                let current_capacity_key = CFString::new(mach_ffi::kIOPSCurrentCapacityKey);
-                let max_capacity_key = CFString::new(mach_ffi::kIOPSMaxCapacityKey);
-
-                let mut charging = std::ptr::null();
-                let mut current_capacity = std::ptr::null();
-                let mut max_capacity = std::ptr::null();
-
-                println!("Getting values for dictionary at {:?}", dict);
-
-                if CFDictionaryGetValueIfPresent(dict, charging_key.to_void(), &mut charging) != 0 {
-                    let cf_ref = charging as CFStringRef;
-                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
-
-                    println!("We have charging value: {}", c_ptr.to_string());
-                }
-
-                if CFDictionaryGetValueIfPresent(dict, current_capacity_key.to_void(),
-                                                 &mut current_capacity) != 0 {
-                    let cf_ref = current_capacity as CFStringRef;
-                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
-
-                    println!("We have current capacity value: {}", c_ptr.to_string());
-                }
-
-                if CFDictionaryGetValueIfPresent(dict, max_capacity_key.to_void(), &mut
-                    max_capacity) != 0 {
-                    let cf_ref = current_capacity as CFStringRef;
-                    let c_ptr = CFString::wrap_under_get_rule(cf_ref);
-
-                    println!("We have max capacity value: {}", c_ptr.to_string());
-                }
-            }
-        }
-
-        if Some(MacOSPowerSource::Battery) != power_info.get_providing_power_source() {
-            return Err(MetricNotAvailable);
-        }
-
-
-        Ok(String::new())
+        Err(MetricNotAvailable)
     }
 
     fn status(&self) -> Result<String, ReadoutError> {
-        let power_info = MacOSPowerSourcesInfo::retrieve();
-
-        if Some(MacOSPowerSource::Battery) != power_info.get_providing_power_source() {
-            return Err(MetricNotAvailable);
-        }
-
-
-        Ok(String::new())
+        Err(MetricNotAvailable)
     }
 }
 
@@ -251,7 +127,14 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
-        Ok(self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?)
+        let product_readout = MacOSProductReadout;
+
+        let version = product_readout.version()?;
+        let name = product_readout.product()?;
+        let major_version_name = unsafe { macos_version_to_name() };
+        let mac_model = self.hw_model_ctl.as_ref().ok_or(MetricNotAvailable)?.value_string()?;
+
+        Ok(format!("{} ({} {} {})", mac_model, name, version, major_version_name))
     }
 }
 
@@ -343,14 +226,88 @@ impl MacOSMemoryReadout {
     }
 }
 
+#[derive(Copy, Clone)]
+#[repr(C)]
+struct NSOperatingSystemVersion {
+    major_version: u64,
+    minor_version: u64,
+    patch_version: u64,
+}
+
+impl Into<String> for NSOperatingSystemVersion {
+    fn into(self) -> String {
+        format!("{}.{}.{}", self.major_version, self.minor_version, self.patch_version)
+    }
+}
+
 impl ProductReadout for MacOSProductReadout {
     fn new() -> Self {
         MacOSProductReadout
+    }
+
+    fn version(&self) -> Result<String, ReadoutError> {
+        Ok(MacOSProductReadout::operating_system_version().into())
+    }
+
+    fn vendor(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Apple"))
+    }
+
+    fn family(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Unix, Macintosh"))
+    }
+
+    fn name(&self) -> Result<String, ReadoutError> {
+        let process_class = class![NSProcessInfo];
+        let process_info: *mut Object = unsafe { msg_send![process_class, processInfo] };
+        let version_string: *const NSString = unsafe {
+            msg_send![process_info, operatingSystemVersionString]
+        };
+
+        let version_string = unsafe { (*version_string).as_str() };
+
+        Ok(String::from(version_string))
+    }
+
+    fn product(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("macOS"))
+    }
+}
+
+impl MacOSProductReadout {
+    fn operating_system_version() -> NSOperatingSystemVersion {
+        let class = class![NSProcessInfo];
+        let process_info: *mut Object = unsafe { msg_send![class, processInfo] };
+        unsafe { msg_send![process_info, operatingSystemVersion] }
     }
 }
 
 impl PackageReadout for MacOSPackageReadout {
     fn new() -> Self {
         MacOSPackageReadout
+    }
+}
+
+unsafe fn macos_version_to_name() -> &'static str {
+    let version = MacOSProductReadout::operating_system_version();
+
+    match (version.major_version, version.minor_version) {
+        (10, 1) => "Puma",
+        (10, 2) => "Jaguar",
+        (10, 3) => "Panther",
+        (10, 4) => "Tiger",
+        (10, 5) => "Leopard",
+        (10, 6) => "Snow Leopard",
+        (10, 7) => "Lion",
+        (10, 8) => "Mountain Lion",
+        (10, 9) => "Mavericks",
+        (10, 10) => "Yosemite",
+        (10, 11) => "El Capitan",
+        (10, 12) => "Sierra",
+        (10, 13) => "High Sierra",
+        (10, 14) => "Mojave",
+        (10, 15) => "Catalina",
+        (11, _) => "Big Sur",
+        _ => "Unknown"
     }
 }
