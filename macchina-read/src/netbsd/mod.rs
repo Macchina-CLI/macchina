@@ -135,9 +135,9 @@ impl GeneralReadout for NetBSDGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         let product_readout = NetBSDProductReadout::new();
 
-        let vendor = product_readout.vendor()?;
-        let product = product_readout.product()?;
-        let version = product_readout.version()?;
+        let vendor = product_readout.vendor().unwrap_or(String::new());
+        let product = product_readout.product().unwrap_or(String::new());
+        let version = product_readout.version().unwrap_or(String::new());
 
         if version == product && version == vendor {
             return Ok(vendor);

@@ -80,18 +80,21 @@ impl GeneralReadout for LinuxGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         let product_readout = LinuxProductReadout::new();
 
-        let family = product_readout.family()?;
         let name = product_readout.name()?;
-        let version = product_readout.version()?;
+        let family = product_readout.family().unwrap_or(String::new());
+        let version = product_readout.version().unwrap_or(String::new());
 
         if family == name && family == version {
             return Ok(family);
         } else if version.is_empty() || version.len() <= 15 {
-            let vendor = product_readout.vendor()?;
-            return Ok(format!("{} {} {}", vendor, family, name));
+            let vendor = product_readout.vendor().unwrap_or(String::new());
+
+            if vendor.len() > 0 {
+                return Ok(format!("{} {} {}", vendor, family, name));
+            }
         }
 
-        Ok(version)
+        Ok(name)
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
@@ -195,6 +198,10 @@ impl ProductReadout for LinuxProductReadout {
     fn family(&self) -> Result<String, ReadoutError> {
         Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/product_family")?))
     }
+
+    fn name(&self) -> Result<String, ReadoutError> {
+        Ok(extra::pop_newline(fs::read_to_string("/sys/class/dmi/id/product_name")?))
+    }
 }
 
 impl PackageReadout for LinuxPackageReadout {
@@ -273,10 +280,10 @@ impl PackageReadout for LinuxPackageReadout {
             let output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return String::from_utf8(output.stdout)
+            return Ok(String::from_utf8(output.stdout)
                 .expect("ERROR: \"ls /var/db/pkg | wc -l\" output was not valid UTF-8")
                 .trim()
-                .to_string();
+                .to_string());
         } else if extra::which("xbps-query") {
             let xbps = Command::new("xbps-query")
                 .arg("-l")
