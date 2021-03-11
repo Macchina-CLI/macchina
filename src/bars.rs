@@ -28,8 +28,8 @@ pub fn battery() -> Result<usize, ReadoutError> {
 /// `display::show_bar` takes this function as a parameter to handle
 /// displaying the bar
 pub fn memory() -> Result<usize, ReadoutError> {
-    let used = crate::READOUTS.memory.used()?;
-    let total = crate::READOUTS.memory.total()?;
+    let used = crate::READOUTS.memory.used()? as f64;
+    let total = crate::READOUTS.memory.total()? as f64;
 
-    Ok(((used as f64) / (total as f64) * 10 as f64).ceil() as usize)
+    Ok((used / total * 10f64).ceil() as usize)
 }
