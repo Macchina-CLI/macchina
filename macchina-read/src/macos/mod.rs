@@ -1,15 +1,16 @@
 use crate::traits::*;
 use sysctl::{Sysctl, Ctl, SysctlError};
-use crate::traits::ReadoutError::MetricNotAvailable;
+use crate::traits::ReadoutError::{MetricNotAvailable, Other};
 use objc::runtime::Object;
 use objc_foundation::{INSString, NSString};
 use crate::macos::mach_ffi::{vm_statistics64, IOServiceGetMatchingService, IOServiceMatching, kIOMasterPortDefault, IORegistryEntryCreateCFProperties};
-use std::os::raw::c_char;
-use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef, CFDictionaryRef};
-use core_foundation::base::{TCFType, TCFTypeRef, CFRelease};
+use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef};
+use core_foundation::base::{TCFType, ToVoid};
 use crate::macos::mach_ffi::{io_registry_entry_t, IOObjectRelease};
 use mach::kern_return::KERN_SUCCESS;
-use std::ffi::{CStr, CString};
+use std::ffi::{CString};
+use core_foundation::string::{CFString};
+use mach::vm_types::integer_t;
 
 mod mach_ffi;
 
@@ -19,7 +20,9 @@ impl From<SysctlError> for ReadoutError {
     }
 }
 
-pub struct MacOSBatteryReadout;
+pub struct MacOSBatteryReadout {
+    power_info: Option<MacOSIOPMPowerSource>
+}
 
 pub struct MacOSProductReadout;
 
@@ -40,23 +43,82 @@ pub struct MacOSMemoryReadout {
     physical_memory: u64,
 }
 
+#[derive(Debug, Default)]
+struct MacOSIOPMPowerSource {
+    battery_installed: Option<bool>,
+    state_of_charge: Option<usize>,
+    charging: Option<bool>,
+}
+
 pub struct MacOSPackageReadout;
 
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
-        MacOSBatteryReadout
+        MacOSBatteryReadout {
+            power_info: MacOSIOPMPowerSource::new().ok()
+        }
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-       /*let io_service_name = CString::new("IOUSBDevice").expect("Unable to create c string");
+        match &self.power_info {
+            Some(info) => Ok(info.state_of_charge.ok_or(MetricNotAvailable)?.to_string()),
+            None => Err(MetricNotAvailable)
+        }
+    }
 
-        let service = unsafe {
-            IOServiceMatching(io_service_name.as_ptr())
-        };
+    fn status(&self) -> Result<String, ReadoutError> {
+        return match &self.power_info {
+            Some(info) => {
+                if let Some(charging) = info.charging {
+                    return match charging {
+                        true => Ok(String::from("TRUE")),
+                        false => Ok(String::from("FALSE"))
+                    };
+                }
+                Err(MetricNotAvailable)
+            },
+            None => Err(MetricNotAvailable)
+        }
+    }
+}
 
+impl MacOSIOPMPowerSource {
+    fn new() -> Result<Self, ReadoutError> {
+        let power_source_dict = MacOSIOPMPowerSource::get_power_source_dict()?;
+        let mut instance: MacOSIOPMPowerSource = std::default::Default::default();
+
+        if let Some(battery_installed) = power_source_dict.find(&CFString::new("BatteryInstalled").to_void()) {
+            let value = (*battery_installed) as *const integer_t;
+            unsafe { instance.battery_installed = Some((*value) != 0); }
+        } else {
+            return Err(Other(String::from("No information available regarding installation status \
+            of battery.")));
+        }
+
+        if let Some(state_of_charge) = power_source_dict.find(&CFString::new("StateOfCharge").to_void()) {
+            let value = (*state_of_charge) as *const integer_t;
+            unsafe { instance.state_of_charge = Some((*value) as usize); }
+        } else {
+            return Err(Other(String::from("No information available regarding state of charge.")));
+        }
+
+        if let Some(charging) = power_source_dict.find(&CFString::new("IsCharging").to_void()) {
+            let value = (*charging) as *const integer_t;
+            unsafe { instance.charging = Some((*value) != 0); }
+        } else {
+            return Err(Other(String::from("No information available regarding charging state.")));
+        }
+
+        Ok(instance)
+    }
+
+    fn get_power_source_dict() ->
+                               Result<CFMutableDictionary, ReadoutError> {
+        let io_service_name = CString::new("IOPMPowerSource").expect("Unable to create c string");
+        let service = unsafe { IOServiceMatching(io_service_name.as_ptr()) };
         let entry: io_registry_entry_t = unsafe { IOServiceGetMatchingService(kIOMasterPortDefault, service) };
+        let mut dict_data: Option<CFMutableDictionary> = None;
 
-        println!("Entry is: {}", entry);
         if entry != 0 {
             let mut dict: CFMutableDictionaryRef = std::ptr::null_mut();
             let dict_ptr = (&mut dict) as *mut CFMutableDictionaryRef;
@@ -65,17 +127,14 @@ impl BatteryReadout for MacOSBatteryReadout {
                 IORegistryEntryCreateCFProperties(entry, dict_ptr, std::ptr::null(), 0)
             };
 
-            unsafe { println!("We got dictionary: {:?}", CFMutableDictionary::wrap_under_get_rule(dict)); }
-            unsafe { CFRelease(dict.as_void_ptr()); }
+            if kern_return == KERN_SUCCESS {
+                dict_data = Some(unsafe { CFMutableDictionary::wrap_under_create_rule(dict) });
+            }
+
             unsafe { IOObjectRelease(entry); }
-            println!("We released dict");
-        }*/
+        }
 
-        Err(MetricNotAvailable)
-    }
-
-    fn status(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        dict_data.ok_or(ReadoutError::MetricNotAvailable)
     }
 }
 

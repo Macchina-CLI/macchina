@@ -59,6 +59,8 @@ impl Fail {
                 (NetBSD) (ripgrep required)
                 Percentage extracted using envstat -d acpibat0 and rg (ripgrep)
                 Status extracted using envstat -d acpibat0 and rg (ripgrep)
+                (macOS)
+                Percentage and status extracted from IOKit.
                 -> Ignore if on a desktop computer.
                 "),
             ),
