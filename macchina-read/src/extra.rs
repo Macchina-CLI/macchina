@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::env;
 
 /// Pop '\n' from the end of a string if it is found
 pub fn pop_newline(mut string: String) -> String {
@@ -33,23 +34,24 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     }
 }
 
-/// Similar to how GNU's __which__ works.
-/// Returns `true` if a program, such as __ps__,
-/// exists on the system, and `false` if it doesn't.
-pub fn which(program_name: &str) -> bool {
-    if Path::new(&String::from("/bin/".to_owned() + &program_name)).exists() {
-        true
-    } else if Path::new(&String::from("/usr/bin/".to_owned() + &program_name)).exists() {
-        true
-    } else if Path::new(&String::from("/usr/sbin/".to_owned() + &program_name)).exists() {
-        true
-    } else if Path::new(&String::from("/usr/pkg/bin/".to_owned() + &program_name)).exists() {
-        true
-    } else if Path::new(&String::from("/usr/local/bin/".to_owned() + &program_name)).exists() {
-        true
-    } else if Path::new(&String::from("/usr/local/sbin/".to_owned() + &program_name)).exists() {
-        true
-    } else {
-        false
+pub fn which<P>(program_name: P) -> bool
+    where
+        P: AsRef<Path>,
+{
+    let exists = env::var_os("PATH").and_then(|paths| {
+        env::split_paths(&paths)
+            .filter_map(|dir| {
+                let full_path = dir.join(&program_name);
+                if full_path.exists() {
+                    Some(full_path)
+                } else {
+                    None
+                }
+            })
+            .next()
+    });
+    return match exists {
+        Some(_p) => true,
+        None => false,
     }
 }

@@ -244,7 +244,7 @@ impl PackageReadout for LinuxPackageReadout {
                 .to_string());
         } else if extra::which("emerge") {
             let ls = Command::new("ls")
-                .arg("/var/db/pkg/*")
+                .arg("/var/db/pkg")
                 .stdout(Stdio::piped())
                 .spawn()
                 .expect("ERROR: failed to start \"ls\" process");
