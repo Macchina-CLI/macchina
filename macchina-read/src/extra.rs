@@ -1,5 +1,5 @@
-use std::path::Path;
 use std::env;
+use std::path::Path;
 
 /// Pop '\n' from the end of a string if it is found
 pub fn pop_newline(mut string: String) -> String {
@@ -10,7 +10,7 @@ pub fn pop_newline(mut string: String) -> String {
 }
 
 /// Return `perc`% of 100%. This is used to determine
-/// how many used blocks to display in the memory bar
+/// how many used glyphs to display in the memory bar
 pub fn percent_of_total(perc: u64, total: u64) -> u64 {
     let new_perc = (perc as f64 / 100.0) * total as f64;
     new_perc as u64
@@ -34,9 +34,10 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     }
 }
 
+/// Search all directories in PATH for a program e.g. `ps`
 pub fn which<P>(program_name: P) -> bool
-    where
-        P: AsRef<Path>,
+where
+    P: AsRef<Path>,
 {
     let exists = env::var_os("PATH").and_then(|paths| {
         env::split_paths(&paths)
