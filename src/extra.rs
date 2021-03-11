@@ -9,12 +9,16 @@ pub fn pop_newline(mut string: String) -> String {
     }
     String::from(string)
 }
+
+/// Pop '%' from the end of a string if it is found
 pub fn pop_percent(mut string: String) -> String {
     if string.ends_with('%') {
         string.pop();
     }
     String::from(string)
 }
+
+/// Pop all whitespace from the start and end of a string if it is found
 pub fn pop_whitespace(mut string: String) -> String {
     while string.ends_with(' ') {
         string.pop();

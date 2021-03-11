@@ -22,8 +22,8 @@ pub fn percentage(fail: &mut Fail) -> String {
         let output = awk
             .wait_with_output()
             .expect("ERROR: failed to wait for \"acpi\" process to exit");
-        let mut percentage =
-            String::from_utf8(output.stdout).expect("\"awk\" process output was not valid uff8");
+        let mut percentage = String::from_utf8(output.stdout)
+            .expect("ERROR: \"awk\" process output was not valid UTF-8");
         if percentage.is_empty() {
             fail.battery.fail_component();
             return String::new();
@@ -46,7 +46,7 @@ pub fn status(fail: &mut Fail) -> String {
             .stdout(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to spawn \"acpi\" process");
-        let acpi_out = acpi.stdout.expect("Error: failed to open \"acpi\" stdout");
+        let acpi_out = acpi.stdout.expect("ERROR: failed to open \"acpi\" stdout");
         let awk = Command::new("awk")
             .arg("-F:|,")
             .arg("{print $2}")
@@ -57,8 +57,8 @@ pub fn status(fail: &mut Fail) -> String {
         let output = awk
             .wait_with_output()
             .expect("ERROR: failed to wait for \"acpi\" process to exit");
-        let mut status =
-            String::from_utf8(output.stdout).expect("\"awk\" process output was not valid uff8");
+        let mut status = String::from_utf8(output.stdout)
+            .expect("ERROR: \"awk\" process output was not valid UTF-8");
         if status.is_empty() {
             fail.battery.fail_component();
             return String::new();
