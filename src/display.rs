@@ -5,8 +5,9 @@ use rand::Rng;
 use std::fmt;
 
 #[allow(dead_code)]
-/// `FailedComponent` is an element that can be failed e.g. host, kernel, battery, etc.
-/// Failed elements can be listed using `--debug`, their extraction method is also printed.
+/// `FailedComponent` is an element that can fail to fetch e.g. host, kernel, battery, etc. \
+/// An element that fails to fetch as well as its extraction method are printed to the \
+/// terminal when `--debug` is present.
 pub struct FailedComponent {
     failed: bool,
     pub extraction_method: String,
@@ -24,7 +25,12 @@ impl FailedComponent {
     }
 }
 
-/// `Fail` holds `FailedComponent` fields e.g. host, kernel, battery, etc.
+/// `Fail` holds a number of `FailedComponent` fields:
+/// - Host
+/// - Kernel
+/// - Uptime
+/// - Battery
+/// - Distribution, etc.
 pub struct Fail {
     pub window_man: FailedComponent,
     pub desktop_env: FailedComponent,
@@ -182,7 +188,7 @@ impl fmt::Display for Pair {
 }
 
 /// `Format` contains any visible element that is not a `Pair`,
-/// such as the separator and bar glyph.
+/// such as the separator and bar glyph. \
 /// It also contains several other components, e.g. color, spacing, padding, etc.
 pub struct Format {
     separator: String,
@@ -214,9 +220,10 @@ impl Format {
     }
 }
 
-/// __Elements__ encapsulates any element that is a `Pair`,
-/// each element is a __Pair__, it also contains miscellaneous fields
-/// such as the key color, bar glyph, etc. which are part of `Format`
+/// This struct encapsulates any element that is a `Pair`. \
+/// it also contains miscellaneous fields such as the
+/// key color, bar glyph, etc. which are part \
+/// of the `Format` struct.
 pub struct Elements {
     pub host: Pair,
     pub distro: Pair,
@@ -236,8 +243,8 @@ pub struct Elements {
 }
 
 impl Elements {
-    /// Initialize each pair of elements but only assign the pair's key,
-    /// as the value is assigned to an element when it is about to be printed
+    /// Initialize each pair of elements but only assign the pair's key, \
+    /// as the value is assigned to an element when it is about to be printed.
     pub fn new() -> Elements {
         Elements {
             host: Pair::new(String::from("Host")),
@@ -257,7 +264,7 @@ impl Elements {
             format: Format::new(),
         }
     }
-    /// Modifies some of `Elements` fields to change Macchina's appearance
+    /// Modifies some of `Elements` fields to change Macchina's appearance.
     pub fn set_theme_alt(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("=>");
         self.format.bar_glyph = String::from("■");
@@ -278,7 +285,7 @@ impl Elements {
         self.battery.update_key("Bat");
         self.set_longest_key(fail);
     }
-    /// Modifies some of `Elements` fields to change Macchina's appearance
+    /// Modifies some of `Elements` fields to change Macchina's appearance.
     pub fn set_theme_long(&mut self, fail: &mut Fail) {
         self.format.separator = String::from("~");
         self.host.update_key("Host");
@@ -297,15 +304,15 @@ impl Elements {
         self.battery.update_key("Battery");
         self.set_longest_key(fail);
     }
-    /// Set the key color to the specified color
+    /// Set the key color to the specified color.
     pub fn set_color(&mut self, c: Color) {
         self.format.color = c;
     }
-    /// Set the separator color to the specified color
+    /// Set the separator color to the specified color.
     pub fn set_separator_color(&mut self, c: Color) {
         self.format.separator_color = c;
     }
-    /// Set the left padding to the specified amount
+    /// Set the left padding to the specified amount.
     pub fn set_left_padding_to(&mut self, amount: usize) {
         self.format.padding = " ".repeat(amount)
     }
@@ -323,9 +330,6 @@ impl Elements {
     /// Determines which of the elements is the longest key to determine
     /// how to autospace them.
     pub fn longest_key(&mut self, fail: &mut Fail) -> String {
-        // Instead of manually declaring which key is the longest
-        // in order to satisfy auto-spacing's algorithm, let longest_key()
-        // determine the longest key
         let mut keys: Vec<String> = Vec::new();
         if !self.host.hidden {
             keys.push(self.host.key.clone());
@@ -382,7 +386,7 @@ impl Elements {
         longest_key
     }
 
-    /// Returns the amount of spacing needed to properly center the separator across each line.
+    /// Returns the amount of spacing needed to properly center the `separator` across each line.
     pub fn calc_spacing(&self, current_key: &String, longest_key: &String) -> usize {
         (longest_key.len() + self.format.spacing) - current_key.len()
     }
@@ -496,23 +500,67 @@ impl Elements {
     }
 }
 
-/// Contains the functions used to print each element to the terminal.
+/// This trait contains many functions whose purpose is to print elements found in the `Elements` struct.
+/// Most elements go through two checks before finally being printed to the terminal:
+/// - Confirming the element has not failed to fetch
+/// - Confirm the element was not hidden using `--hide <element>`
+///
+/// # Example
+/// ```
+/// fn print_example(&mut self, fail: &mut Fail) {
+///        // Exit the function if the element is hidden
+///        if self.example.hidden {
+///            return;
+///        }
+///        
+///        // Fetch the element's value
+///        // If an error occurs during this process then fail the element and exit
+///        match format::example() {
+///            Ok(host) => self.example.modify(Some(example)),
+///            Err(_) => {
+///                fail.example.fail_component();
+///                return;
+///            }
+///        }
+///
+///        // Now it's time to print the key, separator and value
+///        println!(
+///        //...    
+///        );
+///    }
+/// ```
 trait Printing {
+    /// Print host information.
     fn print_host(&mut self, fail: &mut Fail);
+    /// Print product information.
     fn print_machine(&mut self);
-    fn print_kernel_ver(&mut self);
+    /// Print kernel information.
+    fn print_kernel(&mut self);
+    /// Print operating system information.
     fn print_os(&mut self);
+    /// Print the distribution name.
     fn print_distribution(&mut self, fail: &mut Fail);
+    /// Print the desktop environment name.
     fn print_desktop_env(&mut self, fail: &mut Fail);
+    /// Print the window manager name.
     fn print_window_man(&mut self, fail: &mut Fail);
+    /// Print the number of installed packages.
     fn print_package_count(&mut self, fail: &mut Fail);
+    /// Print the shell name/path.
     fn print_shell(&mut self, fail: &Fail);
+    /// Print the terminal name.
     fn print_terminal(&mut self, fail: &mut Fail);
+    /// Print processor information.
     fn print_processor(&mut self);
+    /// Print the computer's uptime.
     fn print_uptime(&mut self, fail: &Fail);
+    /// Print memory usage.
     fn print_memory(&mut self);
+    /// Print battery information.
     fn print_battery(&mut self, fail: &mut Fail);
+    /// Print a bar for elements that support it.
     fn print_bar(&self, blocks: usize);
+    /// Print an 8 color palette.
     fn print_palette(&self, opts: &Options);
 }
 
@@ -568,7 +616,7 @@ impl Printing for Elements {
         );
     }
 
-    fn print_kernel_ver(&mut self) {
+    fn print_kernel(&mut self) {
         if self.kernel.hidden {
             return;
         }
@@ -592,7 +640,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the operating system name.
     fn print_os(&mut self) {
         if self.os.hidden {
             return;
@@ -619,7 +666,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the distribution name.
     fn print_distribution(&mut self, fail: &mut Fail) {
         if self.distro.hidden {
             return;
@@ -647,7 +693,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the desktop environment name.
     fn print_desktop_env(&mut self, fail: &mut Fail) {
         if self.desktop_env.hidden {
             return;
@@ -679,7 +724,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the Window Manager name.
     fn print_window_man(&mut self, fail: &mut Fail) {
         if self.window_man.hidden {
             return;
@@ -707,7 +751,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the amount of installed packages.
     fn print_package_count(&mut self, fail: &mut Fail) {
         if self.packages.hidden {
             return;
@@ -735,7 +778,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the shell name.
     fn print_shell(&mut self, fail: &Fail) {
         if self.shell.hidden || fail.shell.failed {
             return;
@@ -755,7 +797,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the terminal name.
     fn print_terminal(&mut self, fail: &mut Fail) {
         if self.terminal.hidden {
             return;
@@ -783,7 +824,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print processor information.
     fn print_processor(&mut self) {
         if self.cpu.hidden {
             return;
@@ -808,7 +848,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print the computer's uptime.
     fn print_uptime(&mut self, fail: &Fail) {
         if self.uptime.hidden || fail.uptime.failed {
             return;
@@ -828,7 +867,6 @@ impl Printing for Elements {
         );
     }
 
-    /// Print memory usage.
     fn print_memory(&mut self) {
         if self.memory.hidden {
             return;
@@ -875,7 +913,6 @@ impl Printing for Elements {
         }
     }
 
-    /// Print battery information.
     fn print_battery(&mut self, fail: &mut Fail) {
         if self.battery.hidden {
             return;
@@ -918,22 +955,22 @@ impl Printing for Elements {
             );
         }
     }
-    /// Print a bar next to memory and battery keys.
+
     fn print_bar(&self, blocks: usize) {
         match &self.format.color {
             Color::White => match blocks {
                 10 => println!(
                     "{} {}{} {}",
                     self.format.bracket_open,
-                    colored_blocks(self, blocks).color(self.format.color),
-                    colorless_blocks(self, blocks).hidden(),
+                    colored_glyphs(self, blocks).color(self.format.color),
+                    colorless_glyphs(self, blocks).hidden(),
                     self.format.bracket_close
                 ),
                 _ => println!(
                     "{} {} {} {}",
                     self.format.bracket_open,
-                    colored_blocks(self, blocks).color(self.format.color),
-                    colorless_blocks(self, blocks).hidden(),
+                    colored_glyphs(self, blocks).color(self.format.color),
+                    colorless_glyphs(self, blocks).hidden(),
                     self.format.bracket_close
                 ),
             },
@@ -941,21 +978,21 @@ impl Printing for Elements {
                 10 => println!(
                     "{} {}{} {}",
                     self.format.bracket_open,
-                    colored_blocks(self, blocks).color(self.format.color),
-                    colorless_blocks(self, blocks),
+                    colored_glyphs(self, blocks).color(self.format.color),
+                    colorless_glyphs(self, blocks),
                     self.format.bracket_close
                 ),
                 _ => println!(
                     "{} {} {} {}",
                     self.format.bracket_open,
-                    colored_blocks(self, blocks).color(self.format.color),
-                    colorless_blocks(self, blocks),
+                    colored_glyphs(self, blocks).color(self.format.color),
+                    colorless_glyphs(self, blocks),
                     self.format.bracket_close
                 ),
             },
         }
     }
-    /// Print an 8 color palette.
+
     fn print_palette(&self, opts: &Options) {
         if opts.palette_status {
             println!();
@@ -981,7 +1018,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.apply_shorthand_values(opts, fail);
     elems.print_host(fail);
     elems.print_machine();
-    elems.print_kernel_ver();
+    elems.print_kernel();
     elems.print_os();
     elems.print_distribution(fail);
     elems.print_desktop_env(fail);
@@ -996,7 +1033,7 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_palette(opts);
 }
 
-/// List elements that failed to fetch, after initializing them when `--debug` is present.
+/// List elements that failed to fetch when `--debug` is present.
 pub fn debug(fail: &mut Fail) {
     fail.print_failed();
 }
@@ -1129,9 +1166,10 @@ pub fn help() {
 }
 
 /// Return the correct amount of colored blocks: colored blocks are used blocks.
-pub fn colored_blocks(elems: &Elements, block_count: usize) -> String {
-    let colored_blocks = elems.format.bar_glyph.repeat(block_count);
-    colored_blocks
+///
+pub fn colored_glyphs(elems: &Elements, block_count: usize) -> String {
+    let colored_glyphs = elems.format.bar_glyph.repeat(block_count);
+    colored_glyphs
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)
@@ -1141,9 +1179,9 @@ pub fn colored_blocks(elems: &Elements, block_count: usize) -> String {
 }
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks.
-pub fn colorless_blocks(elems: &Elements, block_count: usize) -> String {
-    let colorless_blocks = elems.format.bar_glyph.repeat(10 - block_count);
-    colorless_blocks
+pub fn colorless_glyphs(elems: &Elements, block_count: usize) -> String {
+    let colorless_glyphs = elems.format.bar_glyph.repeat(10 - block_count);
+    colorless_glyphs
         .chars()
         .collect::<Vec<char>>()
         .chunks(1)

@@ -52,11 +52,15 @@ pub trait BatteryReadout {
 
     /// This function is used for querying the current battery percentage. The expected value is
     /// a string in the range of `0` to `100`.
-    fn percentage(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn percentage(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function is used for querying the current battery charging state. If the battery is
     /// currently being charged, we expect a return value of `TRUE`, otherwise `FALSE`.
-    fn status(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn status(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 }
 
 /// This trait is used for implementing common functions for reading kernel properties, such as
@@ -76,11 +80,12 @@ pub trait BatteryReadout {
 ///     }
 ///
 ///     fn os_release(&self) -> Result<String, ReadoutError> {
-///         //get kernel version...
+///         // Get kernel version
 ///         Ok(String::from("20.0.1"))
 ///     }
 ///
 ///     fn os_type(&self) -> Result<String, ReadoutError> {
+///         // Get kernel name
 ///         Ok(String::from("Darwin"))
 ///     }
 /// }
@@ -90,10 +95,14 @@ pub trait KernelReadout {
     fn new() -> Self;
 
     /// This function should return the version of the kernel (e. g. `20.3.0` on macOS for Darwin).
-    fn os_release(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn os_release(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the kernel name as a string (e. g. `Darwin` on macOS).
-    fn os_type(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn os_type(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function is used for getting the kernel name and version in a pretty format.
     fn pretty_kernel(&self) -> Result<String, ReadoutError> {
@@ -125,13 +134,13 @@ pub trait KernelReadout {
 ///     }
 ///
 ///     fn total(&self) -> Result<u64, ReadoutError> {
-///         //get the total physical memory for the machine
-///         Ok(512 * 1024) //return 512mb in kilobytes.
+///         // Get the total physical memory for the machine
+///         Ok(512 * 1024) // Return 512mb in kilobytes.
 ///     }
 ///
 ///     fn used(&self) -> Result<u64, ReadoutError> {
-///         //get the currently used memory.
-///         Ok(256 * 1024) //return 256mb in kilobytes.
+///         // Get the currently used memory.
+///         Ok(256 * 1024) // Return 256mb in kilobytes.
 ///     }
 /// }
 ///
@@ -141,22 +150,34 @@ pub trait MemoryReadout {
     fn new() -> Self;
 
     /// This function should return the total available memory in kilobytes.
-    fn total(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn total(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the free available memory in kilobytes.
-    fn free(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn free(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the current memory value for buffers in kilobytes.
-    fn buffers(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn buffers(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the amount of cached content in memory in kilobytes.
-    fn cached(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn cached(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the amount of reclaimable memory in kilobytes.
-    fn reclaimable(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn reclaimable(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the amount of currently used memory in kilobytes.
-    fn used(&self) -> Result<u64, ReadoutError> { Err(MetricNotAvailable) }
+    fn used(&self) -> Result<u64, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 }
 
 /// This trait provides the interface for implementing functionality used for counting packages on
@@ -176,7 +197,7 @@ pub trait MemoryReadout {
 ///     }
 ///
 ///     fn count_pkgs(&self) -> Result<String, ReadoutError> {
-///         //check if homebrew 🍻 is installed and count installed pkgs...
+///         // Check if homebrew 🍻 is installed and count installed pkgs...
 ///         Ok(String::from("100"))
 ///     }
 /// }
@@ -186,7 +207,9 @@ pub trait PackageReadout {
     fn new() -> Self;
 
     /// This function should return the amount of packages installed.
-    fn count_pkgs(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn count_pkgs(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 }
 
 /// This trait provides the interface for implementing functionality used for getting information
@@ -214,7 +237,7 @@ pub trait PackageReadout {
 ///     }
 ///
 ///     fn name(&self) -> Result<String, ReadoutError> {
-///         //get name of os release...
+///         // Get name of os release...
 ///         Ok(String::from("Big Sur"))
 ///     }
 ///
@@ -227,20 +250,30 @@ pub trait ProductReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
 
-    /// This function should return the version of the hosts operating system.
-    fn version(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    /// This function should return the version of the host's operating system.
+    fn version(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
-    /// This function should return the vendor name of the hosts operating system.
-    fn vendor(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    /// This function should return the vendor name of the host's operating system.
+    fn vendor(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
-    /// This function should return the family name of the hosts operating system.
-    fn family(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    /// This function should return the family name of the host's operating system.
+    fn family(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
-    /// This function should return the name of the hosts operating system.
-    fn name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    /// This function should return the name of the host's operating system.
+    fn name(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the product name of the hosts operating system.
-    fn product(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn product(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 }
 
 /// This trait provides the interface for implementing functionality used for querying general
@@ -265,7 +298,7 @@ pub trait ProductReadout {
 ///         Ok(String::from("johndoe"))
 ///     }
 ///
-///     //implement other trait functions...
+///     // Implement other trait functions...
 /// }
 ///
 /// ```
@@ -274,42 +307,64 @@ pub trait GeneralReadout {
     fn new() -> Self;
 
     /// This function should return the username of the current logged on user.
-    fn username(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn username(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the hostname of the hosts computer.
-    fn hostname(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn hostname(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the name of the distribution of the operating system.
-    fn distribution(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn distribution(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the name of the used desktop environment.
-    fn desktop_environment(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn desktop_environment(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the name of the used window manager.
-    fn window_manager(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn window_manager(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the name of the used terminal software.
-    fn terminal(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn terminal(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the name of the current used shell (e. g. `bash` or `zsh`).
     ///
     /// *Params*:
     ///
-    /// **_shorthand**: If the caller expects the full path to the used shell (e. g. `/bin/bash`) or
-    /// just a shorthand of it (e. g. only the binary name).
-    fn shell(&self, _shorthand: bool) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    /// **_shorthand**: If the caller expects the full path to the used shell (e.g. `/bin/bash`) or
+    /// just a shorthand of it (e.g. only the binary name).
+    fn shell(&self, _shorthand: bool) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the full name of the cpu.
-    fn cpu_model_name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn cpu_model_name(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
     /// This function should return the uptime of the os in seconds.
-    fn uptime(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn uptime(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
-    /// This function should return the name of the physical machine (e. g. MacBookPro11,5 on a
+    /// This function should return the name of the physical machine (e.g. MacBookPro11,5 on a
     /// MacBook Pro).
-    fn machine(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn machine(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 
-    /// This function should return the name of the OS in a pretty format (e. g. macOS 11.2.2 Big
+    /// This function should return the name of the OS in a pretty format (e.g. macOS 11.2.2 Big
     /// Sur)
-    fn os_name(&self) -> Result<String, ReadoutError> { Err(MetricNotAvailable) }
+    fn os_name(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
 }

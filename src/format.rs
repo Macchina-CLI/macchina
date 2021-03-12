@@ -2,12 +2,17 @@ use crate::READOUTS;
 use bytesize::ByteSize;
 use macchina_read::traits::{BatteryReadout, GeneralReadout, MemoryReadout, ReadoutError};
 
-/// Construct a new _String_ from the value
+/// This function should return a new `String` constructed from the value \
 /// returned by `read::uptime`
 pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
     let mut formatted_uptime = String::new();
     let uptime: f32 = READOUTS.general.uptime()?.parse().unwrap();
-    // Uptime is formatted to dd:hh:mm if the system has been up for longer than 60 seconds
+    // Uptime is formatted to "x days, y hours, z minutes" if the system
+    // has been up for longer than 60 seconds, and "x seconds" if not.
+
+    // "x days", "y hours" or "z minutes" might not show up if their value is 0.
+    // for example, if the system has been up for less than a day,
+    // this function will return "y hours, z minutes".
     if uptime > 60.0 {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
         let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
@@ -70,7 +75,7 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
     Ok(formatted_uptime.trim().to_string())
 }
 
-/// Construct a new _String_ from the values
+/// This function should return a new `String` constructed from the values \
 /// returned by `read::hostname` and `read::username`
 pub fn host() -> Result<String, ReadoutError> {
     let username = READOUTS.general.username()?;
@@ -79,7 +84,7 @@ pub fn host() -> Result<String, ReadoutError> {
     Ok(format!("{}@{}", username, hostname))
 }
 
-/// Construct a new _String_ from the values
+/// This function should return a new `String` constructed from the values \
 /// returned by `read::battery_percentage` and `read::battery_status`
 pub fn battery() -> Result<String, ReadoutError> {
     let percentage = READOUTS.battery.percentage()?;
@@ -100,7 +105,7 @@ pub fn battery() -> Result<String, ReadoutError> {
     Err(ReadoutError::MetricNotAvailable)
 }
 
-/// Construct a new _String_ from the values
+/// This function should return a new `String` constructed from the values \
 /// returned by `memory::used` and `memory::memtotal`
 pub fn memory() -> Result<String, ReadoutError> {
     let total = ByteSize::kb(READOUTS.memory.total()?);
@@ -109,7 +114,7 @@ pub fn memory() -> Result<String, ReadoutError> {
     Ok(format!("{}/{}", used, total))
 }
 
-/// Construct a new _String_ from the values
+/// This function should return a new `String` constructed from the values \
 /// returned by `read::cpu_model_name` and `num_cpus::get`
 pub fn cpu() -> Result<String, ReadoutError> {
     let cpu_model = READOUTS.general.cpu_model_name()?;

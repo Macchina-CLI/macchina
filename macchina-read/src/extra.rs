@@ -38,13 +38,13 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
 
 /// Search all directories in PATH for a program e.g. `ps`.
 ///
-/// It is used mainly to check if a program exists before running a command
-/// that could possibly return an error in case that program is not installed.
+/// It is used mainly to check if a program exists before running a command \
+/// that could return an error in case that program is not installed.
 ///
 /// # Example
 /// ```
 /// if extra::which("ps") {
-/// // Do something
+/// // Do something...
 /// }
 /// ```
 /// This means we can run commands, do what we need to do, and only worry about the return value of `extra::which` \
