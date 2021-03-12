@@ -5,3 +5,5 @@ members = [ "macchina", "macchina-read" ]
 [profile.release]
 opt-level = 3
 debug = false
+lto = true
+codegen-units = 1

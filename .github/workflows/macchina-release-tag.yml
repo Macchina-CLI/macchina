@@ -1,0 +1,49 @@
+name: Macchina Create Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        include:
+          - rust: stable
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+      - name: Build Release
+        run: cargo build --release
+      - name: Strip Symbols
+        if: matrix.os == "ubuntu-latest" || matrix.os == "macOS-latest"
+        run: strip target/release/macchina
+      - name: Upload Binary
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: target/release/macchina
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
