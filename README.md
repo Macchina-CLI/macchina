@@ -29,9 +29,9 @@ It provides you with convenient features and customization options but doesn't l
 - [x] Remove `def` theme to fix a memory allocation bug, `def` theme is the default theme and is no different from running `macchina` without the `--theme` argument.
 - [x] Macchina now reads battery information from `/sys/class/power_supply/BAT1` if `/sys/class/power_supply/BAT0` doesn't exist.
 - [x] Add `--show-only` argument to help text.
+- [x] macOS Support
 
 # Todo <a name="todo"></a>
-- [ ] @123marvin123 is working on macOS support!
 - [ ] ASCII Art
 
 ---
@@ -77,7 +77,7 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
 - Distribution
 - Desktop Environment
 - Window Manager
-- Package count ¹
+- Package Count ¹
 - Shell
 - Terminal
 - Processor
@@ -90,14 +90,13 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
   - Status
 - Palette
 
----
-
 1. Package count supports package managers of:
 - Arch-based distributions
 - Debian-based distributions
 - Gentoo
 - Void Linux
 - NetBSD
+- Homebrew
 
 ---
 
@@ -136,7 +135,8 @@ Macchina is available on:
 | :-:           |        :-:         |
 | Linux         |        Yes         |
 | NetBSD ¹      |        Yes         |
-| MacOS         |        Soon        |
+| MacOS ²       |        Yes         |
 | Windows       |                    |
 
-1. Support for NetBSD would not be possible without the help and testing of NetBSD package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org). Thanks __pin__!
+1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org), Thank you!
+2. Support for __macOS__ would not be possible without the help, testing and codebase overhaul done by [123marvin123](https://github.com/123marvin123), Thank you!

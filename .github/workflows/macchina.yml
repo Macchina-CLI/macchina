@@ -1,0 +1,42 @@
+name: Macchina Test
+
+on:
+  # Build master branch only
+  push:
+    branches:
+      - main
+  # Build pull requests targeting main branch only
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        include:
+          - rust: stable
+            can-fail: false
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+          components: rustfmt,clippy
+      - name: Rust Fmt
+        run: cargo fmt --all -- --check
+      - name: Clippy Linter
+        run: cargo clippy -- -D clippy::all
+      - name: Build
+        run: cargo build
+      - name: Test
+        run: cargo test
