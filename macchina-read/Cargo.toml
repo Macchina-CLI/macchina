@@ -10,7 +10,7 @@ build = "build.rs"
 cfg-if = "1.0.0"
 libc = "0.2.88"
 
-[build-dependencies]
+[target.'cfg(target_os = "windows")'.build-dependencies]
 windows = "0.4.0"
 
 [target.'cfg(any(target_os = "linux", target_os = "netbsd"))'.dependencies]
