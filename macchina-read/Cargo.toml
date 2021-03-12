@@ -3,6 +3,8 @@ name = "macchina-read"
 version = "0.1.0"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
+description = "Provides the fetching capabilities for Macchina."
+license = "MIT"
 build = "build.rs"
 
 [dependencies]
