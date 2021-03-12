@@ -281,6 +281,6 @@ pub(crate) fn get_meminfo_value(value: &str) -> u64 {
                 .collect();
             s_mem_kb.parse::<u64>().unwrap_or(0)
         }
-        Err(_e) => 0
+        Err(_e) => 0,
     }
 }
