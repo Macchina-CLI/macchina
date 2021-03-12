@@ -8,9 +8,9 @@
 ---
 
 # About Macchina
-Macchina is a fetching program, not a library.
+_Macchina_ is a fetching program, not a library.
 
-Macchina lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
+_Macchina_ lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
 It provides you with convenient features and customization options but doesn't lose sight of its two main priorities: minimalism and performance.
 
 ![Macchina preview image](screenshots/preview.png)
@@ -18,28 +18,30 @@ It provides you with convenient features and customization options but doesn't l
 ---
 
 # Dependencies
-- [wmctrl](http://tripie.sweb.cz/utils/wmctrl/) to print your window manager
-- If you're on __Gentoo__, you'll want to install:
-  - [portage-utils](https://packages.gentoo.org/packages/app-portage/portage-utils) to see package count
-- If you're on __NetBSD__, you'll want to install:
-  - [ripgrep](https://github.com/BurntSushi/ripgrep) to see battery information
+- Linux:
+  - `wmctrl`
+  - __Gentoo Only:__ `portage-utils`
+- NetBSD:
+  - `wmctrl`
+  - `ripgrep`
+
+The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 
 ---
 
 # Benchmarks
-## Linux
-Macchina is pretty fast, see for yourself!
+_Macchina_ is pretty fast, see for yourself!
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
+- Hiding elements with `--hide` significantly improves speed
 
+## Linux
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
 | `macchina` | 34.3 ± 0.8 | 32.9 | 35.9 | 1.00 |
 | `neofetch` | 369.0 ± 3.3 | 362.9 | 376.1 | 10.77 ± 0.26 |
 
 __Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
-
-- Hiding elements with __--hide__ significantly improves speed
 
 ---
 
@@ -84,14 +86,14 @@ __Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
 
 # Usage
 
-Macchina comes packed with arguments that let you customize Macchina and its behavior.
+_Macchina_ comes packed with arguments that let you customize its behavior and styling.
 
 The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell you all about them and how they work.
 
 ---
 
 # Installation
-Macchina is available on:
+_Macchina_ is available on:
 
 - [AUR](https://aur.archlinux.org/packages/macchina/)
   ```
