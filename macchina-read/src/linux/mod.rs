@@ -55,7 +55,7 @@ impl KernelReadout for LinuxKernelReadout {
         let osrelease = String::from_utf8(output.stdout)
             .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
 
-        Ok(String::from(osrelease))
+        Ok(osrelease)
     }
 
     fn os_type(&self) -> Result<String, ReadoutError> {
@@ -68,7 +68,7 @@ impl KernelReadout for LinuxKernelReadout {
         let osrelease = String::from_utf8(output.stdout)
             .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
 
-        Ok(String::from(osrelease))
+        Ok(osrelease)
     }
 }
 
@@ -81,15 +81,15 @@ impl GeneralReadout for LinuxGeneralReadout {
         let product_readout = LinuxProductReadout::new();
 
         let name = product_readout.name()?;
-        let family = product_readout.family().unwrap_or(String::new());
-        let version = product_readout.version().unwrap_or(String::new());
+        let family = product_readout.family().unwrap_or_default();
+        let version = product_readout.version().unwrap_or_default();
 
         if family == name && family == version {
             return Ok(family);
         } else if version.is_empty() || version.len() <= 15 {
-            let vendor = product_readout.vendor().unwrap_or(String::new());
+            let vendor = product_readout.vendor().unwrap_or_default();
 
-            if vendor.len() > 0 {
+            if !vendor.is_empty() {
                 return Ok(format!("{} {} {}", vendor, family, name));
             }
         }
@@ -107,7 +107,7 @@ impl GeneralReadout for LinuxGeneralReadout {
         match hostname_cstr {
             Ok(hostname_cstr) => {
                 let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
-                return Ok(String::from(hostname));
+                Ok(String::from(hostname))
             }
             Err(_e) => Err(ReadoutError::Other(String::from(
                 "ERROR: failed to fetch hostname from \"unistd::gethostname()\"",

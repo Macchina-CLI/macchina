@@ -47,9 +47,9 @@ pub(crate) fn distribution() -> Result<String, ReadoutError> {
     let distribution =
         String::from_utf8(output.stdout).expect("ERROR: \"ps\" process stdout was not valid UTF-8");
 
-    Ok(extra::pop_newline(String::from(
+    Ok(extra::pop_newline(
         distribution.replace("\"", "").replace("NAME=", ""),
-    )))
+    ))
 }
 
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable
@@ -59,16 +59,15 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
     let desktop_env = env::var("DESKTOP_SESSION");
     match desktop_env {
         Ok(ret) => {
-            if ret.contains("/") {
-                return Ok(format_desktop_environment(ret.to_string()));
+            if ret.contains('/') {
+                return Ok(format_desktop_environment(ret));
             }
-            Ok(extra::ucfirst(ret.to_string()))
+            Ok(extra::ucfirst(ret))
         }
         Err(_) => {
             let fallback = env::var("XDG_CURRENT_DESKTOP").ok();
             let fallback = fallback
-                .as_ref()
-                .map(String::as_str)
+                .as_deref()
                 .and_then(|s| if s.is_empty() { None } else { Some(s) })
                 .unwrap_or("Unknown");
 
@@ -84,9 +83,9 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
 /// Similar to how basename works
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 fn format_desktop_environment(mut session_name: String) -> String {
-    let last_occurence_index = session_name.rfind("/").unwrap() + 1;
+    let last_occurence_index = session_name.rfind('/').unwrap() + 1;
     session_name.replace_range(0..last_occurence_index, "");
-    return extra::ucfirst(&session_name);
+    extra::ucfirst(&session_name)
 }
 
 /// Read window manager using `wmctrl -m | grep Name:`
@@ -282,8 +281,6 @@ pub(crate) fn get_meminfo_value(value: &str) -> u64 {
                 .collect();
             s_mem_kb.parse::<u64>().unwrap_or(0)
         }
-        Err(_e) => {
-            return 0;
-        }
+        Err(_e) => 0
     }
 }
