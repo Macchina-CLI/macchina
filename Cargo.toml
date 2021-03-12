@@ -20,4 +20,4 @@ bytesize = "1.0.1"
 clap = "2.33.3"
 rand = "0.8.3"
 lazy_static = "1.4.0"
-macchina-read = { path = "macchina-read/" }
+macchina-read = { version = "0.1.0", path = "macchina-read/" }
