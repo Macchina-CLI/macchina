@@ -110,6 +110,12 @@ impl Fail {
                 String::from("(OK:DISABLED) Distribution -> macOS system detected, so the \
                 distribution is automatically hidden."),
             ),
+            #[cfg(target_os = "windows")]
+            distro: FailedComponent::new(
+                true,
+                String::from("(OK:DISABLED) Distribution -> Windows system detected, so the \
+                distribution is automatically hidden."),
+            )
         }
     }
     pub fn count_print_failed(&self, failed_comp: &FailedComponent, mut num_fails: usize) -> usize {

@@ -32,6 +32,15 @@ cfg_if! {
         pub type GeneralReadout = netbsd::NetBSDGeneralReadout;
         pub type ProductReadout = netbsd::NetBSDProductReadout;
         pub type PackageReadout = netbsd::NetBSDPackageReadout;
+    } else if #[cfg(target_os = "windows")] {
+        mod windows;
+
+        pub type BatteryReadout = windows::WindowsBatteryReadout;
+        pub type KernelReadout = windows::WindowsKernelReadout;
+        pub type MemoryReadout = windows::WindowsMemoryReadout;
+        pub type GeneralReadout = windows::WindowsGeneralReadout;
+        pub type ProductReadout = windows::WindowsProductReadout;
+        pub type PackageReadout = windows::WindowsPackageReadout;
     } else {
         compiler_error!("This OS is currently not supported by macchina.");
     }
@@ -43,7 +52,7 @@ pub struct Readouts {
     pub memory: MemoryReadout,
     pub general: GeneralReadout,
     pub product: ProductReadout,
-    pub packages: PackageReadout
+    pub packages: PackageReadout,
 }
 
 pub mod traits;
