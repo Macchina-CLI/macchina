@@ -170,6 +170,7 @@ pub(crate) fn terminal() -> Result<String, ReadoutError> {
     Ok(terminal_name)
 }
 
+#[cfg(target_family = "unix")]
 fn get_passwd_struct() -> Result<*mut libc::passwd, ReadoutError> {
     let uid: libc::uid_t = unsafe { libc::geteuid() };
 
