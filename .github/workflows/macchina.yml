@@ -21,7 +21,6 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
         include:
           - rust: stable
-            can-fail: false
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
@@ -34,8 +33,12 @@ jobs:
           components: rustfmt,clippy
       - name: Rust Fmt
         run: cargo fmt --all -- --check
+        continue-on-error: true
       - name: Clippy Linter
-        run: cargo clippy -- -D clippy::all
+        run: |
+          cargo clippy -p macchina -- --no-deps
+          cargo clippy -p macchina-read -- --no-deps
+        continue-on-error: true
       - name: Build
         run: cargo build
       - name: Test
