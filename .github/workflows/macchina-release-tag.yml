@@ -1,29 +1,28 @@
 name: Macchina Create Release
-on:
-  push:
-    tags:
-      - 'v*'
+on: [push]
 
 jobs:
   create_release:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          body_path: CHANGELOG.md
+          body_path: CHANGELOG.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    if: startsWith(github.ref, 'refs/tags/v')
     strategy:
+      fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
         include:
           - rust: stable
     steps:
@@ -38,12 +37,26 @@ jobs:
       - name: Build Release
         run: cargo build --release
       - name: Strip Symbols
-        if: matrix.os == "ubuntu-latest" || matrix.os == "macOS-latest"
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: strip target/release/macchina
+      - name: Rename Binary Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mv target/release/macchina target/release/macchina-linux
+          echo "BINARY_FILE=target/release/macchina-linux" >> $GITHUB_ENV
+      - name: Rename Binary macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          mv target/release/macchina target/release/macchina-macOS
+          echo "BINARY_FILE=target/release/macchina-macOS" >> $GITHUB_ENV
+      - name: Rename Binary Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          mv target/release/macchina.exe target/release/macchina-windows.exe
+          $env:BINARY_FILE = 'target/release/macchina-windows.exe'
       - name: Upload Binary
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: target/release/macchina
+          files: ${{ env.BINARY_FILE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
