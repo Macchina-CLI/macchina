@@ -224,7 +224,7 @@ impl PackageReadout for LinuxPackageReadout {
         // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
-            let pacman = Command::new("pacman")
+            let pacman_output = Command::new("pacman")
                 .args(&["-Q", "-q"])
                 .stdout(Stdio::piped())
                 .spawn()
@@ -234,98 +234,94 @@ impl PackageReadout for LinuxPackageReadout {
 
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(pacman))
+                .stdin(Stdio::from(pacman_output))
                 .stdout(Stdio::piped())
                 .spawn()
                 .expect("ERROR: failed to start \"wc\" process");
 
-            let output = count
+            let final_output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(output.stdout)
+            return Ok(String::from_utf8(final_output.stdout)
                 .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         } else if extra::which("dpkg") {
-            let dpkg = Command::new("dpkg")
+            let dpkg_output = Command::new("dpkg")
                 .arg("-l")
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"dpkg\" process")
+                .expect("ERROR: failed to spawn \"dpkg\" process")
                 .stdout
                 .expect("ERROR: failed to open \"dpkg\" stdout");
 
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(dpkg))
+                .stdin(Stdio::from(dpkg_output))
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
+                .expect("ERROR: failed to spawn \"wc\" process");
 
-            let output = count
+            let final_output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(output.stdout)
+            return Ok(String::from_utf8(final_output.stdout)
                 .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         } else if extra::which("qlist") {
-            let qlist = Command::new("qlist")
+            let qlist_output = Command::new("qlist")
                 .arg("-I")
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"qlist\" process");
-
-            let qlist_out = qlist
+                .expect("ERROR: failed to spawn \"qlist\" process")
                 .stdout
                 .expect("ERROR: failed to open \"qlist\" stdout");
 
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(qlist_out))
+                .stdin(Stdio::from(qlist_output))
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
+                .expect("ERROR: failed to spawn \"wc\" process");
 
-            let output = count
+            let final_output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(output.stdout)
+            return Ok(String::from_utf8(final_output.stdout)
                 .expect("ERROR: \"qlist -I | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         } else if extra::which("xbps-query") {
-            let xbps = Command::new("xbps-query")
+            let xbps_output = Command::new("xbps-query")
                 .arg("-l")
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"xbps-query\" process");
-
-            let xbps_out = xbps
+                .expect("ERROR: failed to spawn \"xbps-query\" process")
                 .stdout
                 .expect("ERROR: failed to open \"xbps-query\" stdout");
 
-            let grep = Command::new("grep")
+            let grep_output = Command::new("grep")
                 .arg("ii")
-                .stdin(Stdio::from(xbps_out))
+                .stdin(Stdio::from(xbps_output))
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"grep\" process");
-
-            let grep_out = grep.stdout.expect("ERROR: failed to read \"grep\" stdout");
+                .expect("ERROR: failed to spawn \"grep\" process")
+                .stdout
+                .expect("ERROR: failed to read \"grep\" stdout");
 
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(grep_out))
+                .stdin(Stdio::from(grep_output))
                 .stdout(Stdio::piped())
                 .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
+                .expect("ERROR: failed to spawn \"wc\" process");
 
-            let output = count
+            let final_output = count
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
 
-            return Ok(String::from_utf8(output.stdout)
+            return Ok(String::from_utf8(final_output.stdout)
                 .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
