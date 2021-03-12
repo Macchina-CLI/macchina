@@ -20,7 +20,8 @@ impl FailedComponent {
             extraction_method: e,
         }
     }
-    pub fn fail_component(&mut self) -> () {
+
+    pub fn fail_component(&mut self) {
         self.failed = true;
     }
 }
@@ -113,7 +114,7 @@ impl Fail {
     }
     pub fn count_print_failed(&self, failed_comp: &FailedComponent, mut num_fails: usize) -> usize {
         if failed_comp.failed {
-            num_fails = num_fails + 1;
+            num_fails += 1;
             println!("{}", failed_comp.extraction_method);
         }
         num_fails
@@ -387,7 +388,7 @@ impl Elements {
     }
 
     /// Returns the amount of spacing needed to properly center the `separator` across each line.
-    pub fn calc_spacing(&self, current_key: &String, longest_key: &String) -> usize {
+    pub fn calc_spacing(&self, current_key: &str, longest_key: &str) -> usize {
         (longest_key.len() + self.format.spacing) - current_key.len()
     }
 
@@ -1104,7 +1105,7 @@ pub fn choose_color(color: &str) -> Color {
 pub fn randomize_color() -> Color {
     let mut rng = rand::thread_rng();
     let rand: usize = rng.gen_range(0..8);
-    return match rand {
+    match rand {
         0 => Color::Red,
         1 => Color::Green,
         2 => Color::Blue,
@@ -1113,7 +1114,7 @@ pub fn randomize_color() -> Color {
         5 => Color::Cyan,
         6 => Color::Black,
         _ => Color::White,
-    };
+    }
 }
 
 /// Print usage and help text.

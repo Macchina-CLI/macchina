@@ -106,8 +106,8 @@ pub trait KernelReadout {
 
     /// This function is used for getting the kernel name and version in a pretty format.
     fn pretty_kernel(&self) -> Result<String, ReadoutError> {
-        let os_type = self.os_type().unwrap_or(String::new());
-        let os_release = self.os_release().unwrap_or(String::new());
+        let os_type = self.os_type().unwrap_or_default();
+        let os_release = self.os_release().unwrap_or_default();
 
         if !(os_type.is_empty() || os_release.is_empty()) {
             return Ok(format!("{} {}", os_type, os_release));

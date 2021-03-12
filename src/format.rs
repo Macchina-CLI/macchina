@@ -29,12 +29,12 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
                 }
                 if up_minutes != 0.0 {
                     formatted_uptime.push_str(&up_minutes.to_string());
-                    formatted_uptime.push_str("m");
+                    formatted_uptime.push('m');
                 }
             }
             false => {
                 if up_days != 0.0 {
-                    if up_days == 1.0 {
+                    if (up_days - 1.0).abs() < 0.001 {
                         formatted_uptime.push_str(&up_days.to_string());
                         formatted_uptime.push_str(" day ");
                     } else {
@@ -43,7 +43,7 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
                     }
                 }
                 if up_hours != 0.0 {
-                    if up_hours == 1.0 {
+                    if (up_hours - 1.0).abs() < 0.001 {
                         formatted_uptime.push_str(&up_hours.to_string());
                         formatted_uptime.push_str(" hour ");
                     } else {
@@ -52,7 +52,7 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
                     }
                 }
                 if up_minutes != 0.0 {
-                    if up_minutes == 1.0 {
+                    if (up_minutes - 1.0).abs() < 0.001 {
                         formatted_uptime.push_str(&up_minutes.to_string());
                         formatted_uptime.push_str(" minute");
                     } else {
@@ -68,7 +68,7 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
         let up_seconds = (uptime % 60.0).floor();
         if up_seconds != 0.0 {
             formatted_uptime = up_seconds.to_string();
-            formatted_uptime.push_str("s");
+            formatted_uptime.push('s');
         }
     }
 

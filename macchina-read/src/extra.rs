@@ -6,7 +6,8 @@ pub fn pop_newline(mut string: String) -> String {
     if string.ends_with('\n') {
         string.pop();
     }
-    String::from(string)
+
+    string
 }
 
 /// Return `perc`% of 100%. \
@@ -20,10 +21,10 @@ pub fn percent_of_total(perc: u64, total: u64) -> u64 {
 /// Check if the `String` that is passed
 /// to this function is a valid integer.
 pub fn is_int(s: String) -> Result<(), String> {
-    let b = s.chars().all(char::is_numeric);
-    if b == true {
+    if s.chars().all(char::is_numeric) {
         return Ok(());
     }
+
     Err(String::from("this argument only accepts integers."))
 }
 
@@ -68,8 +69,9 @@ where
             })
             .next()
     });
-    return match exists {
+
+    match exists {
         Some(_p) => true,
         None => false,
-    };
+    }
 }
