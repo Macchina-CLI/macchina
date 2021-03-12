@@ -27,18 +27,19 @@ It provides you with convenient features and customization options but doesn't l
 ---
 
 # Benchmarks
+## Linux
 Macchina is pretty fast, see for yourself!
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 42.6 ± 0.5 | 41.8 | 45.2 | 1.00 |
-| `neofetch` | 371.1 ± 3.0 | 366.4 | 379.9 | 8.71 ± 0.13 |
+| `macchina` | 34.3 ± 0.8 | 32.9 | 35.9 | 1.00 |
+| `neofetch` | 369.0 ± 3.3 | 362.9 | 376.1 | 10.77 ± 0.26 |
 
-__Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
 
-- Note that hiding elements with __--hide__ significantly improves speed
+- Hiding elements with __--hide__ significantly improves speed
 
 ---
 
@@ -71,14 +72,12 @@ __Summary__: `macchina` runs __8.71 ± 0.13__ times __faster__ than `neofetch`
   - Status
 - Palette
 
----
-
-1. Package count supports package managers of:
-- Arch-based distributions
-- Debian-based distributions
-- Gentoo
-- Void Linux
-- NetBSD
+1. Package count supports the following package managers:
+- Pacman
+- Portage
+- APT
+- XBPS
+- pkgsrc
 - Homebrew
 
 ---
@@ -119,7 +118,7 @@ Macchina is available on:
 | Linux         |        Yes         |
 | NetBSD ¹      |        Yes         |
 | MacOS ²       |        Yes         |
-| Windows       |                    |
+| Windows       |        Soon        |
 
 1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org), Thank you!
-2. Support for __macOS__ would not be possible without the help, testing and codebase overhaul done by [123marvin123](https://github.com/123marvin123), Thank you!
+2. Support for __macOS__ would not be possible without the help, testing and contributions of [123marvin123](https://github.com/123marvin123), Thank you!
