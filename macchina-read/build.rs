@@ -3,9 +3,9 @@ use std::env;
 fn build_windows() {
     #[cfg(windows)]
     windows::build!(
-                windows::win32::windows_programming::GetUserNameA,
-                windows::win32::windows_programming::GetComputerNameExA
-            );
+        windows::win32::windows_programming::GetUserNameA,
+        windows::win32::windows_programming::GetComputerNameExA
+    );
 }
 
 fn build_macos() {

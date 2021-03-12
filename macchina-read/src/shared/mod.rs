@@ -5,14 +5,13 @@ use std::io::Error;
 use std::path::Path;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use nix::unistd;
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use crate::extra;
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use std::{fs, env};
+use nix::unistd;
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::process::{Command, Stdio};
-
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+use std::{env, fs};
 
 impl From<std::io::Error> for ReadoutError {
     fn from(e: Error) -> Self {
@@ -22,7 +21,11 @@ impl From<std::io::Error> for ReadoutError {
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn uptime() -> Result<String, ReadoutError> {
-    Ok(fs::read_to_string("/proc/uptime")?.split_whitespace().next().unwrap().to_string())
+    Ok(fs::read_to_string("/proc/uptime")?
+        .split_whitespace()
+        .next()
+        .unwrap()
+        .to_string())
 }
 
 /// Read distribution name from `/etc/os-release`
@@ -41,8 +44,8 @@ pub(crate) fn distribution() -> Result<String, ReadoutError> {
         .wait_with_output()
         .expect("ERROR: failed to wait for \"head\" process to exit");
 
-    let distribution = String::from_utf8(output.stdout)
-        .expect("ERROR: \"ps\" process stdout was not valid UTF-8");
+    let distribution =
+        String::from_utf8(output.stdout).expect("ERROR: \"ps\" process stdout was not valid UTF-8");
 
     Ok(extra::pop_newline(String::from(
         distribution.replace("\"", "").replace("NAME=", ""),
@@ -114,8 +117,8 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
         let window_manager = String::from_utf8(output.stdout)
             .expect("ERROR: \"wmctrl -m | grep Name:\" process stdout was not valid UTF-8");
 
-        let window_man_name = extra::pop_newline(String::from(window_manager.replace("Name:", "")
-            .trim()));
+        let window_man_name =
+            extra::pop_newline(String::from(window_manager.replace("Name:", "").trim()));
         if window_man_name == "N/A" {
             return Err(ReadoutError::MetricNotAvailable);
         }
@@ -164,7 +167,9 @@ pub(crate) fn terminal() -> Result<String, ReadoutError> {
     );
 
     if terminal_name.is_empty() {
-        return Err(ReadoutError::Other(String::from("Terminal name was empty.")));
+        return Err(ReadoutError::Other(String::from(
+            "Terminal name was empty.",
+        )));
     }
 
     Ok(terminal_name)
@@ -181,7 +186,9 @@ fn get_passwd_struct() -> Result<*mut libc::passwd, ReadoutError> {
         return Ok(passwd);
     }
 
-    Err(ReadoutError::Other(String::from("Reading the account information failed.")))
+    Err(ReadoutError::Other(String::from(
+        "Reading the account information failed.",
+    )))
 }
 
 #[cfg(target_family = "unix")]
@@ -193,7 +200,9 @@ pub(crate) fn whoami() -> Result<String, ReadoutError> {
         return Ok(String::from(str));
     }
 
-    Err(ReadoutError::Other(String::from("Unable to read username for current uid.")))
+    Err(ReadoutError::Other(String::from(
+        "Unable to read username for current uid.",
+    )))
 }
 
 #[cfg(target_family = "unix")]
@@ -206,13 +215,15 @@ pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
 
         if shorthand {
             let path = Path::new(&path);
-            return Ok(path.file_stem().unwrap().to_str().unwrap().into())
+            return Ok(path.file_stem().unwrap().to_str().unwrap().into());
         }
 
         return Ok(path);
     }
 
-    Err(ReadoutError::Other(String::from("Unable to read default shell for current uid.")))
+    Err(ReadoutError::Other(String::from(
+        "Unable to read default shell for current uid.",
+    )))
 }
 
 /// Read processor information from `/proc/cpuinfo`

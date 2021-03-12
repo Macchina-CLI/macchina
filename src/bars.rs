@@ -1,11 +1,14 @@
-use macchina_read::traits::{MemoryReadout, ReadoutError, BatteryReadout};
+use macchina_read::traits::{BatteryReadout, MemoryReadout, ReadoutError};
 
 /// Returns a usize [0..10] based on the battery percentage,
 /// `display::show_bar` takes this function as a parameter to handle
 /// displaying the bar
 pub fn battery() -> Result<usize, ReadoutError> {
-    let res = match crate::READOUTS.battery.percentage()?
-        .parse::<usize>().expect("Percentage could not be parsed.")
+    let res = match crate::READOUTS
+        .battery
+        .percentage()?
+        .parse::<usize>()
+        .expect("Percentage could not be parsed.")
     {
         0..=10 => 1,
         11..=20 => 2,

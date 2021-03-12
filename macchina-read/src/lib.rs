@@ -55,6 +55,6 @@ pub struct Readouts {
     pub packages: PackageReadout,
 }
 
-pub mod traits;
 pub mod extra;
 mod shared;
+pub mod traits;

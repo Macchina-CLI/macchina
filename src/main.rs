@@ -22,14 +22,14 @@ pub const DEFAULT_SEPARATOR_COLOR: Color = Color::White;
 pub const DEFAULT_PADDING: usize = 4;
 
 lazy_static! {
- pub(crate) static ref READOUTS: Readouts = Readouts {
-    battery: macchina_read::BatteryReadout::new(),
-    kernel: macchina_read::KernelReadout::new(),
-    memory: macchina_read::MemoryReadout::new(),
-    general: macchina_read::GeneralReadout::new(),
-    product: macchina_read::ProductReadout::new(),
-    packages: macchina_read::PackageReadout::new()
-};
+    pub(crate) static ref READOUTS: Readouts = Readouts {
+        battery: macchina_read::BatteryReadout::new(),
+        kernel: macchina_read::KernelReadout::new(),
+        memory: macchina_read::MemoryReadout::new(),
+        general: macchina_read::GeneralReadout::new(),
+        product: macchina_read::ProductReadout::new(),
+        packages: macchina_read::PackageReadout::new()
+    };
 }
 
 fn main() {

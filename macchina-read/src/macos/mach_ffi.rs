@@ -1,17 +1,17 @@
 #![allow(non_camel_case_types, dead_code, unused)]
 
-use mach::mach_types::{host_t, host_name_port_t};
-use mach::vm_types::{integer_t, natural_t};
-use mach::message::mach_msg_type_number_t;
+use mach::boolean;
 use mach::kern_return;
 use mach::kern_return::kern_return_t;
-use mach::boolean;
+use mach::mach_types::{host_name_port_t, host_t};
+use mach::message::mach_msg_type_number_t;
+use mach::vm_types::{integer_t, natural_t};
 
-use core_foundation::base::{CFTypeRef, CFRelease, TCFTypeRef, mach_port_t, CFAllocatorRef};
+use core_foundation::array::CFArrayRef;
+use core_foundation::base::{mach_port_t, CFAllocatorRef, CFRelease, CFTypeRef, TCFTypeRef};
 use core_foundation::dictionary::{CFDictionaryRef, CFMutableDictionaryRef};
-use core_foundation::array::{CFArrayRef};
+use core_foundation::string::CFStringRef;
 use libc::c_char;
-use core_foundation::string::{CFStringRef};
 use objc_foundation::NSString;
 use std::os::raw::c_uint;
 
@@ -52,10 +52,12 @@ pub(crate) struct vm_statistics64 {
 }
 
 extern "C" {
-    pub fn host_statistics64(host_priv: host_t,
-                             flavor: host_flavor_t,
-                             host_info64_out: host_info64_t,
-                             host_info64_out_cnt: *mut mach_msg_type_number_t) -> kern_return_t;
+    pub fn host_statistics64(
+        host_priv: host_t,
+        flavor: host_flavor_t,
+        host_info64_out: host_info64_t,
+        host_info64_out_cnt: *mut mach_msg_type_number_t,
+    ) -> kern_return_t;
 
     pub fn mach_host_self() -> host_name_port_t;
 

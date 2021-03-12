@@ -1,5 +1,5 @@
-use crate::traits::*;
 use crate::traits::ReadoutError::MetricNotAvailable;
+use crate::traits::*;
 use crate::windows::bindings::windows::win32::system_services::PSTR;
 
 mod bindings {
@@ -7,10 +7,9 @@ mod bindings {
 }
 
 use bindings::{
-    windows::win32::windows_programming::GetUserNameA,
     windows::win32::windows_programming::GetComputerNameExA,
+    windows::win32::windows_programming::GetUserNameA,
 };
-
 
 pub struct WindowsBatteryReadout;
 
@@ -48,20 +47,31 @@ impl GeneralReadout for WindowsGeneralReadout {
         unsafe { GetUserNameA(PSTR(std::ptr::null_mut()), &mut size) };
 
         if size == 0 {
-            return Err(ReadoutError::Other(String::from("Call to \"GetUserNameA\" failed.")));
+            return Err(ReadoutError::Other(String::from(
+                "Call to \"GetUserNameA\" failed.",
+            )));
         }
 
         let mut username = Vec::with_capacity(size as usize);
         if unsafe { GetUserNameA(PSTR(username.as_mut_ptr()), &mut size) }.as_bool() == false {
-            return Err(ReadoutError::Other(String::from("Call to \"GetUserNameA\" failed.")));
+            return Err(ReadoutError::Other(String::from(
+                "Call to \"GetUserNameA\" failed.",
+            )));
         }
 
-        unsafe { username.set_len(size as usize); }
+        unsafe {
+            username.set_len(size as usize);
+        }
 
         let mut str = match String::from_utf8(username) {
             Ok(str) => str,
-            Err(e) => return Err(ReadoutError::Other(format!("String from \"GetUserNameA\" \
-            was not valid UTF-8: {}", e)))
+            Err(e) => {
+                return Err(ReadoutError::Other(format!(
+                    "String from \"GetUserNameA\" \
+            was not valid UTF-8: {}",
+                    e
+                )))
+            }
         };
 
         str.pop(); //remove null terminator from string.
@@ -73,25 +83,45 @@ impl GeneralReadout for WindowsGeneralReadout {
         use bindings::windows::win32::windows_programming::COMPUTER_NAME_FORMAT;
 
         let mut size = 0;
-        unsafe { GetComputerNameExA(COMPUTER_NAME_FORMAT::ComputerNameDnsHostname, PSTR
-            (std::ptr::null_mut()), &mut size) };
+        unsafe {
+            GetComputerNameExA(
+                COMPUTER_NAME_FORMAT::ComputerNameDnsHostname,
+                PSTR(std::ptr::null_mut()),
+                &mut size,
+            )
+        };
 
         if size == 0 {
-            return Err(ReadoutError::Other(String::from("Call to \"GetComputerNameExA\" failed.")));
+            return Err(ReadoutError::Other(String::from(
+                "Call to \"GetComputerNameExA\" failed.",
+            )));
         }
 
         let mut hostname = Vec::with_capacity(size as usize);
-        if unsafe { GetComputerNameExA(COMPUTER_NAME_FORMAT::ComputerNameDnsHostname, PSTR
-            (hostname.as_mut_ptr()), &mut size) } == false {
-            return Err(ReadoutError::Other(String::from("Call to \"GetComputerNameExA\" failed.")));
+        if unsafe {
+            GetComputerNameExA(
+                COMPUTER_NAME_FORMAT::ComputerNameDnsHostname,
+                PSTR(hostname.as_mut_ptr()),
+                &mut size,
+            )
+        } == false
+        {
+            return Err(ReadoutError::Other(String::from(
+                "Call to \"GetComputerNameExA\" failed.",
+            )));
         }
 
         unsafe { hostname.set_len(size as usize) };
 
         let str = match String::from_utf8(hostname) {
             Ok(str) => str,
-            Err(e) => return Err(ReadoutError::Other(format!("String from \"GetComputerNameExA\" \
-            was not valid UTF-8: {}", e)))
+            Err(e) => {
+                return Err(ReadoutError::Other(format!(
+                    "String from \"GetComputerNameExA\" \
+            was not valid UTF-8: {}",
+                    e
+                )))
+            }
         };
 
         Ok(str)
