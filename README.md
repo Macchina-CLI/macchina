@@ -13,7 +13,7 @@
 - [Usage](#usage)
 - [Installation](#install)
 - [Platform Support](#platform-support)
-
+- [Contributors](#contributors)
 ---
 
 # About Macchina <a name="about"></a>
@@ -127,8 +127,15 @@ _Macchina_ is available on:
 | :-:           |        :-:         |
 | Linux         |        Yes         |
 | NetBSD ¹      |        Yes         |
-| MacOS ²       |        Yes         |
+| macOS ²       |        Yes         |
 | Windows       |        Soon        |
+
+# :earth_africa: Contributors <a name="contributors"></a>
+<a href="https://github.com/grtcdr/macchina/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=grtcdr/macchina" />
+</a>
+
+_Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors.
 
 1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org), Thank you!
 2. Support for __macOS__ would not be possible without the help, testing and contributions of [123marvin123](https://github.com/123marvin123), Thank you!
