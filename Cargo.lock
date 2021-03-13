@@ -201,7 +201,7 @@ checksum = "03b07a082330a35e43f63177cc01689da34fbffa0105e1246cf0311472cac73a"
 
 [[package]]
 name = "macchina"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "bytesize",
  "clap",
@@ -214,7 +214,7 @@ dependencies = [
 
 [[package]]
 name = "macchina-read"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cfg-if",
  "core-foundation",

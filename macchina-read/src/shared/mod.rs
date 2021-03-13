@@ -28,7 +28,7 @@ pub(crate) fn uptime() -> Result<String, ReadoutError> {
         .to_string())
 }
 
-/// Read distribution name from `/etc/os-release`
+/// This function should return the distribution name, e.g. "Arch Linux"
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn distribution() -> Result<String, ReadoutError> {
     use os_release::OsRelease;
@@ -65,7 +65,7 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
     }
 }
 
-/// Similar to how basename works
+/// This function should return the basename of the path to a program
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 fn format_desktop_environment(mut session_name: String) -> String {
     let last_occurence_index = session_name.rfind('/').unwrap() + 1;
