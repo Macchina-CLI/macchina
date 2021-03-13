@@ -1,13 +1,13 @@
 [package]
 name = "macchina"
-version = "0.5.9"
+version = "0.6.0"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "System information fetcher"
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/grtcdr/macchina"
 license = "MIT"
-readme = "README_CARGO.md"
+readme = "../README_CARGO.md"
 
 [dependencies]
 colored = "2.0.0"

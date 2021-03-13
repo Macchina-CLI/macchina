@@ -7,7 +7,6 @@
 
 # Table of Contents
 - [About](#about)
-- [Changelog](#change)
 - [Dependencies](#deps)
 - [Benchmarks](#bench)
 - [Features](#features)
@@ -24,23 +23,15 @@ It provides you with convenient features and customization options but doesn't l
 
 ![Macchina preview image](screenshots/preview.png)
 
-# Changelog <a name="change"></a>
-The latest changes are mainly the contributions of [@123marvin123](https://github.com/123marvin123) who has:
-- Added macOS support
-  - Execution time on macOS is ~3ms!
-- Major overhaul and structural changes to the majority of the codebase, enhancing the execution time significantly across all platforms, and allowing for easier OS support in the future.
-- Added extensive and comprehensive documentation.
-- Added GitHub Actions.
-
 ---
 
 # Dependencies <a name="deps"></a>
-- Linux:
-  - `wmctrl`
-  - __Gentoo Only:__ `portage-utils`
-- NetBSD:
-  - `wmctrl`
-  - `ripgrep`
+### Linux:
+- `wmctrl`
+- __Gentoo Only:__ `portage-utils`
+### NetBSD:
+- `wmctrl`
+- `ripgrep`
 
 The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 

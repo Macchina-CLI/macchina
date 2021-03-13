@@ -1,1 +1,12 @@
 # Changelog
+- Remove "Changelog" section from README.md as it now has its own file
+
+Merge PR from @123marvin123 who has:
+- Enabled Link-Time-Optimization
+- Fixed wrong version number on older macOS systems
+- Fixed windows binary upload
+  - Only trigger release workflow when new tag is pushed
+- Created proper workspaces for projects
+  - This helps manage the crates that make up the project as it grows
+- Automatic release creation
+  - Create GitHub release automatically when the tag version is created in format "v*"

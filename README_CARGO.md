@@ -18,12 +18,12 @@ It provides you with convenient features and customization options but doesn't l
 ---
 
 # Dependencies
-- Linux:
-  - `wmctrl`
-  - __Gentoo Only:__ `portage-utils`
-- NetBSD:
-  - `wmctrl`
-  - `ripgrep`
+### Linux:
+- `wmctrl`
+- __Gentoo Only:__ `portage-utils`
+### NetBSD:
+- `wmctrl`
+- `ripgrep`
 
 The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 
