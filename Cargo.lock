@@ -201,7 +201,7 @@ checksum = "03b07a082330a35e43f63177cc01689da34fbffa0105e1246cf0311472cac73a"
 
 [[package]]
 name = "macchina"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "bytesize",
  "clap",
@@ -214,7 +214,7 @@ dependencies = [
 
 [[package]]
 name = "macchina-read"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cfg-if",
  "core-foundation",
@@ -223,6 +223,7 @@ dependencies = [
  "nix",
  "objc",
  "objc-foundation",
+ "os-release",
  "sysctl",
  "windows",
 ]
@@ -311,6 +312,15 @@ name = "object"
 version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9a7ab5d64814df0fe4a4b5ead45ed6c5f181ee3ff04ba344313a6c80446c5d4"
+
+[[package]]
+name = "os-release"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82f29ae2f71b53ec19cc23385f8e4f3d90975195aa3d09171ba3bef7159bec27"
+dependencies = [
+ "lazy_static",
+]
 
 [[package]]
 name = "ppv-lite86"
