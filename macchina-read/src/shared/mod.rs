@@ -4,6 +4,9 @@ use std::ffi::CStr;
 use std::io::Error;
 use std::path::Path;
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+use sysctl::SysctlError;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use crate::extra;
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
@@ -16,6 +19,12 @@ use std::{env, fs};
 impl From<std::io::Error> for ReadoutError {
     fn from(e: Error) -> Self {
         ReadoutError::Other(e.to_string())
+    }
+}
+
+impl From<SysctlError> for ReadoutError {
+    fn from(e: SysctlError) -> Self {
+        ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
     }
 }
 

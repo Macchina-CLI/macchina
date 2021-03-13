@@ -13,15 +13,9 @@ use mach::kern_return::KERN_SUCCESS;
 use objc::runtime::Object;
 use objc_foundation::{INSString, NSString};
 use std::ffi::CString;
-use sysctl::{Ctl, Sysctl, SysctlError};
+use sysctl::{Ctl, Sysctl};
 
 mod mach_ffi;
-
-impl From<SysctlError> for ReadoutError {
-    fn from(e: SysctlError) -> Self {
-        ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
-    }
-}
 
 pub struct MacOSBatteryReadout {
     power_info: Option<MacOSIOPMPowerSource>,
