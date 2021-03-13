@@ -1,0 +1,88 @@
+name: Macchina Create Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+      - name: Build Release
+        run: cargo build --release
+      - name: Strip Symbols
+        run: strip target/release/macchina
+      - name: Rename Binary
+        run: mv target/release/macchina target/release/macchina-linux
+      - name: Upload Binary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/macchina-linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+      - name: Build Release
+        run: cargo build --release
+      - name: Strip Symbols
+        run: strip target/release/macchina
+      - name: Rename Binary
+        run: mv target/release/macchina target/release/macchina-macos
+      - name: Upload Binary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/macchina-macos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Install Rust
+        uses: hecrj/setup-rust-action@master
+        with:
+          rust-version: stable
+      - name: Build Release
+        run: cargo build --release
+      - name: Rename Binary
+        run: mv target/release/macchina.exe target/release/macchina-windows.exe
+      - name: Upload Binary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/macchina-windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

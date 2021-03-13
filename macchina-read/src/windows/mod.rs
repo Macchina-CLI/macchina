@@ -53,7 +53,7 @@ impl GeneralReadout for WindowsGeneralReadout {
         }
 
         let mut username = Vec::with_capacity(size as usize);
-        if unsafe { GetUserNameA(PSTR(username.as_mut_ptr()), &mut size) }.as_bool() == false {
+        if !unsafe { GetUserNameA(PSTR(username.as_mut_ptr()), &mut size) }.as_bool() {
             return Err(ReadoutError::Other(String::from(
                 "Call to \"GetUserNameA\" failed.",
             )));

@@ -44,7 +44,7 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
 ///
 /// # Example
 /// ```
-/// if extra::which("ps") {
+/// if macchina_read::extra::which("ps") {
 /// // Do something...
 /// }
 /// ```
