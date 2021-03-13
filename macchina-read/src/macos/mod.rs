@@ -462,7 +462,7 @@ unsafe fn macos_version_to_name() -> &'static str {
         (10, 13) => "High Sierra",
         (10, 14) => "Mojave",
         (10, 15) => "Catalina",
-        (11, _) => "Big Sur",
+        (11, _) | (10, 16) => "Big Sur",
         _ => "Unknown",
     }
 }
