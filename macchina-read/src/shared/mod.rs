@@ -31,25 +31,10 @@ pub(crate) fn uptime() -> Result<String, ReadoutError> {
 /// Read distribution name from `/etc/os-release`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn distribution() -> Result<String, ReadoutError> {
-    let content = fs::File::open("/etc/os-release")?;
+    use os_release::OsRelease;
+    let content = OsRelease::new()?;
 
-    let head = Command::new("head")
-        .args(&["-n", "1"])
-        .stdin(Stdio::from(content))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to start \"head\" process");
-
-    let output = head
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"head\" process to exit");
-
-    let distribution =
-        String::from_utf8(output.stdout).expect("ERROR: \"ps\" process stdout was not valid UTF-8");
-
-    Ok(extra::pop_newline(
-        distribution.replace("\"", "").replace("NAME=", ""),
-    ))
+    Ok(content.name)
 }
 
 /// Read desktop environment name from `DESKTOP_SESSION` environment variable

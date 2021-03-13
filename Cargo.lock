@@ -223,6 +223,7 @@ dependencies = [
  "nix",
  "objc",
  "objc-foundation",
+ "os-release",
  "sysctl",
  "windows",
 ]
@@ -311,6 +312,15 @@ name = "object"
 version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a9a7ab5d64814df0fe4a4b5ead45ed6c5f181ee3ff04ba344313a6c80446c5d4"
+
+[[package]]
+name = "os-release"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82f29ae2f71b53ec19cc23385f8e4f3d90975195aa3d09171ba3bef7159bec27"
+dependencies = [
+ "lazy_static",
+]
 
 [[package]]
 name = "ppv-lite86"
