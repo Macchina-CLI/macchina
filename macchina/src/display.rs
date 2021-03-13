@@ -1133,7 +1133,8 @@ pub fn help() {
     -d, --debug                     -   Print debug information
     -p, --palette                   -   Display palette
     -n, --no-color                  -   Disable colors
-    -r, --random-color              -   Let Macchina pick a random color for you
+    -r, --random-color              -   Picks a random key color for you
+    -R, --random-sep-color          -   Picks a random separator color for you
     -c, --color <color>             -   Specify the key color
     -C, --separator-color <color>   -   Specify the separator color
     -t, --theme <theme>             -   Specify the theme to use

@@ -94,6 +94,12 @@ fn main() {
                 .multiple(false),
         )
         .arg(
+            Arg::with_name("random-sep-color")
+                .short("R")
+                .long("random-sep-color")
+                .multiple(false),
+        )
+        .arg(
             Arg::with_name("hide")
                 .short("H")
                 .long("hide")
@@ -223,6 +229,9 @@ fn main() {
     }
     if matches.is_present("random-color") {
         elems.set_color(display::randomize_color());
+    }
+    if matches.is_present("random-sep-color") {
+        elems.set_separator_color(display::randomize_color());
     }
     if matches.is_present("theme") {
         if matches.value_of("theme").unwrap() == "alt" {
