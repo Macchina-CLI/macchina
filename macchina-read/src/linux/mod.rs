@@ -4,10 +4,14 @@ use nix::unistd;
 use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
+use sysctl::{Ctl, Sysctl};
 
 pub struct LinuxBatteryReadout;
 
-pub struct LinuxKernelReadout;
+pub struct LinuxKernelReadout {
+    os_release_ctl: Option<Ctl>,
+    os_type_ctl: Option<Ctl>,
+}
 
 pub struct LinuxGeneralReadout;
 
@@ -43,32 +47,26 @@ impl BatteryReadout for LinuxBatteryReadout {
 
 impl KernelReadout for LinuxKernelReadout {
     fn new() -> Self {
-        LinuxKernelReadout
+        LinuxKernelReadout {
+            os_release_ctl: Ctl::new("kernel.osrelease").ok(),
+            os_type_ctl: Ctl::new("kernel.ostype").ok(),
+        }
     }
 
     fn os_release(&self) -> Result<String, ReadoutError> {
-        let output = Command::new("sysctl")
-            .args(&["-n", "-b", "kernel.osrelease"])
-            .output()
-            .expect("ERROR: failed to fetch \"kernel.osrelease\" using \"sysctl\"");
-
-        let osrelease = String::from_utf8(output.stdout)
-            .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-
-        Ok(osrelease)
+        Ok(self
+            .os_release_ctl
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .value_string()?)
     }
 
     fn os_type(&self) -> Result<String, ReadoutError> {
-        // sysctl -e -n -b kernel.osrelease
-        let output = Command::new("sysctl")
-            .args(&["-n", "-b", "kernel.ostype"])
-            .output()
-            .expect("ERROR: failed to fetch \"kernel.ostype\" using \"sysctl\"");
-
-        let osrelease = String::from_utf8(output.stdout)
-            .expect("ERROR: \"sysctl\" process stdout was not valid UTF-8");
-
-        Ok(osrelease)
+        Ok(self
+            .os_type_ctl
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .value_string()?)
     }
 }
 
