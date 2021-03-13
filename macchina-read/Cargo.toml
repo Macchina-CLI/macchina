@@ -16,6 +16,8 @@ windows = "0.4.0"
 
 [target.'cfg(any(target_os = "linux", target_os = "netbsd"))'.dependencies]
 nix = "0.20.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
 os-release = "0.1"
 
 [target.'cfg(target_os = "macos")'.dependencies]
