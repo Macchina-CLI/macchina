@@ -12,7 +12,6 @@ use core_foundation::base::{mach_port_t, CFAllocatorRef, CFRelease, CFTypeRef, T
 use core_foundation::dictionary::{CFDictionaryRef, CFMutableDictionaryRef};
 use core_foundation::string::CFStringRef;
 use libc::c_char;
-use objc_foundation::NSString;
 use std::os::raw::c_uint;
 
 type host_flavor_t = integer_t;

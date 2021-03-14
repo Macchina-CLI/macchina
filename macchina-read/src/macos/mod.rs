@@ -10,8 +10,6 @@ use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef};
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::string::CFString;
 use mach::kern_return::KERN_SUCCESS;
-use objc::runtime::Object;
-use objc_foundation::{INSString, NSString};
 use std::ffi::CString;
 use sysctl::{Ctl, Sysctl};
 
@@ -21,7 +19,9 @@ pub struct MacOSBatteryReadout {
     power_info: Option<MacOSIOPMPowerSource>,
 }
 
-pub struct MacOSProductReadout;
+pub struct MacOSProductReadout {
+    os_product_version_ctl: Option<Ctl>,
+}
 
 pub struct MacOSKernelReadout {
     os_type_ctl: Option<Ctl>,
@@ -255,11 +255,12 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn os_name(&self) -> Result<String, ReadoutError> {
-        let product_readout = MacOSProductReadout;
+        let product_readout = MacOSProductReadout::new();
 
         let version = product_readout.version()?;
         let name = product_readout.product()?;
-        let major_version_name = unsafe { macos_version_to_name() };
+        let major_version_name =
+            macos_version_to_name(&product_readout.operating_system_version()?);
 
         Ok(format!("{} {} {}", name, version, major_version_name))
     }
@@ -344,7 +345,7 @@ impl MacOSMemoryReadout {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 #[repr(C)]
 struct NSOperatingSystemVersion {
     major_version: u64,
@@ -363,11 +364,13 @@ impl Into<String> for NSOperatingSystemVersion {
 
 impl ProductReadout for MacOSProductReadout {
     fn new() -> Self {
-        MacOSProductReadout
+        MacOSProductReadout {
+            os_product_version_ctl: Ctl::new("kern.osproductversion").ok(),
+        }
     }
 
     fn version(&self) -> Result<String, ReadoutError> {
-        Ok(MacOSProductReadout::operating_system_version().into())
+        Ok(self.operating_system_version()?.into())
     }
 
     fn vendor(&self) -> Result<String, ReadoutError> {
@@ -378,27 +381,44 @@ impl ProductReadout for MacOSProductReadout {
         Ok(String::from("Unix, Macintosh"))
     }
 
-    fn name(&self) -> Result<String, ReadoutError> {
-        let process_class = class![NSProcessInfo];
-        let process_info: *mut Object = unsafe { msg_send![process_class, processInfo] };
-        let version_string: *const NSString =
-            unsafe { msg_send![process_info, operatingSystemVersionString] };
-
-        let version_string = unsafe { (*version_string).as_str() };
-
-        Ok(String::from(version_string))
-    }
-
     fn product(&self) -> Result<String, ReadoutError> {
         Ok(String::from("macOS"))
     }
 }
 
 impl MacOSProductReadout {
-    fn operating_system_version() -> NSOperatingSystemVersion {
-        let class = class![NSProcessInfo];
-        let process_info: *mut Object = unsafe { msg_send![class, processInfo] };
-        unsafe { msg_send![process_info, operatingSystemVersion] }
+    fn operating_system_version(&self) -> Result<NSOperatingSystemVersion, ReadoutError> {
+        let os_string = self
+            .os_product_version_ctl.as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .value_string()?;
+
+        let mut string_parts = os_string.split('.');
+
+        let mut operating_system_version = NSOperatingSystemVersion::default();
+
+        match string_parts.next() {
+            Some(major) => {
+                operating_system_version.major_version = major.parse().unwrap_or_default()
+            }
+            _ => (),
+        };
+
+        match string_parts.next() {
+            Some(minor) => {
+                operating_system_version.minor_version = minor.parse().unwrap_or_default()
+            }
+            _ => (),
+        };
+
+        match string_parts.next() {
+            Some(patch) => {
+                operating_system_version.patch_version = patch.parse().unwrap_or_default()
+            }
+            _ => (),
+        }
+
+        Ok(operating_system_version)
     }
 }
 
@@ -437,9 +457,7 @@ impl PackageReadout for MacOSPackageReadout {
     }
 }
 
-unsafe fn macos_version_to_name() -> &'static str {
-    let version = MacOSProductReadout::operating_system_version();
-
+fn macos_version_to_name(version: &NSOperatingSystemVersion) -> &'static str {
     match (version.major_version, version.minor_version) {
         (10, 1) => "Puma",
         (10, 2) => "Jaguar",
