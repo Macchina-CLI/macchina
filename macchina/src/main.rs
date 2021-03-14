@@ -1,6 +1,7 @@
 mod bars;
 mod display;
 mod format;
+mod theme;
 
 use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
@@ -132,7 +133,7 @@ fn main() {
                 .takes_value(true)
                 .max_values(1)
                 .multiple(false)
-                .possible_values(&["alt", "long"]),
+                .possible_values(&["H", "He", "Li"]),
         )
         .arg(
             Arg::with_name("short-shell")
@@ -159,11 +160,10 @@ fn main() {
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
     let mut fail = Fail::new();
+    elems.set_theme(theme::Theme::hydrogen(), &mut fail);
 
-    // longest_key() is used to determine how to
-    // automatically space the keys, separator and values
     if !matches.is_present("theme") {
-        elems.set_longest_key(&mut fail);
+        elems.theme.misc.longest_key = elems.longest_key(&mut fail);
     }
 
     // Instantiate Macchina's default behavior, i.e:
@@ -177,18 +177,18 @@ fn main() {
         opts.palette_status = true;
     }
     if matches.is_present("padding") {
-        elems.set_left_padding_to(matches.value_of("padding").unwrap().parse().unwrap());
+        elems.theme.misc.padding = matches.value_of("padding").unwrap().parse().unwrap();
     }
     if matches.is_present("spacing") {
-        elems.set_spacing(matches.value_of("spacing").unwrap().parse().unwrap());
+        elems.theme.misc.spacing = matches.value_of("spacing").unwrap().parse().unwrap();
     }
     if matches.is_present("color") {
         let color: Color = choose_color(matches.value_of("color").unwrap());
-        elems.set_color(color);
+        elems.theme.misc.color = color;
     }
     if matches.is_present("separator-color") {
         let color: Color = choose_color(matches.value_of("separator-color").unwrap());
-        elems.set_separator_color(color);
+        elems.theme.misc.separator_color = color;
     }
     if matches.is_present("short-shell") {
         opts.shell_shorthand = true;
@@ -197,11 +197,11 @@ fn main() {
         opts.uptime_shorthand = true;
     }
     if matches.is_present("no-color") {
-        elems.set_color(Color::White);
-        elems.set_separator_color(Color::White);
+        elems.theme.misc.color = Color::White;
+        elems.theme.misc.separator_color = Color::White;
     }
     if matches.is_present("bar") {
-        elems.enable_bar();
+        opts.bar_status = true;
     }
     if matches.is_present("hide") {
         let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
@@ -228,16 +228,16 @@ fn main() {
         std::process::exit(0);
     }
     if matches.is_present("random-color") {
-        elems.set_color(display::randomize_color());
+        elems.theme.misc.color = display::randomize_color();
     }
     if matches.is_present("random-sep-color") {
-        elems.set_separator_color(display::randomize_color());
+        elems.theme.misc.separator_color = display::randomize_color();
     }
     if matches.is_present("theme") {
-        if matches.value_of("theme").unwrap() == "alt" {
-            elems.set_theme_alt(&mut fail);
-        } else if matches.value_of("theme").unwrap() == "long" {
-            elems.set_theme_long(&mut fail);
+        if matches.value_of("theme").unwrap() == "He" {
+            elems.set_theme(theme::Theme::helium(), &mut fail)
+        } else if matches.value_of("theme").unwrap() == "Li" {
+            elems.set_theme(theme::Theme::lithium(), &mut fail)
         }
     }
 
