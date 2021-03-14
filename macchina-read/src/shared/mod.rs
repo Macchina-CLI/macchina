@@ -254,7 +254,7 @@ pub(crate) fn cpu_model_name() -> String {
 }
 
 /// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 pub(crate) fn get_meminfo_value(value: &str) -> u64 {
     let file = fs::File::open("/proc/meminfo");
     match file {

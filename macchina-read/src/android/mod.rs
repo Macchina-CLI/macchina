@@ -50,8 +50,8 @@ impl BatteryReadout for AndroidBatteryReadout {
 impl KernelReadout for AndroidKernelReadout {
     fn new() -> Self {
         AndroidKernelReadout {
-            os_release_ctl: Ctl::new("kernel.osrelease").ok(),
-            os_type_ctl: Ctl::new("kernel.ostype").ok(),
+            os_release_ctl: Ctl::new("kernel/osrelease").ok(),
+            os_type_ctl: Ctl::new("kernel/ostype").ok(),
         }
     }
 
@@ -150,6 +150,7 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> {
+
         // Err(ReadoutError::MetricNotAvailable)
         crate::shared::shell(shorthand)
     }
@@ -160,6 +161,9 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn uptime(&self) -> Result<String, ReadoutError> {
+        // boot=$(date -d"$(uptime -s)" +%s)
+        // now=$(date +%s)
+        // s=$((now - boot))
         Err(ReadoutError::MetricNotAvailable)
         // crate::shared::uptime()
     }
@@ -171,43 +175,37 @@ impl MemoryReadout for AndroidMemoryReadout {
     }
 
     fn total(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::get_meminfo_value("MemTotal"))
+        Ok(crate::shared::get_meminfo_value("MemTotal"))
     }
 
     fn free(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::get_meminfo_value("MemFree"))
+        Ok(crate::shared::get_meminfo_value("MemFree"))
     }
 
     fn buffers(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::get_meminfo_value("Buffers"))
+        Ok(crate::shared::get_meminfo_value("Buffers"))
     }
 
     fn cached(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::get_meminfo_value("^Cached"))
+        Ok(crate::shared::get_meminfo_value("^Cached"))
     }
 
     fn reclaimable(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::get_meminfo_value("SReclaimable"))
+        Ok(crate::shared::get_meminfo_value("SReclaimable"))
     }
 
     fn used(&self) -> Result<u64, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // let total = self.total().unwrap();
-        // let free = self.free().unwrap();
-        // let cached = self.cached().unwrap();
-        // let reclaimable = self.reclaimable().unwrap();
-        // let buffers = self.buffers().unwrap();
-//
-        // if reclaimable != 0 {
-            // return Ok(total - free - cached - reclaimable - buffers);
-        // }
-//
-        // Ok(total - free - cached - buffers)
+        let total = self.total().unwrap();
+        let free = self.free().unwrap();
+        let cached = self.cached().unwrap();
+        let reclaimable = self.reclaimable().unwrap();
+        let buffers = self.buffers().unwrap();
+
+        if reclaimable != 0 {
+            return Ok(total - free - cached - reclaimable - buffers);
+        }
+
+        Ok(total - free - cached - buffers)
     }
 }
 
@@ -260,9 +258,18 @@ impl PackageReadout for AndroidPackageReadout {
                 .stdout
                 .expect("ERROR: failed to open \"dpkg\" stdout");
 
+            let grep_output = Command::new("grep")
+                .arg("ii")
+                .stdin(Stdio::from(dpkg_output))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to spawn \"grep\" process")
+                .stdout
+                .expect("ERROR: failed to read \"grep\" stdout");
+
             let count = Command::new("wc")
                 .arg("-l")
-                .stdin(Stdio::from(dpkg_output))
+                .stdin(Stdio::from(grep_output))
                 .stdout(Stdio::piped())
                 .spawn()
                 .expect("ERROR: failed to spawn \"wc\" process");
@@ -271,7 +278,7 @@ impl PackageReadout for AndroidPackageReadout {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
             return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
+                .expect("ERROR: \"dpkg -l | grep ii |  wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         }
