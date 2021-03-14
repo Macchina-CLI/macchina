@@ -37,7 +37,16 @@ cfg_if! {
         pub type GeneralReadout = windows::WindowsGeneralReadout;
         pub type ProductReadout = windows::WindowsProductReadout;
         pub type PackageReadout = windows::WindowsPackageReadout;
-    } else {
+    } else if #[cfg(target_os = "android")] {
+        mod android;
+
+        pub type BatteryReadout = android::AndroidBatteryReadout;
+        pub type KernelReadout = android::AndroidKernelReadout;
+        pub type MemoryReadout = android::AndroidMemoryReadout;
+        pub type GeneralReadout = android::AndroidGeneralReadout;
+        pub type ProductReadout = android::AndroidProductReadout;
+        pub type PackageReadout = android::AndroidPackageReadout;
+        } else {
         compiler_error!("This OS is currently not supported by macchina.");
     }
 }

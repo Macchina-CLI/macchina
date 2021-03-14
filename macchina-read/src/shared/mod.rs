@@ -5,19 +5,16 @@ use std::ffi::CStr;
 use std::io::Error;
 use std::path::Path;
 
-#[cfg(any(target_os = "linux", target_os = "macos"))]
+#[cfg(any(target_os = "linux", target_os = "macos", target_os = "android"))]
 use sysctl::SysctlError;
 
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use crate::extra;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use nix::unistd;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::process::{Command, Stdio};
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::{env, fs};
 
 impl From<std::io::Error> for ReadoutError {
@@ -127,7 +124,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 }
 
 /// Read current terminal name using `ps`
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
