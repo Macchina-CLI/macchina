@@ -1,9 +1,5 @@
 use cfg_if::cfg_if;
 
-#[cfg(target_os = "macos")]
-#[macro_use]
-extern crate objc;
-
 cfg_if! {
     if #[cfg(target_os = "linux")] {
         mod linux;
