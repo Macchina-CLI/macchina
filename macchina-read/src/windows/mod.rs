@@ -1,4 +1,3 @@
-use crate::traits::ReadoutError::MetricNotAvailable;
 use crate::traits::*;
 use crate::windows::bindings::windows::win32::system_services::PSTR;
 

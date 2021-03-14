@@ -9,10 +9,13 @@ use sysctl::SysctlError;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use crate::extra;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use nix::unistd;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::process::{Command, Stdio};
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::{env, fs};
 
@@ -22,6 +25,7 @@ impl From<std::io::Error> for ReadoutError {
     }
 }
 
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 impl From<SysctlError> for ReadoutError {
     fn from(e: SysctlError) -> Self {
         ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
