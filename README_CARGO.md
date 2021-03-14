@@ -35,13 +35,22 @@ _Macchina_ is pretty fast, see for yourself!
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 - Hiding elements with `--hide` significantly improves speed
 
-## Linux
+## 🐧 Linux
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
 | `macchina` | 34.3 ± 0.8 | 32.9 | 35.9 | 1.00 |
 | `neofetch` | 369.0 ± 3.3 | 362.9 | 376.1 | 10.77 ± 0.26 |
 
 __Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
+
+## 👩🏽‍💻 macOS
+
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `macchina` | 5.0 ± 0.2 | 4.7 | 5.9 | 1.00 |
+| `neofetch` | 484.5 ± 4.3 | 477.2 | 492.3 | 97.10 ± 3.84 |
+
+__Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
 ---
 
