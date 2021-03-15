@@ -4,14 +4,16 @@ use nix::unistd;
 use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
-use sysctl::{Ctl, Sysctl};
+use libc;
+use std::cell::UnsafeCell;
+use android_properties::AndroidProperty;
 
 pub struct AndroidBatteryReadout;
 
-pub struct AndroidKernelReadout {
+pub struct AndroidKernelReadout;/* {
     os_release_ctl: Option<Ctl>,
     os_type_ctl: Option<Ctl>,
-}
+}*/
 
 pub struct AndroidGeneralReadout;
 
@@ -49,26 +51,28 @@ impl BatteryReadout for AndroidBatteryReadout {
 
 impl KernelReadout for AndroidKernelReadout {
     fn new() -> Self {
-        AndroidKernelReadout {
-            os_release_ctl: Ctl::new("kernel/osrelease").ok(),
+        AndroidKernelReadout/* {
+            os_release_prop: AndroidProperty::new("").ok(),
             os_type_ctl: Ctl::new("kernel/ostype").ok(),
-        }
+        }*/
     }
 
     fn os_release(&self) -> Result<String, ReadoutError> {
-        Ok(self
-            .os_release_ctl
-            .as_ref()
-            .ok_or(ReadoutError::MetricNotAvailable)?
-            .value_string()?)
+        Err(ReadoutError::MetricNotAvailable)
+        // Ok(self
+            // .os_release_ctl
+            // .as_ref()
+            // .ok_or(ReadoutError::MetricNotAvailable)?
+            // .value_string()?)
     }
 
     fn os_type(&self) -> Result<String, ReadoutError> {
-        Ok(self
-            .os_type_ctl
-            .as_ref()
-            .ok_or(ReadoutError::MetricNotAvailable)?
-            .value_string()?)
+        Err(ReadoutError::MetricNotAvailable)
+        // Ok(self
+            // .os_type_ctl
+            // .as_ref()
+            // .ok_or(ReadoutError::MetricNotAvailable)?
+            // .value_string()?)
     }
 }
 
@@ -80,21 +84,10 @@ impl GeneralReadout for AndroidGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         let product_readout = AndroidProductReadout::new();
 
-        let name = product_readout.name()?;
-        let family = product_readout.family().unwrap_or_default();
-        let version = product_readout.version().unwrap_or_default();
+        let vendor = product_readout.vendor().unwrap_or_default();
+        let name = product_readout.name().unwrap_or_default();
 
-        if family == name && family == version {
-            return Ok(family);
-        } else if version.is_empty() || version.len() <= 15 {
-            let vendor = product_readout.vendor().unwrap_or_default();
-
-            if !vendor.is_empty() {
-                return Ok(format!("{} {} {}", vendor, family, name));
-            }
-        }
-
-        Ok(version)
+        Ok(format!("{} {}", vendor, name))
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
@@ -117,42 +110,44 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> {
-        // getprop ro.build.version.release
-        let release = Command::new("getprop")
-            .arg("ro.build.version.release")
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("ERROR: failed to spawn \"getprop\" process");
+        let product_readout = AndroidProductReadout::new();
 
-        let output = release
-            .wait_with_output()
-            .expect("ERROR: failed to wait for \"getprop ro.build.version.release\" process to exit");
+        let product = product_readout.product().unwrap_or_default();
+        let version = product_readout.version().unwrap_or_default();
 
-        let version = String::from_utf8(output.stdout)
-            .expect("ERROR: \"getprop ro.build.version.release\" output was not valid UTF-8");
-
-        Ok(format!("Android {}", version))
+        Ok(format!("{} {}", product, version))
     }
 
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
         Err(ReadoutError::MetricNotAvailable)
-        // crate::shared::desktop_environment()
     }
 
     fn window_manager(&self) -> Result<String, ReadoutError> {
         Err(ReadoutError::MetricNotAvailable)
-        // crate::shared::window_manager()
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        // Err(ReadoutError::MetricNotAvailable)
-        crate::shared::terminal()
+        if let Ok(terminal_env) = std::env::var("TERM") {
+            return Ok(terminal_env);
+        }
+
+        //TODO check common terminal software like termux.
+        Err(ReadoutError::MetricNotAvailable)
     }
 
     fn shell(&self, shorthand: bool) -> Result<String, ReadoutError> {
+        if let Ok(path) = std::env::var("SHELL") {
+            if shorthand {
+                let path = Path::new(&path);
+                return Ok(path.file_stem().unwrap().to_str().unwrap().into());
+            }
 
-        // Err(ReadoutError::MetricNotAvailable)
-        crate::shared::shell(shorthand)
+            return Ok(path);
+        }
+
+        Err(ReadoutError::Other(String::from(
+            "Unable to read shell for current user.",
+        )))
     }
 
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
@@ -161,11 +156,23 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn uptime(&self) -> Result<String, ReadoutError> {
-        // boot=$(date -d"$(uptime -s)" +%s)
-        // now=$(date +%s)
-        // s=$((now - boot))
-        Err(ReadoutError::MetricNotAvailable)
-        // crate::shared::uptime()
+        use std::time::{Duration, Instant};
+
+        let mut time = libc::timespec {
+            tv_sec: 0,
+            tv_nsec: 0,
+        };
+        let ret = unsafe { libc::clock_gettime(libc::CLOCK_BOOTTIME, &mut time) };
+
+        if ret != 0 {
+            return Err(ReadoutError::Other(String::from(
+              "ERROR: failed to get boot time."
+            )));
+        }
+
+        let duration = Duration::new(time.tv_sec as u64, time.tv_nsec as u32);
+
+        Ok(duration.as_secs_f64().to_string())
     }
 }
 
@@ -214,32 +221,33 @@ impl ProductReadout for AndroidProductReadout {
         AndroidProductReadout
     }
 
-    fn version(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(extra::pop_newline(fs::read_to_string(
-            // "/sys/class/dmi/id/product_version",
-        // )?))
-    }
-
     fn vendor(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(extra::pop_newline(fs::read_to_string(
-            // "/sys/class/dmi/id/sys_vendor",
-        // )?))
+        Ok(extra::ucfirst(AndroidProperty::new("ro.product.manufacturer")
+            .value()
+            .unwrap_or_default()
+        ))
     }
 
     fn family(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(extra::pop_newline(fs::read_to_string(
-            // "/sys/class/dmi/id/product_family",
-        // )?))
+        Ok(String::from("Linux, Android"))
     }
 
     fn name(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(extra::pop_newline(fs::read_to_string(
-            // "/sys/class/dmi/id/product_name",
-        // )?))
+        Ok(AndroidProperty::new("ro.product.model")
+            .value()
+            .unwrap_or_default()
+        )
+    }
+
+    fn version(&self) -> Result<String, ReadoutError> {
+        Ok(AndroidProperty::new("ro.build.version.release")
+            .value()
+            .unwrap_or_default()
+        )
+    }
+
+    fn product(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Android"))
     }
 }
 

@@ -5,12 +5,12 @@ use std::ffi::CStr;
 use std::io::Error;
 use std::path::Path;
 
-#[cfg(any(target_os = "linux", target_os = "macos", target_os = "android"))]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 use sysctl::SysctlError;
 
-#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use crate::extra;
-#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use nix::unistd;
 #[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::process::{Command, Stdio};
@@ -124,7 +124,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 }
 
 /// Read current terminal name using `ps`
-#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
