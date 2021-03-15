@@ -1,4 +1,5 @@
-use crate::{bars, format, DEFAULT_COLOR, DEFAULT_PADDING, DEFAULT_SEPARATOR_COLOR, READOUTS};
+use crate::theme::{HydrogenTheme, ReadoutKey};
+use crate::{bars, format, theme::Theme, READOUTS};
 use colored::{Color, Colorize};
 use macchina_read::traits::{GeneralReadout, KernelReadout, PackageReadout};
 use rand::Rng;
@@ -147,6 +148,7 @@ impl Fail {
 /// can alter using the program's arguments like displaying
 /// the palette and enabling shell and uptime shorthand.
 pub struct Options {
+    pub bar_status: bool,
     pub palette_status: bool,
     pub shell_shorthand: bool,
     pub uptime_shorthand: bool,
@@ -155,6 +157,7 @@ pub struct Options {
 impl Options {
     pub fn new() -> Options {
         Options {
+            bar_status: false,
             palette_status: false,
             shell_shorthand: false,
             uptime_shorthand: false,
@@ -162,17 +165,15 @@ impl Options {
     }
 }
 
-/// A `Pair` is simply two strings: `key` and `value` (and the pair's visibility: boolean)
+/// A `Pair` is simply two fields: `value` and `visibility`
 pub struct Pair {
-    key: String,
     value: String,
     hidden: bool,
 }
 
 impl Pair {
-    fn new(k: String) -> Pair {
+    fn new() -> Pair {
         Pair {
-            key: k,
             value: String::new(),
             hidden: false,
         }
@@ -183,47 +184,11 @@ impl Pair {
             self.value = value;
         }
     }
-    fn update_key(&mut self, val: &str) {
-        self.key = val.to_string();
-    }
 }
 
 impl fmt::Display for Pair {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.key)
-    }
-}
-
-/// `Format` contains any visible element that is not a `Pair`,
-/// such as the separator and bar glyph. \
-/// It also contains several other components, e.g. color, spacing, padding, etc.
-pub struct Format {
-    separator: String,
-    bar: bool,
-    bar_glyph: String,
-    padding: String,
-    pub longest_key: String,
-    color: colored::Color,
-    bracket_open: char,
-    bracket_close: char,
-    spacing: usize,
-    separator_color: colored::Color,
-}
-
-impl Format {
-    fn new() -> Format {
-        Format {
-            separator: String::from("—"),
-            bar: false,
-            bar_glyph: String::from("●"),
-            bracket_open: '(',
-            bracket_close: ')',
-            padding: " ".repeat(DEFAULT_PADDING),
-            color: DEFAULT_COLOR,
-            separator_color: DEFAULT_SEPARATOR_COLOR,
-            spacing: 1,
-            longest_key: String::new(),
-        }
+        write!(f, "{}", self.value)
     }
 }
 
@@ -232,21 +197,21 @@ impl Format {
 /// key color, bar glyph, etc. which are part \
 /// of the `Format` struct.
 pub struct Elements {
-    pub host: Pair,
-    pub distro: Pair,
-    pub desktop_env: Pair,
-    pub window_man: Pair,
-    pub machine: Pair,
-    pub kernel: Pair,
-    pub os: Pair,
-    pub packages: Pair,
-    pub shell: Pair,
-    pub terminal: Pair,
-    pub cpu: Pair,
-    pub memory: Pair,
-    pub uptime: Pair,
-    pub battery: Pair,
-    pub format: Format,
+    host: Pair,
+    machine: Pair,
+    kernel: Pair,
+    distribution: Pair,
+    operating_system: Pair,
+    desktop_environment: Pair,
+    window_manager: Pair,
+    packages: Pair,
+    shell: Pair,
+    terminal: Pair,
+    uptime: Pair,
+    processor: Pair,
+    memory: Pair,
+    battery: Pair,
+    pub theme: Box<dyn Theme>,
 }
 
 impl Elements {
@@ -254,137 +219,84 @@ impl Elements {
     /// as the value is assigned to an element when it is about to be printed.
     pub fn new() -> Elements {
         Elements {
-            host: Pair::new(String::from("Host")),
-            machine: Pair::new(String::from("Machine")),
-            distro: Pair::new(String::from("Distro")),
-            desktop_env: Pair::new(String::from("DE")),
-            window_man: Pair::new(String::from("WM")),
-            kernel: Pair::new(String::from("Kernel")),
-            os: Pair::new(String::from("OS")),
-            packages: Pair::new(String::from("Packages")),
-            shell: Pair::new(String::from("Shell")),
-            terminal: Pair::new(String::from("Terminal")),
-            cpu: Pair::new(String::from("CPU")),
-            memory: Pair::new(String::from("Memory")),
-            uptime: Pair::new(String::from("Uptime")),
-            battery: Pair::new(String::from("Battery")),
-            format: Format::new(),
+            theme: HydrogenTheme::new(),
+            host: Pair::new(),
+            machine: Pair::new(),
+            kernel: Pair::new(),
+            distribution: Pair::new(),
+            operating_system: Pair::new(),
+            desktop_environment: Pair::new(),
+            window_manager: Pair::new(),
+            packages: Pair::new(),
+            shell: Pair::new(),
+            terminal: Pair::new(),
+            uptime: Pair::new(),
+            processor: Pair::new(),
+            memory: Pair::new(),
+            battery: Pair::new(),
         }
-    }
-    /// Modifies some of `Elements` fields to change Macchina's appearance.
-    pub fn set_theme_alt(&mut self, fail: &mut Fail) {
-        self.format.separator = String::from("=>");
-        self.format.bar_glyph = String::from("■");
-        self.format.bracket_open = '[';
-        self.format.bracket_close = ']';
-        self.host.update_key("Hos");
-        self.machine.update_key("Mac");
-        self.distro.update_key("Dis");
-        self.desktop_env.update_key("Des");
-        self.window_man.update_key("Win");
-        self.kernel.update_key("Ker");
-        self.packages.update_key("Pac");
-        self.shell.update_key("She");
-        self.terminal.update_key("Ter");
-        self.cpu.update_key("Pro");
-        self.memory.update_key("Mem");
-        self.uptime.update_key("Upt");
-        self.battery.update_key("Bat");
-        self.set_longest_key(fail);
-    }
-    /// Modifies some of `Elements` fields to change Macchina's appearance.
-    pub fn set_theme_long(&mut self, fail: &mut Fail) {
-        self.format.separator = String::from("~");
-        self.host.update_key("Host");
-        self.machine.update_key("Machine");
-        self.distro.update_key("Distribution");
-        self.desktop_env.update_key("Desktop Environment");
-        self.window_man.update_key("Window Manager");
-        self.kernel.update_key("Kernel");
-        self.os.update_key("Operating System");
-        self.packages.update_key("Packages");
-        self.shell.update_key("Shell");
-        self.terminal.update_key("Terminal");
-        self.cpu.update_key("Processor");
-        self.memory.update_key("Memory");
-        self.uptime.update_key("Uptime");
-        self.battery.update_key("Battery");
-        self.set_longest_key(fail);
-    }
-    /// Set the key color to the specified color.
-    pub fn set_color(&mut self, c: Color) {
-        self.format.color = c;
-    }
-    /// Set the separator color to the specified color.
-    pub fn set_separator_color(&mut self, c: Color) {
-        self.format.separator_color = c;
-    }
-    /// Set the left padding to the specified amount.
-    pub fn set_left_padding_to(&mut self, amount: usize) {
-        self.format.padding = " ".repeat(amount)
-    }
-    pub fn set_longest_key(&mut self, fail: &mut Fail) {
-        self.format.longest_key = self.longest_key(fail);
-    }
-    pub fn set_spacing(&mut self, v: usize) {
-        self.format.spacing = v;
-    }
-    /// Turns values into bars for
-    /// elements that support it (memory and battery)
-    pub fn enable_bar(&mut self) {
-        self.format.bar = true;
     }
     /// Determines which of the elements is the longest key to determine
     /// how to autospace them.
     pub fn longest_key(&mut self, fail: &mut Fail) -> String {
         let mut keys: Vec<String> = Vec::new();
+        let abbrev = self.theme.default_abbreviation();
         if !self.host.hidden {
-            keys.push(self.host.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Host, abbrev).to_string());
         }
         if !self.machine.hidden {
-            keys.push(self.machine.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Machine, abbrev).to_string());
         }
         if !self.kernel.hidden {
-            keys.push(self.kernel.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Kernel, abbrev).to_string());
         }
-        if !self.os.hidden {
-            keys.push(self.os.key.clone());
-        }
-        if !self.distro.hidden {
-            keys.push(self.distro.key.clone());
+        if !self.distribution.hidden {
+            keys.push(self.theme.key(ReadoutKey::Distribution, abbrev).to_string());
         }
         if !self.packages.hidden {
-            keys.push(self.packages.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Packages, abbrev).to_string());
         }
         if !self.shell.hidden {
-            keys.push(self.shell.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Shell, abbrev).to_string());
         }
         if !self.terminal.hidden {
-            keys.push(self.terminal.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Terminal, abbrev).to_string());
         }
-        if !self.cpu.hidden {
-            keys.push(self.cpu.key.clone());
+        if !self.processor.hidden {
+            keys.push(self.theme.key(ReadoutKey::Processor, abbrev).to_string());
         }
         if !self.uptime.hidden {
-            keys.push(self.uptime.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Uptime, abbrev).to_string());
         }
         if !self.memory.hidden {
-            keys.push(self.memory.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Memory, abbrev).to_string());
         }
         if !self.battery.hidden {
-            keys.push(self.battery.key.clone());
+            keys.push(self.theme.key(ReadoutKey::Battery, abbrev).to_string());
         }
         if let Some(true) = self.is_running_wm_only(fail, false) {
-            keys.push(self.window_man.key.clone());
+            keys.push(
+                self.theme
+                    .key(ReadoutKey::WindowManager, abbrev)
+                    .to_string(),
+            );
         } else {
-            if !self.desktop_env.hidden {
-                keys.push(self.desktop_env.key.clone());
+            if !self.desktop_environment.hidden {
+                keys.push(
+                    self.theme
+                        .key(ReadoutKey::DesktopEnvironment, abbrev)
+                        .to_string(),
+                );
             }
-            if !self.window_man.hidden {
-                keys.push(self.desktop_env.key.clone());
+            if !self.window_manager.hidden {
+                keys.push(
+                    self.theme
+                        .key(ReadoutKey::DesktopEnvironment, abbrev)
+                        .to_string(),
+                );
             }
         }
-        let mut longest_key = keys[0].clone();
+        let mut longest_key = keys[0].to_string();
         for val in keys {
             if val.len() > longest_key.len() {
                 longest_key = val;
@@ -394,23 +306,22 @@ impl Elements {
     }
 
     /// Returns the amount of spacing needed to properly center the `separator` across each line.
-    pub fn calc_spacing(&self, current_key: &str, longest_key: &str) -> usize {
-        (longest_key.len() + self.format.spacing) - current_key.len()
+    pub fn calc_spacing(&self, current_key: &str) -> usize {
+        (self.theme.misc().longest_key.len() + self.theme.misc().spacing) - current_key.len()
     }
 
     /// Hide every element.
     pub fn hide_all(&mut self) {
         self.host.hidden = true;
         self.machine.hidden = true;
-        self.distro.hidden = true;
-        self.desktop_env.hidden = true;
-        self.window_man.hidden = true;
+        self.desktop_environment.hidden = true;
+        self.window_manager.hidden = true;
         self.kernel.hidden = true;
-        self.os.hidden = true;
+        self.distribution.hidden = true;
         self.packages.hidden = true;
         self.shell.hidden = true;
         self.terminal.hidden = true;
-        self.cpu.hidden = true;
+        self.processor.hidden = true;
         self.uptime.hidden = true;
         self.memory.hidden = true;
         self.battery.hidden = true;
@@ -441,12 +352,12 @@ impl Elements {
         }
 
         match READOUTS.general.desktop_environment() {
-            Ok(env) => self.desktop_env.modify(Some(env)),
+            Ok(env) => self.desktop_environment.modify(Some(env)),
             Err(_) => fail.desktop_env.fail_component(),
         }
 
         match READOUTS.general.window_manager() {
-            Ok(wm) => self.window_man.modify(Some(wm)),
+            Ok(wm) => self.window_manager.modify(Some(wm)),
             Err(_) => fail.window_man.fail_component(),
         }
 
@@ -499,18 +410,23 @@ impl Elements {
         };
 
         if window_manager.to_uppercase() == desktop_env.to_uppercase() && apply {
-            fail.desktop_env.failed = true;
+            fail.desktop_env.fail_component();
             return Some(true);
         }
 
         Some(false)
     }
+
+    pub fn set_theme(&mut self, theme: Box<dyn Theme>, fail: &mut Fail) {
+        self.theme = theme;
+        self.theme.misc_mut().longest_key = self.longest_key(fail);
+    }
 }
 
-/// This trait contains many functions whose purpose is to print elements found in the `Elements` struct.
+/// This trait contains functions whose purpose is to display elements found in the `Elements` struct.
 /// Most elements go through two checks before finally being printed to the terminal:
+/// - Confirming the element was not hidden using `--hide <element>`
 /// - Confirming the element has not failed to fetch
-/// - Confirm the element was not hidden using `--hide <element>`
 ///
 /// # Example
 /// ```
@@ -536,7 +452,7 @@ impl Elements {
 ///        );
 ///    }
 /// ```
-trait Printing {
+trait Display {
     /// Print host information.
     fn print_host(&mut self, fail: &mut Fail);
     /// Print product information.
@@ -544,13 +460,13 @@ trait Printing {
     /// Print kernel information.
     fn print_kernel(&mut self);
     /// Print operating system information.
-    fn print_os(&mut self);
+    fn print_operating_system(&mut self);
     /// Print the distribution name.
     fn print_distribution(&mut self, fail: &mut Fail);
     /// Print the desktop environment name.
-    fn print_desktop_env(&mut self, fail: &mut Fail);
+    fn print_desktop_environment(&mut self, fail: &mut Fail);
     /// Print the window manager name.
-    fn print_window_man(&mut self, fail: &mut Fail);
+    fn print_window_manager(&mut self, fail: &mut Fail);
     /// Print the number of installed packages.
     fn print_package_count(&mut self, fail: &mut Fail);
     /// Print the shell name/path.
@@ -562,16 +478,16 @@ trait Printing {
     /// Print the computer's uptime.
     fn print_uptime(&mut self, fail: &Fail);
     /// Print memory usage.
-    fn print_memory(&mut self);
+    fn print_memory(&mut self, opts: &Options);
     /// Print battery information.
-    fn print_battery(&mut self, fail: &mut Fail);
+    fn print_battery(&mut self, opts: &Options, fail: &mut Fail);
     /// Print a bar for elements that support it.
     fn print_bar(&self, blocks: usize);
     /// Print an 8 color palette.
     fn print_palette(&self, opts: &Options);
 }
 
-impl Printing for Elements {
+impl Display for Elements {
     fn print_host(&mut self, fail: &mut Fail) {
         if self.host.hidden {
             return;
@@ -587,14 +503,17 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.host.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.host.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Host),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Host, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.host.value
         );
     }
@@ -611,14 +530,17 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.machine.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.machine.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Machine),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Machine, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.machine.value
         );
     }
@@ -635,25 +557,28 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.kernel.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.kernel.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Kernel),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Kernel, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.kernel.value
         );
     }
 
-    fn print_os(&mut self) {
-        if self.os.hidden {
+    fn print_operating_system(&mut self) {
+        if self.operating_system.hidden {
             return;
         }
 
         match READOUTS.general.os_name() {
-            Ok(os) => self.os.modify(Some(os)),
+            Ok(os) => self.operating_system.modify(Some(os)),
             Err(_) => {
                 return;
             }
@@ -661,25 +586,26 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.os.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.os.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
-            self.os.value
+            self.theme.padding(),
+            self.theme
+                .key_to_colored_string(ReadoutKey::OperatingSystem),
+            " ".repeat(self.calc_spacing(&self.theme.key(
+                ReadoutKey::OperatingSystem,
+                self.theme.default_abbreviation()
+            ),)),
+            self.theme.misc().separator,
+            self.theme.spacing(),
+            self.operating_system.value
         );
     }
 
     fn print_distribution(&mut self, fail: &mut Fail) {
-        if self.distro.hidden {
+        if self.distribution.hidden {
             return;
         }
 
         match READOUTS.general.distribution() {
-            Ok(dist) => self.distro.modify(Some(dist)),
+            Ok(dist) => self.distribution.modify(Some(dist)),
             Err(_) => {
                 fail.distro.fail_component();
                 return;
@@ -688,25 +614,28 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.distro.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.distro.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
-            self.distro.value
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Distribution),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Distribution, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
+            self.distribution.value
         );
     }
 
-    fn print_desktop_env(&mut self, fail: &mut Fail) {
-        if self.desktop_env.hidden {
+    fn print_desktop_environment(&mut self, fail: &mut Fail) {
+        if self.desktop_environment.hidden {
             return;
         }
 
         match READOUTS.general.desktop_environment() {
-            Ok(env) => self.desktop_env.modify(Some(env)),
+            Ok(env) => self.desktop_environment.modify(Some(env)),
             Err(_) => {
                 fail.desktop_env.fail_component();
                 return;
@@ -719,25 +648,26 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.desktop_env.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.desktop_env.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
-            self.desktop_env.value
+            self.theme.padding(),
+            self.theme
+                .key_to_colored_string(ReadoutKey::DesktopEnvironment),
+            " ".repeat(self.calc_spacing(&self.theme.key(
+                ReadoutKey::DesktopEnvironment,
+                self.theme.default_abbreviation()
+            ))),
+            self.theme.misc().separator,
+            self.theme.spacing(),
+            self.desktop_environment.value
         );
     }
 
-    fn print_window_man(&mut self, fail: &mut Fail) {
-        if self.window_man.hidden {
+    fn print_window_manager(&mut self, fail: &mut Fail) {
+        if self.window_manager.hidden {
             return;
         }
 
         match READOUTS.general.window_manager() {
-            Ok(wm) => self.window_man.modify(Some(wm)),
+            Ok(wm) => self.window_manager.modify(Some(wm)),
             Err(_) => {
                 fail.window_man.fail_component();
                 return;
@@ -746,15 +676,18 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.window_man.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.window_man.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
-            self.window_man.value
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::WindowManager),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::WindowManager, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
+            self.window_manager.value
         );
     }
 
@@ -773,14 +706,17 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.packages.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.packages.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Packages),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Packages, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.packages.value
         );
     }
@@ -792,14 +728,17 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.shell.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.shell.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Shell),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Shell, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.shell.value
         );
     }
@@ -819,39 +758,45 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.terminal.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.terminal.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Terminal),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Terminal, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.terminal.value
         );
     }
 
     fn print_processor(&mut self) {
-        if self.cpu.hidden {
+        if self.processor.hidden {
             return;
         }
 
         match format::cpu() {
-            Ok(cpu) => self.cpu.modify(Some(cpu)),
-            Err(_) => self.cpu.modify(Some(String::from("Unknown"))),
+            Ok(cpu) => self.processor.modify(Some(cpu)),
+            Err(_) => self.processor.modify(Some(String::from("Unknown"))),
         }
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.cpu.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.cpu.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
-            self.cpu.value
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Processor),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Processor, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
+            self.processor.value
         );
     }
 
@@ -862,24 +807,27 @@ impl Printing for Elements {
 
         println!(
             "{}{}{}{}{}{}",
-            self.format.padding,
-            self.uptime.key.color(self.format.color).bold(),
-            " ".repeat(self.calc_spacing(&self.uptime.key, &self.format.longest_key)),
-            self.format
-                .separator
-                .color(self.format.separator_color)
-                .bold(),
-            " ".repeat(self.format.spacing),
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::Uptime),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Uptime, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
+            self.theme.spacing(),
             self.uptime.value
         );
     }
 
-    fn print_memory(&mut self) {
+    fn print_memory(&mut self, opts: &Options) {
         if self.memory.hidden {
             return;
         }
 
-        if self.format.bar {
+        if opts.bar_status {
             match bars::memory() {
                 Ok(mem) => self.memory.modify(Some(mem.to_string())),
                 Err(_) => self.memory.modify(Some(String::from("0"))),
@@ -891,36 +839,42 @@ impl Printing for Elements {
             }
         }
 
-        if self.format.bar {
+        if opts.bar_status {
             print!(
                 "{}{}{}{}{}",
-                self.format.padding,
-                self.memory.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
+                self.theme.padding(),
+                self.theme.key_to_colored_string(ReadoutKey::Memory),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Memory, self.theme.default_abbreviation())
+                    )
+                ),
+                self.theme.misc().separator,
+                self.theme.spacing(),
             );
-            Printing::print_bar(self, self.memory.value.parse().unwrap());
+            Self::print_bar(self, self.memory.value.parse().unwrap());
         } else {
             println!(
                 "{}{}{}{}{}{}",
-                self.format.padding,
-                self.memory.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.memory.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
+                self.theme.padding(),
+                self.theme.key_to_colored_string(ReadoutKey::Memory),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Memory, self.theme.default_abbreviation())
+                    )
+                ),
+                self.theme.misc().separator,
+                self.theme.spacing(),
                 self.memory.value
             );
         }
     }
 
-    fn print_battery(&mut self, fail: &mut Fail) {
+    fn print_battery(&mut self, opts: &Options, fail: &mut Fail) {
         if self.battery.hidden {
             return;
         }
@@ -933,68 +887,74 @@ impl Printing for Elements {
             }
         }
 
-        if self.format.bar {
+        if opts.bar_status {
             print!(
                 "{}{}{}{}{}",
-                self.format.padding,
-                self.battery.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
+                self.theme.padding(),
+                self.theme.key_to_colored_string(ReadoutKey::Battery),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Battery, self.theme.default_abbreviation())
+                    )
+                ),
+                self.theme.misc().separator,
+                self.theme.spacing(),
             );
 
-            Printing::print_bar(self, bars::battery().unwrap_or(0));
+            Self::print_bar(self, bars::battery().unwrap_or(0));
         } else {
             println!(
                 "{}{}{}{}{}{}",
-                self.format.padding,
-                self.battery.key.color(self.format.color).bold(),
-                " ".repeat(self.calc_spacing(&self.battery.key, &self.format.longest_key)),
-                self.format
-                    .separator
-                    .color(self.format.separator_color)
-                    .bold(),
-                " ".repeat(self.format.spacing),
+                self.theme.padding(),
+                self.theme.key_to_colored_string(ReadoutKey::Battery),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Battery, self.theme.default_abbreviation())
+                    )
+                ),
+                self.theme.misc().separator,
+                self.theme.spacing(),
                 self.battery.value
             );
         }
     }
 
     fn print_bar(&self, blocks: usize) {
-        match &self.format.color {
+        match self.theme.misc().color {
             Color::White => match blocks {
                 10 => println!(
                     "{} {}{} {}",
-                    self.format.bracket_open,
-                    colored_glyphs(self, blocks).color(self.format.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks).hidden(),
-                    self.format.bracket_close
+                    self.theme.bar().symbol_close,
                 ),
                 _ => println!(
                     "{} {} {} {}",
-                    self.format.bracket_open,
-                    colored_glyphs(self, blocks).color(self.format.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks).hidden(),
-                    self.format.bracket_close
+                    self.theme.bar().symbol_close,
                 ),
             },
             _ => match blocks {
                 10 => println!(
                     "{} {}{} {}",
-                    self.format.bracket_open,
-                    colored_glyphs(self, blocks).color(self.format.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks),
-                    self.format.bracket_close
+                    self.theme.bar().symbol_close,
                 ),
                 _ => println!(
                     "{} {} {} {}",
-                    self.format.bracket_open,
-                    colored_glyphs(self, blocks).color(self.format.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks),
-                    self.format.bracket_close
+                    self.theme.bar().symbol_close,
                 ),
             },
         }
@@ -1005,7 +965,7 @@ impl Printing for Elements {
             println!();
             println!(
                 "{}{}{}{}{}{}{}{}{}",
-                self.format.padding,
+                self.theme.padding(),
                 "   ".on_bright_black(),
                 "   ".on_bright_red(),
                 "   ".on_bright_green(),
@@ -1026,17 +986,17 @@ pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
     elems.print_host(fail);
     elems.print_machine();
     elems.print_kernel();
-    elems.print_os();
+    elems.print_operating_system();
     elems.print_distribution(fail);
-    elems.print_desktop_env(fail);
-    elems.print_window_man(fail);
+    elems.print_desktop_environment(fail);
+    elems.print_window_manager(fail);
     elems.print_package_count(fail);
     elems.print_shell(fail);
     elems.print_terminal(fail);
     elems.print_uptime(fail);
     elems.print_processor();
-    elems.print_memory();
-    elems.print_battery(fail);
+    elems.print_memory(opts);
+    elems.print_battery(opts, fail);
     elems.print_palette(opts);
 }
 
@@ -1047,48 +1007,54 @@ pub fn debug(fail: &mut Fail) {
 
 /// Hide one or more elements e.g. package count, uptime etc. when `--hide <element>` is present.
 pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
+    // We hide the keys the user asked to hide
     elems.host.hidden = hide_parameters.contains(&"host");
     elems.machine.hidden = hide_parameters.contains(&"mach");
-    elems.distro.hidden = hide_parameters.contains(&"distro");
-    elems.desktop_env.hidden = hide_parameters.contains(&"de");
-    elems.window_man.hidden = hide_parameters.contains(&"wm");
+    elems.distribution.hidden = hide_parameters.contains(&"distro");
+    elems.operating_system.hidden = !hide_parameters.contains(&"os");
+    elems.desktop_environment.hidden = hide_parameters.contains(&"de");
+    elems.window_manager.hidden = hide_parameters.contains(&"wm");
     elems.kernel.hidden = hide_parameters.contains(&"kernel");
-    elems.os.hidden = hide_parameters.contains(&"os");
     elems.packages.hidden = hide_parameters.contains(&"pkgs");
     elems.shell.hidden = hide_parameters.contains(&"shell");
     elems.terminal.hidden = hide_parameters.contains(&"term");
-    elems.cpu.hidden = hide_parameters.contains(&"cpu");
+    elems.processor.hidden = hide_parameters.contains(&"cpu");
     elems.uptime.hidden = hide_parameters.contains(&"up");
     elems.memory.hidden = hide_parameters.contains(&"mem");
     elems.battery.hidden = hide_parameters.contains(&"bat");
 
-    elems.set_longest_key(fail);
+    // We don't know which keys the user has allowed to show, so we reset the longest key
+    elems.theme.misc_mut().longest_key = elems.longest_key(fail);
+    // Print everything
     print_info(elems, &options, fail);
 }
 
 /// Print only the specified elements e.g. package count, uptime etc. when `--show-only <element>` is present.
 pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
+    // We unhide the keys the user asked to show
     elems.host.hidden = !hide_parameters.contains(&"host");
     elems.machine.hidden = !hide_parameters.contains(&"mach");
-    elems.distro.hidden = !hide_parameters.contains(&"distro");
+    elems.distribution.hidden = !hide_parameters.contains(&"distro");
+    elems.operating_system.hidden = !hide_parameters.contains(&"os");
     elems.kernel.hidden = !hide_parameters.contains(&"kernel");
-    elems.os.hidden = !hide_parameters.contains(&"os");
     elems.packages.hidden = !hide_parameters.contains(&"pkgs");
     elems.shell.hidden = !hide_parameters.contains(&"shell");
     elems.terminal.hidden = !hide_parameters.contains(&"term");
-    elems.cpu.hidden = !hide_parameters.contains(&"cpu");
+    elems.processor.hidden = !hide_parameters.contains(&"cpu");
     elems.uptime.hidden = !hide_parameters.contains(&"up");
     elems.memory.hidden = !hide_parameters.contains(&"mem");
     elems.battery.hidden = !hide_parameters.contains(&"bat");
 
     if let Some(true) = elems.is_running_wm_only(fail, false) {
-        elems.desktop_env.hidden = hide_parameters.contains(&"de");
-        elems.window_man.hidden = !hide_parameters.contains(&"wm");
+        elems.desktop_environment.hidden = hide_parameters.contains(&"de");
+        elems.window_manager.hidden = !hide_parameters.contains(&"wm");
     } else {
-        elems.desktop_env.hidden = !hide_parameters.contains(&"de");
-        elems.window_man.hidden = !hide_parameters.contains(&"wm");
+        elems.desktop_environment.hidden = !hide_parameters.contains(&"de");
+        elems.window_manager.hidden = !hide_parameters.contains(&"wm");
     }
-    elems.set_longest_key(fail);
+
+    // We don't know which keys the user has allowed to show, so we reset the longest key
+    elems.theme.misc_mut().longest_key = elems.longest_key(fail);
     print_info(elems, &options, fail);
 }
 
@@ -1159,7 +1125,7 @@ pub fn help() {
         Macchina comes with multiple themes out of the box,
         to change the default theme, use \"--theme / -t <theme>\"
         Supported themes (case-sensitive):
-            alt and long.
+            H, He, Li.
 
     Hiding elements:
         To hide an element (or more), use \"--hide / -H <element>\"
@@ -1176,7 +1142,7 @@ pub fn help() {
 /// Return the correct amount of colored blocks: colored blocks are used blocks.
 ///
 pub fn colored_glyphs(elems: &Elements, block_count: usize) -> String {
-    let colored_glyphs = elems.format.bar_glyph.repeat(block_count);
+    let colored_glyphs = elems.theme.bar().glyph.repeat(block_count);
     colored_glyphs
         .chars()
         .collect::<Vec<char>>()
@@ -1188,7 +1154,7 @@ pub fn colored_glyphs(elems: &Elements, block_count: usize) -> String {
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks.
 pub fn colorless_glyphs(elems: &Elements, block_count: usize) -> String {
-    let colorless_glyphs = elems.format.bar_glyph.repeat(10 - block_count);
+    let colorless_glyphs = elems.theme.bar().glyph.repeat(10 - block_count);
     colorless_glyphs
         .chars()
         .collect::<Vec<char>>()
