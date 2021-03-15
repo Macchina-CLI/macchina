@@ -27,3 +27,4 @@ sysctl = "0.4.0"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = "0.4.0"
+winreg = "0.8.0"

@@ -218,6 +218,7 @@ dependencies = [
  "os-release",
  "sysctl",
  "windows",
+ "winreg",
 ]
 
 [[package]]
@@ -524,4 +525,13 @@ dependencies = [
  "squote",
  "syn",
  "windows_gen",
+]
+
+[[package]]
+name = "winreg"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d107f8c6e916235c4c01cabb3e8acf7bea8ef6a63ca2e7fa0527c049badfc48c"
+dependencies = [
+ "winapi",
 ]
