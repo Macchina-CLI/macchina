@@ -2,18 +2,19 @@ use crate::extra;
 use crate::traits::*;
 use nix::unistd;
 use std::fs;
+use std::io;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use libc;
 use std::cell::UnsafeCell;
 use android_properties::AndroidProperty;
+use uname::uname;
 
 pub struct AndroidBatteryReadout;
 
-pub struct AndroidKernelReadout;/* {
-    os_release_ctl: Option<Ctl>,
-    os_type_ctl: Option<Ctl>,
-}*/
+pub struct AndroidKernelReadout {
+    os_info: uname::Info,
+}
 
 pub struct AndroidGeneralReadout;
 
@@ -51,28 +52,17 @@ impl BatteryReadout for AndroidBatteryReadout {
 
 impl KernelReadout for AndroidKernelReadout {
     fn new() -> Self {
-        AndroidKernelReadout/* {
-            os_release_prop: AndroidProperty::new("").ok(),
-            os_type_ctl: Ctl::new("kernel/ostype").ok(),
-        }*/
+        AndroidKernelReadout {
+            os_info: uname().unwrap(),
+        }
     }
 
     fn os_release(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(self
-            // .os_release_ctl
-            // .as_ref()
-            // .ok_or(ReadoutError::MetricNotAvailable)?
-            // .value_string()?)
+        Ok(self.os_info.release.to_string())
     }
 
     fn os_type(&self) -> Result<String, ReadoutError> {
-        Err(ReadoutError::MetricNotAvailable)
-        // Ok(self
-            // .os_type_ctl
-            // .as_ref()
-            // .ok_or(ReadoutError::MetricNotAvailable)?
-            // .value_string()?)
+        Ok(self.os_info.sysname.to_string())
     }
 }
 
