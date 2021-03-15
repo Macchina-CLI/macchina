@@ -132,7 +132,7 @@ _Macchina_ is available on:
 | Linux         |        Yes         |
 | NetBSD ¹      |        Yes         |
 | macOS ²       |        Yes         |
-| Windows       |        Soon        |
+| Windows       |        Partial     |
 
 # 🌍 Contributors
 
@@ -141,4 +141,4 @@ _Macchina_ is available on:
 _Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
 
 1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-2. Support for __macOS__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+2. Support for __macOS__ and __Windows__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
