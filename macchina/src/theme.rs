@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 use colored::{Color, ColoredString, Colorize};
 use std::collections::HashMap;
-
-#[derive(Clone)]
 pub struct Misc {
     pub separator: &'static str,
     pub separator_color: Color,
@@ -44,8 +42,6 @@ impl Misc {
         }
     }
 }
-
-#[derive(Clone)]
 pub struct Bar {
     pub glyph: &'static str,
     pub symbol_open: char,
@@ -228,8 +224,8 @@ pub struct HydrogenTheme {
 impl Theme for HydrogenTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(HydrogenTheme {
-            bar: Bar::rounded().clone(),
-            misc: Misc::dash().clone(),
+            bar: Bar::rounded(),
+            misc: Misc::dash(),
         })
     }
 
@@ -262,8 +258,8 @@ pub struct HeliumTheme {
 impl Theme for HeliumTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(HeliumTheme {
-            bar: Bar::squared().clone(),
-            misc: Misc::arrow().clone(),
+            bar: Bar::squared(),
+            misc: Misc::arrow(),
         })
     }
 
@@ -296,8 +292,8 @@ pub struct LithiumTheme {
 impl Theme for LithiumTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(LithiumTheme {
-            bar: Bar::angled().clone(),
-            misc: Misc::squiggly().clone(),
+            bar: Bar::angled(),
+            misc: Misc::squiggly(),
         })
     }
 

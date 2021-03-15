@@ -425,8 +425,8 @@ impl Elements {
 
 /// This trait contains functions whose purpose is to display elements found in the `Elements` struct.
 /// Most elements go through two checks before finally being printed to the terminal:
+/// - Confirming the element was not hidden using `--hide <element>`
 /// - Confirming the element has not failed to fetch
-/// - Confirm the element was not hidden using `--hide <element>`
 ///
 /// # Example
 /// ```
@@ -787,7 +787,13 @@ impl Display for Elements {
             "{}{}{}{}{}{}",
             self.theme.padding(),
             self.theme.key_to_colored_string(ReadoutKey::Processor),
-            " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Processor, self.theme.default_abbreviation()))),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Processor, self.theme.default_abbreviation())
+                )
+            ),
             self.theme.misc().separator,
             self.theme.spacing(),
             self.processor.value
@@ -803,7 +809,13 @@ impl Display for Elements {
             "{}{}{}{}{}{}",
             self.theme.padding(),
             self.theme.key_to_colored_string(ReadoutKey::Uptime),
-            " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Uptime, self.theme.default_abbreviation()))),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Uptime, self.theme.default_abbreviation())
+                )
+            ),
             self.theme.misc().separator,
             self.theme.spacing(),
             self.uptime.value
@@ -832,7 +844,13 @@ impl Display for Elements {
                 "{}{}{}{}{}",
                 self.theme.padding(),
                 self.theme.key_to_colored_string(ReadoutKey::Memory),
-                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Memory, self.theme.default_abbreviation()))),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Memory, self.theme.default_abbreviation())
+                    )
+                ),
                 self.theme.misc().separator,
                 self.theme.spacing(),
             );
@@ -841,8 +859,14 @@ impl Display for Elements {
             println!(
                 "{}{}{}{}{}{}",
                 self.theme.padding(),
-                self.theme.key_to_colored_string(ReadoutKey::Uptime),
-                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Memory, self.theme.default_abbreviation()))),
+                self.theme.key_to_colored_string(ReadoutKey::Memory),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Memory, self.theme.default_abbreviation())
+                    )
+                ),
                 self.theme.misc().separator,
                 self.theme.spacing(),
                 self.memory.value
@@ -868,7 +892,13 @@ impl Display for Elements {
                 "{}{}{}{}{}",
                 self.theme.padding(),
                 self.theme.key_to_colored_string(ReadoutKey::Battery),
-                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Battery, self.theme.default_abbreviation()))),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Battery, self.theme.default_abbreviation())
+                    )
+                ),
                 self.theme.misc().separator,
                 self.theme.spacing(),
             );
@@ -879,7 +909,13 @@ impl Display for Elements {
                 "{}{}{}{}{}{}",
                 self.theme.padding(),
                 self.theme.key_to_colored_string(ReadoutKey::Battery),
-                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Battery, self.theme.default_abbreviation()))),
+                " ".repeat(
+                    self.calc_spacing(
+                        &self
+                            .theme
+                            .key(ReadoutKey::Battery, self.theme.default_abbreviation())
+                    )
+                ),
                 self.theme.misc().separator,
                 self.theme.spacing(),
                 self.battery.value
