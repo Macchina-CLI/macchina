@@ -81,7 +81,6 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
-        // Err(ReadoutError::MetricNotAvailable)
         crate::shared::whoami()
     }
 
@@ -117,11 +116,11 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        if let Ok(terminal_env) = std::env::var("TERM") {
-            return Ok(terminal_env);
+        if let Ok(termux_version) = std::env::var("TERMUX_VERSION") {
+            return Ok(String::from("Termux"));
         }
 
-        //TODO check common terminal software like termux.
+        // TODO: investigate other terminal emulators
         Err(ReadoutError::MetricNotAvailable)
     }
 
@@ -141,6 +140,12 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
+        let max_freq = fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq")
+            .expect("")// TODO
+            .chars()
+            .filter(|c| c.is_digit(10))
+            .collect();
+        let khz = max_freq.parse::<u32>().unwrap_or(0);
         Err(ReadoutError::MetricNotAvailable)
         // Ok(crate::shared::cpu_model_name())
     }
@@ -212,7 +217,7 @@ impl ProductReadout for AndroidProductReadout {
     }
 
     fn vendor(&self) -> Result<String, ReadoutError> {
-        Ok(extra::ucfirst(AndroidProperty::new("ro.product.manufacturer")
+        Ok(extra::ucfirst(AndroidProperty::new("ro.product.brand")
             .value()
             .unwrap_or_default()
         ))
