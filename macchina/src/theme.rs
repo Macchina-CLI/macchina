@@ -1,6 +1,14 @@
 #![allow(dead_code)]
 use colored::{Color, ColoredString, Colorize};
 use std::collections::HashMap;
+
+/// `Misc` contains several elements that make up a `Theme`, such as the: \
+/// - Separator glyph
+/// - Separator color
+/// - Key color
+/// - Amount of padding
+/// - Amount of spacing
+/// - Longest key of the current `Theme`
 pub struct Misc {
     pub separator: &'static str,
     pub separator_color: Color,
@@ -42,12 +50,21 @@ impl Misc {
         }
     }
 }
+
+/// `Bar` contains several elements that make up a `Theme`, such as the: \
+/// - `Bar` glyph
+/// - `Bar` opening symbol
+/// - `Bar` closing symbol
 pub struct Bar {
+    /// This is the glyph/symbol that represents the usage.
     pub glyph: &'static str,
+    /// This is used to indicate the beginning of a bar.
     pub symbol_open: char,
+    /// This is used to indicate the end of a bar.
     pub symbol_close: char,
 }
 
+/// This implements all the different ways a `Bar` can look.
 impl Bar {
     fn squared() -> Bar {
         Bar {
@@ -71,7 +88,7 @@ impl Bar {
         }
     }
 }
-
+/// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 pub enum ReadoutKey {
     Host,
     Machine,
@@ -89,6 +106,10 @@ pub enum ReadoutKey {
     Battery,
 }
 
+/// Defines the different ways a key can be named, let's take the _OperatingSystem variant_ for example: \
+/// - `AbbreviationType::Classic` -> OS \
+/// - `AbbreviationType::Alternative` -> Ope \
+/// - `AbbreviationType::Long` -> Operating System
 #[derive(Eq, PartialEq, Hash)]
 pub enum AbbreviationType {
     Classic,
@@ -96,6 +117,8 @@ pub enum AbbreviationType {
     Long,
 }
 
+/// This implements all the different ways a `Key` can be named using \
+/// the predefined variants found in the `AbbreviationType` enum.
 impl ReadoutKey {
     fn get_common_name(&self) -> HashMap<&AbbreviationType, &'static str> {
         let mut values = HashMap::new();
@@ -177,6 +200,7 @@ impl ReadoutKey {
     }
 }
 
+/// This trait provides the necessary functions for creating _themes_.
 pub trait Theme {
     fn new() -> Box<dyn Theme>
     where
@@ -216,6 +240,10 @@ pub trait Theme {
     }
 }
 
+/// This structure's implementation utilizes the following:
+/// - _Rounded_ bar through `Bar::rounded()`
+/// - _Dash_ style through `Misc::dash()`
+/// - _Classic_ abbreviation type through `AbbreviationType::Classic`
 pub struct HydrogenTheme {
     bar: Bar,
     misc: Misc,
@@ -249,7 +277,10 @@ impl Theme for HydrogenTheme {
         &AbbreviationType::Classic
     }
 }
-
+/// This structure's implementation utilizes the following:
+/// - _Squared_ bar through `Bar::squared()`
+/// - _Arrow_ style through `Misc::arrow()`
+/// - _Alternative_ abbreviation type through `AbbreviationType::Alternative`
 pub struct HeliumTheme {
     bar: Bar,
     misc: Misc,
@@ -284,6 +315,10 @@ impl Theme for HeliumTheme {
     }
 }
 
+/// This structure's implementation utilizes the following:
+/// - _Angled_ bar through `Bar::angled()`
+/// - _Squiggly_ style through `Misc::squiggly()`
+/// - _Long_ abbreviation type through `AbbreviationType::Long`
 pub struct LithiumTheme {
     bar: Bar,
     misc: Misc,
