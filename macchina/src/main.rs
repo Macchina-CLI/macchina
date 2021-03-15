@@ -7,6 +7,7 @@ use clap::{crate_authors, crate_version, App, Arg};
 use colored::Color;
 use display::{choose_color, Elements, Fail, Options};
 use macchina_read::{extra, Readouts};
+use theme::Theme;
 
 #[macro_use]
 extern crate lazy_static;
@@ -160,10 +161,10 @@ fn main() {
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
     let mut fail = Fail::new();
-    elems.set_theme(theme::Theme::hydrogen(), &mut fail);
+    elems.set_theme(theme::HydrogenTheme::new(), &mut fail);
 
     if !matches.is_present("theme") {
-        elems.theme.misc.longest_key = elems.longest_key(&mut fail);
+        elems.theme.misc_mut().longest_key = elems.longest_key(&mut fail);
     }
 
     // Instantiate Macchina's default behavior, i.e:
@@ -177,18 +178,18 @@ fn main() {
         opts.palette_status = true;
     }
     if matches.is_present("padding") {
-        elems.theme.misc.padding = matches.value_of("padding").unwrap().parse().unwrap();
+        elems.theme.misc_mut().padding = matches.value_of("padding").unwrap().parse().unwrap();
     }
     if matches.is_present("spacing") {
-        elems.theme.misc.spacing = matches.value_of("spacing").unwrap().parse().unwrap();
+        elems.theme.misc_mut().spacing = matches.value_of("spacing").unwrap().parse().unwrap();
     }
     if matches.is_present("color") {
         let color: Color = choose_color(matches.value_of("color").unwrap());
-        elems.theme.misc.color = color;
+        elems.theme.misc_mut().color = color;
     }
     if matches.is_present("separator-color") {
         let color: Color = choose_color(matches.value_of("separator-color").unwrap());
-        elems.theme.misc.separator_color = color;
+        elems.theme.misc_mut().separator_color = color;
     }
     if matches.is_present("short-shell") {
         opts.shell_shorthand = true;
@@ -197,8 +198,9 @@ fn main() {
         opts.uptime_shorthand = true;
     }
     if matches.is_present("no-color") {
-        elems.theme.misc.color = Color::White;
-        elems.theme.misc.separator_color = Color::White;
+        let mut misc = elems.theme.misc_mut();
+        misc.color = Color::White;
+        misc.separator_color = Color::White;
     }
     if matches.is_present("bar") {
         opts.bar_status = true;
@@ -228,16 +230,16 @@ fn main() {
         std::process::exit(0);
     }
     if matches.is_present("random-color") {
-        elems.theme.misc.color = display::randomize_color();
+        elems.theme.misc_mut().color = display::randomize_color();
     }
     if matches.is_present("random-sep-color") {
-        elems.theme.misc.separator_color = display::randomize_color();
+        elems.theme.misc_mut().separator_color = display::randomize_color();
     }
     if matches.is_present("theme") {
         if matches.value_of("theme").unwrap() == "He" {
-            elems.set_theme(theme::Theme::helium(), &mut fail)
+            elems.set_theme(theme::HeliumTheme::new(), &mut fail)
         } else if matches.value_of("theme").unwrap() == "Li" {
-            elems.set_theme(theme::Theme::lithium(), &mut fail)
+            elems.set_theme(theme::LithiumTheme::new(), &mut fail)
         }
     }
 
