@@ -4,7 +4,10 @@ fn build_windows() {
     #[cfg(windows)]
     windows::build!(
         windows::win32::windows_programming::GetUserNameA,
-        windows::win32::windows_programming::GetComputerNameExA
+        windows::win32::windows_programming::GetComputerNameExA,
+        windows::win32::system_services::GlobalMemoryStatusEx,
+        windows::win32::windows_programming::GetTickCount64,
+        windows::win32::system_services::GetSystemPowerStatus,
     );
 }
 
