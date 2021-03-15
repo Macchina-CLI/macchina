@@ -8,7 +8,8 @@
 ---
 
 # About Macchina
-_Macchina_ is a fetching program, not a library.
+_Macchina_ is a fetching program.
+If you're interested in its library, check out [macchina-read](https://crates.io/crates/macchina-read).
 
 _Macchina_ lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
 It provides you with convenient features and customization options but doesn't lose sight of its two main priorities: minimalism and performance.
@@ -18,10 +19,10 @@ It provides you with convenient features and customization options but doesn't l
 ---
 
 # Dependencies
-### Linux:
+## 🐧 Linux:
 - `wmctrl`
 - __Gentoo Only:__ `portage-utils`
-### NetBSD:
+## 🚩 NetBSD:
 - `wmctrl`
 - `ripgrep`
 
@@ -57,6 +58,8 @@ __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 # Features
 ### Themes
 ![Theme preview](screenshots/themes.png)
+
+The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can use.
 
 ### Bars
 ![Preview of bar argument](screenshots/bars.png)
@@ -95,7 +98,7 @@ __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
 # Usage
 
-_Macchina_ comes packed with arguments that let you customize its behavior and styling.
+_Macchina_ comes packed with __arguments__ that let you customize its behavior and styling.
 
 The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell you all about them and how they work.
 
@@ -131,7 +134,11 @@ _Macchina_ is available on:
 | macOS ²       |        Yes         |
 | Windows       |        Soon        |
 
-_Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors.
+# 🌍 Contributors
 
-1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org), Thank you!
-2. Support for __macOS__ would not be possible without the help, testing and contributions of [123marvin123](https://github.com/123marvin123), Thank you!
+[![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
+
+_Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
+
+1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
+2. Support for __macOS__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
