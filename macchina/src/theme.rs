@@ -1,45 +1,10 @@
 #![allow(dead_code)]
 use colored::{Color, ColoredString, Colorize};
-/// Themes control the program's visuals, the visuals range from the color choice to the way keys are named
-pub struct Theme {
-    pub keys: Keys,
-    pub bar: Bar,
-    pub misc: Misc,
-}
+use std::collections::HashMap;
 
-impl Theme {
-    // Themes are named after chemical elements
-    // 1 Hydrogen (H)
-    // Usage: macchina --theme H
-    pub fn hydrogen() -> Theme {
-        Theme {
-            keys: Keys::classic(),
-            bar: Bar::rounded(),
-            misc: Misc::dash(),
-        }
-    }
-    // 2 Helium (He)
-    // Usage: macchina --theme He
-    pub fn helium() -> Theme {
-        Theme {
-            keys: Keys::alternative(),
-            bar: Bar::squared(),
-            misc: Misc::arrow(),
-        }
-    }
-    // 3 Lithium (Li)
-    // Usage: macchina --theme Li
-    pub fn lithium() -> Theme {
-        Theme {
-            keys: Keys::long(),
-            bar: Bar::angled(),
-            misc: Misc::squiggly(),
-        }
-    }
-}
-
+#[derive(Clone)]
 pub struct Misc {
-    separator: &'static str,
+    pub separator: &'static str,
     pub separator_color: Color,
     pub color: Color,
     pub padding: usize,
@@ -80,6 +45,7 @@ impl Misc {
     }
 }
 
+#[derive(Clone)]
 pub struct Bar {
     pub glyph: &'static str,
     pub symbol_open: char,
@@ -110,187 +76,248 @@ impl Bar {
     }
 }
 
-pub struct Keys {
-    pub host: &'static str,
-    pub machine: &'static str,
-    pub kernel: &'static str,
-    pub distribution: &'static str,
-    pub operating_system: &'static str,
-    pub desktop_environment: &'static str,
-    pub window_manager: &'static str,
-    pub packages: &'static str,
-    pub shell: &'static str,
-    pub terminal: &'static str,
-    pub uptime: &'static str,
-    pub processor: &'static str,
-    pub memory: &'static str,
-    pub battery: &'static str,
+pub enum ReadoutKey {
+    Host,
+    Machine,
+    Kernel,
+    Distribution,
+    OperatingSystem,
+    DesktopEnvironment,
+    WindowManager,
+    Packages,
+    Shell,
+    Terminal,
+    Uptime,
+    Processor,
+    Memory,
+    Battery,
 }
 
-impl Keys {
-    fn classic() -> Keys {
-        Keys {
-            host: "Host",
-            machine: "Machine",
-            kernel: "Kernel",
-            distribution: "Distro",
-            operating_system: "OS",
-            desktop_environment: "DE",
-            window_manager: "WM",
-            packages: "Packages",
-            shell: "Shell",
-            terminal: "Terminal",
-            uptime: "Uptime",
-            processor: "CPU",
-            memory: "Memory",
-            battery: "Battery",
+#[derive(Eq, PartialEq, Hash)]
+pub enum AbbreviationType {
+    Classic,
+    Alternative,
+    Long,
+}
+
+impl ReadoutKey {
+    fn get_common_name(&self) -> HashMap<&AbbreviationType, &'static str> {
+        let mut values = HashMap::new();
+
+        match self {
+            ReadoutKey::Host => {
+                values.insert(&AbbreviationType::Classic, "Host");
+                values.insert(&AbbreviationType::Alternative, "Hos");
+                values.insert(&AbbreviationType::Long, "Host");
+            }
+            ReadoutKey::Machine => {
+                values.insert(&AbbreviationType::Classic, "Machine");
+                values.insert(&AbbreviationType::Alternative, "Mac");
+                values.insert(&AbbreviationType::Long, "Machine");
+            }
+            ReadoutKey::Kernel => {
+                values.insert(&AbbreviationType::Classic, "Kernel");
+                values.insert(&AbbreviationType::Alternative, "Ker");
+                values.insert(&AbbreviationType::Long, "Kernel");
+            }
+            ReadoutKey::Distribution => {
+                values.insert(&AbbreviationType::Classic, "Distro");
+                values.insert(&AbbreviationType::Alternative, "Dis");
+                values.insert(&AbbreviationType::Long, "Distribution");
+            }
+            ReadoutKey::OperatingSystem => {
+                values.insert(&AbbreviationType::Classic, "OS");
+                values.insert(&AbbreviationType::Alternative, "Ope");
+                values.insert(&AbbreviationType::Long, "Operating System");
+            }
+            ReadoutKey::DesktopEnvironment => {
+                values.insert(&AbbreviationType::Classic, "DE");
+                values.insert(&AbbreviationType::Alternative, "Des");
+                values.insert(&AbbreviationType::Long, "Desktop Environment");
+            }
+            ReadoutKey::WindowManager => {
+                values.insert(&AbbreviationType::Classic, "WM");
+                values.insert(&AbbreviationType::Alternative, "Win");
+                values.insert(&AbbreviationType::Long, "Window Manager");
+            }
+            ReadoutKey::Packages => {
+                values.insert(&AbbreviationType::Classic, "Packages");
+                values.insert(&AbbreviationType::Alternative, "Pac");
+                values.insert(&AbbreviationType::Long, "Packages");
+            }
+            ReadoutKey::Shell => {
+                values.insert(&AbbreviationType::Classic, "Shell");
+                values.insert(&AbbreviationType::Alternative, "She");
+                values.insert(&AbbreviationType::Long, "Shell");
+            }
+            ReadoutKey::Terminal => {
+                values.insert(&AbbreviationType::Classic, "Terminal");
+                values.insert(&AbbreviationType::Alternative, "Ter");
+                values.insert(&AbbreviationType::Long, "Terminal");
+            }
+            ReadoutKey::Uptime => {
+                values.insert(&AbbreviationType::Classic, "Uptime");
+                values.insert(&AbbreviationType::Alternative, "Upt");
+                values.insert(&AbbreviationType::Long, "Uptime");
+            }
+            ReadoutKey::Processor => {
+                values.insert(&AbbreviationType::Classic, "CPU");
+                values.insert(&AbbreviationType::Alternative, "Cpu");
+                values.insert(&AbbreviationType::Long, "Processor");
+            }
+            ReadoutKey::Memory => {
+                values.insert(&AbbreviationType::Classic, "Memory");
+                values.insert(&AbbreviationType::Alternative, "Mem");
+                values.insert(&AbbreviationType::Long, "Memory");
+            }
+            ReadoutKey::Battery => {
+                values.insert(&AbbreviationType::Classic, "Battery");
+                values.insert(&AbbreviationType::Alternative, "Bat");
+                values.insert(&AbbreviationType::Long, "Battery");
+            }
         }
-    }
-    fn alternative() -> Keys {
-        Keys {
-            host: "Hos",
-            machine: "Mac",
-            kernel: "Ker",
-            distribution: "Dis",
-            operating_system: "Ope",
-            desktop_environment: "Des",
-            window_manager: "Win",
-            packages: "Pac",
-            shell: "She",
-            terminal: "Ter",
-            uptime: "Upt",
-            processor: "Cpu",
-            memory: "Mem",
-            battery: "Bat",
-        }
-    }
-    fn long() -> Keys {
-        Keys {
-            host: "Host",
-            machine: "Machine",
-            kernel: "Kernel",
-            distribution: "Distribution",
-            operating_system: "Operating System",
-            desktop_environment: "Desktop Environment",
-            window_manager: "Window Manager",
-            packages: "Packages",
-            shell: "Shell",
-            terminal: "Terminal",
-            uptime: "Uptime",
-            processor: "Processor",
-            memory: "Memory",
-            battery: "Battery",
-        }
+
+        values
     }
 }
 
-pub trait Printing {
-    /// Prints the host key
-    fn host(&self) -> ColoredString;
-    /// Prints the machine key
-    fn machine(&self) -> ColoredString;
-    /// Prints the kernel key
-    fn kernel(&self) -> ColoredString;
-    /// Prints the distro key
-    fn distribution(&self) -> ColoredString;
-    /// Prints the operating system key
-    fn operating_system(&self) -> ColoredString;
-    /// Prints the desktop environment key
-    fn desktop_environment(&self) -> ColoredString;
-    /// Prints the window manager key
-    fn window_manager(&self) -> ColoredString;
-    /// Prints the packages key
-    fn packages(&self) -> ColoredString;
-    /// Prints the shell key
-    fn shell(&self) -> ColoredString;
-    /// Prints the terminal key
-    fn terminal(&self) -> ColoredString;
-    /// Prints the uptime key
-    fn uptime(&self) -> ColoredString;
-    /// Prints the processor key
-    fn processor(&self) -> ColoredString;
-    /// Prints the memory key
-    fn memory(&self) -> ColoredString;
-    /// Prints the battery key
-    fn battery(&self) -> ColoredString;
-    /// Prints the separator
-    fn separator(&self) -> ColoredString;
-    /// Prints the padding
-    fn padding(&self) -> String;
-    /// Prints the spacing
-    fn spacing(&self) -> String;
-}
+pub trait Theme {
+    fn new() -> Box<dyn Theme>
+    where
+        Self: Sized;
 
-impl Printing for Theme {
-    fn host(&self) -> ColoredString {
-        self.keys.host.to_string().color(self.misc.color).bold()
+    fn bar(&self) -> &Bar;
+    fn misc(&self) -> &Misc;
+    fn bar_mut(&mut self) -> &mut Bar;
+    fn misc_mut(&mut self) -> &mut Misc;
+
+    fn default_abbreviation(&self) -> &AbbreviationType;
+
+    fn key(&self, readout_key: ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
+        let abbreviated_names = readout_key.get_common_name();
+        let name_entry = abbreviated_names.get(&abbreviation);
+
+        if let Some(name) = name_entry {
+            name
+        } else {
+            abbreviated_names.values().next().unwrap()
+        }
     }
-    fn machine(&self) -> ColoredString {
-        self.keys.machine.to_string().color(self.misc.color).bold()
-    }
-    fn kernel(&self) -> ColoredString {
-        self.keys.kernel.to_string().color(self.misc.color).bold()
-    }
-    fn distribution(&self) -> ColoredString {
-        self.keys
-            .distribution
-            .to_string()
-            .color(self.misc.color)
+
+    fn key_to_colored_string(&self, readout_key: ReadoutKey) -> ColoredString {
+        let key_name = self.key(readout_key, self.default_abbreviation());
+        ColoredString::from(key_name)
+            .color(self.misc().color)
             .bold()
     }
-    fn operating_system(&self) -> ColoredString {
-        self.keys
-            .operating_system
-            .to_string()
-            .color(self.misc.color)
-            .bold()
-    }
-    fn desktop_environment(&self) -> ColoredString {
-        self.keys
-            .desktop_environment
-            .to_string()
-            .color(self.misc.color)
-            .bold()
-    }
-    fn window_manager(&self) -> ColoredString {
-        self.keys
-            .window_manager
-            .to_string()
-            .color(self.misc.color)
-            .bold()
-    }
-    fn packages(&self) -> ColoredString {
-        self.keys.packages.to_string().color(self.misc.color).bold()
-    }
-    fn shell(&self) -> ColoredString {
-        self.keys.shell.to_string().color(self.misc.color).bold()
-    }
-    fn terminal(&self) -> ColoredString {
-        self.keys.terminal.to_string().color(self.misc.color).bold()
-    }
-    fn processor(&self) -> ColoredString {
-        self.keys
-            .processor
-            .to_string()
-            .color(self.misc.color)
-            .bold()
-    }
-    fn uptime(&self) -> ColoredString {
-        self.keys.uptime.to_string().color(self.misc.color).bold()
-    }
-    fn memory(&self) -> ColoredString {
-        self.keys.memory.to_string().color(self.misc.color).bold()
-    }
-    fn battery(&self) -> ColoredString {
-        self.keys.battery.to_string().color(self.misc.color).bold()
-    }
-    fn separator(&self) -> ColoredString {
-        self.misc.separator.color(self.misc.separator_color).bold()
-    }
-    fn spacing(&self) -> String {
-        " ".repeat(self.misc.spacing)
-    }
+
     fn padding(&self) -> String {
-        " ".repeat(self.misc.padding)
+        " ".repeat(self.misc().padding)
+    }
+
+    fn spacing(&self) -> String {
+        " ".repeat(self.misc().spacing)
+    }
+}
+
+pub struct HydrogenTheme {
+    bar: Bar,
+    misc: Misc,
+}
+
+impl Theme for HydrogenTheme {
+    fn new() -> Box<dyn Theme> {
+        Box::new(HydrogenTheme {
+            bar: Bar::rounded().clone(),
+            misc: Misc::dash().clone(),
+        })
+    }
+
+    fn bar(&self) -> &Bar {
+        &self.bar
+    }
+
+    fn misc(&self) -> &Misc {
+        &self.misc
+    }
+
+    fn bar_mut(&mut self) -> &mut Bar {
+        &mut self.bar
+    }
+
+    fn misc_mut(&mut self) -> &mut Misc {
+        &mut self.misc
+    }
+
+    fn default_abbreviation(&self) -> &AbbreviationType {
+        &AbbreviationType::Classic
+    }
+}
+
+pub struct HeliumTheme {
+    bar: Bar,
+    misc: Misc,
+}
+
+impl Theme for HeliumTheme {
+    fn new() -> Box<dyn Theme> {
+        Box::new(HeliumTheme {
+            bar: Bar::squared().clone(),
+            misc: Misc::arrow().clone(),
+        })
+    }
+
+    fn bar(&self) -> &Bar {
+        &self.bar
+    }
+
+    fn misc(&self) -> &Misc {
+        &self.misc
+    }
+
+    fn bar_mut(&mut self) -> &mut Bar {
+        &mut self.bar
+    }
+
+    fn misc_mut(&mut self) -> &mut Misc {
+        &mut self.misc
+    }
+
+    fn default_abbreviation(&self) -> &AbbreviationType {
+        &AbbreviationType::Alternative
+    }
+}
+
+pub struct LithiumTheme {
+    bar: Bar,
+    misc: Misc,
+}
+
+impl Theme for LithiumTheme {
+    fn new() -> Box<dyn Theme> {
+        Box::new(LithiumTheme {
+            bar: Bar::angled().clone(),
+            misc: Misc::squiggly().clone(),
+        })
+    }
+
+    fn bar(&self) -> &Bar {
+        &self.bar
+    }
+
+    fn misc(&self) -> &Misc {
+        &self.misc
+    }
+
+    fn bar_mut(&mut self) -> &mut Bar {
+        &mut self.bar
+    }
+
+    fn misc_mut(&mut self) -> &mut Misc {
+        &mut self.misc
+    }
+
+    fn default_abbreviation(&self) -> &AbbreviationType {
+        &AbbreviationType::Long
     }
 }

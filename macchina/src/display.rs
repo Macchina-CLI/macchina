@@ -1,4 +1,5 @@
-use crate::{bars, format, theme::Printing, theme::Theme, READOUTS};
+use crate::theme::{HydrogenTheme, ReadoutKey};
+use crate::{bars, format, theme::Theme, READOUTS};
 use colored::{Color, Colorize};
 use macchina_read::traits::{GeneralReadout, KernelReadout, PackageReadout};
 use rand::Rng;
@@ -210,7 +211,7 @@ pub struct Elements {
     processor: Pair,
     memory: Pair,
     battery: Pair,
-    pub theme: Theme,
+    pub theme: Box<dyn Theme>,
 }
 
 impl Elements {
@@ -218,7 +219,7 @@ impl Elements {
     /// as the value is assigned to an element when it is about to be printed.
     pub fn new() -> Elements {
         Elements {
-            theme: Theme::hydrogen(),
+            theme: HydrogenTheme::new(),
             host: Pair::new(),
             machine: Pair::new(),
             kernel: Pair::new(),
@@ -239,47 +240,60 @@ impl Elements {
     /// how to autospace them.
     pub fn longest_key(&mut self, fail: &mut Fail) -> String {
         let mut keys: Vec<String> = Vec::new();
+        let abbrev = self.theme.default_abbreviation();
         if !self.host.hidden {
-            keys.push(self.theme.keys.host.to_string());
+            keys.push(self.theme.key(ReadoutKey::Host, abbrev).to_string());
         }
         if !self.machine.hidden {
-            keys.push(self.theme.keys.machine.to_string());
+            keys.push(self.theme.key(ReadoutKey::Machine, abbrev).to_string());
         }
         if !self.kernel.hidden {
-            keys.push(self.theme.keys.kernel.to_string());
+            keys.push(self.theme.key(ReadoutKey::Kernel, abbrev).to_string());
         }
         if !self.distribution.hidden {
-            keys.push(self.theme.keys.distribution.to_string());
+            keys.push(self.theme.key(ReadoutKey::Distribution, abbrev).to_string());
         }
         if !self.packages.hidden {
-            keys.push(self.theme.keys.packages.to_string());
+            keys.push(self.theme.key(ReadoutKey::Packages, abbrev).to_string());
         }
         if !self.shell.hidden {
-            keys.push(self.theme.keys.shell.to_string());
+            keys.push(self.theme.key(ReadoutKey::Shell, abbrev).to_string());
         }
         if !self.terminal.hidden {
-            keys.push(self.theme.keys.terminal.to_string());
+            keys.push(self.theme.key(ReadoutKey::Terminal, abbrev).to_string());
         }
         if !self.processor.hidden {
-            keys.push(self.theme.keys.processor.to_string());
+            keys.push(self.theme.key(ReadoutKey::Processor, abbrev).to_string());
         }
         if !self.uptime.hidden {
-            keys.push(self.theme.keys.uptime.to_string());
+            keys.push(self.theme.key(ReadoutKey::Uptime, abbrev).to_string());
         }
         if !self.memory.hidden {
-            keys.push(self.theme.keys.memory.to_string());
+            keys.push(self.theme.key(ReadoutKey::Memory, abbrev).to_string());
         }
         if !self.battery.hidden {
-            keys.push(self.theme.keys.battery.to_string());
+            keys.push(self.theme.key(ReadoutKey::Battery, abbrev).to_string());
         }
         if let Some(true) = self.is_running_wm_only(fail, false) {
-            keys.push(self.theme.keys.window_manager.to_string());
+            keys.push(
+                self.theme
+                    .key(ReadoutKey::WindowManager, abbrev)
+                    .to_string(),
+            );
         } else {
             if !self.desktop_environment.hidden {
-                keys.push(self.theme.keys.desktop_environment.to_string());
+                keys.push(
+                    self.theme
+                        .key(ReadoutKey::DesktopEnvironment, abbrev)
+                        .to_string(),
+                );
             }
             if !self.window_manager.hidden {
-                keys.push(self.theme.keys.desktop_environment.to_string());
+                keys.push(
+                    self.theme
+                        .key(ReadoutKey::DesktopEnvironment, abbrev)
+                        .to_string(),
+                );
             }
         }
         let mut longest_key = keys[0].to_string();
@@ -293,7 +307,7 @@ impl Elements {
 
     /// Returns the amount of spacing needed to properly center the `separator` across each line.
     pub fn calc_spacing(&self, current_key: &str) -> usize {
-        (self.theme.misc.longest_key.len() + self.theme.misc.spacing) - current_key.len()
+        (self.theme.misc().longest_key.len() + self.theme.misc().spacing) - current_key.len()
     }
 
     /// Hide every element.
@@ -403,9 +417,9 @@ impl Elements {
         Some(false)
     }
 
-    pub fn set_theme(&mut self, theme: Theme, fail: &mut Fail) {
+    pub fn set_theme(&mut self, theme: Box<dyn Theme>, fail: &mut Fail) {
         self.theme = theme;
-        self.theme.misc.longest_key = self.longest_key(fail);
+        self.theme.misc_mut().longest_key = self.longest_key(fail);
     }
 }
 
@@ -490,9 +504,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.host(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.host)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Host),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Host, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.host.value
         );
@@ -511,9 +531,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.machine(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.machine)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Machine),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Machine, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.machine.value
         );
@@ -532,9 +558,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.kernel(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.kernel)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Kernel),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Kernel, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.kernel.value
         );
@@ -555,9 +587,13 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.operating_system(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.operating_system,)),
-            self.theme.separator(),
+            self.theme
+                .key_to_colored_string(ReadoutKey::OperatingSystem),
+            " ".repeat(self.calc_spacing(&self.theme.key(
+                ReadoutKey::OperatingSystem,
+                self.theme.default_abbreviation()
+            ),)),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.operating_system.value
         );
@@ -579,9 +615,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.distribution(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.distribution)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Distribution),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Distribution, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.distribution.value
         );
@@ -607,9 +649,13 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.desktop_environment(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.desktop_environment,)),
-            self.theme.separator(),
+            self.theme
+                .key_to_colored_string(ReadoutKey::DesktopEnvironment),
+            " ".repeat(self.calc_spacing(&self.theme.key(
+                ReadoutKey::DesktopEnvironment,
+                self.theme.default_abbreviation()
+            ))),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.desktop_environment.value
         );
@@ -631,9 +677,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.window_manager(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.window_manager,)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::WindowManager),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::WindowManager, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.window_manager.value
         );
@@ -655,9 +707,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.packages(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.packages)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Packages),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Packages, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.packages.value
         );
@@ -671,9 +729,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.shell(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.shell)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Shell),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Shell, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.shell.value
         );
@@ -695,9 +759,15 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.terminal(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.terminal)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Terminal),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Terminal, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.terminal.value
         );
@@ -716,9 +786,9 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.processor(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.processor)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Processor),
+            " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Processor, self.theme.default_abbreviation()))),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.processor.value
         );
@@ -732,9 +802,9 @@ impl Display for Elements {
         println!(
             "{}{}{}{}{}{}",
             self.theme.padding(),
-            self.theme.uptime(),
-            " ".repeat(self.calc_spacing(&self.theme.keys.uptime)),
-            self.theme.separator(),
+            self.theme.key_to_colored_string(ReadoutKey::Uptime),
+            " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Uptime, self.theme.default_abbreviation()))),
+            self.theme.misc().separator,
             self.theme.spacing(),
             self.uptime.value
         );
@@ -761,9 +831,9 @@ impl Display for Elements {
             print!(
                 "{}{}{}{}{}",
                 self.theme.padding(),
-                self.theme.memory(),
-                " ".repeat(self.calc_spacing(&self.theme.keys.memory)),
-                self.theme.separator(),
+                self.theme.key_to_colored_string(ReadoutKey::Memory),
+                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Memory, self.theme.default_abbreviation()))),
+                self.theme.misc().separator,
                 self.theme.spacing(),
             );
             Self::print_bar(self, self.memory.value.parse().unwrap());
@@ -771,9 +841,9 @@ impl Display for Elements {
             println!(
                 "{}{}{}{}{}{}",
                 self.theme.padding(),
-                self.theme.uptime(),
-                " ".repeat(self.calc_spacing(&self.theme.keys.memory)),
-                self.theme.separator(),
+                self.theme.key_to_colored_string(ReadoutKey::Uptime),
+                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Memory, self.theme.default_abbreviation()))),
+                self.theme.misc().separator,
                 self.theme.spacing(),
                 self.memory.value
             );
@@ -797,9 +867,9 @@ impl Display for Elements {
             print!(
                 "{}{}{}{}{}",
                 self.theme.padding(),
-                self.theme.battery(),
-                " ".repeat(self.calc_spacing(&self.theme.keys.battery)),
-                self.theme.separator(),
+                self.theme.key_to_colored_string(ReadoutKey::Battery),
+                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Battery, self.theme.default_abbreviation()))),
+                self.theme.misc().separator,
                 self.theme.spacing(),
             );
 
@@ -808,9 +878,9 @@ impl Display for Elements {
             println!(
                 "{}{}{}{}{}{}",
                 self.theme.padding(),
-                self.theme.battery(),
-                " ".repeat(self.calc_spacing(&self.theme.keys.battery)),
-                self.theme.separator(),
+                self.theme.key_to_colored_string(ReadoutKey::Battery),
+                " ".repeat(self.calc_spacing(&self.theme.key(ReadoutKey::Battery, self.theme.default_abbreviation()))),
+                self.theme.misc().separator,
                 self.theme.spacing(),
                 self.battery.value
             );
@@ -818,37 +888,37 @@ impl Display for Elements {
     }
 
     fn print_bar(&self, blocks: usize) {
-        match self.theme.misc.color {
+        match self.theme.misc().color {
             Color::White => match blocks {
                 10 => println!(
                     "{} {}{} {}",
-                    self.theme.bar.symbol_open,
-                    colored_glyphs(self, blocks).color(self.theme.misc.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks).hidden(),
-                    self.theme.bar.symbol_close,
+                    self.theme.bar().symbol_close,
                 ),
                 _ => println!(
                     "{} {} {} {}",
-                    self.theme.bar.symbol_open,
-                    colored_glyphs(self, blocks).color(self.theme.misc.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks).hidden(),
-                    self.theme.bar.symbol_close,
+                    self.theme.bar().symbol_close,
                 ),
             },
             _ => match blocks {
                 10 => println!(
                     "{} {}{} {}",
-                    self.theme.bar.symbol_open,
-                    colored_glyphs(self, blocks).color(self.theme.misc.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks),
-                    self.theme.bar.symbol_close,
+                    self.theme.bar().symbol_close,
                 ),
                 _ => println!(
                     "{} {} {} {}",
-                    self.theme.bar.symbol_open,
-                    colored_glyphs(self, blocks).color(self.theme.misc.color),
+                    self.theme.bar().symbol_open,
+                    colored_glyphs(self, blocks).color(self.theme.misc().color),
                     colorless_glyphs(self, blocks),
-                    self.theme.bar.symbol_close,
+                    self.theme.bar().symbol_close,
                 ),
             },
         }
@@ -918,7 +988,7 @@ pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_paramet
     elems.battery.hidden = hide_parameters.contains(&"bat");
 
     // We don't know which keys the user has allowed to show, so we reset the longest key
-    elems.theme.misc.longest_key = elems.longest_key(fail);
+    elems.theme.misc_mut().longest_key = elems.longest_key(fail);
     // Print everything
     print_info(elems, &options, fail);
 }
@@ -948,7 +1018,7 @@ pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_param
     }
 
     // We don't know which keys the user has allowed to show, so we reset the longest key
-    elems.theme.misc.longest_key = elems.longest_key(fail);
+    elems.theme.misc_mut().longest_key = elems.longest_key(fail);
     print_info(elems, &options, fail);
 }
 
@@ -1036,7 +1106,7 @@ pub fn help() {
 /// Return the correct amount of colored blocks: colored blocks are used blocks.
 ///
 pub fn colored_glyphs(elems: &Elements, block_count: usize) -> String {
-    let colored_glyphs = elems.theme.bar.glyph.repeat(block_count);
+    let colored_glyphs = elems.theme.bar().glyph.repeat(block_count);
     colored_glyphs
         .chars()
         .collect::<Vec<char>>()
@@ -1048,7 +1118,7 @@ pub fn colored_glyphs(elems: &Elements, block_count: usize) -> String {
 
 /// Return the correct amount of colorless blocks: colorless blocks are unused blocks.
 pub fn colorless_glyphs(elems: &Elements, block_count: usize) -> String {
-    let colorless_glyphs = elems.theme.bar.glyph.repeat(10 - block_count);
+    let colorless_glyphs = elems.theme.bar().glyph.repeat(10 - block_count);
     colorless_glyphs
         .chars()
         .collect::<Vec<char>>()
