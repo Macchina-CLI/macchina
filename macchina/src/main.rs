@@ -169,9 +169,10 @@ fn main() {
     let mut fail = Fail::new();
     elems.set_theme(opt.theme.create_instance(), &mut fail);
 
+    let longest_key = elems.longest_key(&mut fail);
     let mut misc = elems.theme.misc_mut();
 
-
+    misc.longest_key = longest_key;
     misc.padding = opt.padding;
     misc.color = opt.color.get_color();
     misc.separator_color = opt.separator_color.get_color();
