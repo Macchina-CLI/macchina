@@ -60,8 +60,8 @@ impl Fail {
             ),
             battery: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Battery -> 
-                (Linux) 
+                String::from("(ERROR:DISABLED) Battery ->
+                (Linux)
                 Percentage extracted from /sys/class/power_supply/BATx/capacity
                 Status extracted from /sys/class/power_supply/BATx/status
                 (NetBSD) (ripgrep is required)
@@ -74,7 +74,7 @@ impl Fail {
             ),
             host: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Host -> 
+                String::from("(ERROR:DISABLED) Host ->
                 Hostname: Obtained from nix::unistd::gethostname()
                 Username: Obtained from whoami"),
             ),
@@ -88,7 +88,7 @@ impl Fail {
             ),
             packages: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Packages -> 
+                String::from("(ERROR:DISABLED) Packages ->
                 (Arch-based distros) Extracted using \"pacman -Qq | wc -l\"
                 (Debian-based distros) Extracted using \"dpkg -l | wc -l\"
                 (Gentoo) Extracted using \"qlist -I | wc -l\"
@@ -411,7 +411,7 @@ impl Elements {
 ///        if self.example.hidden {
 ///            return;
 ///        }
-///        
+///
 ///        // Fetch the element's value
 ///        // If an error occurs during this process then fail the element and exit
 ///        match format::example() {
@@ -424,7 +424,7 @@ impl Elements {
 ///
 ///        // Now it's time to print the key, separator and value
 ///        println!(
-///        //...    
+///        //...
 ///        );
 ///    }
 /// ```
@@ -488,7 +488,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Host, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.host.value
         );
@@ -515,7 +515,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Machine, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.machine.value
         );
@@ -542,7 +542,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Kernel, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.kernel.value
         );
@@ -567,7 +567,7 @@ impl Display for Elements {
                 ReadoutKey::OperatingSystem,
                 self.theme.default_abbreviation()
             ),)),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.operating_system.value
         );
@@ -597,7 +597,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Distribution, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.distribution.value
         );
@@ -629,7 +629,7 @@ impl Display for Elements {
                 ReadoutKey::DesktopEnvironment,
                 self.theme.default_abbreviation()
             ))),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.desktop_environment.value
         );
@@ -659,7 +659,7 @@ impl Display for Elements {
                         .key(ReadoutKey::WindowManager, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.window_manager.value
         );
@@ -689,7 +689,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Packages, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.packages.value
         );
@@ -711,7 +711,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Shell, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.shell.value
         );
@@ -741,7 +741,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Terminal, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.terminal.value
         );
@@ -768,7 +768,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Processor, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.processor.value
         );
@@ -790,7 +790,7 @@ impl Display for Elements {
                         .key(ReadoutKey::Uptime, self.theme.default_abbreviation())
                 )
             ),
-            self.theme.misc().separator,
+            self.theme.get_colored_separator(),
             self.theme.spacing(),
             self.uptime.value
         );
@@ -825,7 +825,7 @@ impl Display for Elements {
                             .key(ReadoutKey::Memory, self.theme.default_abbreviation())
                     )
                 ),
-                self.theme.misc().separator,
+                self.theme.get_colored_separator(),
                 self.theme.spacing(),
             );
             Self::print_bar(self, self.memory.value.parse().unwrap());
@@ -841,7 +841,7 @@ impl Display for Elements {
                             .key(ReadoutKey::Memory, self.theme.default_abbreviation())
                     )
                 ),
-                self.theme.misc().separator,
+                self.theme.get_colored_separator(),
                 self.theme.spacing(),
                 self.memory.value
             );
@@ -873,7 +873,7 @@ impl Display for Elements {
                             .key(ReadoutKey::Battery, self.theme.default_abbreviation())
                     )
                 ),
-                self.theme.misc().separator,
+                self.theme.get_colored_separator(),
                 self.theme.spacing(),
             );
 
@@ -890,7 +890,7 @@ impl Display for Elements {
                             .key(ReadoutKey::Battery, self.theme.default_abbreviation())
                     )
                 ),
-                self.theme.misc().separator,
+                self.theme.get_colored_separator(),
                 self.theme.spacing(),
                 self.battery.value
             );

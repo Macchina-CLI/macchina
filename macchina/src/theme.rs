@@ -248,6 +248,10 @@ pub trait Theme {
         }
     }
 
+    fn get_colored_separator(&self) -> ColoredString {
+        ColoredString::from(self.misc().separator).color(self.misc().separator_color)
+    }
+
     fn key_to_colored_string(&self, readout_key: ReadoutKey) -> ColoredString {
         let key_name = self.key(readout_key, self.default_abbreviation());
         ColoredString::from(key_name)
