@@ -3,25 +3,20 @@ mod display;
 mod format;
 mod theme;
 
-use clap::{crate_authors, crate_version, App, Arg};
+use clap::arg_enum;
+use clap::crate_authors;
 use colored::Color;
-use display::{choose_color, Elements, Fail, Options};
-use macchina_read::{extra, Readouts};
-use theme::Theme;
+use display::{Elements, Fail};
+use macchina_read::Readouts;
+use structopt::StructOpt;
 
 #[macro_use]
 extern crate lazy_static;
 
 use macchina_read::traits::*;
 
-/// Macchina's version
-pub const VERSION: &str = crate_version!();
-/// Macchina's default color
-pub const DEFAULT_COLOR: Color = Color::Blue;
-/// Macchina's default separator color
-pub const DEFAULT_SEPARATOR_COLOR: Color = Color::White;
-/// Macchina's default padding value
-pub const DEFAULT_PADDING: usize = 4;
+pub const AUTHORS: &str = crate_authors!();
+pub const ABOUT: &str = "System information fetcher";
 
 lazy_static! {
     pub(crate) static ref READOUTS: Readouts = Readouts {
@@ -34,214 +29,187 @@ lazy_static! {
     };
 }
 
+arg_enum! {
+    #[derive(Debug)]
+    pub enum MacchinaColor {
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Cyan,
+        Magenta,
+        Black,
+        White
+    }
+}
+
+impl MacchinaColor {
+    /// Convert arguments passed to `--color` to their respective color.
+    fn get_color(&self) -> Color {
+        match self {
+            MacchinaColor::Red => Color::Red,
+            MacchinaColor::Green => Color::Green,
+            MacchinaColor::Blue => Color::Blue,
+            MacchinaColor::Yellow => Color::Yellow,
+            MacchinaColor::Cyan => Color::Cyan,
+            MacchinaColor::Magenta => Color::Magenta,
+            MacchinaColor::Black => Color::Black,
+            MacchinaColor::White => Color::White,
+        }
+    }
+}
+
+#[derive(StructOpt, Debug)]
+#[structopt(author = AUTHORS, about = ABOUT)]
+pub struct Opt {
+    #[structopt(short = "p", long = "palette", help = "Displays color palette")]
+    palette: bool,
+
+    #[structopt(
+        short = "P",
+        long = "padding",
+        default_value = "4",
+        help = "Specifies the amount of left padding to use"
+    )]
+    padding: usize,
+
+    #[structopt(
+        short = "s",
+        long = "spacing",
+        help = "Specifies the amount of spacing to use"
+    )]
+    spacing: Option<usize>,
+
+    #[structopt(short = "n", long = "no-color", help = "Disables color")]
+    no_color: bool,
+
+    #[structopt(
+        short = "c",
+        long = "color",
+        possible_values = &MacchinaColor::variants(),
+        case_insensitive = true,
+        default_value = "Blue",
+        help = "Specifies the key color"
+    )]
+    color: MacchinaColor,
+
+    #[structopt(
+        short = "b",
+        long = "bar",
+        help = "Displays bars instead of numerical values"
+    )]
+    bar: bool,
+
+    #[structopt(
+        short = "C",
+        long = "separator-color",
+        possible_values = &MacchinaColor::variants(),
+        case_insensitive = true,
+        default_value = "White",
+        help = "Specifies the separator color"
+    )]
+    separator_color: MacchinaColor,
+
+    #[structopt(
+        short = "r",
+        long = "random-color",
+        help = "Picks a random key color for you"
+    )]
+    random_color: bool,
+
+    #[structopt(
+        short = "R",
+        long = "random-sep-color",
+        help = "Picks a random separator color for you"
+    )]
+    random_sep_color: bool,
+
+    #[structopt(
+        short = "H",
+        long = "hide",
+        possible_values = &theme::ReadoutKey::variants(),
+        case_insensitive = true,
+        help = "Hides the specified elements"
+    )]
+    hide: Option<Vec<theme::ReadoutKey>>,
+
+    #[structopt(
+        short = "X",
+        long = "show-only",
+        possible_values = &theme::ReadoutKey::variants(),
+        case_insensitive = true,
+        help = " Displays only the specified elements"
+    )]
+    show_only: Option<Vec<theme::ReadoutKey>>,
+
+    #[structopt(short = "d", long = "debug", help = "Prints debug information")]
+    debug: bool,
+
+    #[structopt(short = "U", long = "short-uptime", help = "Shortens uptime output")]
+    short_uptime: bool,
+
+    #[structopt(short = "S", long = "short-shell", help = "Shortens shell output")]
+    short_shell: bool,
+
+    #[structopt(
+        short = "t",
+        long = "theme",
+        default_value = "Hydrogen",
+        possible_values = &theme::Themes::variants(),
+        help = "Specifies the theme to use"
+    )]
+    theme: theme::Themes,
+}
+
 fn main() {
-    let matches = App::new("Macchina")
-        .version(VERSION)
-        .author(crate_authors!())
-        .arg(
-            Arg::with_name("palette")
-                .short("p")
-                .long("palette")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("padding")
-                .short("-P")
-                .validator(extra::is_int)
-                .long("padding")
-                .takes_value(true)
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("spacing")
-                .short("-s")
-                .validator(extra::is_int)
-                .long("spacing")
-                .takes_value(true)
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("no-color")
-                .short("n")
-                .long("no-color")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("color")
-                .short("c")
-                .long("color")
-                .takes_value(true)
-                .multiple(false)
-                .max_values(1)
-                .possible_values(&[
-                    "red", "green", "blue", "yellow", "cyan", "magenta", "black", "white",
-                ]),
-        )
-        .arg(Arg::with_name("bar").short("b").long("bar").multiple(false))
-        .arg(
-            Arg::with_name("separator-color")
-                .short("C")
-                .long("separator-color")
-                .takes_value(true)
-                .multiple(false)
-                .max_values(1)
-                .possible_values(&[
-                    "red", "green", "blue", "yellow", "cyan", "magenta", "black", "white",
-                ]),
-        )
-        .arg(
-            Arg::with_name("random-color")
-                .short("r")
-                .long("random-color")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("random-sep-color")
-                .short("R")
-                .long("random-sep-color")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("hide")
-                .short("H")
-                .long("hide")
-                .takes_value(true)
-                .min_values(1)
-                .max_values(12)
-                .multiple(false)
-                .possible_values(&[
-                    "host", "mach", "distro", "de", "wm", "kernel", "pkgs", "shell", "term", "cpu",
-                    "up", "mem", "bat",
-                ]),
-        )
-        .arg(
-            Arg::with_name("show-only")
-                .short("X")
-                .long("show-only")
-                .takes_value(true)
-                .min_values(1)
-                .max_values(12)
-                .multiple(false)
-                .possible_values(&[
-                    "host", "mach", "distro", "de", "wm", "kernel", "pkgs", "shell", "term", "cpu",
-                    "up", "mem", "bat",
-                ]),
-        )
-        .arg(
-            Arg::with_name("theme")
-                .short("t")
-                .long("theme")
-                .takes_value(true)
-                .max_values(1)
-                .multiple(false)
-                .possible_values(&["H", "He", "Li"]),
-        )
-        .arg(
-            Arg::with_name("short-shell")
-                .short("S")
-                .long("short-shell")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("short-uptime")
-                .short("U")
-                .long("short-uptime")
-                .multiple(false),
-        )
-        .arg(
-            Arg::with_name("debug")
-                .short("d")
-                .long("debug")
-                .multiple(false),
-        )
-        .arg(Arg::with_name("help").short("h").long("help"))
-        .arg(Arg::with_name("version").short("v").long("version"))
-        .get_matches();
+    let opt = Opt::from_args();
 
     // Instantiate Macchina's elements.
     let mut elems = Elements::new();
     let mut fail = Fail::new();
-    elems.set_theme(theme::HydrogenTheme::new(), &mut fail);
+    elems.set_theme(opt.theme.create_instance(), &mut fail);
 
-    if !matches.is_present("theme") {
-        elems.theme.misc_mut().longest_key = elems.longest_key(&mut fail);
+    let longest_key = elems.longest_key(&mut fail);
+    let mut misc = elems.theme.misc_mut();
+
+    misc.longest_key = longest_key;
+    misc.padding = opt.padding;
+    misc.color = opt.color.get_color();
+    misc.separator_color = opt.separator_color.get_color();
+
+    if let Some(spacing) = opt.spacing {
+        misc.spacing = spacing;
     }
 
-    // Instantiate Macchina's default behavior, i.e:
-    //   color: enabled
-    //   palette: disabled
-    //   shell shorthand: disabled
-    //   uptime shorthand: disabled
-    let mut opts = Options::new();
-
-    if matches.is_present("palette") {
-        opts.palette_status = true;
-    }
-    if matches.is_present("padding") {
-        elems.theme.misc_mut().padding = matches.value_of("padding").unwrap().parse().unwrap();
-    }
-    if matches.is_present("spacing") {
-        elems.theme.misc_mut().spacing = matches.value_of("spacing").unwrap().parse().unwrap();
-    }
-    if matches.is_present("color") {
-        let color: Color = choose_color(matches.value_of("color").unwrap());
-        elems.theme.misc_mut().color = color;
-    }
-    if matches.is_present("separator-color") {
-        let color: Color = choose_color(matches.value_of("separator-color").unwrap());
-        elems.theme.misc_mut().separator_color = color;
-    }
-    if matches.is_present("short-shell") {
-        opts.shell_shorthand = true;
-    }
-    if matches.is_present("short-uptime") {
-        opts.uptime_shorthand = true;
-    }
-    if matches.is_present("no-color") {
-        let mut misc = elems.theme.misc_mut();
+    if opt.no_color {
         misc.color = Color::White;
         misc.separator_color = Color::White;
     }
-    if matches.is_present("bar") {
-        opts.bar_status = true;
+
+    if let Some(ref elements_to_hide) = opt.hide {
+        display::hide(elems, &opt, &mut fail, elements_to_hide);
+        std::process::exit(0); //todo: refactor, don't make display::hide() also print_info...
     }
-    if matches.is_present("hide") {
-        let elements_to_hide: Vec<&str> = matches.values_of("hide").unwrap().collect();
-        display::hide(elems, opts, &mut fail, elements_to_hide);
-        std::process::exit(0);
-    }
-    if matches.is_present("show-only") {
+
+    if let Some(ref show_only) = opt.show_only {
         elems.hide_all();
-        let elements_to_unhide: Vec<&str> = matches.values_of("show-only").unwrap().collect();
-        display::unhide(elems, opts, &mut fail, elements_to_unhide);
-        std::process::exit(0);
+        display::unhide(elems, &opt, &mut fail, show_only);
+        std::process::exit(0); //todo: refactor, don't make display::unhide() also print_info...
     }
-    if matches.is_present("debug") {
-        elems.init_elements_for_debug(&mut fail, &opts);
+
+    if opt.debug {
+        elems.init_elements_for_debug(&mut fail, &opt);
         display::debug(&mut fail);
         std::process::exit(0);
     }
-    if matches.is_present("help") {
-        display::help();
-        std::process::exit(0);
-    }
-    if matches.is_present("version") {
-        println!("Macchina v{}", VERSION);
-        std::process::exit(0);
-    }
-    if matches.is_present("random-color") {
-        elems.theme.misc_mut().color = display::randomize_color();
-    }
-    if matches.is_present("random-sep-color") {
-        elems.theme.misc_mut().separator_color = display::randomize_color();
-    }
-    if matches.is_present("theme") {
-        if matches.value_of("theme").unwrap() == "He" {
-            elems.set_theme(theme::HeliumTheme::new(), &mut fail)
-        } else if matches.value_of("theme").unwrap() == "Li" {
-            elems.set_theme(theme::LithiumTheme::new(), &mut fail)
-        }
+
+    if opt.random_color {
+        misc.color = display::randomize_color();
     }
 
-    display::print_info(elems, &opts, &mut fail);
+    if opt.random_sep_color {
+        misc.separator_color = display::randomize_color();
+    }
+
+    display::print_info(elems, &opt, &mut fail);
 }

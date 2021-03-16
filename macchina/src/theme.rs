@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 use colored::{Color, ColoredString, Colorize};
 use std::collections::HashMap;
+use clap::arg_enum;
 
 /// `Misc` contains several elements that make up a `Theme`, such as the: \
 /// - Separator glyph
@@ -88,22 +89,45 @@ impl Bar {
         }
     }
 }
-/// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-pub enum ReadoutKey {
-    Host,
-    Machine,
-    Kernel,
-    Distribution,
-    OperatingSystem,
-    DesktopEnvironment,
-    WindowManager,
-    Packages,
-    Shell,
-    Terminal,
-    Uptime,
-    Processor,
-    Memory,
-    Battery,
+
+arg_enum! {
+    /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
+    #[derive(Debug, PartialEq)]
+    pub enum ReadoutKey {
+        Host,
+        Machine,
+        Kernel,
+        Distribution,
+        OperatingSystem,
+        DesktopEnvironment,
+        WindowManager,
+        Packages,
+        Shell,
+        Terminal,
+        Uptime,
+        Processor,
+        Memory,
+        Battery,
+    }
+}
+
+arg_enum! {
+    #[derive(Debug, PartialEq)]
+    pub enum Themes {
+        Hydrogen,
+        Helium,
+        Lithium
+    }
+}
+
+impl Themes {
+    pub fn create_instance(&self) -> Box<dyn Theme> {
+        match self {
+            Themes::Hydrogen => HydrogenTheme::new(),
+            Themes::Helium => HeliumTheme::new(),
+            Themes::Lithium => LithiumTheme::new()
+        }
+    }
 }
 
 /// Defines the different ways a key can be named, let's take the _OperatingSystem variant_ for example: \
@@ -222,6 +246,10 @@ pub trait Theme {
         } else {
             abbreviated_names.values().next().unwrap()
         }
+    }
+
+    fn get_colored_separator(&self) -> ColoredString {
+        ColoredString::from(self.misc().separator).color(self.misc().separator_color)
     }
 
     fn key_to_colored_string(&self, readout_key: ReadoutKey) -> ColoredString {
