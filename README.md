@@ -68,7 +68,7 @@ The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains 
 - Distribution
 - Desktop Environment
 - Window Manager
-- Package Count <sup>[[1]](https://github.com/grtcdr/macchina/wiki/%F0%9F%92%BB-Platform-Support)</sup>
+- Package Count <sup>[[1]](https://github.com/grtcdr/macchina/wiki/Platform-Support)</sup>
 - Shell
 - Terminal
 - Processor
