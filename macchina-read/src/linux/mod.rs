@@ -87,12 +87,14 @@ impl GeneralReadout for LinuxGeneralReadout {
             .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let family = product_readout
             .family()
             .unwrap_or_default()
             .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let version = product_readout
             .version()
             .unwrap_or_default()

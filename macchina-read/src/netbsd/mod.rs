@@ -142,12 +142,14 @@ impl GeneralReadout for NetBSDGeneralReadout {
             .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let product = product_readout
             .product()
             .unwrap_or(String::new())
-            .replace("To be filled by O.E.M.")
+            .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let version = product_readout
             .version()
             .unwrap_or(String::new())
