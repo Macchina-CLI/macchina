@@ -114,22 +114,11 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 # Installation <a name="install"></a>
 _Macchina_ is available on:
 
-- [AUR](https://aur.archlinux.org/packages/macchina/)
-  ```
-  git clone https://aur.archlinux.org/macchina.git
-  cd macchina
-  makepkg -si
-  ```
-
-- [NetBSD](https://pkgsrc.se/sysutils/macchina)
-  ```
-  pkgin install macchina
-  ```
-
 - [crates.io](https://crates.io/crates/macchina)
-  ```
-  cargo install macchina
-  ```
+- [AUR](https://aur.archlinux.org/packages/macchina/)
+- [pkgsrc](https://pkgsrc.se/sysutils/macchina)
+
+Read the [installation guide](https://github.com/grtcdr/macchina/wiki/Installation) to see the multiple ways you can install it on your machine, or download the [prebuilt binaries](https://github.com/grtcdr/macchina/releases)!
 
 ---
 
