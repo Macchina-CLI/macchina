@@ -36,6 +36,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 .args(&["-o", "-P", r"(?<=\().*(?=\))"])
                 .stdin(Stdio::from(envstat_out))
                 .stdout(Stdio::piped())
+                .stderr(Stdio::null())
                 .spawn()
                 .expect("ERROR: failed to spawn \"rg\" process");
             let output = rg
@@ -67,14 +68,15 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 .stdout
                 .expect("ERROR: failed to open \"envstat\" stdout");
 
-            let grep = Command::new("rg")
+            let rg = Command::new("rg")
                 .arg("charging:")
                 .stdin(Stdio::from(envstat_out))
                 .stdout(Stdio::piped())
+                .stderr(Stdio::null())
                 .spawn()
                 .expect("ERROR: failed to spawn \"rg\" process");
 
-            let output = grep
+            let output = rg
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"rg\" process to exit");
             let mut status = String::from_utf8(output.stdout)
@@ -134,9 +136,24 @@ impl GeneralReadout for NetBSDGeneralReadout {
     fn machine(&self) -> Result<String, ReadoutError> {
         let product_readout = NetBSDProductReadout::new();
 
-        let vendor = product_readout.vendor().unwrap_or(String::new());
-        let product = product_readout.product().unwrap_or(String::new());
-        let version = product_readout.version().unwrap_or(String::new());
+        let vendor = product_readout
+            .vendor()
+            .unwrap_or(String::new())
+            .replace("To be filled by O.E.M.", "")
+            .trim()
+            .to_string();
+        let product = product_readout
+            .product()
+            .unwrap_or(String::new())
+            .replace("To be filled by O.E.M.")
+            .trim()
+            .to_string();
+        let version = product_readout
+            .version()
+            .unwrap_or(String::new())
+            .replace("To be filled by O.E.M.", "")
+            .trim()
+            .to_string();
 
         if version == product && version == vendor {
             return Ok(vendor);

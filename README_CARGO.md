@@ -41,6 +41,15 @@ __Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
 
 __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
+## 🚩 NetBSD
+
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `macchina` | 245.1 ± 1.0 | 244.1 | 247.6 | 1.00 |
+| `neofetch` | 1264.8 ± 5.7 | 1258.0 | 1276.9 | 5.16 ± 0.03 |
+
+__Summary__: `macchina` runs __5.16 ± 0.03__ times __faster__ than `neofetch`
+
 ---
 
 # Features
