@@ -94,6 +94,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
         let wmctrl = Command::new("wmctrl")
             .arg("-m")
             .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
             .spawn()
             .expect("ERROR: failed to spawn \"wmctrl\" process");
 
@@ -117,7 +118,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 
         let window_man_name =
             extra::pop_newline(String::from(window_manager.replace("Name:", "").trim()));
-        if window_man_name == "N/A" {
+        if window_man_name == "N/A" || window_man_name.is_empty() {
             return Err(ReadoutError::MetricNotAvailable);
         }
         return Ok(window_man_name);
