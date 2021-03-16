@@ -129,7 +129,8 @@ pub struct Opt {
         long = "hide",
         possible_values = &theme::ReadoutKey::variants(),
         case_insensitive = true,
-        help = "Hides the specified elements"
+        help = "Hides the specified elements",
+        min_values = 1
     )]
     hide: Option<Vec<theme::ReadoutKey>>,
 
@@ -138,7 +139,8 @@ pub struct Opt {
         long = "show-only",
         possible_values = &theme::ReadoutKey::variants(),
         case_insensitive = true,
-        help = " Displays only the specified elements"
+        help = " Displays only the specified elements",
+        min_values = 1
     )]
     show_only: Option<Vec<theme::ReadoutKey>>,
 
