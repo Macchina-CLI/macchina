@@ -116,6 +116,11 @@ impl Fail {
                 true,
                 String::from("(OK:DISABLED) Distribution -> Windows system detected, so the \
                 distribution is automatically hidden."),
+            ),
+            #[cfg(target_os = "android")]
+            distro: FailedComponent::new(
+                true,
+                String::from("(ERROR:DISABLED) Distribution -> Extracted from Android property \"ro.build.version.release\"."),
             )
         }
     }
