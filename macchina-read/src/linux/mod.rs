@@ -307,7 +307,7 @@ impl PackageReadout for LinuxPackageReadout {
                 .to_string());
         } else if extra::which("qlist") {
             // Returns the number of installed packages using:
-            // dnf list installed | wc -l
+            // qlist -I | wc -l
             let qlist_output = Command::new("qlist")
                 .arg("-I")
                 .stdout(Stdio::piped())
@@ -387,7 +387,32 @@ impl PackageReadout for LinuxPackageReadout {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
             return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
+                .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
+                .trim()
+                .to_string());
+        } else if extra::which("rpm") {
+            // Returns the number of installed packages using:
+            // rpm -qa | wc -l
+            let rpm_output = Command::new("rpm")
+                .args(&["-q", "-a"])
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"rpm\" process")
+                .stdout
+                .expect("ERROR: failed to open \"rpm\" stdout");
+
+            let count = Command::new("wc")
+                .arg("-l")
+                .stdin(Stdio::from(rpm_output))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"wc\" process");
+
+            let final_output = count
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"wc\" process to exit");
+            return Ok(String::from_utf8(final_output.stdout)
+                .expect("ERROR: \"rpm -qa | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         }
