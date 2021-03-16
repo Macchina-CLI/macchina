@@ -1,10 +1,10 @@
 use crate::extra;
 use crate::traits::*;
-use nix::unistd;
 use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
+extern crate libc;
 
 pub struct LinuxBatteryReadout;
 
@@ -13,7 +13,9 @@ pub struct LinuxKernelReadout {
     os_type_ctl: Option<Ctl>,
 }
 
-pub struct LinuxGeneralReadout;
+pub struct LinuxGeneralReadout {
+    hostname_ctl: Option<Ctl>,
+}
 
 pub struct LinuxMemoryReadout;
 
@@ -72,7 +74,9 @@ impl KernelReadout for LinuxKernelReadout {
 
 impl GeneralReadout for LinuxGeneralReadout {
     fn new() -> Self {
-        LinuxGeneralReadout
+        LinuxGeneralReadout {
+            hostname_ctl: Ctl::new("kernel.hostname").ok(),
+        }
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
@@ -114,17 +118,11 @@ impl GeneralReadout for LinuxGeneralReadout {
     }
 
     fn hostname(&self) -> Result<String, ReadoutError> {
-        let mut buf = [0u8; 64];
-        let hostname_cstr = unistd::gethostname(&mut buf);
-        match hostname_cstr {
-            Ok(hostname_cstr) => {
-                let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
-                Ok(String::from(hostname))
-            }
-            Err(_e) => Err(ReadoutError::Other(String::from(
-                "ERROR: failed to fetch hostname from \"unistd::gethostname()\"",
-            ))),
-        }
+        Ok(self
+            .hostname_ctl
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .value_string()?)
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> {
