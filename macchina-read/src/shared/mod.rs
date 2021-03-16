@@ -10,12 +10,16 @@ use sysctl::SysctlError;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use crate::extra;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use nix::unistd;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::process::{Command, Stdio};
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::env;
+
 #[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::fs;
 

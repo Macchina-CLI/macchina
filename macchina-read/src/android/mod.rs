@@ -5,7 +5,7 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 use std::time::Duration;
 use libc;
-use android_properties::AndroidProperty;
+use android_properties::AndroidProperty; // TODO: build fails on android 7.1.1, lib links to extern __system_property_read_callback added in API 26, but offers a feature flag to support deprecated function
 use uname::uname;
 
 pub struct AndroidBatteryReadout;
