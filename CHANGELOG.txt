@@ -1,12 +1,13 @@
 # Changelog
-- Remove "Changelog" section from README.md as it now has its own file
-
-Merge PR from @123marvin123 who has:
-- Enabled Link-Time-Optimization
-- Fixed wrong version number on older macOS systems
-- Fixed windows binary upload
-  - Only trigger release workflow when new tag is pushed
-- Created proper workspaces for projects
-  - This helps manage the crates that make up the project as it grows
-- Automatic release creation
-  - Create GitHub release automatically when the tag version is created in format "v*"
+- Rework the theming system
+- Rework the long theme
+- Declutter `Elements` and `display.rs`
+- Remove objc runtime and use _sysctl_ to get os version to improve performance on macOS
+- Add documentation for `theme.rs`
+- Add __macOS__ benchmarks to README
+- Add more __Windows__ metrics
+- Add support for APK (Alpine Linux) package manager
+- Fix an issue where a bar's unused glyphs (when using `--no-color` flag) are not hidden for some terminals, e.g. Kitty.
+- Fix __Windows__ compilation
+- Move dependencies section of README files to the bottom
+- Other miscellaneous changes and improvements 

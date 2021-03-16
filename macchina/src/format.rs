@@ -3,7 +3,7 @@ use bytesize::ByteSize;
 use macchina_read::traits::{BatteryReadout, GeneralReadout, MemoryReadout, ReadoutError};
 
 /// This function should return a new `String` constructed from the value \
-/// returned by `read::uptime`
+/// returned by `READOUTS.general.uptime()`
 pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
     let mut formatted_uptime = String::new();
     let uptime: f32 = READOUTS.general.uptime()?.parse().unwrap();
@@ -76,7 +76,7 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `read::hostname` and `read::username`
+/// returned by `READOUTS.general.username()` and `READOUTS.general.hostname()`
 pub fn host() -> Result<String, ReadoutError> {
     let username = READOUTS.general.username()?;
     let hostname = READOUTS.general.hostname()?;
@@ -85,7 +85,7 @@ pub fn host() -> Result<String, ReadoutError> {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `read::battery_percentage` and `read::battery_status`
+/// returned by `READOUTS.battery.percentage()` and `READOUTS.battery.status()`
 pub fn battery() -> Result<String, ReadoutError> {
     let percentage = READOUTS.battery.percentage()?;
     let status_from_read_func = READOUTS.battery.status()?;
@@ -106,7 +106,7 @@ pub fn battery() -> Result<String, ReadoutError> {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `memory::used` and `memory::memtotal`
+/// returned by `READOUTS.memory.total()` and `READOUTS.memory.used()`
 pub fn memory() -> Result<String, ReadoutError> {
     let total = ByteSize::kb(READOUTS.memory.total()?);
     let used = ByteSize::kb(READOUTS.memory.used()?);
@@ -115,7 +115,7 @@ pub fn memory() -> Result<String, ReadoutError> {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `read::cpu_model_name` and `num_cpus::get`
+/// returned by `READOUTS.general.cpu_model_name()` and `num_cpus::get()`
 pub fn cpu() -> Result<String, ReadoutError> {
     let cpu_model = READOUTS.general.cpu_model_name()?;
 

@@ -217,11 +217,22 @@ impl PackageReadout for LinuxPackageReadout {
         LinuxPackageReadout
     }
 
+    /// Returns the __number of installed packages__ for the following package managers:
+    /// - pacman
+    /// - apk
+    /// - emerge _(using qlist)_
+    /// - apt _(using dpkg)_
+    /// - xbps _(using xbps-query)_
+    ///
+    /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
+    /// that isn't mentioned in the above list.
     fn count_pkgs(&self) -> Result<String, ReadoutError> {
         // Instead of having a condition for each distribution.
         // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
+            // Returns the number of installed packages using
+            // pacman -Qq | wc -l
             let pacman_output = Command::new("pacman")
                 .args(&["-Q", "-q"])
                 .stdout(Stdio::piped())
@@ -245,6 +256,8 @@ impl PackageReadout for LinuxPackageReadout {
                 .trim()
                 .to_string());
         } else if extra::which("dpkg") {
+            // Returns the number of installed packages using
+            // dpkg -l | wc -l
             let dpkg_output = Command::new("dpkg")
                 .arg("-l")
                 .stdout(Stdio::piped())
@@ -268,6 +281,8 @@ impl PackageReadout for LinuxPackageReadout {
                 .trim()
                 .to_string());
         } else if extra::which("qlist") {
+            // Returns the number of installed packages using:
+            // dnf list installed | wc -l
             let qlist_output = Command::new("qlist")
                 .arg("-I")
                 .stdout(Stdio::piped())
@@ -291,6 +306,8 @@ impl PackageReadout for LinuxPackageReadout {
                 .trim()
                 .to_string());
         } else if extra::which("xbps-query") {
+            // Returns the number of installed packages using:
+            // xbps-query | grep ii | wc -l
             let xbps_output = Command::new("xbps-query")
                 .arg("-l")
                 .stdout(Stdio::piped())
@@ -321,6 +338,31 @@ impl PackageReadout for LinuxPackageReadout {
 
             return Ok(String::from_utf8(final_output.stdout)
                 .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
+                .trim()
+                .to_string());
+        } else if extra::which("apk") {
+            // Returns the number of installed packages using:
+            // apk info | wc -l
+            let apk_output = Command::new("apk")
+                .arg("info")
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"apk\" process")
+                .stdout
+                .expect("ERROR: failed to open \"apk\" stdout");
+
+            let count = Command::new("wc")
+                .arg("-l")
+                .stdin(Stdio::from(apk_output))
+                .stdout(Stdio::piped())
+                .spawn()
+                .expect("ERROR: failed to start \"wc\" process");
+
+            let final_output = count
+                .wait_with_output()
+                .expect("ERROR: failed to wait for \"wc\" process to exit");
+            return Ok(String::from_utf8(final_output.stdout)
+                .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
         }
