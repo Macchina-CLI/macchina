@@ -1,5 +1,5 @@
 use crate::theme::{HydrogenTheme, ReadoutKey};
-use crate::{bars, format, theme::Theme, READOUTS};
+use crate::{bars, format, theme, theme::Theme, Opt, READOUTS};
 use colored::{Color, Colorize};
 use macchina_read::traits::{GeneralReadout, KernelReadout, PackageReadout};
 use rand::Rng;
@@ -140,27 +140,6 @@ impl Fail {
             println!(
                 "Everything is displaying correctly!\nIf this is not true, please create an issue at https://github.com/grtcdr/macchina"
             )
-        }
-    }
-}
-
-/// __Options__ holds Macchina's behaviour that the user
-/// can alter using the program's arguments like displaying
-/// the palette and enabling shell and uptime shorthand.
-pub struct Options {
-    pub bar_status: bool,
-    pub palette_status: bool,
-    pub shell_shorthand: bool,
-    pub uptime_shorthand: bool,
-}
-
-impl Options {
-    pub fn new() -> Options {
-        Options {
-            bar_status: false,
-            palette_status: false,
-            shell_shorthand: false,
-            uptime_shorthand: false,
         }
     }
 }
@@ -329,9 +308,9 @@ impl Elements {
 
     /// This function will assign an element its shorthand value if the
     /// user chooses to use an argument that enables this behavior.
-    pub fn apply_shorthand_values(&mut self, opts: &Options, fail: &mut Fail) {
-        let shell_shorthand = opts.shell_shorthand && !self.shell.hidden && !fail.shell.failed;
-        let uptime_shorthand = opts.uptime_shorthand && !self.uptime.hidden && !fail.shell.failed;
+    pub fn apply_shorthand_values(&mut self, opts: &Opt, fail: &mut Fail) {
+        let shell_shorthand = opts.short_shell && !self.shell.hidden && !fail.shell.failed;
+        let uptime_shorthand = opts.short_uptime && !self.uptime.hidden && !fail.shell.failed;
 
         match READOUTS.general.shell(shell_shorthand) {
             Ok(shell) => self.shell.modify(Some(shell)),
@@ -345,7 +324,7 @@ impl Elements {
     }
 
     /// Initialize each element its value for debugging purposes
-    pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Options) {
+    pub fn init_elements_for_debug(&mut self, fail: &mut Fail, opts: &Opt) {
         match format::uptime(true) {
             Ok(uptime) => self.uptime.modify(Some(uptime)),
             Err(_) => fail.uptime.fail_component(),
@@ -363,12 +342,12 @@ impl Elements {
 
         self.is_running_wm_only(fail, true);
 
-        match format::uptime(opts.uptime_shorthand) {
+        match format::uptime(opts.short_uptime) {
             Ok(uptime) => self.uptime.modify(Some(uptime)),
             Err(_) => fail.uptime.fail_component(),
         }
 
-        match READOUTS.general.shell(opts.shell_shorthand) {
+        match READOUTS.general.shell(opts.short_shell) {
             Ok(shell) => self.shell.modify(Some(shell)),
             Err(_) => fail.shell.fail_component(),
         }
@@ -478,13 +457,13 @@ trait Display {
     /// Print the computer's uptime.
     fn print_uptime(&mut self, fail: &Fail);
     /// Print memory usage.
-    fn print_memory(&mut self, opts: &Options);
+    fn print_memory(&mut self, opts: &Opt);
     /// Print battery information.
-    fn print_battery(&mut self, opts: &Options, fail: &mut Fail);
+    fn print_battery(&mut self, opts: &Opt, fail: &mut Fail);
     /// Print a bar for elements that support it.
     fn print_bar(&self, blocks: usize);
     /// Print an 8 color palette.
-    fn print_palette(&self, opts: &Options);
+    fn print_palette(&self, opts: &Opt);
 }
 
 impl Display for Elements {
@@ -822,12 +801,12 @@ impl Display for Elements {
         );
     }
 
-    fn print_memory(&mut self, opts: &Options) {
+    fn print_memory(&mut self, opts: &Opt) {
         if self.memory.hidden {
             return;
         }
 
-        if opts.bar_status {
+        if opts.bar {
             match bars::memory() {
                 Ok(mem) => self.memory.modify(Some(mem.to_string())),
                 Err(_) => self.memory.modify(Some(String::from("0"))),
@@ -839,7 +818,7 @@ impl Display for Elements {
             }
         }
 
-        if opts.bar_status {
+        if opts.bar {
             print!(
                 "{}{}{}{}{}",
                 self.theme.padding(),
@@ -874,7 +853,7 @@ impl Display for Elements {
         }
     }
 
-    fn print_battery(&mut self, opts: &Options, fail: &mut Fail) {
+    fn print_battery(&mut self, opts: &Opt, fail: &mut Fail) {
         if self.battery.hidden {
             return;
         }
@@ -887,7 +866,7 @@ impl Display for Elements {
             }
         }
 
-        if opts.bar_status {
+        if opts.bar {
             print!(
                 "{}{}{}{}{}",
                 self.theme.padding(),
@@ -960,8 +939,8 @@ impl Display for Elements {
         }
     }
 
-    fn print_palette(&self, opts: &Options) {
-        if opts.palette_status {
+    fn print_palette(&self, opts: &Opt) {
+        if opts.palette {
             println!();
             println!(
                 "{}{}{}{}{}{}{}{}{}",
@@ -981,7 +960,7 @@ impl Display for Elements {
 }
 
 /// Calls all print functions found in the `Printing` trait
-pub fn print_info(mut elems: Elements, opts: &Options, fail: &mut Fail) {
+pub fn print_info(mut elems: Elements, opts: &Opt, fail: &mut Fail) {
     elems.apply_shorthand_values(opts, fail);
     elems.print_host(fail);
     elems.print_machine();
@@ -1006,71 +985,66 @@ pub fn debug(fail: &mut Fail) {
 }
 
 /// Hide one or more elements e.g. package count, uptime etc. when `--hide <element>` is present.
-pub fn hide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
+pub fn hide(
+    mut elems: Elements,
+    options: &Opt,
+    fail: &mut Fail,
+    hide_parameters: &Vec<theme::ReadoutKey>,
+) {
     // We hide the keys the user asked to hide
-    elems.host.hidden = hide_parameters.contains(&"host");
-    elems.machine.hidden = hide_parameters.contains(&"mach");
-    elems.distribution.hidden = hide_parameters.contains(&"distro");
-    elems.operating_system.hidden = !hide_parameters.contains(&"os");
-    elems.desktop_environment.hidden = hide_parameters.contains(&"de");
-    elems.window_manager.hidden = hide_parameters.contains(&"wm");
-    elems.kernel.hidden = hide_parameters.contains(&"kernel");
-    elems.packages.hidden = hide_parameters.contains(&"pkgs");
-    elems.shell.hidden = hide_parameters.contains(&"shell");
-    elems.terminal.hidden = hide_parameters.contains(&"term");
-    elems.processor.hidden = hide_parameters.contains(&"cpu");
-    elems.uptime.hidden = hide_parameters.contains(&"up");
-    elems.memory.hidden = hide_parameters.contains(&"mem");
-    elems.battery.hidden = hide_parameters.contains(&"bat");
+    elems.host.hidden = hide_parameters.contains(&ReadoutKey::Host);
+    elems.machine.hidden = hide_parameters.contains(&ReadoutKey::Machine);
+    elems.distribution.hidden = hide_parameters.contains(&ReadoutKey::Distribution);
+    elems.operating_system.hidden = !hide_parameters.contains(&ReadoutKey::OperatingSystem);
+    elems.desktop_environment.hidden = hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
+    elems.window_manager.hidden = hide_parameters.contains(&ReadoutKey::WindowManager);
+    elems.kernel.hidden = hide_parameters.contains(&ReadoutKey::Kernel);
+    elems.packages.hidden = hide_parameters.contains(&ReadoutKey::Packages);
+    elems.shell.hidden = hide_parameters.contains(&ReadoutKey::Shell);
+    elems.terminal.hidden = hide_parameters.contains(&ReadoutKey::Terminal);
+    elems.processor.hidden = hide_parameters.contains(&ReadoutKey::Processor);
+    elems.uptime.hidden = hide_parameters.contains(&ReadoutKey::Uptime);
+    elems.memory.hidden = hide_parameters.contains(&ReadoutKey::Memory);
+    elems.battery.hidden = hide_parameters.contains(&ReadoutKey::Battery);
 
     // We don't know which keys the user has allowed to show, so we reset the longest key
     elems.theme.misc_mut().longest_key = elems.longest_key(fail);
     // Print everything
-    print_info(elems, &options, fail);
+    print_info(elems, options, fail);
 }
 
 /// Print only the specified elements e.g. package count, uptime etc. when `--show-only <element>` is present.
-pub fn unhide(mut elems: Elements, options: Options, fail: &mut Fail, hide_parameters: Vec<&str>) {
+pub fn unhide(
+    mut elems: Elements,
+    options: &Opt,
+    fail: &mut Fail,
+    hide_parameters: &Vec<theme::ReadoutKey>,
+) {
     // We unhide the keys the user asked to show
-    elems.host.hidden = !hide_parameters.contains(&"host");
-    elems.machine.hidden = !hide_parameters.contains(&"mach");
-    elems.distribution.hidden = !hide_parameters.contains(&"distro");
-    elems.operating_system.hidden = !hide_parameters.contains(&"os");
-    elems.kernel.hidden = !hide_parameters.contains(&"kernel");
-    elems.packages.hidden = !hide_parameters.contains(&"pkgs");
-    elems.shell.hidden = !hide_parameters.contains(&"shell");
-    elems.terminal.hidden = !hide_parameters.contains(&"term");
-    elems.processor.hidden = !hide_parameters.contains(&"cpu");
-    elems.uptime.hidden = !hide_parameters.contains(&"up");
-    elems.memory.hidden = !hide_parameters.contains(&"mem");
-    elems.battery.hidden = !hide_parameters.contains(&"bat");
+    elems.host.hidden = !hide_parameters.contains(&ReadoutKey::Host);
+    elems.machine.hidden = !hide_parameters.contains(&ReadoutKey::Machine);
+    elems.distribution.hidden = !hide_parameters.contains(&ReadoutKey::Distribution);
+    elems.operating_system.hidden = !hide_parameters.contains(&ReadoutKey::OperatingSystem);
+    elems.kernel.hidden = !hide_parameters.contains(&ReadoutKey::Kernel);
+    elems.packages.hidden = !hide_parameters.contains(&ReadoutKey::Packages);
+    elems.shell.hidden = !hide_parameters.contains(&ReadoutKey::Shell);
+    elems.terminal.hidden = !hide_parameters.contains(&ReadoutKey::Terminal);
+    elems.processor.hidden = !hide_parameters.contains(&ReadoutKey::Processor);
+    elems.uptime.hidden = !hide_parameters.contains(&ReadoutKey::Uptime);
+    elems.memory.hidden = !hide_parameters.contains(&ReadoutKey::Memory);
+    elems.battery.hidden = !hide_parameters.contains(&ReadoutKey::Battery);
 
     if let Some(true) = elems.is_running_wm_only(fail, false) {
-        elems.desktop_environment.hidden = hide_parameters.contains(&"de");
-        elems.window_manager.hidden = !hide_parameters.contains(&"wm");
+        elems.desktop_environment.hidden = hide_parameters.contains(&ReadoutKey::Distribution);
+        elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     } else {
-        elems.desktop_environment.hidden = !hide_parameters.contains(&"de");
-        elems.window_manager.hidden = !hide_parameters.contains(&"wm");
+        elems.desktop_environment.hidden = !hide_parameters.contains(&ReadoutKey::Distribution);
+        elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     }
 
     // We don't know which keys the user has allowed to show, so we reset the longest key
     elems.theme.misc_mut().longest_key = elems.longest_key(fail);
-    print_info(elems, &options, fail);
-}
-
-/// Convert arguments passed to `--color` to their respective color.
-pub fn choose_color(color: &str) -> Color {
-    match color {
-        "black" => Color::Black,
-        "red" => Color::Red,
-        "magenta" => Color::Magenta,
-        "cyan" => Color::Cyan,
-        "blue" => Color::Blue,
-        "green" => Color::Green,
-        "yellow" => Color::Yellow,
-        "white" => Color::White,
-        _ => Color::Magenta,
-    }
+    print_info(elems, options, fail);
 }
 
 /// Pick a random color for the keys when `--random-color` is present.
@@ -1087,56 +1061,6 @@ pub fn randomize_color() -> Color {
         6 => Color::Black,
         _ => Color::White,
     }
-}
-
-/// Print usage and help text.
-pub fn help() {
-    let usage_string: &str = "
-    USAGE: macchina [OPTIONS]
-    OPTIONS:
-    -h, --help                      -   Print help text
-    -v, --version                   -   Print Macchina's version
-    -d, --debug                     -   Print debug information
-    -p, --palette                   -   Display palette
-    -n, --no-color                  -   Disable colors
-    -r, --random-color              -   Picks a random key color for you
-    -R, --random-sep-color          -   Picks a random separator color for you
-    -c, --color <color>             -   Specify the key color
-    -C, --separator-color <color>   -   Specify the separator color
-    -t, --theme <theme>             -   Specify the theme to use
-    -P, --padding <amount>          -   Specify the amount of left padding to use
-    -s, --spacing <amount>          -   Specify the amount of spacing to use
-    -b, --bar                       -   Display bars instead of values for battery and memory
-    -S, --short-shell               -   Shorten shell output
-    -U, --short-uptime              -   Shorten uptime output
-    -H, --hide <element>            -   Hide the specified elements
-    -X, --show-only <element>       -   Display only the specified elements";
-    let help_string: &str = "
-    Coloring:
-        Macchina's default key color is blue, to change the key color
-        use \"--color / -c <color>\"
-        Macchina's default separator color is white, to change the separator color
-        use \"--separator-color / -C <color>\"
-        To let Macchina pick a random color for you, use \"--random-color / -r\"
-        Supported colors (case-sensitive):
-            red, green, blue, magenta, cyan, yellow, black and white.
-        
-    Theming:
-        Macchina comes with multiple themes out of the box,
-        to change the default theme, use \"--theme / -t <theme>\"
-        Supported themes (case-sensitive):
-            H, He, Li.
-
-    Hiding elements:
-        To hide an element (or more), use \"--hide / -H <element>\"
-        To display only the specified element (or more), use \"--show-only / -X <element>\" 
-        Elements (case-sensitive):
-            host, mach, kernel, os, distro, de, wm, pkgs, shell, term, cpu, up, mem and bat.
-    
-    If an element e.g. kernel, uptime etc. fails to display, then Macchina couldn't
-    fetch that piece of information, and therefore hides it from you.
-    To see failing elements run: \"macchina --debug\"";
-    println!("{}\n{}\n", usage_string, help_string);
 }
 
 /// Return the correct amount of colored blocks: colored blocks are used blocks.
