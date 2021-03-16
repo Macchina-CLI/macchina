@@ -1,12 +1,10 @@
 use crate::extra;
 use crate::traits::*;
 use nix::unistd;
-use std::fs;
-use std::io;
 use std::path::Path;
 use std::process::{Command, Stdio};
+use std::time::Duration;
 use libc;
-use std::cell::UnsafeCell;
 use android_properties::AndroidProperty;
 use uname::uname;
 
@@ -116,7 +114,7 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        if let Ok(termux_version) = std::env::var("TERMUX_VERSION") {
+        if let Ok(_) = std::env::var("TERMUX_VERSION") {
             return Ok(String::from("Termux"));
         }
 
@@ -140,19 +138,16 @@ impl GeneralReadout for AndroidGeneralReadout {
     }
 
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
-        let max_freq = fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq")
-            .expect("")// TODO
-            .chars()
-            .filter(|c| c.is_digit(10))
-            .collect();
-        let khz = max_freq.parse::<u32>().unwrap_or(0);
+        // let max_freq = fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq")
+            // .expect("")// TODO
+            // .chars()
+            // .filter(|c| c.is_digit(10))
+            // .collect();
+        // let khz = max_freq.parse::<u32>().unwrap_or(0);
         Err(ReadoutError::MetricNotAvailable)
-        // Ok(crate::shared::cpu_model_name())
     }
 
     fn uptime(&self) -> Result<String, ReadoutError> {
-        use std::time::{Duration, Instant};
-
         let mut time = libc::timespec {
             tv_sec: 0,
             tv_nsec: 0,

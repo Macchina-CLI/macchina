@@ -14,8 +14,10 @@ use crate::extra;
 use nix::unistd;
 #[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
 use std::process::{Command, Stdio};
+#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+use std::env;
 #[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "android"))]
-use std::{env, fs};
+use std::fs;
 
 impl From<std::io::Error> for ReadoutError {
     fn from(e: Error) -> Self {
