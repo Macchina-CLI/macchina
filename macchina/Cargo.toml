@@ -17,4 +17,4 @@ clap = "2.33.3"
 structopt = "0.3.21"
 rand = "0.8.3"
 lazy_static = "1.4.0"
-macchina-read = { version = "0.1.1", path = "../macchina-read" }
+macchina-read = { version = "0.1.2", path = "../macchina-read" }
