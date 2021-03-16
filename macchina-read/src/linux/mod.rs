@@ -236,6 +236,7 @@ impl PackageReadout for LinuxPackageReadout {
     /// - emerge _(using qlist)_
     /// - apt _(using dpkg)_
     /// - xbps _(using xbps-query)_
+    /// - rpm
     ///
     /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
     /// that isn't mentioned in the above list.
