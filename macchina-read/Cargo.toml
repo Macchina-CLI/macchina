@@ -1,6 +1,6 @@
 [package]
 name = "macchina-read"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "Provides the fetching capabilities for Macchina."
@@ -27,3 +27,4 @@ sysctl = "0.4.0"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = "0.4.0"
+winreg = "0.8.0"

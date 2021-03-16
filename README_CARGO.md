@@ -18,18 +18,6 @@ It provides you with convenient features and customization options but doesn't l
 
 ---
 
-# Dependencies
-## 🐧 Linux:
-- `wmctrl`
-- __Gentoo Only:__ `portage-utils`
-## 🚩 NetBSD:
-- `wmctrl`
-- `ripgrep`
-
-The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
-
----
-
 # Benchmarks
 _Macchina_ is pretty fast, see for yourself!
 
@@ -73,7 +61,7 @@ The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains 
 - Distribution
 - Desktop Environment
 - Window Manager
-- Package Count ¹
+- Package Count [[1]](https://github.com/grtcdr/macchina/wiki/Platform-Support)
 - Shell
 - Terminal
 - Processor
@@ -86,14 +74,6 @@ The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains 
   - Status
 - Palette
 
-1. Package count supports the following package managers:
-- Pacman
-- Portage
-- APT
-- XBPS
-- pkgsrc
-- Homebrew
-
 ---
 
 # Usage
@@ -101,6 +81,18 @@ The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains 
 _Macchina_ comes packed with __arguments__ that let you customize its behavior and styling.
 
 The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell you all about them and how they work.
+
+---
+
+# Dependencies
+## 🐧 Linux:
+- `wmctrl`
+- __Gentoo Only:__ `portage-utils`
+## 🚩 NetBSD:
+- `wmctrl`
+- `ripgrep`
+
+The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 
 ---
 
@@ -127,12 +119,12 @@ _Macchina_ is available on:
 
 # Platform Support	
 
-|  Platform     |      Support       |
-| :-:           |        :-:         |
-| Linux         |        Yes         |
-| NetBSD ¹      |        Yes         |
-| macOS ²       |        Yes         |
-| Windows       |        Soon        |
+|  Platform   |      Support       |
+| :-:         |        :-:         |
+| GNU/Linux   |        Yes         |
+| NetBSD      |        Yes         |
+| macOS       |        Yes         |
+| Windows     |        Partial     |
 
 # 🌍 Contributors
 
@@ -140,5 +132,5 @@ _Macchina_ is available on:
 
 _Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
 
-1. Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-2. Support for __macOS__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+- Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
+- Support for __macOS__ and __Windows__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)

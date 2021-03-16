@@ -171,10 +171,8 @@ impl fmt::Display for Pair {
     }
 }
 
-/// This struct encapsulates any element that is a `Pair`. \
-/// it also contains miscellaneous fields such as the
-/// key color, bar glyph, etc. which are part \
-/// of the `Format` struct.
+/// This struct contains a `Pair` for each element, and a `theme` field \
+/// that holds the default or user-specified theme.
 pub struct Elements {
     host: Pair,
     machine: Pair,
@@ -194,8 +192,7 @@ pub struct Elements {
 }
 
 impl Elements {
-    /// Initialize each pair of elements but only assign the pair's key, \
-    /// as the value is assigned to an element when it is about to be printed.
+    /// Creates an instance of this struct.
     pub fn new() -> Elements {
         Elements {
             theme: HydrogenTheme::new(),
@@ -215,8 +212,8 @@ impl Elements {
             battery: Pair::new(),
         }
     }
-    /// Determines which of the elements is the longest key to determine
-    /// how to autospace them.
+    /// Determines which of the (non-hidden) elements in the __current theme__
+    /// has the longest key to determine how to _autospace_ them.
     pub fn longest_key(&mut self, fail: &mut Fail) -> String {
         let mut keys: Vec<String> = Vec::new();
         let abbrev = self.theme.default_abbreviation();
@@ -558,9 +555,7 @@ impl Display for Elements {
 
         match READOUTS.general.os_name() {
             Ok(os) => self.operating_system.modify(Some(os)),
-            Err(_) => {
-                return;
-            }
+            Err(_) => return,
         }
 
         println!(
@@ -909,14 +904,14 @@ impl Display for Elements {
                     "{} {}{} {}",
                     self.theme.bar().symbol_open,
                     colored_glyphs(self, blocks).color(self.theme.misc().color),
-                    colorless_glyphs(self, blocks).hidden(),
+                    colorless_glyphs(self, blocks).replace(self.theme.bar().glyph, " "),
                     self.theme.bar().symbol_close,
                 ),
                 _ => println!(
                     "{} {} {} {}",
                     self.theme.bar().symbol_open,
                     colored_glyphs(self, blocks).color(self.theme.misc().color),
-                    colorless_glyphs(self, blocks).hidden(),
+                    colorless_glyphs(self, blocks).replace(self.theme.bar().glyph, " "),
                     self.theme.bar().symbol_close,
                 ),
             },
