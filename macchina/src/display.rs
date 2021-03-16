@@ -1030,10 +1030,10 @@ pub fn unhide(
     elems.battery.hidden = !hide_parameters.contains(&ReadoutKey::Battery);
 
     if let Some(true) = elems.is_running_wm_only(fail, false) {
-        elems.desktop_environment.hidden = hide_parameters.contains(&ReadoutKey::Distribution);
+        elems.desktop_environment.hidden = hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
         elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     } else {
-        elems.desktop_environment.hidden = !hide_parameters.contains(&ReadoutKey::Distribution);
+        elems.desktop_environment.hidden = !hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
         elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     }
 
