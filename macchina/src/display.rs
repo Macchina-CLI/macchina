@@ -238,6 +238,9 @@ impl Elements {
         if !self.terminal.hidden {
             keys.push(self.theme.key(ReadoutKey::Terminal, abbrev).to_string());
         }
+        if !self.operating_system.hidden {
+            keys.push(self.theme.key(ReadoutKey::OperatingSystem, abbrev).to_string());
+        }
         if !self.processor.hidden {
             keys.push(self.theme.key(ReadoutKey::Processor, abbrev).to_string());
         }
@@ -272,6 +275,7 @@ impl Elements {
                 );
             }
         }
+
         let mut longest_key = keys[0].to_string();
         for val in keys {
             if val.len() > longest_key.len() {
