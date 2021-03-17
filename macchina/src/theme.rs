@@ -108,6 +108,7 @@ arg_enum! {
         Processor,
         Memory,
         Battery,
+        LocalIP,
     }
 }
 
@@ -207,6 +208,11 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Classic, "CPU");
                 values.insert(&AbbreviationType::Alternative, "Cpu");
                 values.insert(&AbbreviationType::Long, "Processor");
+            }
+            ReadoutKey::LocalIP => {
+                values.insert(&AbbreviationType::Classic, "Local IP");
+                values.insert(&AbbreviationType::Alternative, "Adr");
+                values.insert(&AbbreviationType::Long, "Local IP");
             }
             ReadoutKey::Memory => {
                 values.insert(&AbbreviationType::Classic, "Memory");

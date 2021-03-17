@@ -1,5 +1,6 @@
 use crate::extra;
 use crate::traits::*;
+use local_ipaddress;
 use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
@@ -14,6 +15,7 @@ pub struct LinuxKernelReadout {
 
 pub struct LinuxGeneralReadout {
     hostname_ctl: Option<Ctl>,
+    local_ip: Option<String>,
 }
 
 pub struct LinuxMemoryReadout;
@@ -75,6 +77,7 @@ impl GeneralReadout for LinuxGeneralReadout {
     fn new() -> Self {
         LinuxGeneralReadout {
             hostname_ctl: Ctl::new("kernel.hostname").ok(),
+            local_ip: local_ipaddress::get(),
         }
     }
 
@@ -112,6 +115,14 @@ impl GeneralReadout for LinuxGeneralReadout {
         }
 
         Ok(version)
+    }
+
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Ok(self
+            .local_ip
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .to_string())
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
@@ -232,10 +243,10 @@ impl PackageReadout for LinuxPackageReadout {
 
     /// Returns the __number of installed packages__ for the following package managers:
     /// - pacman
-    /// - apk
-    /// - emerge _(using qlist)_
-    /// - apt _(using dpkg)_
-    /// - xbps _(using xbps-query)_
+    /// - apk _(using apk info )_
+    /// - emerge _(using qlist -I)_
+    /// - apt _(using dpkg -l)_
+    /// - xbps _(using xbps-query -l)_
     ///
     /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
     /// that isn't mentioned in the above list.

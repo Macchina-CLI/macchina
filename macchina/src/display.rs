@@ -43,6 +43,7 @@ pub struct Fail {
     pub shell: FailedComponent,
     pub terminal: FailedComponent,
     pub packages: FailedComponent,
+    pub local_ip: FailedComponent,
 }
 
 impl Fail {
@@ -94,6 +95,10 @@ impl Fail {
                 (Gentoo) Extracted using \"qlist -I | wc -l\"
                 (NetBSD) Extracted using \"pkg_info | wc -l\"
                 "),
+            ),
+            local_ip: FailedComponent::new(
+                false,
+                String::from("(ERROR:DISABLED) Local IP Address -> Something went wrong!")
             ),
             #[cfg(target_os = "linux")]
             distro: FailedComponent::new(
@@ -188,6 +193,7 @@ pub struct Elements {
     processor: Pair,
     memory: Pair,
     battery: Pair,
+    local_ip: Pair,
     pub theme: Box<dyn Theme>,
 }
 
@@ -210,6 +216,7 @@ impl Elements {
             processor: Pair::new(),
             memory: Pair::new(),
             battery: Pair::new(),
+            local_ip: Pair::new(),
         }
     }
     /// Determines which of the (non-hidden) elements in the __current theme__
@@ -256,6 +263,9 @@ impl Elements {
         }
         if !self.battery.hidden {
             keys.push(self.theme.key(ReadoutKey::Battery, abbrev).to_string());
+        }
+        if !self.local_ip.hidden {
+            keys.push(self.theme.key(ReadoutKey::LocalIP, abbrev).to_string());
         }
         if let Some(true) = self.is_running_wm_only(fail, false) {
             keys.push(
@@ -309,6 +319,7 @@ impl Elements {
         self.uptime.hidden = true;
         self.memory.hidden = true;
         self.battery.hidden = true;
+        self.local_ip.hidden = true;
     }
 
     /// This function will assign an element its shorthand value if the
@@ -360,6 +371,11 @@ impl Elements {
         match READOUTS.general.terminal() {
             Ok(terminal) => self.terminal.modify(Some(terminal)),
             Err(_) => fail.terminal.fail_component(),
+        }
+
+        match READOUTS.general.local_ip() {
+            Ok(ip) => self.local_ip.modify(Some(ip)),
+            Err(_) => fail.local_ip.fail_component(),
         }
 
         match format::host() {
@@ -461,6 +477,8 @@ trait Display {
     fn print_processor(&mut self);
     /// Print the computer's uptime.
     fn print_uptime(&mut self, fail: &Fail);
+    /// Print the computer's local IP address.
+    fn print_local_ip(&mut self, fail: &mut Fail);
     /// Print memory usage.
     fn print_memory(&mut self, opts: &Opt);
     /// Print battery information.
@@ -755,6 +773,36 @@ impl Display for Elements {
         );
     }
 
+    fn print_local_ip(&mut self, fail: &mut Fail) {
+        if self.local_ip.hidden {
+            return;
+        }
+
+        match READOUTS.general.local_ip() {
+            Ok(ip) => self.local_ip.modify(Some(ip)),
+            Err(_) => {
+                fail.local_ip.fail_component();
+                return;
+            }
+        }
+
+        println!(
+            "{}{}{}{}{}{}",
+            self.theme.padding(),
+            self.theme.key_to_colored_string(ReadoutKey::LocalIP),
+            " ".repeat(
+                self.calc_spacing(
+                    &self
+                        .theme
+                        .key(ReadoutKey::Terminal, self.theme.default_abbreviation())
+                )
+            ),
+            self.theme.get_colored_separator(),
+            self.theme.spacing(),
+            self.local_ip.value
+        );
+    }
+
     fn print_processor(&mut self) {
         if self.processor.hidden {
             return;
@@ -977,6 +1025,7 @@ pub fn print_info(mut elems: Elements, opts: &Opt, fail: &mut Fail) {
     elems.print_terminal(fail);
     elems.print_uptime(fail);
     elems.print_processor();
+    elems.print_local_ip(fail);
     elems.print_memory(opts);
     elems.print_battery(opts, fail);
     elems.print_palette(opts);
@@ -1006,6 +1055,7 @@ pub fn hide(
     elems.shell.hidden = hide_parameters.contains(&ReadoutKey::Shell);
     elems.terminal.hidden = hide_parameters.contains(&ReadoutKey::Terminal);
     elems.processor.hidden = hide_parameters.contains(&ReadoutKey::Processor);
+    elems.local_ip.hidden = hide_parameters.contains(&ReadoutKey::LocalIP);
     elems.uptime.hidden = hide_parameters.contains(&ReadoutKey::Uptime);
     elems.memory.hidden = hide_parameters.contains(&ReadoutKey::Memory);
     elems.battery.hidden = hide_parameters.contains(&ReadoutKey::Battery);
@@ -1033,6 +1083,7 @@ pub fn unhide(
     elems.shell.hidden = !hide_parameters.contains(&ReadoutKey::Shell);
     elems.terminal.hidden = !hide_parameters.contains(&ReadoutKey::Terminal);
     elems.processor.hidden = !hide_parameters.contains(&ReadoutKey::Processor);
+    elems.local_ip.hidden = !hide_parameters.contains(&ReadoutKey::LocalIP);
     elems.uptime.hidden = !hide_parameters.contains(&ReadoutKey::Uptime);
     elems.memory.hidden = !hide_parameters.contains(&ReadoutKey::Memory);
     elems.battery.hidden = !hide_parameters.contains(&ReadoutKey::Battery);
