@@ -239,7 +239,11 @@ impl Elements {
             keys.push(self.theme.key(ReadoutKey::Terminal, abbrev).to_string());
         }
         if !self.operating_system.hidden {
-            keys.push(self.theme.key(ReadoutKey::OperatingSystem, abbrev).to_string());
+            keys.push(
+                self.theme
+                    .key(ReadoutKey::OperatingSystem, abbrev)
+                    .to_string(),
+            );
         }
         if !self.processor.hidden {
             keys.push(self.theme.key(ReadoutKey::Processor, abbrev).to_string());
@@ -988,7 +992,7 @@ pub fn hide(
     mut elems: Elements,
     options: &Opt,
     fail: &mut Fail,
-    hide_parameters: &Vec<theme::ReadoutKey>,
+    hide_parameters: &[theme::ReadoutKey],
 ) {
     // We hide the keys the user asked to hide
     elems.host.hidden = hide_parameters.contains(&ReadoutKey::Host);
@@ -1017,7 +1021,7 @@ pub fn unhide(
     mut elems: Elements,
     options: &Opt,
     fail: &mut Fail,
-    hide_parameters: &Vec<theme::ReadoutKey>,
+    hide_parameters: &[theme::ReadoutKey],
 ) {
     // We unhide the keys the user asked to show
     elems.host.hidden = !hide_parameters.contains(&ReadoutKey::Host);
@@ -1034,10 +1038,12 @@ pub fn unhide(
     elems.battery.hidden = !hide_parameters.contains(&ReadoutKey::Battery);
 
     if let Some(true) = elems.is_running_wm_only(fail, false) {
-        elems.desktop_environment.hidden = hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
+        elems.desktop_environment.hidden =
+            hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
         elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     } else {
-        elems.desktop_environment.hidden = !hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
+        elems.desktop_environment.hidden =
+            !hide_parameters.contains(&ReadoutKey::DesktopEnvironment);
         elems.window_manager.hidden = !hide_parameters.contains(&ReadoutKey::WindowManager);
     }
 

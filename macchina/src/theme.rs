@@ -1,7 +1,7 @@
 #![allow(dead_code)]
+use clap::arg_enum;
 use colored::{Color, ColoredString, Colorize};
 use std::collections::HashMap;
-use clap::arg_enum;
 
 /// `Misc` contains several elements that make up a `Theme`, such as the: \
 /// - Separator glyph
@@ -125,7 +125,7 @@ impl Themes {
         match self {
             Themes::Hydrogen => HydrogenTheme::new(),
             Themes::Helium => HeliumTheme::new(),
-            Themes::Lithium => LithiumTheme::new()
+            Themes::Lithium => LithiumTheme::new(),
         }
     }
 }
