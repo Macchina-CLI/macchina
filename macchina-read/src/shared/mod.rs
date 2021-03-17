@@ -12,9 +12,6 @@ use sysctl::SysctlError;
 use crate::extra;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use nix::unistd;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::process::{Command, Stdio};
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
@@ -132,15 +129,11 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
-    //  accessed through nix::unistd::getppid()
-
-    // the way this argument is processed is through 3 phases
-    // 1. acquiring the value of ps -p $$ -o ppid=
-    // 2. passing this value to ps -p o comm=
-    // 3. the end result is ps -p $(ps -p $$ -o ppid=) o comm=, the command whose stdout is captured and printed
+    //  accessed through libc::getppid()
+    //  libc::getppid(): is always successful.
     let ppid = Command::new("ps")
         .arg("-p")
-        .arg(unistd::getppid().to_string())
+        .arg(unsafe { libc::getppid() }.to_string())
         .arg("-o")
         .arg("ppid=")
         .output()
