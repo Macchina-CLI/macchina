@@ -1,6 +1,5 @@
 #[allow(dead_code)]
 use crate::traits::ReadoutError;
-use std::io::{BufRead, BufReader};
 
 use std::ffi::CStr;
 use std::io::Error;
@@ -222,6 +221,7 @@ pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
 /// Read processor information from `/proc/cpuinfo`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn cpu_model_name() -> String {
+    use std::io::{BufRead, BufReader};
     let file = fs::File::open("/proc/cpuinfo");
     match file {
         Ok(content) => {
@@ -246,6 +246,7 @@ pub(crate) fn cpu_model_name() -> String {
 /// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn get_meminfo_value(value: &str) -> u64 {
+    use std::io::{BufRead, BufReader};
     let file = fs::File::open("/proc/meminfo");
     match file {
         Ok(content) => {
