@@ -1,9 +1,12 @@
 [package]
 name = "macchina-read"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "Provides the fetching capabilities for Macchina."
+keywords = ["system", "fetch", "cli"]
+repository = "https://github.com/grtcdr/macchina"
+readme = "README.md"
 license = "MIT"
 build = "build.rs"
 

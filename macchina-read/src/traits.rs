@@ -1,6 +1,5 @@
-//! This module contains all the traits and types for creating a cross-platform api to query
-//! different readouts from various operating systems. For each operating system, there must be an
-//! implementation of these traits.
+//! This module contains all the traits and types for creating a cross-platform API to query
+//! different readouts from various operating systems. For each operating system, there must be an implementation of these traits.
 
 use ReadoutError::MetricNotAvailable;
 
@@ -8,7 +7,8 @@ use ReadoutError::MetricNotAvailable;
 #[derive(Debug)]
 pub enum ReadoutError {
     /// A specific metric might not be available on all systems (e. g. battery percentage on a
-    /// desktop). If you encounter this error, it means that the requested value is not available.
+    /// desktop). \
+    /// If you encounter this error, it means that the requested value is not available.
     MetricNotAvailable,
 
     /// A readout for a metric might be available, but fails due to missing dependencies or other
@@ -117,7 +117,7 @@ pub trait KernelReadout {
     }
 }
 
-/// This trait provides common functions for querying the current memory state of the host
+/// This trait provides common functions for _querying the current memory state_ of the host
 /// device, most notably `free` and `used`.
 ///
 /// # Example
@@ -180,7 +180,7 @@ pub trait MemoryReadout {
     }
 }
 
-/// This trait provides the interface for implementing functionality used for counting packages on
+/// This trait provides the interface for implementing functionality used for _counting packages_ on
 /// the host system. Almost all modern operating systems use some kind of package managers.
 ///
 /// # Example
@@ -206,13 +206,13 @@ pub trait PackageReadout {
     /// Creates a new instance of the structure which implements this trait.
     fn new() -> Self;
 
-    /// This function should return the amount of packages installed.
+    /// This function should return the number of installed packages.
     fn count_pkgs(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
     }
 }
 
-/// This trait provides the interface for implementing functionality used for getting information
+/// This trait provides the interface for implementing functionality used for getting _product information_
 /// about the hosts operating system.
 ///
 /// # Example
@@ -331,7 +331,7 @@ pub trait GeneralReadout {
         Err(MetricNotAvailable)
     }
 
-    /// This function should return the name of the used terminal software.
+    /// This function should return the name of the used terminal emulator.
     fn terminal(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
     }
@@ -346,12 +346,12 @@ pub trait GeneralReadout {
         Err(MetricNotAvailable)
     }
 
-    /// This function should return the full name of the cpu.
+    /// This function should return the full name of the CPU.
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
     }
 
-    /// This function should return the uptime of the os in seconds.
+    /// This function should return the uptime of the OS in seconds.
     fn uptime(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
     }

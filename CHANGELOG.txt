@@ -1,15 +1,3 @@
 # Changelog
-- Rework the theming system
-- Rework the long theme
-- Declutter `Elements` and `display.rs`
-- Remove objc runtime and use _sysctl_ to get os version to improve performance on macOS
-- Add documentation for `theme.rs`
-- Add __macOS__ and NetBSD benchmarks to README
-- Add more __Windows__ metrics and fix its compilations errors
-- Add support for APK (Alpine Linux) package manager
-- Fix an issue where a bar's unused glyphs (when using `--no-color` flag) are not hidden for some terminals, e.g. Kitty.
-- Remove "To be filled by O.E.M." from machine information on certain computers
-- ripgrep should no longer print any error messages to the terminal on NetBSD
-- Use type-safe command line parsing with StructOpt and Clap
-- Move dependencies section of README files to the bottom
-- Other miscellaneous changes and improvements 
+- Add a _README_ for the `macchina-read` crate
+- `macchina-read` Cargo.toml now links to _Macchina's_ repository
