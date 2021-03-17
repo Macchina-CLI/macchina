@@ -27,10 +27,10 @@ _Macchina_ is pretty fast, see for yourself!
 ## 🐧 Linux
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 34.3 ± 0.8 | 32.9 | 35.9 | 1.00 |
-| `neofetch` | 369.0 ± 3.3 | 362.9 | 376.1 | 10.77 ± 0.26 |
+| `macchina` | 24.7 ± 0.6 | 23.7 | 26.3 | 1.00 |
+| `neofetch` | 373.4 ± 3.8 | 367.3 | 385.9 | 15.10 ± 0.39 |
 
-__Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __15.10 ± 0.39__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
