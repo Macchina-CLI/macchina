@@ -244,6 +244,18 @@ impl PackageReadout for LinuxPackageReadout {
         // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
+            use std::fs::read_dir;
+            use std::path::Path;
+
+            let pacman_folder = Path::new("/var/lib/pacman/local");
+
+            if pacman_folder.exists() {
+                let pacman_count = match read_dir(pacman_folder) {
+                    Ok(read_dir) => read_dir.count() - 1,
+                    Err(_) => 0,
+                };
+                return Ok(pacman_count.to_string());
+            }
             // Returns the number of installed packages using
             // pacman -Qq | wc -l
             let pacman_output = Command::new("pacman")
