@@ -222,33 +222,25 @@ pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
 /// Read processor information from `/proc/cpuinfo`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn cpu_model_name() -> String {
-    let grep = Command::new("grep")
-        .arg("model name")
-        .arg("/proc/cpuinfo")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"grep\" process");
-
-    let grep_out = grep.stdout.expect("ERROR: failed to open \"grep\" stdout");
-
-    let head = Command::new("head")
-        .args(&["-n", "1"])
-        .stdin(Stdio::from(grep_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"head\" process");
-
-    let output = head
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"head\" process to exit");
-    let mut cpu = String::from_utf8(output.stdout)
-        .expect("ERROR: \"head\" process output was not valid UTF-8");
-    cpu = cpu
-        .replace("model name", "")
-        .replace(":", "")
-        .trim()
-        .to_string();
-    cpu
+    let file = fs::File::open("/proc/cpuinfo");
+    match file {
+        Ok(content) => {
+            let reader = BufReader::new(content);
+            for line in reader.lines() {
+                if let Ok(l) = line {
+                    if l.starts_with("model name") {
+                        return l
+                            .replace("model name", "")
+                            .replace(":", "")
+                            .trim()
+                            .to_string();
+                    }
+                }
+            }
+            return String::new();
+        }
+        Err(_e) => String::new(),
+    }
 }
 
 /// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
