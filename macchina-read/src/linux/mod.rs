@@ -4,7 +4,6 @@ use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
-extern crate libc;
 
 pub struct LinuxBatteryReadout;
 

@@ -389,7 +389,8 @@ impl ProductReadout for MacOSProductReadout {
 impl MacOSProductReadout {
     fn operating_system_version(&self) -> Result<NSOperatingSystemVersion, ReadoutError> {
         let os_string = self
-            .os_product_version_ctl.as_ref()
+            .os_product_version_ctl
+            .as_ref()
             .ok_or(ReadoutError::MetricNotAvailable)?
             .value_string()?;
 
