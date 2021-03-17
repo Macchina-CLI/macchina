@@ -46,16 +46,12 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
 ///
 /// # Example
 /// ```
-/// if which("program") {
-///     // Do something...
-/// } else {
-///     return String::from("ps is not installed");     
+/// if macchina_read::extra::which("program") {
+///     // Run the program.
 /// }
-///
 /// ```
 ///
 /// - Returns `TRUE` if _program_ is in `PATH`, or false if it isn't.
-
 pub fn which<P>(program_name: P) -> bool
 where
     P: AsRef<Path>,
@@ -74,7 +70,7 @@ where
     });
 
     match exists {
-        Some(_p) => true,
+        Some(_) => true,
         None => false,
     }
 }
