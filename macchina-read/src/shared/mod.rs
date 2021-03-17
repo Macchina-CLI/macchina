@@ -1,5 +1,6 @@
 #[allow(dead_code)]
 use crate::traits::ReadoutError;
+use std::io::{BufRead, BufReader};
 
 use std::ffi::CStr;
 use std::io::Error;
@@ -256,23 +257,15 @@ pub(crate) fn get_meminfo_value(value: &str) -> u64 {
     let file = fs::File::open("/proc/meminfo");
     match file {
         Ok(content) => {
-            let grep = Command::new("grep")
-                .arg(value)
-                .stdin(Stdio::from(content))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"grep\" process");
-
-            let mem = grep
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"grep\" process to exit");
-            // Collect only the value of MemTotal
-            let s_mem_kb: String = String::from_utf8(mem.stdout)
-                .expect("\"grep\" process stdout was not valid UTF-8")
-                .chars()
-                .filter(|c| c.is_digit(10))
-                .collect();
-            s_mem_kb.parse::<u64>().unwrap_or(0)
+            let reader = BufReader::new(content);
+            for line in reader.lines() {
+                let l = line.unwrap();
+                if l.starts_with(value) {
+                    let s_mem_kb: String = l.chars().filter(|c| c.is_digit(10)).collect();
+                    return s_mem_kb.parse::<u64>().unwrap_or(0);
+                }
+            }
+            return 0;
         }
         Err(_e) => 0,
     }

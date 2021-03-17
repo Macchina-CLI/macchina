@@ -173,7 +173,7 @@ impl MemoryReadout for LinuxMemoryReadout {
     }
 
     fn cached(&self) -> Result<u64, ReadoutError> {
-        Ok(crate::shared::get_meminfo_value("^Cached"))
+        Ok(crate::shared::get_meminfo_value("Cached"))
     }
 
     fn reclaimable(&self) -> Result<u64, ReadoutError> {
