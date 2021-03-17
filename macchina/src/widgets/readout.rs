@@ -58,7 +58,7 @@ impl<'a, 'b> ReadoutList<'a> {
     }
 }
 
-impl<'a, 'b> Widget for ReadoutList<'a> {
+impl<'a> Widget for ReadoutList<'a> {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         buf.set_style(area, self.style);
         let list_area = match &self.block {
