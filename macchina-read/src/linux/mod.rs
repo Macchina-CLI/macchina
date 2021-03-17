@@ -4,6 +4,13 @@ use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
+use rusqlite::{Connection, Result, Error, NO_PARAMS};
+
+impl From<Error> for ReadoutError {
+     fn from(e: Error) -> Self {
+         ReadoutError::Other(format!("Error while accessing SQLite database: {:?}", e))
+     }
+ }
 
 pub struct LinuxBatteryReadout;
 
@@ -392,32 +399,18 @@ impl PackageReadout for LinuxPackageReadout {
                 .trim()
                 .to_string());
         } else if extra::which("rpm") {
-            // Returns the number of installed packages using:
-            // rpm -qa | wc -l
-            let rpm_output = Command::new("rpm")
-                .args(&["-q", "-a"])
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"rpm\" process")
-                .stdout
-                .expect("ERROR: failed to open \"rpm\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(rpm_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"rpm -qa | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+            return _count_rpms()
         }
 
         Err(ReadoutError::MetricNotAvailable)
     }
+}
+
+fn _count_rpms() -> Result<String, ReadoutError> {
+    let path = "/var/lib/rpm/rpmdb.sqlite";
+    let conn = Connection::open(&path)?;
+
+    let count: u32  = conn.query_row("SELECT COUNT(*) FROM Installtid", NO_PARAMS, |r| r.get(0))?;
+
+    Ok(count.to_string())
 }
