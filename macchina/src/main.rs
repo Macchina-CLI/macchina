@@ -1,19 +1,33 @@
 mod bars;
-mod display;
 mod format;
 mod theme;
 
 use clap::arg_enum;
 use clap::crate_authors;
-use colored::Color;
-use display::{Elements, Fail};
 use macchina_read::Readouts;
+use std::io;
 use structopt::StructOpt;
+
+mod data;
+pub mod widgets;
 
 #[macro_use]
 extern crate lazy_static;
 
+use crate::data::ReadoutKey;
+use crate::theme::LithiumTheme;
+use crate::theme::Themes::EmojiTheme;
+use data::Readout;
 use macchina_read::traits::*;
+use std::ops::Deref;
+use std::thread::current;
+use tui::backend::{Backend, CrosstermBackend};
+use tui::buffer::Buffer;
+use tui::layout::{Rect, Margin};
+use tui::style::{Color, Modifier, Style};
+use tui::text::Text;
+use tui::widgets::{Block, BorderType, Borders, Clear, Widget};
+use tui::Terminal;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
@@ -84,12 +98,12 @@ pub struct Opt {
     no_color: bool,
 
     #[structopt(
-        short = "c",
-        long = "color",
-        possible_values = &MacchinaColor::variants(),
-        case_insensitive = true,
-        default_value = "Blue",
-        help = "Specifies the key color"
+    short = "c",
+    long = "color",
+    possible_values = & MacchinaColor::variants(),
+    case_insensitive = true,
+    default_value = "Blue",
+    help = "Specifies the key color"
     )]
     color: MacchinaColor,
 
@@ -101,12 +115,12 @@ pub struct Opt {
     bar: bool,
 
     #[structopt(
-        short = "C",
-        long = "separator-color",
-        possible_values = &MacchinaColor::variants(),
-        case_insensitive = true,
-        default_value = "White",
-        help = "Specifies the separator color"
+    short = "C",
+    long = "separator-color",
+    possible_values = & MacchinaColor::variants(),
+    case_insensitive = true,
+    default_value = "White",
+    help = "Specifies the separator color"
     )]
     separator_color: MacchinaColor,
 
@@ -125,24 +139,24 @@ pub struct Opt {
     random_sep_color: bool,
 
     #[structopt(
-        short = "H",
-        long = "hide",
-        possible_values = &theme::ReadoutKey::variants(),
-        case_insensitive = true,
-        help = "Hides the specified elements",
-        min_values = 1
+    short = "H",
+    long = "hide",
+    possible_values = & data::ReadoutKey::variants(),
+    case_insensitive = true,
+    help = "Hides the specified elements",
+    min_values = 1
     )]
-    hide: Option<Vec<theme::ReadoutKey>>,
+    hide: Option<Vec<data::ReadoutKey>>,
 
     #[structopt(
-        short = "X",
-        long = "show-only",
-        possible_values = &theme::ReadoutKey::variants(),
-        case_insensitive = true,
-        help = " Displays only the specified elements",
-        min_values = 1
+    short = "X",
+    long = "show-only",
+    possible_values = & data::ReadoutKey::variants(),
+    case_insensitive = true,
+    help = " Displays only the specified elements",
+    min_values = 1
     )]
-    show_only: Option<Vec<theme::ReadoutKey>>,
+    show_only: Option<Vec<data::ReadoutKey>>,
 
     #[structopt(short = "d", long = "debug", help = "Prints debug information")]
     debug: bool,
@@ -154,64 +168,89 @@ pub struct Opt {
     short_shell: bool,
 
     #[structopt(
-        short = "t",
-        long = "theme",
-        default_value = "Hydrogen",
-        possible_values = &theme::Themes::variants(),
-        help = "Specifies the theme to use"
+    short = "t",
+    long = "theme",
+    default_value = "Hydrogen",
+    possible_values = & theme::Themes::variants(),
+    help = "Specifies the theme to use"
     )]
     theme: theme::Themes,
 }
 
-fn main() {
+fn create_terminal() -> Result<Terminal<CrosstermBackend<io::Stdout>>, io::Error> {
+    let stdout = io::stdout();
+    let backend = CrosstermBackend::new(stdout);
+    Terminal::new(backend)
+}
+
+fn find_last_buffer_cell(buf: &Buffer) -> Option<(u16, u16)> {
+    for x in (0..buf.area.width).rev() {
+        for y in (0..buf.area.height).rev() {
+            let index = buf.index_of(x, y);
+            let cell = &buf.content()[index];
+            if !cell.symbol.trim().is_empty() {
+                return Some((x, y));
+            }
+        }
+    }
+
+    None
+}
+
+fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
+    let mut terminal = create_terminal()?;
 
-    // Instantiate Macchina's elements.
-    let mut elems = Elements::new();
-    let mut fail = Fail::new();
-    elems.set_theme(opt.theme.create_instance(), &mut fail);
+    let readout_data = vec![
+        Readout::new(ReadoutKey::DesktopEnvironment, "Apple Windows"),
+        Readout::new(ReadoutKey::Uptime, "10h 5m 3s"),
+        Readout::new(ReadoutKey::Processor, "Intel Core\nProcessor"),
+        Readout::new(ReadoutKey::Processor, "Intel Core Processor"),
+        Readout::new(ReadoutKey::OperatingSystem, "Apple Windows 123"),
+        Readout::new(ReadoutKey::Terminal, "iTerm2"),
+    ];
 
-    let longest_key = elems.longest_key(&mut fail);
-    let mut misc = elems.theme.misc_mut();
+    use crate::theme::{EmojiTheme, Theme};
+    use crate::widgets::readout::ReadoutList;
 
-    misc.longest_key = longest_key;
-    misc.padding = opt.padding;
-    misc.color = opt.color.get_color();
-    misc.separator_color = opt.separator_color.get_color();
+    let list = ReadoutList::new(readout_data, EmojiTheme::new())
+        .block_inner_margin(Margin { horizontal: 1, vertical: 1 })
+        .block(Block::default().border_type(BorderType::Rounded).title("🍻 Yeet").borders
+        (Borders::ALL));
+    let mut tmp_buffer = Buffer::empty(terminal.current_buffer_mut().area);
 
-    if let Some(spacing) = opt.spacing {
-        misc.spacing = spacing;
-    }
+    list.render(
+        Rect {
+            x: 0,
+            y: 0,
+            width: tmp_buffer.area.width,
+            height: tmp_buffer.area.height,
+        },
+        &mut tmp_buffer,
+    );
 
-    if opt.no_color {
-        misc.color = Color::White;
-        misc.separator_color = Color::White;
-    }
+    let (last_x, last_y) =
+        find_last_buffer_cell(&mut tmp_buffer).expect("Error while writing to terminal buffer.");
 
-    if let Some(ref elements_to_hide) = opt.hide {
-        display::hide(elems, &opt, &mut fail, elements_to_hide);
-        std::process::exit(0); //todo: refactor, don't make display::hide() also print_info...
-    }
+    tmp_buffer.resize(Rect {
+        x: 0,
+        y: 0,
+        width: tmp_buffer.area.width,
+        height: last_y + 1,
+    });
 
-    if let Some(ref show_only) = opt.show_only {
-        elems.hide_all();
-        display::unhide(elems, &opt, &mut fail, show_only);
-        std::process::exit(0); //todo: refactor, don't make display::unhide() also print_info...
-    }
+    print!("{}", "\n".repeat(tmp_buffer.area.height as usize - 1));
 
-    if opt.debug {
-        elems.init_elements_for_debug(&mut fail, &opt);
-        display::debug(&mut fail);
-        std::process::exit(0);
-    }
+    let mut current_buffer = terminal.current_buffer_mut();
+    let buffer_start_index = current_buffer.index_of(0, current_buffer.area.height - last_y - 1);
+    let tmp_buffer_index = tmp_buffer.index_of(last_x, last_y);
 
-    if opt.random_color {
-        misc.color = display::randomize_color();
-    }
+    let tmp_buffer_slice = &tmp_buffer.content[..=tmp_buffer_index];
 
-    if opt.random_sep_color {
-        misc.separator_color = display::randomize_color();
-    }
+    current_buffer.content[buffer_start_index..(buffer_start_index + tmp_buffer_slice.len())]
+        .clone_from_slice(tmp_buffer_slice);
 
-    display::print_info(elems, &opt, &mut fail);
+    terminal.flush();
+
+    Ok(())
 }
