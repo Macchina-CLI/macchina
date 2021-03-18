@@ -299,8 +299,9 @@ fn write_buffer_to_console(
     let tmp_width = tmp_buffer.area.width;
 
     let mut y_tmp = 0;
+    let starting_pos = if last_y > cursor.1 { 0 } else { cursor.1 - last_y };
 
-    for y in (cursor.1 - last_y)..cursor.1 {
+    for y in starting_pos..cursor.1 {
         let start_index_term = (y * term_width) as usize;
         let end_index_term = start_index_term + term_width as usize;
 
