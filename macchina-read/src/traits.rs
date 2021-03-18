@@ -321,6 +321,11 @@ pub trait GeneralReadout {
         Err(MetricNotAvailable)
     }
 
+    /// This function should return the user's local ip address
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Err(MetricNotAvailable)
+    }
+
     /// This function should return the name of the used desktop environment.
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
