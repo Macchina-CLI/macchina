@@ -1,9 +1,9 @@
 [package]
 name = "macchina"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
-description = "System information fetcher"
+description = "A fast and minimal system information fetcher."
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/grtcdr/macchina"
 license = "MIT"
@@ -17,4 +17,4 @@ tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
 structopt = "0.3.21"
 rand = "0.8.3"
 lazy_static = "1.4.0"
-macchina-read = { version = "0.1.2", path = "../macchina-read" }
+macchina-read = { version = "0.1.3", path = "../macchina-read" }

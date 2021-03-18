@@ -12,9 +12,6 @@ use sysctl::SysctlError;
 use crate::extra;
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use nix::unistd;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
 use std::process::{Command, Stdio};
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
@@ -132,15 +129,11 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
-    //  accessed through nix::unistd::getppid()
-
-    // the way this argument is processed is through 3 phases
-    // 1. acquiring the value of ps -p $$ -o ppid=
-    // 2. passing this value to ps -p o comm=
-    // 3. the end result is ps -p $(ps -p $$ -o ppid=) o comm=, the command whose stdout is captured and printed
+    //  accessed through libc::getppid()
+    //  libc::getppid(): is always successful.
     let ppid = Command::new("ps")
         .arg("-p")
-        .arg(unistd::getppid().to_string())
+        .arg(unsafe { libc::getppid() }.to_string())
         .arg("-o")
         .arg("ppid=")
         .output()
@@ -228,58 +221,45 @@ pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
 /// Read processor information from `/proc/cpuinfo`
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn cpu_model_name() -> String {
-    let grep = Command::new("grep")
-        .arg("model name")
-        .arg("/proc/cpuinfo")
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"grep\" process");
-
-    let grep_out = grep.stdout.expect("ERROR: failed to open \"grep\" stdout");
-
-    let head = Command::new("head")
-        .args(&["-n", "1"])
-        .stdin(Stdio::from(grep_out))
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("ERROR: failed to spawn \"head\" process");
-
-    let output = head
-        .wait_with_output()
-        .expect("ERROR: failed to wait for \"head\" process to exit");
-    let mut cpu = String::from_utf8(output.stdout)
-        .expect("ERROR: \"head\" process output was not valid UTF-8");
-    cpu = cpu
-        .replace("model name", "")
-        .replace(":", "")
-        .trim()
-        .to_string();
-    cpu
+    use std::io::{BufRead, BufReader};
+    let file = fs::File::open("/proc/cpuinfo");
+    match file {
+        Ok(content) => {
+            let reader = BufReader::new(content);
+            for line in reader.lines() {
+                if let Ok(l) = line {
+                    if l.starts_with("model name") {
+                        return l
+                            .replace("model name", "")
+                            .replace(":", "")
+                            .trim()
+                            .to_string();
+                    }
+                }
+            }
+            return String::new();
+        }
+        Err(_e) => String::new(),
+    }
 }
 
 /// Obtain the value of a specified field from `/proc/meminfo` needed to calculate memory usage
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
 pub(crate) fn get_meminfo_value(value: &str) -> u64 {
+    use std::io::{BufRead, BufReader};
     let file = fs::File::open("/proc/meminfo");
     match file {
         Ok(content) => {
-            let grep = Command::new("grep")
-                .arg(value)
-                .stdin(Stdio::from(content))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"grep\" process");
-
-            let mem = grep
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"grep\" process to exit");
-            // Collect only the value of MemTotal
-            let s_mem_kb: String = String::from_utf8(mem.stdout)
-                .expect("\"grep\" process stdout was not valid UTF-8")
-                .chars()
-                .filter(|c| c.is_digit(10))
-                .collect();
-            s_mem_kb.parse::<u64>().unwrap_or(0)
+            let reader = BufReader::new(content);
+            for line in reader.lines() {
+                if let Ok(l) = line {
+                    if l.starts_with(value) {
+                        let s_mem_kb: String = l.chars().filter(|c| c.is_digit(10)).collect();
+                        return s_mem_kb.parse::<u64>().unwrap_or(0);
+                    }
+                }
+            }
+            return 0;
         }
         Err(_e) => 0,
     }

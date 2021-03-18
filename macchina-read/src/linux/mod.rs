@@ -1,10 +1,17 @@
 use crate::extra;
 use crate::traits::*;
-use nix::unistd;
 use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
+
+
+
+impl From<sqlite::Error> for ReadoutError {
+    fn from(e: sqlite::Error) -> Self {
+        ReadoutError::Other(e.to_string())
+    }
+}
 
 pub struct LinuxBatteryReadout;
 
@@ -13,7 +20,9 @@ pub struct LinuxKernelReadout {
     os_type_ctl: Option<Ctl>,
 }
 
-pub struct LinuxGeneralReadout;
+pub struct LinuxGeneralReadout {
+    hostname_ctl: Option<Ctl>,
+}
 
 pub struct LinuxMemoryReadout;
 
@@ -72,7 +81,9 @@ impl KernelReadout for LinuxKernelReadout {
 
 impl GeneralReadout for LinuxGeneralReadout {
     fn new() -> Self {
-        LinuxGeneralReadout
+        LinuxGeneralReadout {
+            hostname_ctl: Ctl::new("kernel.hostname").ok(),
+        }
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
@@ -83,12 +94,14 @@ impl GeneralReadout for LinuxGeneralReadout {
             .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let family = product_readout
             .family()
             .unwrap_or_default()
             .replace("To be filled by O.E.M.", "")
             .trim()
             .to_string();
+
         let version = product_readout
             .version()
             .unwrap_or_default()
@@ -114,17 +127,11 @@ impl GeneralReadout for LinuxGeneralReadout {
     }
 
     fn hostname(&self) -> Result<String, ReadoutError> {
-        let mut buf = [0u8; 64];
-        let hostname_cstr = unistd::gethostname(&mut buf);
-        match hostname_cstr {
-            Ok(hostname_cstr) => {
-                let hostname = hostname_cstr.to_str().unwrap_or("Unknown");
-                Ok(String::from(hostname))
-            }
-            Err(_e) => Err(ReadoutError::Other(String::from(
-                "ERROR: failed to fetch hostname from \"unistd::gethostname()\"",
-            ))),
-        }
+        Ok(self
+            .hostname_ctl
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .value_string()?)
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> {
@@ -174,7 +181,7 @@ impl MemoryReadout for LinuxMemoryReadout {
     }
 
     fn cached(&self) -> Result<u64, ReadoutError> {
-        Ok(crate::shared::get_meminfo_value("^Cached"))
+        Ok(crate::shared::get_meminfo_value("Cached"))
     }
 
     fn reclaimable(&self) -> Result<u64, ReadoutError> {
@@ -237,6 +244,7 @@ impl PackageReadout for LinuxPackageReadout {
     /// - emerge _(using qlist)_
     /// - apt _(using dpkg)_
     /// - xbps _(using xbps-query)_
+    /// - rpm
     ///
     /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
     /// that isn't mentioned in the above list.
@@ -245,6 +253,18 @@ impl PackageReadout for LinuxPackageReadout {
         // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
+            use std::fs::read_dir;
+            use std::path::Path;
+
+            let pacman_folder = Path::new("/var/lib/pacman/local");
+
+            if pacman_folder.exists() {
+                let pacman_count = match read_dir(pacman_folder) {
+                    Ok(read_dir) => read_dir.count() - 1,
+                    Err(_) => 0,
+                };
+                return Ok(pacman_count.to_string());
+            }
             // Returns the number of installed packages using
             // pacman -Qq | wc -l
             let pacman_output = Command::new("pacman")
@@ -296,7 +316,7 @@ impl PackageReadout for LinuxPackageReadout {
                 .to_string());
         } else if extra::which("qlist") {
             // Returns the number of installed packages using:
-            // dnf list installed | wc -l
+            // qlist -I | wc -l
             let qlist_output = Command::new("qlist")
                 .arg("-I")
                 .stdout(Stdio::piped())
@@ -376,11 +396,29 @@ impl PackageReadout for LinuxPackageReadout {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
             return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
+                .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
+        } else if extra::which("rpm") {
+            return _count_rpms()
         }
 
         Err(ReadoutError::MetricNotAvailable)
+    }
+}
+
+fn _count_rpms() -> Result<String, ReadoutError> {
+    let path = "/var/lib/rpm/rpmdb.sqlite";
+    let connection = sqlite::open(path);
+    match connection {
+        Ok(con) => {
+            let mut statement = con.prepare("SELECT COUNT(*) FROM Installtid")?;
+            statement.next()?;
+
+            let count = statement.read::<Option<i64>>(0)?.unwrap_or_default();
+
+            Ok(count.to_string())
+        }
+        Err(_) => Err(ReadoutError::MetricNotAvailable),
     }
 }

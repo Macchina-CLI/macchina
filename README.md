@@ -34,10 +34,10 @@ _Macchina_ is pretty fast, see for yourself!
 ## 🐧 Linux
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 34.3 ± 0.8 | 32.9 | 35.9 | 1.00 |
-| `neofetch` | 369.0 ± 3.3 | 362.9 | 376.1 | 10.77 ± 0.26 |
+| `macchina` | 24.7 ± 0.6 | 23.7 | 26.3 | 1.00 |
+| `neofetch` | 373.4 ± 3.8 | 367.3 | 385.9 | 15.10 ± 0.39 |
 
-__Summary__: `macchina` runs __10.77 ± 0.26__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __15.10 ± 0.39__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
@@ -114,22 +114,11 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 # Installation <a name="install"></a>
 _Macchina_ is available on:
 
-- [AUR](https://aur.archlinux.org/packages/macchina/)
-  ```
-  git clone https://aur.archlinux.org/macchina.git
-  cd macchina
-  makepkg -si
-  ```
-
-- [NetBSD](https://pkgsrc.se/sysutils/macchina)
-  ```
-  pkgin install macchina
-  ```
-
 - [crates.io](https://crates.io/crates/macchina)
-  ```
-  cargo install macchina
-  ```
+- [AUR](https://aur.archlinux.org/packages/macchina/)
+- [pkgsrc](https://pkgsrc.se/sysutils/macchina)
+
+Read the [installation guide](https://github.com/grtcdr/macchina/wiki/Installation) to see the multiple ways you can install it on your machine, or download the [prebuilt binaries](https://github.com/grtcdr/macchina/releases)!
 
 ---
 

@@ -1,3 +1,5 @@
+//! This module provides additional functionalities
+
 use std::env;
 use std::path::Path;
 
@@ -37,22 +39,19 @@ pub fn ucfirst<S: AsRef<str>>(s: S) -> String {
     }
 }
 
-/// Search all directories in PATH for a program e.g. `ps`.
+/// Search all directories in `PATH` for a program e.g. __ps__, __grep__, etc.
 ///
-/// It is used mainly to check if a program exists before running a command \
-/// that could return an error in case that program is not installed.
+/// This can be used to check if a particular program exists before running a command \
+/// that could return an error in case the program is not installed.
 ///
 /// # Example
 /// ```
-/// if macchina_read::extra::which("ps") {
-/// // Do something...
+/// if macchina_read::extra::which("program") {
+///     // Run the program.
 /// }
 /// ```
-/// This means we can run commands, do what we need to do, and only worry about the return value of `extra::which` \
-/// that will return `true` if the program passed to it is installed, and `false` if it isn't.
 ///
-/// __Do not__ use absolute paths to check if a program is installed, as programs can be installed
-/// in non-traditional paths.
+/// - Returns `TRUE` if _program_ is in `PATH`, or false if it isn't.
 pub fn which<P>(program_name: P) -> bool
 where
     P: AsRef<Path>,
@@ -71,7 +70,7 @@ where
     });
 
     match exists {
-        Some(_p) => true,
+        Some(_) => true,
         None => false,
     }
 }
