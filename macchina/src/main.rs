@@ -15,18 +15,17 @@ pub mod widgets;
 extern crate lazy_static;
 
 use crate::data::ReadoutKey;
-use crate::theme::LithiumTheme;
-use crate::theme::Themes::{EmojiTheme, Lithium};
+use crate::theme::{EmojiTheme, Theme};
+use crate::widgets::readout::ReadoutList;
 use data::Readout;
 use macchina_read::traits::*;
-use std::ops::Deref;
-use std::thread::current;
-use tui::backend::{Backend, CrosstermBackend};
+use std::io::Stdout;
+use tui::backend::CrosstermBackend;
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::{Color, Modifier, Style};
+use tui::style::Color;
 use tui::text::Text;
-use tui::widgets::{Block, BorderType, Borders, Clear, Paragraph, Widget};
+use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use tui::Terminal;
 
 pub const AUTHORS: &str = crate_authors!();
@@ -177,7 +176,7 @@ pub struct Opt {
     theme: theme::Themes,
 }
 
-fn create_terminal() -> Result<Terminal<CrosstermBackend<io::Stdout>>, io::Error> {
+fn create_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, io::Error> {
     let stdout = io::stdout();
     let backend = CrosstermBackend::new(stdout);
     Terminal::new(backend)
@@ -213,36 +212,8 @@ const ASCII: &'static str = r#"        .n.                     |
   `===-'-----'""`  '-.              ~
                  __.-'      ^"#;
 
-fn main() -> Result<(), io::Error> {
-    let opt = Opt::from_args();
-    let mut terminal = create_terminal()?;
-
-    let readout_data = vec![
-        Readout::new(ReadoutKey::DesktopEnvironment, "Apple Windows"),
-        Readout::new(ReadoutKey::Uptime, "10h 5m 3s"),
-        Readout::new(ReadoutKey::Processor, "Intel Core\nProcessor"),
-        Readout::new(ReadoutKey::OperatingSystem, "Apple Windows 123"),
-        Readout::new(ReadoutKey::Terminal, "iTerm2"),
-    ];
-
-    use crate::theme::{EmojiTheme, Theme};
-    use crate::widgets::readout::ReadoutList;
-
-    let list = ReadoutList::new(readout_data, EmojiTheme::new())
-        .block_inner_margin(Margin {
-            horizontal: 1,
-            vertical: 1,
-        })
-        .block(
-            Block::default()
-                .border_type(BorderType::Rounded)
-                .title("🍻 Yeet")
-                .borders(Borders::ALL),
-        );
-
-    let mut tmp_buffer = Buffer::empty(terminal.current_buffer_mut().area);
-
-    let paragraph = Text::raw(ASCII);
+fn draw_ascii(ascii: &str, tmp_buffer: &mut Buffer) -> Rect {
+    let paragraph = Text::raw(ascii);
     let ascii_rect = Rect {
         x: 0,
         y: 0,
@@ -250,36 +221,95 @@ fn main() -> Result<(), io::Error> {
         height: paragraph.height() as u16,
     };
 
-    Paragraph::new(paragraph).render(ascii_rect, &mut tmp_buffer);
+    Paragraph::new(paragraph).render(ascii_rect, tmp_buffer);
+    ascii_rect
+}
 
-    list.render(
-        Rect {
-            x: ascii_rect.x + ascii_rect.width + 4,
-            y: ascii_rect.y,
-            width: tmp_buffer.area.width - ascii_rect.width - 4,
-            height: ascii_rect.height,
-        },
+fn draw_readout_data(data: Vec<Readout>, theme: Box<dyn Theme>, buf: &mut Buffer, area: Rect) {
+    let list = ReadoutList::new(data, theme)
+        .block_inner_margin(Margin {
+            horizontal: 1,
+            vertical: 1,
+        })
+        .block(
+            Block::default()
+                .border_type(BorderType::Rounded)
+                .title("ℹ️  System Information")
+                .borders(Borders::ALL),
+        );
+
+    list.render(area, buf);
+}
+
+fn main() -> Result<(), io::Error> {
+    let opt = Opt::from_args();
+
+    let mut terminal = create_terminal()?;
+    let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 300, 50));
+
+    let readout_data = vec![
+        Readout::new(
+            ReadoutKey::Host,
+            format!(
+                "{}@{}",
+                READOUTS.general.hostname().unwrap(),
+                READOUTS.general.username().unwrap()
+            ),
+        ),
+        Readout::new(
+            ReadoutKey::Processor,
+            READOUTS.general.cpu_model_name().unwrap(),
+        ),
+    ];
+
+    let ascii_area = draw_ascii(ASCII, &mut tmp_buffer);
+    let tmp_buffer_area = tmp_buffer.area;
+    draw_readout_data(
+        readout_data,
+        EmojiTheme::new(),
         &mut tmp_buffer,
+        Rect::new(
+            ascii_area.x + ascii_area.width + 4,
+            ascii_area.y,
+            tmp_buffer_area.width - ascii_area.width - 4,
+            ascii_area.height,
+        ),
     );
 
-    let (last_x, last_y) = find_last_buffer_cell_index(&mut tmp_buffer).expect(
-        "Error while writing to terminal buffer\
-        .",
-    );
+    write_buffer_to_console(&mut terminal, &mut tmp_buffer);
 
-    print!("{}", "\n".repeat(last_y as usize));
-
-    let mut current_buffer = terminal.current_buffer_mut();
-    let buffer_start_index = current_buffer.index_of(0, current_buffer.area.height - last_y - 1);
-    let tmp_buffer_index = tmp_buffer.index_of(last_x, last_y);
-    let tmp_buffer_slice = &tmp_buffer.content[..=tmp_buffer_index];
-
-    current_buffer.content[buffer_start_index..(buffer_start_index + tmp_buffer_slice.len())]
-        .clone_from_slice(tmp_buffer_slice);
-
-    terminal.flush();
-
+    terminal.flush()?;
     println!();
 
     Ok(())
+}
+
+fn write_buffer_to_console(
+    terminal: &mut Terminal<CrosstermBackend<Stdout>>,
+    tmp_buffer: &mut Buffer,
+) {
+    let (_, last_y) =
+        find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
+
+    print!("{}", "\n".repeat(last_y as usize));
+
+    let cursor = terminal.get_cursor().unwrap();
+    let terminal_buf = terminal.current_buffer_mut();
+    let term_width = terminal_buf.area.width;
+    let tmp_width = tmp_buffer.area.width;
+
+    let mut y_tmp = 0;
+
+    for y in (cursor.1 - last_y)..cursor.1 {
+        let start_index_term = (y * term_width) as usize;
+        let end_index_term = start_index_term + term_width as usize;
+
+        let start_index_tmp = (y_tmp * tmp_width) as usize;
+        let end_index_tmp = start_index_tmp + term_width as usize;
+
+        terminal_buf.content[start_index_term..end_index_term]
+            .clone_from_slice(&tmp_buffer.content[start_index_tmp..end_index_tmp]);
+
+        y_tmp += 1;
+    }
 }

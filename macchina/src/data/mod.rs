@@ -3,7 +3,7 @@ use tui::text::Text;
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[derive(Debug, Clone, Copy, PartialEq)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub enum ReadoutKey {
         Host,
         Machine,
