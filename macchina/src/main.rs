@@ -23,7 +23,7 @@ use std::io::Stdout;
 use tui::backend::CrosstermBackend;
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::Color;
+use tui::style::{Color, Style};
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use tui::Terminal;
@@ -174,6 +174,12 @@ pub struct Opt {
     help = "Specifies the theme to use"
     )]
     theme: theme::Themes,
+
+    #[structopt(long = "no-ascii", help = "Removes the ascii art.")]
+    no_ascii: bool,
+
+    #[structopt(long = "no-box", help = "Removes the system information borders.")]
+    no_box: bool,
 }
 
 fn create_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, io::Error> {
@@ -198,22 +204,25 @@ fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     None
 }
 
-const ASCII: &'static str = r#"        .n.                     |
-       /___\          _.---.  \ _ /
-       [|||]         (_._ ) )--;_) =-
-       [___]           '---'.__,' \
-       }-=-{                    |
-       |-" |
-       |.-"|                p
-~^=~^~-|_.-|~^-~^~ ~^~ -^~^~|\ ~^-~^~-
-^   .=.| _.|__  ^       ~  /| \
- ~ /:. \" _|_/\    ~      /_|__\  ^
-.-/::.  |   |""|-._    ^   ~~~~
-  `===-'-----'""`  '-.              ~
-                 __.-'      ^"#;
+const ASCII: &'static str = r#"         _nnnn_
+        dGGGGMMb
+       @p~qp~~qMb
+       M|@||@) M|
+       @,----.JM|
+      JS^\__/  qKL
+     dZP        qKRb
+    dZP          qKKb
+   fZP            SMMb
+   HZM            MMMM
+   FqM            MMMM
+ __| ".        |\dS"qML
+ |    `.       | `' \Zq
+_)      \.___.,|     .'
+\____   )MMMMMP|   .'
+     `-'       `--' hjm"#;
 
 fn draw_ascii(ascii: &str, tmp_buffer: &mut Buffer) -> Rect {
-    let paragraph = Text::raw(ascii);
+    let paragraph = Text::styled(ascii, Style::default().fg(Color::LightBlue));
     let ascii_rect = Rect {
         x: 0,
         y: 0,
@@ -225,18 +234,28 @@ fn draw_ascii(ascii: &str, tmp_buffer: &mut Buffer) -> Rect {
     ascii_rect
 }
 
-fn draw_readout_data(data: Vec<Readout>, theme: Box<dyn Theme>, buf: &mut Buffer, area: Rect) {
-    let list = ReadoutList::new(data, theme)
-        .block_inner_margin(Margin {
-            horizontal: 1,
-            vertical: 1,
-        })
-        .block(
-            Block::default()
-                .border_type(BorderType::Rounded)
-                .title("ℹ️  System Information")
-                .borders(Borders::ALL),
-        );
+fn draw_readout_data(
+    data: Vec<Readout>,
+    theme: Box<dyn Theme>,
+    buf: &mut Buffer,
+    area: Rect,
+    show_box: bool,
+) {
+    let mut list = ReadoutList::new(data, theme);
+
+    if show_box {
+        list = list
+            .block_inner_margin(Margin {
+                horizontal: 1,
+                vertical: 1,
+            })
+            .block(
+                Block::default()
+                    .border_type(BorderType::Rounded)
+                    .title("ℹ️  System Information")
+                    .borders(Borders::ALL),
+            );
+    }
 
     list.render(area, buf);
 }
@@ -260,21 +279,42 @@ fn main() -> Result<(), io::Error> {
             ReadoutKey::Processor,
             READOUTS.general.cpu_model_name().unwrap(),
         ),
+        Readout::new(
+            ReadoutKey::LocalIP,
+            READOUTS.general.local_ip().unwrap()
+        ),
+        Readout::new(
+            ReadoutKey::Memory,
+            format::memory().unwrap()
+        ),
+        Readout::new(
+            ReadoutKey::Uptime,
+            format::uptime(false).unwrap()
+        )
     ];
 
-    let ascii_area = draw_ascii(ASCII, &mut tmp_buffer);
+    let ascii_area = if !opt.no_ascii {
+        draw_ascii(ASCII, &mut tmp_buffer)
+    } else {
+        Rect::new(0, 0, 0, tmp_buffer.area.height)
+    };
+
     let tmp_buffer_area = tmp_buffer.area;
-    let theme = EmojiTheme::new();
+
+    let theme = opt.theme.create_instance();
+    let theme_padding = theme.get_padding() as u16;
+
     draw_readout_data(
         readout_data,
-        EmojiTheme::new(),
+        theme,
         &mut tmp_buffer,
         Rect::new(
-            ascii_area.x + ascii_area.width + theme.get_padding() as u16,
+            ascii_area.x + ascii_area.width + theme_padding,
             ascii_area.y,
             tmp_buffer_area.width - ascii_area.width - 4,
             ascii_area.height,
         ),
+        !opt.no_box,
     );
 
     write_buffer_to_console(&mut terminal, &mut tmp_buffer);
@@ -292,7 +332,7 @@ fn write_buffer_to_console(
     let (_, last_y) =
         find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
 
-    print!("{}", "\n".repeat(last_y as usize));
+    print!("{}", "\n".repeat(last_y as usize + 1));
 
     let cursor = terminal.get_cursor().unwrap();
     let terminal_buf = terminal.current_buffer_mut();
@@ -300,7 +340,11 @@ fn write_buffer_to_console(
     let tmp_width = tmp_buffer.area.width;
 
     let mut y_tmp = 0;
-    let starting_pos = if last_y > cursor.1 { 0 } else { cursor.1 - last_y };
+    let starting_pos = if last_y > cursor.1 {
+        0
+    } else {
+        cursor.1 - last_y - 1
+    };
 
     for y in starting_pos..cursor.1 {
         let start_index_term = (y * term_width) as usize;
