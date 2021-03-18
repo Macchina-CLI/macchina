@@ -23,6 +23,9 @@ windows = "0.4.0"
 [target.'cfg(any(target_os = "linux", target_os = "netbsd"))'.dependencies]
 os-release = "0.1"
 
+[target.'cfg(target_os = "linux")'.dependencies]
+sqlite = "0.25.3"
+
 [target.'cfg(target_os = "macos")'.dependencies]
 core-foundation = "0.9.1"
 mach = "0.3.2"

@@ -5,6 +5,14 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
 
+
+
+impl From<sqlite::Error> for ReadoutError {
+    fn from(e: sqlite::Error) -> Self {
+        ReadoutError::Other(e.to_string())
+    }
+}
+
 pub struct LinuxBatteryReadout;
 
 pub struct LinuxKernelReadout {
@@ -236,6 +244,7 @@ impl PackageReadout for LinuxPackageReadout {
     /// - emerge _(using qlist)_
     /// - apt _(using dpkg)_
     /// - xbps _(using xbps-query)_
+    /// - rpm
     ///
     /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
     /// that isn't mentioned in the above list.
@@ -307,7 +316,7 @@ impl PackageReadout for LinuxPackageReadout {
                 .to_string());
         } else if extra::which("qlist") {
             // Returns the number of installed packages using:
-            // dnf list installed | wc -l
+            // qlist -I | wc -l
             let qlist_output = Command::new("qlist")
                 .arg("-I")
                 .stdout(Stdio::piped())
@@ -387,11 +396,29 @@ impl PackageReadout for LinuxPackageReadout {
                 .wait_with_output()
                 .expect("ERROR: failed to wait for \"wc\" process to exit");
             return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
+                .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
                 .trim()
                 .to_string());
+        } else if extra::which("rpm") {
+            return _count_rpms()
         }
 
         Err(ReadoutError::MetricNotAvailable)
+    }
+}
+
+fn _count_rpms() -> Result<String, ReadoutError> {
+    let path = "/var/lib/rpm/rpmdb.sqlite";
+    let connection = sqlite::open(path);
+    match connection {
+        Ok(con) => {
+            let mut statement = con.prepare("SELECT COUNT(*) FROM Installtid")?;
+            statement.next()?;
+
+            let count = statement.read::<Option<i64>>(0)?.unwrap_or_default();
+
+            Ok(count.to_string())
+        }
+        Err(_) => Err(ReadoutError::MetricNotAvailable),
     }
 }
