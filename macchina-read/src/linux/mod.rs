@@ -408,9 +408,11 @@ impl PackageReadout for LinuxPackageReadout {
 
 fn _count_rpms() -> Result<String, ReadoutError> {
     let path = "/var/lib/rpm/rpmdb.sqlite";
-    let conn = Connection::open(&path)?;
+    let conn = Connection::open(&path)
+        .expect("ERROR: failed to open RPM's database");
 
-    let count: u32  = conn.query_row("SELECT COUNT(*) FROM Installtid", NO_PARAMS, |r| r.get(0))?;
+    let count: u32  = conn.query_row("SELECT COUNT(*) FROM Installtid", NO_PARAMS, |r| r.get(0))
+        .expect("ERROR: failed to query RPM's database");
 
     Ok(count.to_string())
 }
