@@ -4,13 +4,14 @@ use std::fs;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
-use rusqlite::{Connection, Result, Error, NO_PARAMS};
 
-impl From<Error> for ReadoutError {
-     fn from(e: Error) -> Self {
-         ReadoutError::Other(format!("Error while accessing SQLite database: {:?}", e))
-     }
- }
+
+
+impl From<sqlite::Error> for ReadoutError {
+    fn from(e: sqlite::Error) -> Self {
+        ReadoutError::Other(e.to_string())
+    }
+}
 
 pub struct LinuxBatteryReadout;
 
@@ -408,11 +409,14 @@ impl PackageReadout for LinuxPackageReadout {
 
 fn _count_rpms() -> Result<String, ReadoutError> {
     let path = "/var/lib/rpm/rpmdb.sqlite";
-    let conn = Connection::open(&path)
+    let connection = sqlite::open(path)
         .expect("ERROR: failed to open RPM's database");
 
-    let count: u32  = conn.query_row("SELECT COUNT(*) FROM Installtid", NO_PARAMS, |r| r.get(0))
-        .expect("ERROR: failed to query RPM's database");
+    let mut statement = connection.prepare("SELECT COUNT(*) FROM Installtid")?;
+    statement.next()?;
+    
+    let count = statement.read::<Option<i64>>(0)?
+        .unwrap_or_default();
 
     Ok(count.to_string())
 }
