@@ -19,6 +19,7 @@ arg_enum! {
         Processor,
         Memory,
         Battery,
+        LocalIP,
     }
 }
 

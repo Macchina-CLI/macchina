@@ -184,7 +184,7 @@ impl<'a> ReadoutList<'a> {
         [
             max_key_width as u16 + self.theme.get_padding() as u16,
             themed_separator.width() as u16,
-            self.theme.get_padding() as u16,
+            self.theme.get_spacing() as u16,
             readout_data.width() as u16,
         ]
     }

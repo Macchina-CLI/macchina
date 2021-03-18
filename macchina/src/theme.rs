@@ -183,6 +183,9 @@ pub trait Theme {
     fn get_padding(&self) -> usize;
     fn set_padding(&mut self, size: usize);
 
+    fn get_spacing(&self) -> usize;
+    fn set_spacing(&mut self, spacing: usize);
+
     fn default_abbreviation(&self) -> &AbbreviationType;
 
     fn key(&self, readout_key: &ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
@@ -255,6 +258,14 @@ impl Theme for HydrogenTheme {
         self.padding = size
     }
 
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
     fn default_abbreviation(&self) -> &AbbreviationType {
         &AbbreviationType::Classic
     }
@@ -315,6 +326,14 @@ impl Theme for HeliumTheme {
 
     fn set_padding(&mut self, size: usize) {
         self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -380,6 +399,14 @@ impl Theme for LithiumTheme {
         self.padding = size
     }
 
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
     fn default_abbreviation(&self) -> &AbbreviationType {
         &AbbreviationType::Long
     }
@@ -441,6 +468,14 @@ impl Theme for EmojiTheme {
 
     fn set_padding(&mut self, size: usize) {
         self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {

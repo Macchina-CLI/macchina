@@ -264,12 +264,13 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area = draw_ascii(ASCII, &mut tmp_buffer);
     let tmp_buffer_area = tmp_buffer.area;
+    let theme = EmojiTheme::new();
     draw_readout_data(
         readout_data,
         EmojiTheme::new(),
         &mut tmp_buffer,
         Rect::new(
-            ascii_area.x + ascii_area.width + 4,
+            ascii_area.x + ascii_area.width + theme.get_padding() as u16,
             ascii_area.y,
             tmp_buffer_area.width - ascii_area.width - 4,
             ascii_area.height,
