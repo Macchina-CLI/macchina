@@ -98,7 +98,7 @@ impl Fail {
             ),
             local_ip: FailedComponent::new(
                 false,
-                String::from("(ERROR:DISABLED) Local IP Address -> Something went wrong!")
+                String::from("(ERROR:DISABLED) Local IP Address -> Offline")
             ),
             #[cfg(target_os = "linux")]
             distro: FailedComponent::new(
@@ -141,6 +141,7 @@ impl Fail {
         num_fails = self.count_print_failed(&self.shell, num_fails);
         num_fails = self.count_print_failed(&self.terminal, num_fails);
         num_fails = self.count_print_failed(&self.packages, num_fails);
+        num_fails = self.count_print_failed(&self.local_ip, num_fails);
         if num_fails == 0 {
             println!(
                 "Everything is displaying correctly!\nIf this is not true, please create an issue at https://github.com/grtcdr/macchina"
