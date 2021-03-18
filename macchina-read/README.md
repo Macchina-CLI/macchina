@@ -27,6 +27,7 @@ Through this crate, you can access a variety of system information, such as:
 - Processor
   - Model
   - Thread count
+- Local IP Address
 - Uptime
 - Memory Usage
   - Used / Total
