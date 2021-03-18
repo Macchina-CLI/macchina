@@ -33,6 +33,7 @@ pub struct MacOSGeneralReadout {
     boot_time_ctl: Option<Ctl>,
     hostname_ctl: Option<Ctl>,
     hw_model_ctl: Option<Ctl>,
+    local_ip: Option<String>,
 }
 
 pub struct MacOSMemoryReadout {
@@ -177,6 +178,7 @@ impl GeneralReadout for MacOSGeneralReadout {
             boot_time_ctl: Ctl::new("kern.boottime").ok(),
             hostname_ctl: Ctl::new("kern.hostname").ok(),
             hw_model_ctl: Ctl::new("hw.model").ok(),
+            local_ip: local_ipaddress::get(),
         }
     }
 
@@ -190,6 +192,14 @@ impl GeneralReadout for MacOSGeneralReadout {
             .as_ref()
             .ok_or(MetricNotAvailable)?
             .value_string()?)
+    }
+
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Ok(self
+            .local_ip
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .to_string())
     }
 
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
