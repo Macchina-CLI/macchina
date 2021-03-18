@@ -36,9 +36,7 @@ jobs:
         run: cargo fmt --all -- --check
         continue-on-error: true
       - name: Clippy Linter
-        run: |
-          cargo clippy -p macchina -- --no-deps
-          cargo clippy -p macchina-read -- --no-deps
+        run: cargo clippy -- --no-deps -D clippy::all
         continue-on-error: true
       - name: Build
         run: cargo build
