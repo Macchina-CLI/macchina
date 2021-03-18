@@ -1,22 +1,22 @@
 use crate::traits::*;
 use crate::windows::bindings::windows::win32::system_services::PSTR;
+use crate::windows::bindings::windows::win32::system_services::SYSTEM_POWER_STATUS;
 use winreg::enums::*;
 use winreg::RegKey;
-use crate::windows::bindings::windows::win32::system_services::SYSTEM_POWER_STATUS;
 
 mod bindings {
     ::windows::include_bindings!();
 }
 
+use crate::traits::ReadoutError::MetricNotAvailable;
 use bindings::{
+    windows::win32::system_services::GetSystemPowerStatus,
     windows::win32::system_services::GlobalMemoryStatusEx,
     windows::win32::system_services::MEMORYSTATUSEX,
     windows::win32::windows_programming::GetComputerNameExA,
-    windows::win32::windows_programming::GetUserNameA,
     windows::win32::windows_programming::GetTickCount64,
-    windows::win32::system_services::GetSystemPowerStatus
+    windows::win32::windows_programming::GetUserNameA,
 };
-use crate::traits::ReadoutError::MetricNotAvailable;
 
 pub struct WindowsBatteryReadout;
 
@@ -41,7 +41,7 @@ impl BatteryReadout for WindowsBatteryReadout {
         return match power_state.ac_line_status {
             0 => Ok(String::from("FALSE")),
             1 => Ok(String::from("TRUE")),
-            _ => Err(MetricNotAvailable)
+            _ => Err(MetricNotAvailable),
         };
     }
 }
@@ -54,7 +54,9 @@ impl WindowsBatteryReadout {
             return Ok(power_state);
         }
 
-        Err(ReadoutError::Other(String::from("Call to GetSystemPowerStatus failed.")))
+        Err(ReadoutError::Other(String::from(
+            "Call to GetSystemPowerStatus failed.",
+        )))
     }
 }
 
@@ -119,11 +121,15 @@ impl WindowsMemoryReadout {
     }
 }
 
-pub struct WindowsGeneralReadout;
+pub struct WindowsGeneralReadout {
+    local_ip: Option<String>,
+}
 
 impl GeneralReadout for WindowsGeneralReadout {
     fn new() -> Self {
-        WindowsGeneralReadout {}
+        WindowsGeneralReadout {
+            local_ip: local_ipaddress::get(),
+        }
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
@@ -211,6 +217,14 @@ impl GeneralReadout for WindowsGeneralReadout {
         Ok(str)
     }
 
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Ok(self
+            .local_ip
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .to_string())
+    }
+
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
         let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
         let central_processor =
@@ -230,8 +244,7 @@ impl GeneralReadout for WindowsGeneralReadout {
 
     fn machine(&self) -> Result<String, ReadoutError> {
         let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-        let sys_info =
-            hklm.open_subkey("SYSTEM\\CurrentControlSet\\Control\\SystemInformation")?;
+        let sys_info = hklm.open_subkey("SYSTEM\\CurrentControlSet\\Control\\SystemInformation")?;
 
         let manufacturer: String = sys_info.get_value("SystemManufacturer").unwrap();
         let model: String = sys_info.get_value("SystemProductName").unwrap();
@@ -241,16 +254,17 @@ impl GeneralReadout for WindowsGeneralReadout {
 
     fn os_name(&self) -> Result<String, ReadoutError> {
         let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-        let nt_current =
-            hklm.open_subkey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")?;
+        let nt_current = hklm.open_subkey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")?;
 
         let product_name: String = nt_current.get_value("ProductName").unwrap();
         let product_version: String = nt_current.get_value("DisplayVersion").unwrap();
         let release_id: String = nt_current.get_value("ReleaseId").unwrap();
 
-        Ok(format!("{} {} ({})", product_name, product_version, release_id))
+        Ok(format!(
+            "{} {} ({})",
+            product_name, product_version, release_id
+        ))
     }
-
 }
 
 pub struct WindowsProductReadout;
