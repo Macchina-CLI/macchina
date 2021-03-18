@@ -108,39 +108,48 @@ impl<'a> Widget for ReadoutList<'a> {
             };
 
             let constraints = [
-                Constraint::Length(max_key_width as u16 + self.theme.get_padding() as u16),
-                Constraint::Length(theme_separator.width() as u16),
-                Constraint::Length(self.theme.get_padding() as u16),
-                Constraint::Length(readout_text.width() as u16),
+                max_key_width as u16 + self.theme.get_padding() as u16,
+                theme_separator.width() as u16,
+                self.theme.get_padding() as u16,
+                readout_text.width() as u16,
             ];
 
-            let layout = Layout::default()
-                .direction(Direction::Horizontal)
-                .constraints(constraints)
-                .split(area);
+            let total_line_width = constraints.iter().sum::<u16>() + constraints.len() as
+                u16 - 1;
+            if total_line_width > max_line_width {
+                max_line_width = total_line_width;
+            }
+
+            let mut layout: Vec<Rect> = Vec::with_capacity(constraints.len());
+            layout.push(Rect {
+                x: area.x,
+                y: area.y,
+                width: constraints[0],
+                height: area.height,
+            });
+
+            for (i, &constraint) in constraints.iter().enumerate().skip(1) {
+                let previous = layout[i - 1];
+                layout.push(Rect {
+                    x: previous.x + previous.width + 1,
+                    y: previous.y,
+                    width: constraint,
+                    height: area.height,
+                });
+            }
 
             height += readout_text.height() as u16;
 
             Paragraph::new(readout_key).render(layout[0], buf);
             Paragraph::new(theme_separator).render(layout[1], buf);
             Paragraph::new(readout_text.to_owned()).render(layout[3], buf);
-
-            let mut line_width: u16 = 0;
-            for c in &constraints {
-                if let Constraint::Length(l) = c {
-                    line_width += l;
-                }
-            }
-            if line_width > max_line_width {
-                max_line_width = line_width;
-            }
         }
 
         if let Some(b) = self.block.take() {
             b.render(
                 Rect {
-                    x: 0,
-                    y: 0,
+                    x: area.x,
+                    y: area.y,
                     width: max_line_width + 2 + self.block_inner_margin.horizontal * 2,
                     height: height + 2 + self.block_inner_margin.vertical * 2,
                 },

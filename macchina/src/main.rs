@@ -16,17 +16,17 @@ extern crate lazy_static;
 
 use crate::data::ReadoutKey;
 use crate::theme::LithiumTheme;
-use crate::theme::Themes::EmojiTheme;
+use crate::theme::Themes::{EmojiTheme, Lithium};
 use data::Readout;
 use macchina_read::traits::*;
 use std::ops::Deref;
 use std::thread::current;
 use tui::backend::{Backend, CrosstermBackend};
-use tui::buffer::Buffer;
-use tui::layout::{Rect, Margin};
+use tui::buffer::{Buffer, Cell};
+use tui::layout::{Margin, Rect};
 use tui::style::{Color, Modifier, Style};
 use tui::text::Text;
-use tui::widgets::{Block, BorderType, Borders, Clear, Widget};
+use tui::widgets::{Block, BorderType, Borders, Clear, Paragraph, Widget};
 use tui::Terminal;
 
 pub const AUTHORS: &str = crate_authors!();
@@ -183,19 +183,35 @@ fn create_terminal() -> Result<Terminal<CrosstermBackend<io::Stdout>>, io::Error
     Terminal::new(backend)
 }
 
-fn find_last_buffer_cell(buf: &Buffer) -> Option<(u16, u16)> {
-    for x in (0..buf.area.width).rev() {
-        for y in (0..buf.area.height).rev() {
-            let index = buf.index_of(x, y);
-            let cell = &buf.content()[index];
-            if !cell.symbol.trim().is_empty() {
-                return Some((x, y));
-            }
-        }
+fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
+    let empty_cell = Cell::default();
+
+    if let Some((idx, _)) = buf
+        .content
+        .iter()
+        .enumerate()
+        .filter(|p| !(*(p.1)).eq(&empty_cell))
+        .last()
+    {
+        return Some(buf.pos_of(idx));
     }
 
     None
 }
+
+const ASCII: &'static str = r#"        .n.                     |
+       /___\          _.---.  \ _ /
+       [|||]         (_._ ) )--;_) =-
+       [___]           '---'.__,' \
+       }-=-{                    |
+       |-" |
+       |.-"|                p
+~^=~^~-|_.-|~^-~^~ ~^~ -^~^~|\ ~^-~^~-
+^   .=.| _.|__  ^       ~  /| \
+ ~ /:. \" _|_/\    ~      /_|__\  ^
+.-/::.  |   |""|-._    ^   ~~~~
+  `===-'-----'""`  '-.              ~
+                 __.-'      ^"#;
 
 fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
@@ -205,7 +221,6 @@ fn main() -> Result<(), io::Error> {
         Readout::new(ReadoutKey::DesktopEnvironment, "Apple Windows"),
         Readout::new(ReadoutKey::Uptime, "10h 5m 3s"),
         Readout::new(ReadoutKey::Processor, "Intel Core\nProcessor"),
-        Readout::new(ReadoutKey::Processor, "Intel Core Processor"),
         Readout::new(ReadoutKey::OperatingSystem, "Apple Windows 123"),
         Readout::new(ReadoutKey::Terminal, "iTerm2"),
     ];
@@ -214,43 +229,57 @@ fn main() -> Result<(), io::Error> {
     use crate::widgets::readout::ReadoutList;
 
     let list = ReadoutList::new(readout_data, EmojiTheme::new())
-        .block_inner_margin(Margin { horizontal: 1, vertical: 1 })
-        .block(Block::default().border_type(BorderType::Rounded).title("🍻 Yeet").borders
-        (Borders::ALL));
+        .block_inner_margin(Margin {
+            horizontal: 1,
+            vertical: 1,
+        })
+        .block(
+            Block::default()
+                .border_type(BorderType::Rounded)
+                .title("🍻 Yeet")
+                .borders(Borders::ALL),
+        );
+
     let mut tmp_buffer = Buffer::empty(terminal.current_buffer_mut().area);
+
+    let paragraph = Text::raw(ASCII);
+    let ascii_rect = Rect {
+        x: 0,
+        y: 0,
+        width: paragraph.width() as u16,
+        height: paragraph.height() as u16,
+    };
+
+    Paragraph::new(paragraph).render(ascii_rect, &mut tmp_buffer);
 
     list.render(
         Rect {
-            x: 0,
-            y: 0,
-            width: tmp_buffer.area.width,
-            height: tmp_buffer.area.height,
+            x: ascii_rect.x + ascii_rect.width + 4,
+            y: ascii_rect.y,
+            width: tmp_buffer.area.width - ascii_rect.width - 4,
+            height: ascii_rect.height,
         },
         &mut tmp_buffer,
     );
 
-    let (last_x, last_y) =
-        find_last_buffer_cell(&mut tmp_buffer).expect("Error while writing to terminal buffer.");
+    let (last_x, last_y) = find_last_buffer_cell_index(&mut tmp_buffer).expect(
+        "Error while writing to terminal buffer\
+        .",
+    );
 
-    tmp_buffer.resize(Rect {
-        x: 0,
-        y: 0,
-        width: tmp_buffer.area.width,
-        height: last_y + 1,
-    });
-
-    print!("{}", "\n".repeat(tmp_buffer.area.height as usize - 1));
+    print!("{}", "\n".repeat(last_y as usize));
 
     let mut current_buffer = terminal.current_buffer_mut();
     let buffer_start_index = current_buffer.index_of(0, current_buffer.area.height - last_y - 1);
     let tmp_buffer_index = tmp_buffer.index_of(last_x, last_y);
-
     let tmp_buffer_slice = &tmp_buffer.content[..=tmp_buffer_index];
 
     current_buffer.content[buffer_start_index..(buffer_start_index + tmp_buffer_slice.len())]
         .clone_from_slice(tmp_buffer_slice);
 
     terminal.flush();
+
+    println!();
 
     Ok(())
 }
