@@ -409,14 +409,16 @@ impl PackageReadout for LinuxPackageReadout {
 
 fn _count_rpms() -> Result<String, ReadoutError> {
     let path = "/var/lib/rpm/rpmdb.sqlite";
-    let connection = sqlite::open(path)
-        .expect("ERROR: failed to open RPM's database");
+    let connection = sqlite::open(path);
+    match connection {
+        Ok(con) => {
+            let mut statement = con.prepare("SELECT COUNT(*) FROM Installtid")?;
+            statement.next()?;
 
-    let mut statement = connection.prepare("SELECT COUNT(*) FROM Installtid")?;
-    statement.next()?;
-    
-    let count = statement.read::<Option<i64>>(0)?
-        .unwrap_or_default();
+            let count = statement.read::<Option<i64>>(0)?.unwrap_or_default();
 
-    Ok(count.to_string())
+            Ok(count.to_string())
+        }
+        Err(_) => Err(ReadoutError::MetricNotAvailable),
+    }
 }
