@@ -398,25 +398,16 @@ impl MacOSProductReadout {
 
         let mut operating_system_version = NSOperatingSystemVersion::default();
 
-        match string_parts.next() {
-            Some(major) => {
-                operating_system_version.major_version = major.parse().unwrap_or_default()
-            }
-            _ => (),
-        };
+        if let Some(major) = string_parts.next() {
+            operating_system_version.major_version = major.parse().unwrap_or_default()
+        }
 
-        match string_parts.next() {
-            Some(minor) => {
-                operating_system_version.minor_version = minor.parse().unwrap_or_default()
-            }
-            _ => (),
-        };
+        if let Some(minor) = string_parts.next() {
+            operating_system_version.minor_version = minor.parse().unwrap_or_default()
+        }
 
-        match string_parts.next() {
-            Some(patch) => {
-                operating_system_version.patch_version = patch.parse().unwrap_or_default()
-            }
-            _ => (),
+        if let Some(patch) = string_parts.next() {
+            operating_system_version.patch_version = patch.parse().unwrap_or_default()
         }
 
         Ok(operating_system_version)

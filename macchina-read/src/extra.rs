@@ -69,8 +69,5 @@ where
             .next()
     });
 
-    match exists {
-        Some(_) => true,
-        None => false,
-    }
+    exists.is_some()
 }
