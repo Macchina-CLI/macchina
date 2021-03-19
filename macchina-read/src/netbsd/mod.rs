@@ -1,6 +1,7 @@
 use crate::extra;
 use crate::traits::*;
 use nix::unistd;
+use regex;
 use std::process::{Command, Stdio};
 
 pub struct NetBSDBatteryReadout;
@@ -21,36 +22,23 @@ impl BatteryReadout for NetBSDBatteryReadout {
     }
 
     fn percentage(&self) -> Result<String, ReadoutError> {
-        if extra::which("rg") {
+        if extra::which("envstat") {
             let envstat = Command::new("envstat")
-                .args(&["-d", "acpibat0"])
+                .args(&["-s", "acpibat0:charge"])
                 .stdout(Stdio::piped())
-                .spawn()
+                .output()
                 .expect("ERROR: failed to spawn \"envstat\" process");
 
-            let envstat_out = envstat
-                .stdout
-                .expect("ERROR: failed to open \"envstat\" stdout");
-
-            let rg = Command::new("rg")
-                .args(&["-o", "-P", r"(?<=\().*(?=\))"])
-                .stdin(Stdio::from(envstat_out))
-                .stdout(Stdio::piped())
-                .stderr(Stdio::null())
-                .spawn()
-                .expect("ERROR: failed to spawn \"rg\" process");
-            let output = rg
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"rg\" process to exit");
-            let perc_str = String::from_utf8(output.stdout)
-                .expect("ERROR: \"rg\" process output was not valid UTF-8");
-            let percentage = perc_str.trim().split(".").next().unwrap_or("").to_string();
-
-            if percentage.is_empty() {
+            let envstat_out = String::from_utf8(envstat.stdout)
+                .expect("ERROR: \"envstat\" process stdout was not valid UTF-8");
+            if envstat_out.is_empty() {
                 return Err(ReadoutError::MetricNotAvailable);
+            } else {
+                let re = Regex::new(r"/\(([^)]+)\)/").unwrap();
+                let caps = re.captures(envstat_out).unwrap();
+                let percentage = caps.get(1).map_or("", |m| m.as_str());
+                return Ok(percentage);
             }
-
-            return Ok(percentage);
         }
 
         Err(ReadoutError::MetricNotAvailable)
@@ -58,9 +46,8 @@ impl BatteryReadout for NetBSDBatteryReadout {
 
     fn status(&self) -> Result<String, ReadoutError> {
         if extra::which("envstat") {
-            let mut status = String::new();
             let envstat = Command::new("envstat")
-                .args(&["-d", "acpibat0"])
+                .args(&["-s", "acpibat0:present"])
                 .stdout(Stdio::piped())
                 .output()
                 .expect("ERROR: failed to spawn \"envstat\" process");
@@ -72,13 +59,11 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 return Err(ReadoutError::MetricNotAvailable);
             } else {
                 if envstat_out.contains("TRUE") {
-                    status = String::from("TRUE");
+                    return Ok("TRUE");
                 } else {
-                    status = String::from("FALSE");
+                    return Ok("FALSE");
                 }
             }
-
-            return Ok(status);
         }
 
         Err(ReadoutError::MetricNotAvailable)
