@@ -106,7 +106,6 @@ The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell yo
 - __Gentoo Only:__ `portage-utils`
 ## 🚩 NetBSD:
 - `wmctrl`
-- `ripgrep`
 
 The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 
