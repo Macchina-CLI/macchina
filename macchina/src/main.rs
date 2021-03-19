@@ -127,7 +127,8 @@ pub struct Opt {
     possible_values = & data::ReadoutKey::variants(),
     case_insensitive = true,
     help = "Hides the specified elements",
-    min_values = 1
+    min_values = 1,
+    conflicts_with = "show_only"
     )]
     hide: Option<Vec<data::ReadoutKey>>,
 
@@ -137,7 +138,8 @@ pub struct Opt {
     possible_values = & data::ReadoutKey::variants(),
     case_insensitive = true,
     help = " Displays only the specified elements",
-    min_values = 1
+    min_values = 1,
+    conflicts_with = "hide"
     )]
     show_only: Option<Vec<data::ReadoutKey>>,
 
