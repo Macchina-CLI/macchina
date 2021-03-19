@@ -1,7 +1,7 @@
 use crate::extra;
 use crate::traits::*;
 use nix::unistd;
-use regex;
+use regex::Regex;
 use std::process::{Command, Stdio};
 
 pub struct NetBSDBatteryReadout;
@@ -35,9 +35,9 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 return Err(ReadoutError::MetricNotAvailable);
             } else {
                 let re = Regex::new(r"/\(([^)]+)\)/").unwrap();
-                let caps = re.captures(envstat_out).unwrap();
+                let caps = re.captures(&envstat_out).unwrap();
                 let percentage = caps.get(1).map_or("", |m| m.as_str());
-                return Ok(percentage);
+                return Ok(percentage.to_string());
             }
         }
 
@@ -59,9 +59,9 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 return Err(ReadoutError::MetricNotAvailable);
             } else {
                 if envstat_out.contains("TRUE") {
-                    return Ok("TRUE");
+                    return Ok(String::from("TRUE"));
                 } else {
-                    return Ok("FALSE");
+                    return Ok(String::from("FALSE"));
                 }
             }
         }
