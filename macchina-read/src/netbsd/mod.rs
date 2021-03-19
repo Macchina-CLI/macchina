@@ -39,7 +39,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 match caps {
                     Some(c) => {
                         let percentage = c.get(1).map_or("", |m| m.as_str());
-                        return Ok(percentage.to_string());
+                        return Ok(percentage.to_string().replace("%", ""));
                     }
                     None => return Err(ReadoutError::MetricNotAvailable),
                 }
