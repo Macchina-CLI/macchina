@@ -34,10 +34,15 @@ impl BatteryReadout for NetBSDBatteryReadout {
             if envstat_out.is_empty() {
                 return Err(ReadoutError::MetricNotAvailable);
             } else {
-                let re = Regex::new(r"/\(([^)]+)\)/").unwrap();
-                let caps = re.captures(&envstat_out).unwrap();
-                let percentage = caps.get(1).map_or("", |m| m.as_str());
-                return Ok(percentage.to_string());
+                let re = Regex::new(r"\(([^()]*)\)").unwrap();
+                let caps = re.captures(&envstat_out);
+                match caps {
+                    Some(c) => {
+                        let percentage = c.get(1).map_or("", |m| m.as_str());
+                        return Ok(percentage.to_string());
+                    }
+                    None => return Err(ReadoutError::MetricNotAvailable),
+                }
             }
         }
 
