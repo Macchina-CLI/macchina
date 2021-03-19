@@ -58,7 +58,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
     fn status(&self) -> Result<String, ReadoutError> {
         if extra::which("envstat") {
             let envstat = Command::new("envstat")
-                .args(&["-s", "acpibat0:present"])
+                .args(&["-s", "acpibat0:charging"])
                 .stdout(Stdio::piped())
                 .output()
                 .expect("ERROR: failed to spawn \"envstat\" process");
