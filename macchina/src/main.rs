@@ -171,6 +171,7 @@ pub struct Opt {
     long = "theme",
     default_value = "Hydrogen",
     possible_values = & theme::Themes::variants(),
+    case_insensitive = true,
     help = "Specifies the theme to use"
     )]
     theme: theme::Themes,
