@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use tui::buffer::Buffer;
 use tui::layout::{Margin, Rect};
 use tui::style::{Color, Style};
-use tui::text::{Text};
+use tui::text::{Span, Spans, Text};
 use tui::widgets::{Block, Paragraph, Widget};
 
 pub struct ReadoutList<'a> {
@@ -13,6 +13,7 @@ pub struct ReadoutList<'a> {
     items: Vec<Readout<'a>>,
     theme: &'a Box<dyn Theme>,
     block_inner_margin: Margin,
+    palette: bool,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
@@ -29,6 +30,7 @@ impl<'a, 'b> ReadoutList<'a> {
                 horizontal: 0,
                 vertical: 0,
             },
+            palette: false,
         }
     }
 
@@ -54,6 +56,11 @@ impl<'a, 'b> ReadoutList<'a> {
 
     pub fn block_inner_margin(mut self, margin: Margin) -> ReadoutList<'a> {
         self.block_inner_margin = margin;
+        self
+    }
+
+    pub fn palette(mut self, palette: bool) -> ReadoutList<'a> {
+        self.palette = palette;
         self
     }
 }
@@ -114,6 +121,10 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
+        if self.palette {
+            self.print_palette(buf, &list_area, &mut height);
+        }
+
         Self::render_block(
             self.block,
             buf,
@@ -127,8 +138,37 @@ impl<'a> Widget for ReadoutList<'a> {
 }
 
 impl<'a> ReadoutList<'a> {
+    fn print_palette(&self, buf: &mut Buffer, list_area: &Rect, height: &mut u16) {
+        let colors = [
+            // Bright Black
+            Color::Rgb(169, 169, 169),
+            Color::LightRed,
+            Color::LightGreen,
+            Color::LightYellow,
+            Color::LightBlue,
+            // Bright Purple
+            Color::Rgb(218, 112, 214),
+            // Bright Cyan
+            Color::Rgb(65, 253, 254),
+            //Bright White
+            Color::Rgb(249, 249, 249),
+        ];
+
+        let span_vector: Vec<_> = colors
+            .iter()
+            .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
+            .collect();
+
+        let spans = Spans::from(span_vector);
+        let area = Rect::new(list_area.x, list_area.y + *height + 1, list_area.width, 1);
+
+        Paragraph::new(spans).render(area, buf);
+
+        *height += 2;
+    }
+
     fn keys_to_text(&self, key_color: &Color) -> HashMap<ReadoutKey, Text> {
-        let color_style = Style::default().fg(key_color.clone());
+        let color_style = Style::default().fg(*key_color);
 
         self.items
             .iter()
@@ -171,7 +211,7 @@ impl<'a> ReadoutList<'a> {
     }
 
     fn get_themed_separator(separator: &'a str, sep_color: &Color) -> Text<'a> {
-        Text::styled(separator, Style::default().fg(sep_color.clone()))
+        Text::styled(separator, Style::default().fg(*sep_color))
     }
 }
 

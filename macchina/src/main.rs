@@ -11,6 +11,7 @@ mod data;
 mod doctor;
 pub mod widgets;
 
+use crate::data::ReadoutKey;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use data::Readout;
@@ -24,7 +25,6 @@ use tui::style::{Color, Style};
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use tui::Terminal;
-use crate::data::ReadoutKey;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
@@ -235,6 +235,7 @@ fn draw_readout_data(
     buf: &mut Buffer,
     area: Rect,
     show_box: bool,
+    palette: bool,
 ) {
     let mut list = ReadoutList::new(data, &theme);
 
@@ -249,7 +250,8 @@ fn draw_readout_data(
                     .border_type(BorderType::Rounded)
                     .title(theme.get_block_title())
                     .borders(Borders::ALL),
-            );
+            )
+            .palette(palette);
     }
 
     list.render(area, buf);
@@ -303,7 +305,10 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
         return show_only;
     }
 
-    let mut keys: Vec<ReadoutKey> = ReadoutKey::variants().iter().map(|f| ReadoutKey::from_str(f).unwrap()).collect();
+    let mut keys: Vec<ReadoutKey> = ReadoutKey::variants()
+        .iter()
+        .map(|f| ReadoutKey::from_str(f).unwrap())
+        .collect();
     if let Some(hide) = opt.hide.to_owned() {
         keys.retain(|f| hide.contains(f));
     }
@@ -314,7 +319,8 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
 fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
     let should_display = should_display(&opt);
-    let readout_data = data::get_all_readouts(&opt, should_display);
+    let theme = create_theme(&opt);
+    let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);
@@ -332,7 +338,6 @@ fn main() -> Result<(), io::Error> {
 
     let tmp_buffer_area = tmp_buffer.area;
 
-    let theme = create_theme(&opt);
     let theme_padding = theme.get_padding() as u16;
 
     draw_readout_data(
@@ -346,6 +351,7 @@ fn main() -> Result<(), io::Error> {
             ascii_area.height,
         ),
         !opt.no_box,
+        opt.palette,
     );
 
     write_buffer_to_console(&mut terminal, &mut tmp_buffer);
@@ -370,26 +376,18 @@ fn write_buffer_to_console(
     let term_width = terminal_buf.area.width;
     let tmp_width = tmp_buffer.area.width;
 
-    let mut y_tmp = 0;
-
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
-    let starting_pos = cursor_y
-        .checked_sub(last_y)
-        .unwrap_or(0)
-        .checked_sub(1)
-        .unwrap_or(0);
+    let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
 
-    for y in starting_pos..cursor_y {
+    for (y_tmp, y) in (starting_pos..cursor_y).enumerate() {
         let start_index_term = (y * term_width) as usize;
         let end_index_term = start_index_term + term_width as usize;
 
-        let start_index_tmp = (y_tmp * tmp_width) as usize;
+        let start_index_tmp = y_tmp * tmp_width as usize;
         let end_index_tmp = start_index_tmp + term_width as usize;
 
         terminal_buf.content[start_index_term..end_index_term]
             .clone_from_slice(&tmp_buffer.content[start_index_tmp..end_index_tmp]);
-
-        y_tmp += 1;
     }
 }

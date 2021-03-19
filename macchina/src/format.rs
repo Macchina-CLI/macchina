@@ -78,7 +78,7 @@ pub fn uptime(uptime: usize, shorthand: bool) -> String {
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.general.username()` and `READOUTS.general.hostname()`
-pub fn host(username: &String, hostname: &String) -> String {
+pub fn host(username: &str, hostname: &str) -> String {
     format!("{}@{}", username, hostname)
 }
 
@@ -104,7 +104,7 @@ pub fn memory(total: u64, used: u64) -> String {
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.general.cpu_model_name()` and `num_cpus::get()`
-pub fn cpu(model_name: &String) -> String {
+pub fn cpu(model_name: &str) -> String {
     format!("{} ({})", model_name, num_cpus::get())
         .replace("(TM)", "™")
         .replace("(R)", "®")

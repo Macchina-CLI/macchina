@@ -172,6 +172,8 @@ pub trait Theme {
     where
         Self: Sized;
 
+    fn get_bar_style(&self) -> &BarStyle;
+
     fn get_separator(&self) -> &'static str;
     fn set_separator(&mut self, separator: &'static str);
 
@@ -230,6 +232,10 @@ impl Theme for HydrogenTheme {
             padding: 4,
             block_title: String::from("System Information"),
         })
+    }
+
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
     }
 
     fn get_separator(&self) -> &'static str {
@@ -310,6 +316,10 @@ impl Theme for HeliumTheme {
             padding: 4,
             block_title: String::from("System Information"),
         })
+    }
+
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
     }
 
     fn get_separator(&self) -> &'static str {
@@ -393,6 +403,10 @@ impl Theme for LithiumTheme {
         })
     }
 
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
+    }
+
     fn get_separator(&self) -> &'static str {
         self.separator
     }
@@ -464,22 +478,22 @@ impl Theme for EmojiTheme {
         let title = format!(
             "{}{}System Information",
             emoji,
-            " ".repeat(3usize.checked_sub(emoji_width).unwrap_or(0))
+            " ".repeat(3usize.saturating_sub(emoji_width))
         );
 
         Box::new(EmojiTheme {
-            bar: BarStyle {
-                glyph: "🔴",
-                symbol_open: '﹙',
-                symbol_close: '﹚',
-            },
-            color: Color::LightBlue,
+            bar: BarStyle::rounded(),
+            color: Color::Blue,
             separator_color: Color::White,
             separator: "👉",
             spacing: 2,
             padding: 4,
             block_title: title,
         })
+    }
+
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
     }
 
     fn get_separator(&self) -> &'static str {
@@ -536,7 +550,7 @@ impl Theme for EmojiTheme {
 impl EmojiTheme {
     fn get_random_emoji() -> &'static char {
         //Only single-codepoint emojis are supported.
-        const AVAILABLE_EMOJIS: &'static [char] = &[
+        const AVAILABLE_EMOJIS: &[char] = &[
             '🖥', '🔋', '💻', '💡', '🦀', '🍺', '🚀', '🧨', '🔥', '✨', '🎉', '🏆', '🎒', '🔌', '🔬',
         ];
         let mut rand = rand::thread_rng();

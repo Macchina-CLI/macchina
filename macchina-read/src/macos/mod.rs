@@ -62,7 +62,7 @@ impl BatteryReadout for MacOSBatteryReadout {
 
         Ok(power_info
             .state_of_charge
-            .ok_or(ReadoutError::Other(String::from(
+            .ok_or_else(|| ReadoutError::Other(String::from(
                 "State of charge property was not present in the dictionary that was returned from IOKit.",
             )))? as u8)
     }
@@ -149,7 +149,7 @@ impl MacOSIOPMPowerSource {
             }
         }
 
-        dict_data.ok_or(ReadoutError::Other(String::from(
+        dict_data.ok_or_else(|| ReadoutError::Other(String::from(
             "Unable to get the 'IOPMPowerSource' service from IOKit :( Are you on a desktop system?",
         )))
     }
@@ -230,9 +230,8 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        match crate::shared::terminal() {
-            Ok(t) => return Ok(t),
-            _ => (),
+        if let Ok(t) = crate::shared::terminal() {
+            return Ok(t);
         }
 
         if let Ok(terminal_env) = std::env::var("TERM") {

@@ -1,8 +1,11 @@
+use crate::theme::Theme;
 use crate::Opt;
 use clap::arg_enum;
 use macchina_read::traits::ReadoutError;
 use macchina_read::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
-use tui::text::Text;
+use std::borrow::Cow;
+use tui::style::{Color, Style};
+use tui::text::{Span, Spans, Text};
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
@@ -42,10 +45,55 @@ impl<'a> Readout<'a> {
     }
 }
 
-pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<Readout<'a>> {
+fn colored_glyphs(glyph: &str, blocks: usize) -> String {
+    glyph
+        .repeat(blocks)
+        .chars()
+        .collect::<Vec<char>>()
+        .chunks(1)
+        .map(|c| c.iter().collect::<String>())
+        .collect::<Vec<String>>()
+        .join(" ")
+}
+
+fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
+    let mut span_vector = vec![
+        Span::raw(format!("{} ", theme.get_bar_style().symbol_open)),
+        Span::raw(""),
+        Span::raw(""),
+        Span::raw(format!(" {}", theme.get_bar_style().symbol_close)),
+    ];
+
+    let glyph = theme.get_bar_style().glyph;
+    let glyphs = colored_glyphs(glyph, blocks);
+
+    if blocks == 10 {
+        span_vector[1].content = Cow::from(glyphs);
+    } else {
+        span_vector[1].content = Cow::from(format!("{} ", glyphs));
+    }
+    span_vector[1].style = Style::default().fg(theme.get_color());
+
+    span_vector[2].content = Cow::from(colored_glyphs(glyph, 10 - blocks).to_string());
+    if theme.get_color() == Color::White {
+        span_vector[2].content = Cow::from(
+            span_vector[2]
+                .content
+                .replace(glyph, " "),
+        );
+    }
+
+    Spans::from(span_vector)
+}
+
+pub fn get_all_readouts<'a>(
+    opt: &Opt,
+    theme: &Box<dyn Theme>,
+    should_display: Vec<ReadoutKey>,
+) -> Vec<Readout<'a>> {
     let mut readout_values = Vec::with_capacity(ReadoutKey::variants().len());
 
-    fn battery_readout(vec: &mut Vec<Readout>) {
+    fn battery_readout(vec: &mut Vec<Readout>, theme: &Box<dyn Theme>, use_bar: bool) {
         use crate::format::battery as format_bat;
         use macchina_read::traits::BatteryReadout as _;
 
@@ -56,7 +104,14 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
         let state = battery_readout.status();
 
         match (percentage, state) {
-            (Ok(p), Ok(s)) => vec.push(Readout::new(key, format_bat(p, s))),
+            (Ok(p), Ok(s)) => {
+                if use_bar {
+                    let bar = create_bar(theme, crate::bars::battery(p));
+                    vec.push(Readout::new(key, bar));
+                } else {
+                    vec.push(Readout::new(key, format_bat(p, s)));
+                }
+            }
             (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(key, e)),
         }
     }
@@ -85,7 +140,7 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
         }
     }
 
-    fn memory_readout(vec: &mut Vec<Readout>) {
+    fn memory_readout(vec: &mut Vec<Readout>, theme: &Box<dyn Theme>, use_bar: bool) {
         use crate::format::memory as format_mem;
         use macchina_read::traits::MemoryReadout as _;
 
@@ -95,13 +150,18 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+                if use_bar {
+                    let bar = create_bar(theme, crate::bars::memory(used, total));
+                    vec.push(Readout::new(ReadoutKey::Memory, bar))
+                } else {
+                    vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+                }
             }
             (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::Memory, e)),
         }
     }
 
-    fn general_readout(vec: &mut Vec<Readout>, should_display: &Vec<ReadoutKey>, opt: &Opt) {
+    fn general_readout(vec: &mut Vec<Readout>, should_display: &[ReadoutKey], opt: &Opt) {
         use crate::format::cpu as format_cpu;
         use crate::format::host as format_host;
         use crate::format::uptime as format_uptime;
@@ -174,7 +234,9 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
         // Check if the user is using only a Window Manager.
         match (window_manager, desktop_environment) {
             (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
-                vec.push(Readout::new(ReadoutKey::WindowManager, w));
+                if should_display.contains(&ReadoutKey::WindowManager) {
+                    vec.push(Readout::new(ReadoutKey::WindowManager, w));
+                }
                 vec.push(Readout::new_err(
                     ReadoutKey::DesktopEnvironment,
                     ReadoutError::Warning(String::from(
@@ -183,26 +245,32 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
                 ))
             }
             _ => {
-                match general_readout.window_manager() {
-                    Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
-                    Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
+                if should_display.contains(&ReadoutKey::WindowManager) {
+                    match general_readout.window_manager() {
+                        Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
+                        Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
+                    }
                 }
 
-                match general_readout.desktop_environment() {
-                    Ok(s) => vec.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
-                    Err(e) => vec.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e)),
+                if should_display.contains(&ReadoutKey::DesktopEnvironment) {
+                    match general_readout.desktop_environment() {
+                        Ok(s) => vec.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
+                        Err(e) => vec.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e)),
+                    }
                 }
             }
         }
 
-        match general_readout.os_name() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::OperatingSystem, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::OperatingSystem, e)),
+        if should_display.contains(&ReadoutKey::OperatingSystem) {
+            match general_readout.os_name() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::OperatingSystem, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::OperatingSystem, e)),
+            }
         }
     }
 
     if should_display.contains(&ReadoutKey::Battery) {
-        battery_readout(&mut readout_values);
+        battery_readout(&mut readout_values, theme, opt.bar);
     }
 
     if should_display.contains(&ReadoutKey::Packages) {
@@ -214,7 +282,7 @@ pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<R
     }
 
     if should_display.contains(&ReadoutKey::Memory) {
-        memory_readout(&mut readout_values);
+        memory_readout(&mut readout_values, theme, opt.bar);
     }
 
     general_readout(&mut readout_values, &should_display, &opt);
