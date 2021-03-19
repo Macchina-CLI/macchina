@@ -31,12 +31,16 @@ impl From<SysctlError> for ReadoutError {
 }
 
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn uptime() -> Result<String, ReadoutError> {
-    Ok(fs::read_to_string("/proc/uptime")?
-        .split_whitespace()
-        .next()
-        .unwrap()
-        .to_string())
+pub(crate) fn uptime() -> Result<usize, ReadoutError> {
+    let uptime_file_text = fs::read_to_string("/proc/uptime")?;
+    let uptime_text = uptime_file_text.split_whitespace().next().unwrap();
+    let parsed_uptime = uptime_text.parse::<f64>();
+
+    match parsed_uptime {
+        Ok(s) => Ok(s as usize),
+        Err(e) => Err(ReadoutError::Other(format!("Could not convert '{}' to a digit: {:?}",
+                                                  uptime_text, e)))
+    }
 }
 
 /// This function should return the distribution name, e.g. "Arch Linux"

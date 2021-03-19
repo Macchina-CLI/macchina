@@ -6,8 +6,6 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 use sysctl::{Ctl, Sysctl};
 
-
-
 impl From<sqlite::Error> for ReadoutError {
     fn from(e: sqlite::Error) -> Self {
         ReadoutError::Other(e.to_string())
@@ -37,22 +35,43 @@ impl BatteryReadout for LinuxBatteryReadout {
         LinuxBatteryReadout
     }
 
-    fn percentage(&self) -> Result<String, ReadoutError> {
+    fn percentage(&self) -> Result<u8, ReadoutError> {
         let mut bat_path = Path::new("/sys/class/power_supply/BAT0/capacity");
         if !Path::exists(bat_path) {
             bat_path = Path::new("/sys/class/power_supply/BAT1/capacity");
         }
 
-        Ok(extra::pop_newline(fs::read_to_string(bat_path)?))
+        let percentage_text = extra::pop_newline(fs::read_to_string(bat_path)?);
+        let percentage_parsed = percentage_text.parse::<u8>();
+
+        match percentage_parsed {
+            Ok(p) => Ok(p),
+            Err(e) => Err(ReadoutError::Other(format!(
+                "Could not parse the value '{}' of {} into a \
+            digit: {:?}",
+                percentage_text,
+                bat_path.to_str().unwrap_or_default(),
+                e
+            ))),
+        }
     }
 
-    fn status(&self) -> Result<String, ReadoutError> {
+    fn status(&self) -> Result<BatteryState, ReadoutError> {
         let mut bat_path = Path::new("/sys/class/power_supply/BAT0/status");
         if !Path::exists(bat_path) {
             bat_path = Path::new("/sys/class/power_supply/BAT1/status");
         }
 
-        Ok(extra::pop_newline(fs::read_to_string(bat_path)?))
+        let status_text = extra::pop_newline(fs::read_to_string(bat_path)?).to_lowercase();
+        match &status_text[..] {
+            "true" => Ok(BatteryState::Charging),
+            "false" => Ok(BatteryState::Discharging),
+            s => Err(ReadoutError::Other(format!(
+                "Got unexpected value '{}' from {}.",
+                s,
+                bat_path.to_str().unwrap_or_default()
+            ))),
+        }
     }
 }
 
@@ -169,7 +188,7 @@ impl GeneralReadout for LinuxGeneralReadout {
         Ok(crate::shared::cpu_model_name())
     }
 
-    fn uptime(&self) -> Result<String, ReadoutError> {
+    fn uptime(&self) -> Result<usize, ReadoutError> {
         crate::shared::uptime()
     }
 }
@@ -259,177 +278,227 @@ impl PackageReadout for LinuxPackageReadout {
 
     /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
     /// that isn't mentioned in the above list.
-    fn count_pkgs(&self) -> Result<String, ReadoutError> {
+    fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
+        let mut packages = Vec::new();
         // Instead of having a condition for each distribution.
         // we will try and extract package count by checking
         // if a certain package manager is installed
         if extra::which("pacman") {
-            use std::fs::read_dir;
-            use std::path::Path;
-
-            let pacman_folder = Path::new("/var/lib/pacman/local");
-
-            if pacman_folder.exists() {
-                let pacman_count = match read_dir(pacman_folder) {
-                    Ok(read_dir) => read_dir.count() - 1,
-                    Err(_) => 0,
-                };
-                return Ok(pacman_count.to_string());
+            match LinuxPackageReadout::count_pacman() {
+                Some(c) => packages.push((PackageManager::Pacman, c)),
+                _ => (),
             }
-            // Returns the number of installed packages using
-            // pacman -Qq | wc -l
-            let pacman_output = Command::new("pacman")
-                .args(&["-Q", "-q"])
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"pacman\" process")
-                .stdout
-                .expect("ERROR: failed to open \"pacman\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(pacman_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
         } else if extra::which("dpkg") {
-            // Returns the number of installed packages using
-            // dpkg -l | wc -l
-            let dpkg_output = Command::new("dpkg")
-                .arg("-l")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"dpkg\" process")
-                .stdout
-                .expect("ERROR: failed to open \"dpkg\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(dpkg_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+            match LinuxPackageReadout::count_apt() {
+                Some(c) => packages.push((PackageManager::Apt, c)),
+                _ => (),
+            }
         } else if extra::which("qlist") {
-            // Returns the number of installed packages using:
-            // qlist -I | wc -l
-            let qlist_output = Command::new("qlist")
-                .arg("-I")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"qlist\" process")
-                .stdout
-                .expect("ERROR: failed to open \"qlist\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(qlist_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"qlist -I | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+            match LinuxPackageReadout::count_portage() {
+                Some(c) => packages.push((PackageManager::Portage, c)),
+                _ => (),
+            }
         } else if extra::which("xbps-query") {
-            // Returns the number of installed packages using:
-            // xbps-query | grep ii | wc -l
-            let xbps_output = Command::new("xbps-query")
-                .arg("-l")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"xbps-query\" process")
-                .stdout
-                .expect("ERROR: failed to open \"xbps-query\" stdout");
-
-            let grep_output = Command::new("grep")
-                .arg("ii")
-                .stdin(Stdio::from(xbps_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"grep\" process")
-                .stdout
-                .expect("ERROR: failed to read \"grep\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(grep_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+            match LinuxPackageReadout::count_xbps() {
+                Some(c) => packages.push((PackageManager::Xbps, c)),
+                _ => (),
+            }
         } else if extra::which("apk") {
-            // Returns the number of installed packages using:
-            // apk info | wc -l
-            let apk_output = Command::new("apk")
-                .arg("info")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"apk\" process")
-                .stdout
-                .expect("ERROR: failed to open \"apk\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(apk_output))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
-
-            let final_output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"wc\" process to exit");
-            return Ok(String::from_utf8(final_output.stdout)
-                .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+            match LinuxPackageReadout::count_apk() {
+                Some(c) => packages.push((PackageManager::Apk, c)),
+                _ => (),
+            }
         } else if extra::which("rpm") {
-            return _count_rpms()
+            match LinuxPackageReadout::count_rpms() {
+                Ok(c) => packages.push((PackageManager::Pacman, c)),
+                _ => (),
+            }
         }
 
-        Err(ReadoutError::MetricNotAvailable)
+        packages
     }
 }
 
-fn _count_rpms() -> Result<String, ReadoutError> {
-    let path = "/var/lib/rpm/rpmdb.sqlite";
-    let connection = sqlite::open(path);
-    match connection {
-        Ok(con) => {
-            let mut statement = con.prepare("SELECT COUNT(*) FROM Installtid")?;
-            statement.next()?;
+impl LinuxPackageReadout {
+    fn count_rpms() -> Result<usize, ReadoutError> {
+        let path = "/var/lib/rpm/rpmdb.sqlite";
+        let connection = sqlite::open(path);
+        match connection {
+            Ok(con) => {
+                let mut statement = con.prepare("SELECT COUNT(*) FROM Installtid")?;
+                statement.next()?;
 
-            let count = statement.read::<Option<i64>>(0)?.unwrap_or_default();
-
-            Ok(count.to_string())
+                return match statement.read::<Option<i64>>(0) {
+                    Ok(Some(count)) => Ok(count as usize),
+                    Ok(_) => Ok(0),
+                    Err(e) => Err(ReadoutError::Other(format!(
+                        "Could not read package count \
+                    from sqlite database table 'Installtid': {:?}",
+                        e
+                    ))),
+                };
+            }
+            Err(_) => Err(ReadoutError::MetricNotAvailable),
         }
-        Err(_) => Err(ReadoutError::MetricNotAvailable),
+    }
+
+    fn count_pacman() -> Option<usize> {
+        use std::fs::read_dir;
+        use std::path::Path;
+
+        let pacman_folder = Path::new("/var/lib/pacman/local");
+        if pacman_folder.exists() {
+            match read_dir(pacman_folder) {
+                Ok(read_dir) => return Some(read_dir.count() - 1),
+                _ => (),
+            };
+        }
+
+        // Returns the number of installed packages using
+        // pacman -Qq | wc -l
+        let pacman_output = Command::new("pacman")
+            .args(&["-Q", "-q"])
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"pacman\" process")
+            .stdout
+            .expect("ERROR: failed to open \"pacman\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(pacman_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"wc\" process");
+
+        let final_output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+        String::from_utf8(final_output.stdout)
+            .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>().ok()
+    }
+
+    fn count_apt() -> Option<usize> {
+        // Returns the number of installed packages using
+        // dpkg -l | wc -l
+        let dpkg_output = Command::new("dpkg")
+            .arg("-l")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"dpkg\" process")
+            .stdout
+            .expect("ERROR: failed to open \"dpkg\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(dpkg_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"wc\" process");
+
+        let final_output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+        String::from_utf8(final_output.stdout)
+            .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>().ok()
+    }
+
+    fn count_portage() -> Option<usize> {
+        // Returns the number of installed packages using:
+        // qlist -I | wc -l
+        let qlist_output = Command::new("qlist")
+            .arg("-I")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"qlist\" process")
+            .stdout
+            .expect("ERROR: failed to open \"qlist\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(qlist_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"wc\" process");
+
+        let final_output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+        String::from_utf8(final_output.stdout)
+            .expect("ERROR: \"qlist -I | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>().ok()
+    }
+
+    fn count_xbps() -> Option<usize> {
+        // Returns the number of installed packages using:
+        // xbps-query | grep ii | wc -l
+        let xbps_output = Command::new("xbps-query")
+            .arg("-l")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"xbps-query\" process")
+            .stdout
+            .expect("ERROR: failed to open \"xbps-query\" stdout");
+
+        let grep_output = Command::new("grep")
+            .arg("ii")
+            .stdin(Stdio::from(xbps_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"grep\" process")
+            .stdout
+            .expect("ERROR: failed to read \"grep\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(grep_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"wc\" process");
+
+        let final_output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+        String::from_utf8(final_output.stdout)
+            .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>().ok()
+    }
+
+    fn count_apk() -> Option<usize> {
+        // Returns the number of installed packages using:
+        // apk info | wc -l
+        let apk_output = Command::new("apk")
+            .arg("info")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"apk\" process")
+            .stdout
+            .expect("ERROR: failed to open \"apk\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(apk_output))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"wc\" process");
+
+        let final_output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait for \"wc\" process to exit");
+
+        String::from_utf8(final_output.stdout)
+            .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>().ok()
     }
 }
