@@ -4,7 +4,7 @@
 use ReadoutError::MetricNotAvailable;
 
 /// This enum contains possible error types when doing sensor & variable readouts.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ReadoutError {
     /// A specific metric might not be available on all systems (e. g. battery percentage on a
     /// desktop). \
@@ -14,6 +14,28 @@ pub enum ReadoutError {
     /// A readout for a metric might be available, but fails due to missing dependencies or other
     /// unsatisfied requirements.
     Other(String),
+
+    /// Getting a readout on a specific operating system might not make sense or causes some other
+    /// kind of warning. This is not necessarily an error.
+    Warning(String),
+}
+
+impl ToString for ReadoutError {
+    fn to_string(&self) -> String {
+        match self {
+            ReadoutError::MetricNotAvailable => {
+                String::from("Metric is not available on this system.")
+            }
+            ReadoutError::Other(s) => s.clone(),
+            ReadoutError::Warning(s) => s.clone(),
+        }
+    }
+}
+
+impl From<&ReadoutError> for ReadoutError {
+    fn from(r: &ReadoutError) -> Self {
+        r.to_owned()
+    }
 }
 
 /// This trait provides the necessary functions for querying battery statistics from the host
@@ -51,14 +73,15 @@ pub trait BatteryReadout {
     fn new() -> Self;
 
     /// This function is used for querying the current battery percentage. The expected value is
-    /// a string in the range of `0` to `100`.
-    fn percentage(&self) -> Result<String, ReadoutError> {
+    /// a u8 in the range of `0` to `100`.
+    fn percentage(&self) -> Result<u8, ReadoutError> {
         Err(MetricNotAvailable)
     }
 
     /// This function is used for querying the current battery charging state. If the battery is
-    /// currently being charged, we expect a return value of `TRUE`, otherwise `FALSE`.
-    fn status(&self) -> Result<String, ReadoutError> {
+    /// currently being charged, we expect a return value of `BatteryState::Charging`, otherwise
+    /// `BatteryState::Discharging`.
+    fn status(&self) -> Result<BatteryState, ReadoutError> {
         Err(MetricNotAvailable)
     }
 }
@@ -186,7 +209,7 @@ pub trait MemoryReadout {
 /// # Example
 ///
 /// ```
-/// use macchina_read::traits::PackageReadout;
+/// use macchina_read::traits::{PackageReadout, PackageManager};
 /// use macchina_read::traits::ReadoutError;
 ///
 /// pub struct MacOSPackageReadout;
@@ -196,9 +219,9 @@ pub trait MemoryReadout {
 ///         MacOSPackageReadout {}
 ///     }
 ///
-///     fn count_pkgs(&self) -> Result<String, ReadoutError> {
+///     fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
 ///         // Check if homebrew 🍻 is installed and count installed pkgs...
-///         Ok(String::from("100"))
+///         vec![(PackageManager::Homebrew, 120)]
 ///     }
 /// }
 /// ```
@@ -207,8 +230,8 @@ pub trait PackageReadout {
     fn new() -> Self;
 
     /// This function should return the number of installed packages.
-    fn count_pkgs(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+    fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
+        Vec::new()
     }
 }
 
@@ -357,7 +380,7 @@ pub trait GeneralReadout {
     }
 
     /// This function should return the uptime of the OS in seconds.
-    fn uptime(&self) -> Result<String, ReadoutError> {
+    fn uptime(&self) -> Result<usize, ReadoutError> {
         Err(MetricNotAvailable)
     }
 
@@ -371,5 +394,49 @@ pub trait GeneralReadout {
     /// Sur)
     fn os_name(&self) -> Result<String, ReadoutError> {
         Err(MetricNotAvailable)
+    }
+}
+
+pub enum BatteryState {
+    Charging,
+    Discharging,
+}
+
+impl Into<&'static str> for BatteryState {
+    fn into(self) -> &'static str {
+        match self {
+            BatteryState::Charging => "Charging",
+            BatteryState::Discharging => "Discharging",
+        }
+    }
+}
+
+pub enum PackageManager {
+    Homebrew,
+    MacPorts,
+    Pacman,
+    Portage,
+    Apt,
+    Xbps,
+    Pkgsrc,
+    Apk,
+    Eopkg,
+    Dnf,
+}
+
+impl ToString for PackageManager {
+    fn to_string(&self) -> String {
+        String::from(match self {
+            PackageManager::Homebrew => "Homebrew",
+            PackageManager::MacPorts => "MacPorts",
+            PackageManager::Pacman => "Pacman",
+            PackageManager::Portage => "Portage",
+            PackageManager::Apt => "APT",
+            PackageManager::Xbps => "XBPS",
+            PackageManager::Pkgsrc => "pkgsrc",
+            PackageManager::Apk => "apk",
+            PackageManager::Eopkg => "eopkg",
+            PackageManager::Dnf => "dnf",
+        })
     }
 }

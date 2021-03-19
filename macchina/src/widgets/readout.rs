@@ -87,8 +87,9 @@ impl<'a> Widget for ReadoutList<'a> {
 
         let mut max_line_width: u16 = 0;
 
-        for item in self.items.iter() {
-            let readout_data = &item.1;
+        for item in self.items.iter().filter(|f| f.1.is_ok()) {
+            //it's ok to unwrap, because we filtered out everything that is not a valid Option<T>.
+            let readout_data = item.1.as_ref().unwrap();
             let readout_key = keys.get(&item.0).unwrap();
 
             let list_item_area = Rect {

@@ -16,7 +16,7 @@ use sysctl::{Ctl, Sysctl};
 mod mach_ffi;
 
 pub struct MacOSBatteryReadout {
-    power_info: Option<MacOSIOPMPowerSource>,
+    power_info: Result<MacOSIOPMPowerSource, ReadoutError>,
 }
 
 pub struct MacOSProductReadout {
@@ -53,30 +53,34 @@ pub struct MacOSPackageReadout;
 impl BatteryReadout for MacOSBatteryReadout {
     fn new() -> Self {
         MacOSBatteryReadout {
-            power_info: MacOSIOPMPowerSource::new().ok(),
+            power_info: MacOSIOPMPowerSource::new(),
         }
     }
 
-    fn percentage(&self) -> Result<String, ReadoutError> {
-        match &self.power_info {
-            Some(info) => Ok(info.state_of_charge.ok_or(MetricNotAvailable)?.to_string()),
-            None => Err(MetricNotAvailable),
-        }
+    fn percentage(&self) -> Result<u8, ReadoutError> {
+        let power_info = self.power_info.as_ref()?;
+
+        Ok(power_info
+            .state_of_charge
+            .ok_or(ReadoutError::Other(String::from(
+                "State of charge property was not present in the dictionary that was returned from IOKit.",
+            )))? as u8)
     }
 
-    fn status(&self) -> Result<String, ReadoutError> {
-        match &self.power_info {
-            Some(info) => {
-                if let Some(charging) = info.charging {
-                    return match charging {
-                        true => Ok(String::from("TRUE")),
-                        false => Ok(String::from("FALSE")),
-                    };
-                }
-                Err(MetricNotAvailable)
-            }
-            None => Err(MetricNotAvailable),
+    fn status(&self) -> Result<BatteryState, ReadoutError> {
+        let power_info = self.power_info.as_ref()?;
+
+        if let Some(charging) = power_info.charging {
+            return Ok(if charging {
+                BatteryState::Charging
+            } else {
+                BatteryState::Discharging
+            });
         }
+
+        Err(ReadoutError::Other(String::from(
+            "Charging state was not present in the dictionary that was returned from IOKit.",
+        )))
     }
 }
 
@@ -136,9 +140,18 @@ impl MacOSIOPMPowerSource {
             unsafe {
                 IOObjectRelease(entry);
             }
+
+            if kern_return != KERN_SUCCESS {
+                return Err(ReadoutError::Other(format!(
+                    "Creating the dictionary for the IOService failed with return code: {}",
+                    kern_return
+                )));
+            }
         }
 
-        dict_data.ok_or(ReadoutError::MetricNotAvailable)
+        dict_data.ok_or(ReadoutError::Other(String::from(
+            "Unable to get the 'IOPMPowerSource' service from IOKit :( Are you on a desktop system?",
+        )))
     }
 }
 
@@ -194,6 +207,12 @@ impl GeneralReadout for MacOSGeneralReadout {
             .value_string()?)
     }
 
+    fn distribution(&self) -> Result<String, ReadoutError> {
+        Err(ReadoutError::Warning(String::from(
+            "Since you're on macOS, there is no distribution to be read from the system.",
+        )))
+    }
+
     fn local_ip(&self) -> Result<String, ReadoutError> {
         Ok(self
             .local_ip
@@ -231,7 +250,7 @@ impl GeneralReadout for MacOSGeneralReadout {
             .value_string()?)
     }
 
-    fn uptime(&self) -> Result<String, ReadoutError> {
+    fn uptime(&self) -> Result<usize, ReadoutError> {
         use libc::timeval;
         use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -244,8 +263,8 @@ impl GeneralReadout for MacOSGeneralReadout {
         let bootup_timestamp = UNIX_EPOCH + duration;
 
         if let Ok(duration) = SystemTime::now().duration_since(bootup_timestamp) {
-            let seconds_since_boot = duration.as_secs_f64();
-            return Ok(seconds_since_boot.to_string());
+            let seconds_since_boot = duration.as_secs();
+            return Ok(seconds_since_boot as usize);
         }
 
         Err(ReadoutError::Other(String::from(
@@ -432,7 +451,7 @@ impl PackageReadout for MacOSPackageReadout {
     /// This methods check the `/usr/local/Cellar` and `/usr/local/Caskroom` folders which will
     /// contain all installed packages when using the Homebrew package manager. A manually call via
     /// `homebrew list` would be too expensive, since it is pretty slow.
-    fn count_pkgs(&self) -> Result<String, ReadoutError> {
+    fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
         use std::fs::read_dir;
         use std::path::Path;
 
@@ -452,10 +471,10 @@ impl PackageReadout for MacOSPackageReadout {
 
         let total = cellar_count + caskroom_count;
         if total == 0 {
-            return Err(MetricNotAvailable);
+            return Vec::new();
         }
 
-        Ok(format!("{}", total))
+        vec![(PackageManager::Homebrew, total)]
     }
 }
 
