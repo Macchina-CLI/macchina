@@ -44,7 +44,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
                             .to_string()
                             .replace("%", "");
                         let percentage_f = percentage.parse::<f32>().unwrap();
-                        let percentage_i = ((percentage_f / 100_000.0) as i64) * 100_000;
+                        let percentage_i = percentage_f.round() as i32;
                         return Ok(percentage_i.to_string());
                     }
                     None => return Err(ReadoutError::MetricNotAvailable),
