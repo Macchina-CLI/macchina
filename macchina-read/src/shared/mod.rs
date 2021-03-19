@@ -1,32 +1,28 @@
 #![allow(dead_code)]
+#![allow(unused_imports)]
+
 use crate::traits::ReadoutError;
 
 use std::ffi::CStr;
 use std::io::Error;
 use std::path::Path;
+use std::process::{Command, Stdio};
+use crate::extra;
+use std::{env, fs};
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 use sysctl::SysctlError;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use crate::extra;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use std::process::{Command, Stdio};
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use std::{env, fs};
-
-impl From<std::io::Error> for ReadoutError {
-    fn from(e: Error) -> Self {
-        ReadoutError::Other(e.to_string())
-    }
-}
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 impl From<SysctlError> for ReadoutError {
     fn from(e: SysctlError) -> Self {
         ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
+    }
+}
+
+impl From<std::io::Error> for ReadoutError {
+    fn from(e: Error) -> Self {
+        ReadoutError::Other(e.to_string())
     }
 }
 
@@ -129,7 +125,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 }
 
 /// Read current terminal name using `ps`
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "macos"))]
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be

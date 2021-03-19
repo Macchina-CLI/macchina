@@ -1,10 +1,8 @@
+use crate::Opt;
 use clap::arg_enum;
 use macchina_read::traits::ReadoutError;
-use macchina_read::{
-    BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout,
-};
+use macchina_read::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use tui::text::Text;
-use crate::Opt;
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
@@ -44,7 +42,7 @@ impl<'a> Readout<'a> {
     }
 }
 
-pub fn get_all_readouts<'a>(opt: &Opt) -> Vec<Readout<'a>> {
+pub fn get_all_readouts<'a>(opt: &Opt, should_display: Vec<ReadoutKey>) -> Vec<Readout<'a>> {
     let mut readout_values = Vec::with_capacity(ReadoutKey::variants().len());
 
     fn battery_readout(vec: &mut Vec<Readout>) {
@@ -103,67 +101,99 @@ pub fn get_all_readouts<'a>(opt: &Opt) -> Vec<Readout<'a>> {
         }
     }
 
-    fn general_readout(vec: &mut Vec<Readout>) {
+    fn general_readout(vec: &mut Vec<Readout>, should_display: &Vec<ReadoutKey>, opt: &Opt) {
         use crate::format::cpu as format_cpu;
         use crate::format::host as format_host;
         use crate::format::uptime as format_uptime;
         use macchina_read::traits::GeneralReadout as _;
 
         let general_readout = GeneralReadout::new();
-        match general_readout.uptime() {
-            //TODO: shorthand
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Uptime, format_uptime(s, false))),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Uptime, e)),
+
+        if should_display.contains(&ReadoutKey::Uptime) {
+            match general_readout.uptime() {
+                Ok(s) => vec.push(Readout::new(
+                    ReadoutKey::Uptime,
+                    format_uptime(s, opt.short_uptime),
+                )),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Uptime, e)),
+            }
         }
 
-        match general_readout.local_ip() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::LocalIP, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+        if should_display.contains(&ReadoutKey::LocalIP) {
+            match general_readout.local_ip() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::LocalIP, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+            }
         }
 
-        match (general_readout.username(), general_readout.hostname()) {
-            (Ok(u), Ok(h)) => vec.push(Readout::new(ReadoutKey::Host, format_host(&u, &h))),
-            (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+        if should_display.contains(&ReadoutKey::Host) {
+            match (general_readout.username(), general_readout.hostname()) {
+                (Ok(u), Ok(h)) => vec.push(Readout::new(ReadoutKey::Host, format_host(&u, &h))),
+                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+            }
         }
 
-        match general_readout.cpu_model_name() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Processor, format_cpu(&s))),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Processor, e)),
+        if should_display.contains(&ReadoutKey::Processor) {
+            match general_readout.cpu_model_name() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Processor, format_cpu(&s))),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Processor, e)),
+            }
         }
 
-        match general_readout.machine() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Machine, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Machine, e)),
+        if should_display.contains(&ReadoutKey::Machine) {
+            match general_readout.machine() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Machine, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Machine, e)),
+            }
         }
 
-        //TODO: shorthand
-        match general_readout.shell(false) {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Shell, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Shell, e)),
+        if should_display.contains(&ReadoutKey::Shell) {
+            match general_readout.shell(opt.short_shell) {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Shell, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Shell, e)),
+            }
         }
 
-        match general_readout.terminal() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Terminal, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Terminal, e)),
+        if should_display.contains(&ReadoutKey::Terminal) {
+            match general_readout.terminal() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Terminal, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Terminal, e)),
+            }
         }
 
-        match general_readout.distribution() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::Distribution, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::Distribution, e)),
+        if should_display.contains(&ReadoutKey::Distribution) {
+            match general_readout.distribution() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Distribution, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Distribution, e)),
+            }
         }
 
-        //---
-        //TODO: check the previous window manager / desktop env
-        match general_readout.window_manager() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
-        }
+        let window_manager = general_readout.window_manager();
+        let desktop_environment = general_readout.desktop_environment();
 
-        match general_readout.desktop_environment() {
-            Ok(s) => vec.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
-            Err(e) => vec.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e)),
+        // Check if the user is using only a Window Manager.
+        match (window_manager, desktop_environment) {
+            (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
+                vec.push(Readout::new(ReadoutKey::WindowManager, w));
+                vec.push(Readout::new_err(
+                    ReadoutKey::DesktopEnvironment,
+                    ReadoutError::Warning(String::from(
+                        "You appear to be only running a window manager.",
+                    )),
+                ))
+            }
+            _ => {
+                match general_readout.window_manager() {
+                    Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
+                    Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
+                }
+
+                match general_readout.desktop_environment() {
+                    Ok(s) => vec.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
+                    Err(e) => vec.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e)),
+                }
+            }
         }
-        //---
 
         match general_readout.os_name() {
             Ok(s) => vec.push(Readout::new(ReadoutKey::OperatingSystem, s)),
@@ -171,11 +201,23 @@ pub fn get_all_readouts<'a>(opt: &Opt) -> Vec<Readout<'a>> {
         }
     }
 
-    battery_readout(&mut readout_values);
-    package_readout(&mut readout_values);
-    kernel_readout(&mut readout_values);
-    memory_readout(&mut readout_values);
-    general_readout(&mut readout_values);
+    if should_display.contains(&ReadoutKey::Battery) {
+        battery_readout(&mut readout_values);
+    }
+
+    if should_display.contains(&ReadoutKey::Packages) {
+        package_readout(&mut readout_values);
+    }
+
+    if should_display.contains(&ReadoutKey::Kernel) {
+        kernel_readout(&mut readout_values);
+    }
+
+    if should_display.contains(&ReadoutKey::Memory) {
+        memory_readout(&mut readout_values);
+    }
+
+    general_readout(&mut readout_values, &should_display, &opt);
 
     readout_values
 }

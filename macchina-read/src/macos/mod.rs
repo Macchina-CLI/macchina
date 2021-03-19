@@ -230,6 +230,11 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
+        match crate::shared::terminal() {
+            Ok(t) => return Ok(t),
+            _ => (),
+        }
+
         if let Ok(terminal_env) = std::env::var("TERM") {
             return Ok(terminal_env);
         }

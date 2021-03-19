@@ -14,7 +14,9 @@ pub mod widgets;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use data::Readout;
+use rand::Rng;
 use std::io::Stdout;
+use std::str::FromStr;
 use tui::backend::CrosstermBackend;
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
@@ -22,6 +24,7 @@ use tui::style::{Color, Style};
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use tui::Terminal;
+use crate::data::ReadoutKey;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
@@ -85,10 +88,9 @@ pub struct Opt {
     long = "color",
     possible_values = & MacchinaColor::variants(),
     case_insensitive = true,
-    default_value = "Blue",
     help = "Specifies the key color"
     )]
-    color: MacchinaColor,
+    color: Option<MacchinaColor>,
 
     #[structopt(
         short = "b",
@@ -102,10 +104,9 @@ pub struct Opt {
     long = "separator-color",
     possible_values = & MacchinaColor::variants(),
     case_insensitive = true,
-    default_value = "White",
     help = "Specifies the separator color"
     )]
-    separator_color: MacchinaColor,
+    separator_color: Option<MacchinaColor>,
 
     #[structopt(
         short = "r",
@@ -167,6 +168,13 @@ pub struct Opt {
 
     #[structopt(long = "no-box", help = "Removes the system information borders.")]
     no_box: bool,
+
+    #[structopt(
+        long = "box-title",
+        help = "Overrides the title of the box.",
+        conflicts_with = "no_box"
+    )]
+    box_title: Option<String>,
 }
 
 fn create_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, io::Error> {
@@ -247,9 +255,66 @@ fn draw_readout_data(
     list.render(area, buf);
 }
 
+fn create_theme(opt: &Opt) -> Box<dyn Theme> {
+    let mut theme = opt.theme.create_instance();
+    let color_variants = MacchinaColor::variants();
+    let make_random_color = || {
+        let mut random = rand::thread_rng();
+        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
+            .unwrap()
+            .get_color()
+    };
+
+    theme.set_padding(opt.padding);
+    if let Some(spacing) = opt.spacing {
+        theme.set_spacing(spacing);
+    }
+
+    if let Some(color) = &opt.color {
+        theme.set_color(color.get_color());
+    }
+
+    if let Some(separator_color) = &opt.separator_color {
+        theme.set_separator_color(separator_color.get_color());
+    }
+
+    if let Some(box_title) = &opt.box_title {
+        theme.set_block_title(&box_title[..]);
+    }
+
+    if opt.random_color {
+        theme.set_color(make_random_color());
+    }
+
+    if opt.random_sep_color {
+        theme.set_separator_color(make_random_color());
+    }
+
+    if opt.no_color {
+        theme.set_separator_color(Color::Reset);
+        theme.set_color(Color::Reset);
+    }
+
+    theme
+}
+
+fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
+    if let Some(show_only) = opt.show_only.to_owned() {
+        return show_only;
+    }
+
+    let mut keys: Vec<ReadoutKey> = ReadoutKey::variants().iter().map(|f| ReadoutKey::from_str(f).unwrap()).collect();
+    if let Some(hide) = opt.hide.to_owned() {
+        keys.retain(|f| hide.contains(f));
+    }
+
+    keys
+}
+
 fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
-    let readout_data = data::get_all_readouts(&opt);
+    let should_display = should_display(&opt);
+    let readout_data = data::get_all_readouts(&opt, should_display);
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);
@@ -267,7 +332,7 @@ fn main() -> Result<(), io::Error> {
 
     let tmp_buffer_area = tmp_buffer.area;
 
-    let theme = opt.theme.create_instance();
+    let theme = create_theme(&opt);
     let theme_padding = theme.get_padding() as u16;
 
     draw_readout_data(
