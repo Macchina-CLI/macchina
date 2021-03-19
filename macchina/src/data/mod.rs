@@ -1,9 +1,8 @@
 use clap::arg_enum;
 use macchina_read::traits::ReadoutError;
 use macchina_read::{
-    BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout, ProductReadout,
+    BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout,
 };
-use std::net::Shutdown::Read;
 use tui::text::Text;
 use crate::Opt;
 

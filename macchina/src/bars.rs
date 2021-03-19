@@ -1,4 +1,3 @@
-use macchina_read::traits::{BatteryReadout, MemoryReadout, ReadoutError};
 
 /// Returns a usize [0..10] based on the battery percentage,
 /// `display::show_bar` takes this function as a parameter to handle

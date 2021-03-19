@@ -1,11 +1,5 @@
-use crate::READOUTS;
 use bytesize::ByteSize;
-use macchina_read::traits::{
-    BatteryReadout, BatteryState, GeneralReadout, MemoryReadout, PackageManager, ReadoutError,
-};
-use std::num::ParseFloatError;
-use std::ops::Add;
-use std::str::FromStr;
+use macchina_read::traits::{PackageManager, ReadoutError, BatteryState};
 
 //TODO: rework documentation
 

@@ -273,7 +273,6 @@ dependencies = [
  "bytesize",
  "clap",
  "colored",
- "lazy_static",
  "macchina-read",
  "num_cpus",
  "rand",

@@ -3,7 +3,6 @@ use crate::data::ReadoutKey;
 use clap::arg_enum;
 use rand::Rng;
 use std::collections::HashMap;
-use std::ops::Sub;
 use tui::style::Color;
 
 /// `Bar` contains several elements that make up a `Theme`, such as the: \

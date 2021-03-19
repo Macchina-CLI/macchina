@@ -4,21 +4,16 @@ mod theme;
 
 use clap::arg_enum;
 use clap::crate_authors;
-use macchina_read::Readouts;
 use std::io;
 use structopt::StructOpt;
 
 mod data;
+mod doctor;
 pub mod widgets;
 
-#[macro_use]
-extern crate lazy_static;
-
-use crate::data::ReadoutKey;
-use crate::theme::{EmojiTheme, Theme};
+use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use data::Readout;
-use macchina_read::traits::*;
 use std::io::Stdout;
 use tui::backend::CrosstermBackend;
 use tui::buffer::{Buffer, Cell};
@@ -30,17 +25,6 @@ use tui::Terminal;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
-
-lazy_static! {
-    pub(crate) static ref READOUTS: Readouts = Readouts {
-        battery: macchina_read::BatteryReadout::new(),
-        kernel: macchina_read::KernelReadout::new(),
-        memory: macchina_read::MemoryReadout::new(),
-        general: macchina_read::GeneralReadout::new(),
-        product: macchina_read::ProductReadout::new(),
-        packages: macchina_read::PackageReadout::new()
-    };
-}
 
 arg_enum! {
     #[derive(Debug)]
@@ -261,84 +245,12 @@ fn draw_readout_data(
     list.render(area, buf);
 }
 
-fn print_doctor(data: &Vec<Readout>) {
-    use colored::Colorize;
-    let failed_items: Vec<_> = data.iter().filter(|p| p.1.is_err()).collect();
-
-    let err_items: Vec<_> = failed_items.iter().filter(|p| {
-        match p.1.as_ref().err() {
-            Some(ReadoutError::Warning(_)) => false,
-            _ => true,
-        }
-    }).collect();
-
-    let warn_items: Vec<_> = failed_items.iter().filter(|p| {
-        match p.1.as_ref().err() {
-            Some(ReadoutError::Warning(_)) => true,
-            _ => false,
-        }
-    }).collect();
-
-    println!(
-        "👩‍⚕️ Let's check your system for {}... Here's a summary:\n",
-        "errors".bright_red()
-    );
-
-    println!(
-        "⏳ We've collected {} {}, including {} {} and {} read(s) which resulted in a {}.",
-        data.len().to_string().bright_green(),
-        "readouts".bright_green(),
-        err_items.len().to_string().bright_red(),
-        "failed read(s)".bright_red(),
-        warn_items.len(),
-        "warning".bright_yellow()
-    );
-
-    if err_items.is_empty() {
-        println!("  🎉 You are good to go! No failures detected.");
-    }
-
-    for failed_item in err_items
-    {
-        let key = failed_item.0;
-        let error = failed_item.1.as_ref().err().unwrap().to_string();
-
-        println!(
-            "  ⚠️  Readout \"{}\" failed with messages: {}",
-            key.to_string().bright_blue(),
-            error.bright_red()
-        );
-    }
-
-    if warn_items.is_empty() {
-        return;
-    }
-
-    let warn_len = warn_items.len().to_string().bright_yellow();
-    let err_len = failed_items.len().to_string().bright_red();
-    println!(
-        "\n👩‍⚕️ {} of the {} unsuccessful read(s) resulted in a warning:",
-        warn_len, err_len
-    );
-
-    for warn_item in warn_items {
-        let key = warn_item.0;
-        let warn = warn_item.1.as_ref().err().unwrap().to_string();
-
-        println!(
-            "  🤔 Readout \"{}\" thew a warning with message: {}",
-            key.to_string().bright_blue(),
-            warn.yellow()
-        );
-    }
-}
-
 fn main() -> Result<(), io::Error> {
     let opt = Opt::from_args();
     let readout_data = data::get_all_readouts(&opt);
 
     if opt.doctor {
-        print_doctor(&readout_data);
+        doctor::print_doctor(&readout_data);
         return Ok(());
     }
 
