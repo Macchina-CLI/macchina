@@ -38,8 +38,14 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 let caps = re.captures(&envstat_out);
                 match caps {
                     Some(c) => {
-                        let percentage = c.get(1).map_or("", |m| m.as_str());
-                        return Ok(percentage.to_string().replace("%", ""));
+                        let percentage = c
+                            .get(1)
+                            .map_or("", |m| m.as_str())
+                            .to_string()
+                            .replace("%", "");
+                        let percentage_f = percentage.parse::<f32>().unwrap();
+                        let percentage_i = ((percentage_f / 100_000.0) as i64) * 100_000;
+                        return Ok(percentage_i.to_string());
                     }
                     None => return Err(ReadoutError::MetricNotAvailable),
                 }
