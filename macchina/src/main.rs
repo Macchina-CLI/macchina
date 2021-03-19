@@ -204,7 +204,7 @@ fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     None
 }
 
-const ASCII: &'static str = r#"         _nnnn_
+const ASCII: &str = r#"         _nnnn_
         dGGGGMMb
        @p~qp~~qMb
        M|@||@) M|
@@ -241,7 +241,7 @@ fn draw_readout_data(
     area: Rect,
     show_box: bool,
 ) {
-    let mut list = ReadoutList::new(data, theme);
+    let mut list = ReadoutList::new(data, &theme);
 
     if show_box {
         list = list
@@ -252,7 +252,7 @@ fn draw_readout_data(
             .block(
                 Block::default()
                     .border_type(BorderType::Rounded)
-                    .title("ℹ️  System Information")
+                    .title(theme.get_block_title())
                     .borders(Borders::ALL),
             );
     }
@@ -267,30 +267,14 @@ fn main() -> Result<(), io::Error> {
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 300, 50));
 
     let readout_data = vec![
-        Readout::new(
-            ReadoutKey::Host,
-            format!(
-                "{}@{}",
-                READOUTS.general.hostname().unwrap(),
-                READOUTS.general.username().unwrap()
-            ),
-        ),
+        Readout::new(ReadoutKey::Host, format::host().unwrap()),
         Readout::new(
             ReadoutKey::Processor,
             READOUTS.general.cpu_model_name().unwrap(),
         ),
-        Readout::new(
-            ReadoutKey::LocalIP,
-            READOUTS.general.local_ip().unwrap()
-        ),
-        Readout::new(
-            ReadoutKey::Memory,
-            format::memory().unwrap()
-        ),
-        Readout::new(
-            ReadoutKey::Uptime,
-            format::uptime(false).unwrap()
-        )
+        Readout::new(ReadoutKey::LocalIP, READOUTS.general.local_ip().unwrap()),
+        Readout::new(ReadoutKey::Memory, format::memory().unwrap()),
+        Readout::new(ReadoutKey::Uptime, format::uptime(false).unwrap()),
     ];
 
     let ascii_area = if !opt.no_ascii {
@@ -334,19 +318,22 @@ fn write_buffer_to_console(
 
     print!("{}", "\n".repeat(last_y as usize + 1));
 
-    let cursor = terminal.get_cursor().unwrap();
+    let (_, cursor_y) = terminal.get_cursor().unwrap();
     let terminal_buf = terminal.current_buffer_mut();
     let term_width = terminal_buf.area.width;
     let tmp_width = tmp_buffer.area.width;
 
     let mut y_tmp = 0;
-    let starting_pos = if last_y > cursor.1 {
-        0
-    } else {
-        cursor.1 - last_y - 1
-    };
 
-    for y in starting_pos..cursor.1 {
+    // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
+    // cursor_y is smaller than (last_y - 1).
+    let starting_pos = cursor_y
+        .checked_sub(last_y)
+        .unwrap_or(0)
+        .checked_sub(1)
+        .unwrap_or(0);
+
+    for y in starting_pos..cursor_y {
         let start_index_term = (y * term_width) as usize;
         let end_index_term = start_index_term + term_width as usize;
 

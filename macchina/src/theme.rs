@@ -1,7 +1,9 @@
 #![allow(dead_code)]
 use crate::data::ReadoutKey;
 use clap::arg_enum;
+use rand::Rng;
 use std::collections::HashMap;
+use std::ops::Sub;
 use tui::style::Color;
 
 /// `Bar` contains several elements that make up a `Theme`, such as the: \
@@ -51,7 +53,7 @@ arg_enum! {
         Hydrogen,
         Helium,
         Lithium,
-        EmojiTheme
+        Emoji,
     }
 }
 
@@ -61,7 +63,7 @@ impl Themes {
             Themes::Hydrogen => HydrogenTheme::new(),
             Themes::Helium => HeliumTheme::new(),
             Themes::Lithium => LithiumTheme::new(),
-            Themes::EmojiTheme => EmojiTheme::new(),
+            Themes::Emoji => EmojiTheme::new(),
         }
     }
 }
@@ -186,6 +188,9 @@ pub trait Theme {
     fn get_spacing(&self) -> usize;
     fn set_spacing(&mut self, spacing: usize);
 
+    fn get_block_title(&self) -> &str;
+    fn set_block_title(&mut self, s: &str);
+
     fn default_abbreviation(&self) -> &AbbreviationType;
 
     fn key(&self, readout_key: &ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
@@ -212,6 +217,7 @@ pub struct HydrogenTheme {
     separator: &'static str,
     spacing: usize,
     padding: usize,
+    block_title: String,
 }
 
 impl Theme for HydrogenTheme {
@@ -223,6 +229,7 @@ impl Theme for HydrogenTheme {
             separator: "—",
             spacing: 2,
             padding: 4,
+            block_title: String::from("System Information"),
         })
     }
 
@@ -264,6 +271,14 @@ impl Theme for HydrogenTheme {
 
     fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -282,6 +297,7 @@ pub struct HeliumTheme {
     separator: &'static str,
     spacing: usize,
     padding: usize,
+    block_title: String,
 }
 
 impl Theme for HeliumTheme {
@@ -293,6 +309,7 @@ impl Theme for HeliumTheme {
             separator: "=>",
             spacing: 2,
             padding: 4,
+            block_title: String::from("System Information"),
         })
     }
 
@@ -334,6 +351,14 @@ impl Theme for HeliumTheme {
 
     fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -353,6 +378,7 @@ pub struct LithiumTheme {
     separator: &'static str,
     spacing: usize,
     padding: usize,
+    block_title: String,
 }
 
 impl Theme for LithiumTheme {
@@ -364,6 +390,7 @@ impl Theme for LithiumTheme {
             separator: "~",
             spacing: 2,
             padding: 4,
+            block_title: String::from("System Information"),
         })
     }
 
@@ -405,6 +432,14 @@ impl Theme for LithiumTheme {
 
     fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -420,10 +455,19 @@ pub struct EmojiTheme {
     separator: &'static str,
     spacing: usize,
     padding: usize,
+    block_title: String,
 }
 
 impl Theme for EmojiTheme {
     fn new() -> Box<dyn Theme> {
+        let emoji = Self::get_random_emoji();
+        let emoji_width = unicode_width::UnicodeWidthChar::width(*emoji).unwrap_or(1);
+        let title = format!(
+            "{}{}System Information",
+            emoji,
+            " ".repeat(3usize.checked_sub(emoji_width).unwrap_or(0))
+        );
+
         Box::new(EmojiTheme {
             bar: BarStyle {
                 glyph: "🔴",
@@ -435,6 +479,7 @@ impl Theme for EmojiTheme {
             separator: "👉",
             spacing: 2,
             padding: 4,
+            block_title: title,
         })
     }
 
@@ -478,7 +523,25 @@ impl Theme for EmojiTheme {
         self.spacing = spacing;
     }
 
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, _: &str) {}
+
     fn default_abbreviation(&self) -> &AbbreviationType {
         &AbbreviationType::Long
+    }
+}
+
+impl EmojiTheme {
+    fn get_random_emoji() -> &'static char {
+        //Only single-codepoint emojis are supported.
+        const AVAILABLE_EMOJIS: &'static [char] = &[
+            '🖥', '🔋', '💻', '💡', '🦀', '🍺', '🚀', '🧨', '🔥', '✨', '🎉', '🏆', '🎒', '🔌', '🔬',
+        ];
+        let mut rand = rand::thread_rng();
+
+        &AVAILABLE_EMOJIS[rand.gen_range(0..AVAILABLE_EMOJIS.len())]
     }
 }

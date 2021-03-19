@@ -267,6 +267,7 @@ dependencies = [
  "rand",
  "structopt",
  "tui",
+ "unicode-width",
 ]
 
 [[package]]

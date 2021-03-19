@@ -11,12 +11,12 @@ pub struct ReadoutList<'a> {
     block: Option<Block<'a>>,
     style: Style,
     items: Vec<Readout<'a>>,
-    theme: Box<dyn Theme>,
+    theme: &'a Box<dyn Theme>,
     block_inner_margin: Margin,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
-    pub fn new<T>(items: T, theme: Box<dyn Theme>) -> ReadoutList<'a>
+    pub fn new<T>(items: T, theme: &'a Box<dyn Theme>) -> ReadoutList<'a>
     where
         T: Into<Vec<Readout<'a>>>,
     {
@@ -42,7 +42,7 @@ impl<'a, 'b> ReadoutList<'a> {
         self
     }
 
-    pub fn theme(mut self, theme: Box<dyn Theme>) -> ReadoutList<'a> {
+    pub fn theme(mut self, theme: &'a Box<dyn Theme>) -> ReadoutList<'a> {
         self.theme = theme;
         self
     }
