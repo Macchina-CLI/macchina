@@ -47,6 +47,7 @@ impl From<&ReadoutError> for ReadoutError {
 /// ```
 /// use macchina_read::traits::BatteryReadout;
 /// use macchina_read::traits::ReadoutError;
+/// use macchina_read::traits::BatteryState;
 ///
 /// //You can add fields to this struct which will then need to be initialized in the
 /// //BatteryReadout::new() function.
@@ -57,14 +58,14 @@ impl From<&ReadoutError> for ReadoutError {
 ///         MacOSBatteryReadout {}
 ///     }
 ///
-///     fn percentage(&self) -> Result<String, ReadoutError> {
+///     fn percentage(&self) -> Result<u8, ReadoutError> {
 ///         //get the battery percentage somehow...
-///         Ok(String::from("100")) //always fully charged
+///         Ok(100u8) //always fully charged
 ///     }
 ///
-///     fn status(&self) -> Result<String, ReadoutError> {
+///     fn status(&self) -> Result<BatteryState, ReadoutError> {
 ///         //check if battery is being charged...
-///         Ok(String::from("TRUE")) //always charging.
+///         Ok(BatteryState::Charging) //always charging.
 ///     }
 /// }
 /// ```
