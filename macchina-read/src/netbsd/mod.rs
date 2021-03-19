@@ -57,33 +57,25 @@ impl BatteryReadout for NetBSDBatteryReadout {
     }
 
     fn status(&self) -> Result<String, ReadoutError> {
-        if extra::which("rg") {
+        if extra::which("envstat") {
+            let mut status = String::new();
             let envstat = Command::new("envstat")
                 .args(&["-d", "acpibat0"])
                 .stdout(Stdio::piped())
-                .spawn()
+                .output()
                 .expect("ERROR: failed to spawn \"envstat\" process");
 
-            let envstat_out = envstat
-                .stdout
-                .expect("ERROR: failed to open \"envstat\" stdout");
+            let envstat_out = String::from_utf8(envstat.stdout)
+                .expect("ERROR: \"envstat\" process stdout was not valid UTF-8");
 
-            let rg = Command::new("rg")
-                .arg("charging:")
-                .stdin(Stdio::from(envstat_out))
-                .stdout(Stdio::piped())
-                .stderr(Stdio::null())
-                .spawn()
-                .expect("ERROR: failed to spawn \"rg\" process");
-
-            let output = rg
-                .wait_with_output()
-                .expect("ERROR: failed to wait for \"rg\" process to exit");
-            let mut status = String::from_utf8(output.stdout)
-                .expect("ERROR: \"grep\" process output was not valid UTF-8");
-            status = status.replace("charging:", "").trim().to_string();
-            if status.is_empty() {
+            if envstat_out.is_empty() {
                 return Err(ReadoutError::MetricNotAvailable);
+            } else {
+                if envstat_out.contains("TRUE") {
+                    status = String::from("TRUE");
+                } else {
+                    status = String::from("FALSE");
+                }
             }
 
             return Ok(status);
