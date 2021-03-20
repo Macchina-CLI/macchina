@@ -221,7 +221,7 @@ fn draw_readout_data(
     show_box: bool,
     palette: bool,
 ) {
-    let mut list = ReadoutList::new(data, &theme);
+    let mut list = ReadoutList::new(data, &theme).palette(palette);
 
     if show_box {
         list = list
@@ -234,8 +234,7 @@ fn draw_readout_data(
                     .border_type(BorderType::Rounded)
                     .title(theme.get_block_title())
                     .borders(Borders::ALL),
-            )
-            .palette(palette);
+            );
     }
 
     list.render(area, buf);
