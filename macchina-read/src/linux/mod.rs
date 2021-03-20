@@ -65,7 +65,7 @@ impl BatteryReadout for LinuxBatteryReadout {
         let status_text = extra::pop_newline(fs::read_to_string(bat_path)?).to_lowercase();
         match &status_text[..] {
             "true" => Ok(BatteryState::Charging),
-            "false" => Ok(BatteryState::Discharging),
+            "false" | "full" => Ok(BatteryState::Discharging),
             s => Err(ReadoutError::Other(format!(
                 "Got unexpected value '{}' from {}.",
                 s,
