@@ -42,7 +42,7 @@ WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#];
 }
 
 #[cfg(target_os = "linux")]
-pub(crate) fn get_ascii_art() -> Box<&[&'static str]> {
+pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
     const ASCII_ARRAY: &[&str] = &[r#"         _nnnn_
         dGGGGMMb
        @p~qp~~qMb
@@ -65,7 +65,7 @@ _)      \.___.,|     .'
 }
 
 #[cfg(target_os = "netbsd")]
-pub(crate) fn get_ascii_art() -> Box<&[&'static str]> {
+pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
     const ASCII_ARRAY: &[&str] = &[r#"                                 __,gnCCCOObaau
        _._                  __,gnnCCCPF"''
       (N\XCbngg,._____.,gnnndCCCCCCC___,
