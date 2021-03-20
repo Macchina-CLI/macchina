@@ -300,8 +300,15 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     keys
 }
 
-fn random_ascii() -> Option<&str> {
+fn random_ascii() -> Option<&'static str> {
     let ascii_art = ascii::get_ascii_art();
+    let mut rand = rand::thread_rng();
+
+    if !ascii_art.is_empty() {
+        Some(ascii_art[rand.gen_range(0..ascii_art.len())])
+    } else {
+        None
+    }
 }
 
 fn main() -> Result<(), io::Error> {
@@ -318,10 +325,9 @@ fn main() -> Result<(), io::Error> {
     let mut terminal = create_terminal()?;
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 300, 50));
 
-    let ascii_area = if !opt.no_ascii {
-        draw_ascii(ASCII, &mut tmp_buffer)
-    } else {
-        Rect::new(0, 0, 0, tmp_buffer.area.height)
+    let ascii_area = match (opt.no_ascii, random_ascii()) {
+        (false, Some(ascii)) => draw_ascii(ascii, &mut tmp_buffer),
+        _ => Rect::new(0, 0, 0, tmp_buffer.area.height)
     };
 
     let tmp_buffer_area = tmp_buffer.area;
