@@ -22,8 +22,8 @@ use std::str::FromStr;
 use tui::backend::CrosstermBackend;
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::{Color, Style};
-use tui::text::Text;
+use tui::style::{Color};
+use tui::text::{Text};
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use tui::Terminal;
 
@@ -200,16 +200,15 @@ fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     None
 }
 
-fn draw_ascii(ascii: &str, tmp_buffer: &mut Buffer) -> Rect {
-    let paragraph = Text::styled(ascii, Style::default().fg(Color::LightBlue));
+fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     let ascii_rect = Rect {
         x: 0,
         y: 0,
-        width: paragraph.width() as u16,
-        height: paragraph.height() as u16,
+        width: ascii.width() as u16,
+        height: ascii.height() as u16,
     };
 
-    Paragraph::new(paragraph).render(ascii_rect, tmp_buffer);
+    Paragraph::new(ascii).render(ascii_rect, tmp_buffer);
     ascii_rect
 }
 
@@ -299,12 +298,12 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     keys
 }
 
-fn random_ascii() -> Option<&'static str> {
+fn random_ascii() -> Option<Text<'static>> {
     let ascii_art = ascii::get_ascii_art();
     let mut rand = rand::thread_rng();
 
     if !ascii_art.is_empty() {
-        Some(ascii_art[rand.gen_range(0..ascii_art.len())])
+        Some(ascii_art[rand.gen_range(0..ascii_art.len())].clone())
     } else {
         None
     }
@@ -325,7 +324,7 @@ fn main() -> Result<(), io::Error> {
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
     let ascii_area = match (opt.no_ascii, random_ascii()) {
-        (false, Some(ascii)) => draw_ascii(ascii, &mut tmp_buffer),
+        (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
         _ => Rect::new(0, 0, 0, tmp_buffer.area.height)
     };
 

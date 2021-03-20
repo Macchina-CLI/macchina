@@ -1,23 +1,34 @@
-#[cfg(target_os = "macos")]
-pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
-    const ASCII_ARRAY: &[&str] = &[r#"                 ,MMMM.
-               .MMMMMM
-               MMMMM,
-     .;MMMMM:' MMMMMMMMMM;.
-   MMMMMMMMMMMMNWMMMMMMMMMMM:
- .MMMMMMMMMMMMMMMMMMMMMMMMWM.
- MMMMMMMMMMMMMMMMMMMMMMMMM.
-;MMMMMMMMMMMMMMMMMMMMMMMM:
-:MMMMMMMMMMMMMMMMMMMMMMMM:
-.MMMMMMMMMMMMMMMMMMMMMMMMM.
- MMMMMMMMMMMMMMMMMMMMMMMMMMM.
- .MMMMMMMMMMMMMMMMMMMMMMMMMMMM
-  .MMMMMMMMMMMMMMMMMMMMMMMMMM.
-    MMMMMMMMMMMMMMMMMMMMMMMM
-     ;MMMMMMMMMMMMMMMMMMMM.
-       .MMMM,.    .MMMM,."#];
+use tui::style::{Color, Style};
+use tui::text::{Span, Spans, Text};
 
-    Box::new(ASCII_ARRAY)
+#[cfg(target_os = "macos")]
+pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
+    let color = Style::default().fg(Color::Red);
+
+    let art: Vec<Span> = vec![
+        Span::styled("                 ,MMMM.", color),
+        Span::raw("               .MMMMMM"),
+        Span::styled("               MMMMM,", color),
+        Span::raw("     .;MMMMM:' MMMMMMMMMM;."),
+        Span::styled("   MMMMMMMMMMMMNWMMMMMMMMMMM:", color),
+        Span::raw(" .MMMMMMMMMMMMMMMMMMMMMMMMWM."),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMM.", color),
+        Span::raw(";MMMMMMMMMMMMMMMMMMMMMMMM:"),
+        Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", color),
+        Span::raw(".MMMMMMMMMMMMMMMMMMMMMMMMM."),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", color),
+        Span::raw(" .MMMMMMMMMMMMMMMMMMMMMMMMMMMM"),
+        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", color),
+        Span::raw("    MMMMMMMMMMMMMMMMMMMMMMMM"),
+        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", color),
+        Span::raw("       .MMMM,.    .MMMM,."),
+    ];
+
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }
 
 #[cfg(target_os = "windows")]
