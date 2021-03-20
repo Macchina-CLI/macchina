@@ -9,6 +9,7 @@ use structopt::StructOpt;
 
 mod data;
 mod doctor;
+mod ascii;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
@@ -199,23 +200,6 @@ fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     None
 }
 
-const ASCII: &str = r#"         _nnnn_
-        dGGGGMMb
-       @p~qp~~qMb
-       M|@||@) M|
-       @,----.JM|
-      JS^\__/  qKL
-     dZP        qKRb
-    dZP          qKKb
-   fZP            SMMb
-   HZM            MMMM
-   FqM            MMMM
- __| ".        |\dS"qML
- |    `.       | `' \Zq
-_)      \.___.,|     .'
-\____   )MMMMMP|   .'
-     `-'       `--' hjm"#;
-
 fn draw_ascii(ascii: &str, tmp_buffer: &mut Buffer) -> Rect {
     let paragraph = Text::styled(ascii, Style::default().fg(Color::LightBlue));
     let ascii_rect = Rect {
@@ -314,6 +298,10 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     }
 
     keys
+}
+
+fn random_ascii() -> Option<&str> {
+    let ascii_art = ascii::get_ascii_art();
 }
 
 fn main() -> Result<(), io::Error> {
