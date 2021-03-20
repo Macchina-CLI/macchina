@@ -54,10 +54,10 @@ __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 21.6 ± 2.6 | 18.9 | 31.3 | 1.00 |
-| `neofetch` | 269.9 ± 10.5 | 256.2 | 290.0 | 12.51 ± 1.58 |
+| `macchina` | 20.9 ± 2.0 | 19.3 | 30.9 | 1.00 |
+| `neofetch` | 380.6 ± 26.0 | 344.8 | 422.1 | 18.25 ± 2.16 |
 
-__Summary__: `macchina` runs __12.51 ± 1.58__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 
 ---
 
