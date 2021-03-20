@@ -115,9 +115,15 @@ impl<'a> Widget for ReadoutList<'a> {
                 max_line_width = total_line_width;
             }
 
-            Paragraph::new(readout_key.clone()).render(layout[0], buf);
-            Paragraph::new(themed_separator.clone()).render(layout[1], buf);
-            Paragraph::new(readout_data.to_owned()).render(layout[3], buf);
+            let mut layout_iter = layout.iter();
+            if self.theme.get_padding() > 0 {
+                layout_iter.next();
+            }
+
+            Paragraph::new(readout_key.clone()).render(*layout_iter.next().unwrap(), buf);
+            Paragraph::new(themed_separator.clone()).render(*layout_iter.next().unwrap(), buf);
+            layout_iter.next();
+            Paragraph::new(readout_data.to_owned()).render(*layout_iter.next().unwrap(), buf);
             height += readout_data.height() as u16;
         }
 
@@ -221,18 +227,24 @@ impl<'a> ReadoutList<'a> {
         max_key_width: usize,
         themed_separator: &Text,
         readout_data: &Text,
-    ) -> [u16; 4] {
-        [
-            max_key_width as u16 + self.theme.get_padding() as u16,
+    ) -> Vec<u16> {
+        let mut values = vec![
+            max_key_width as u16 + self.theme.get_spacing() as u16,
             themed_separator.width() as u16,
             self.theme.get_spacing() as u16,
             readout_data.width() as u16,
-        ]
+        ];
+
+        if self.theme.get_padding() > 0 {
+            values.insert(0, self.theme.get_padding() as u16)
+        }
+
+        values
     }
 }
 
 impl<'a> ReadoutList<'a> {
-    fn create_layout(area: &Rect, constraints: &[u16; 4]) -> Vec<Rect> {
+    fn create_layout(area: &Rect, constraints: &Vec<u16>) -> Vec<Rect> {
         let mut layout: Vec<Rect> = Vec::with_capacity(constraints.len());
         layout.push(Rect {
             x: area.x,
@@ -244,7 +256,7 @@ impl<'a> ReadoutList<'a> {
         for (i, &constraint) in constraints.iter().enumerate().skip(1) {
             let previous = layout[i - 1];
             layout.push(Rect {
-                x: previous.x + previous.width + 1,
+                x: previous.x + previous.width,
                 y: previous.y,
                 width: constraint,
                 height: area.height,

@@ -322,7 +322,7 @@ fn main() -> Result<(), io::Error> {
     }
 
     let mut terminal = create_terminal()?;
-    let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 300, 50));
+    let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
     let ascii_area = match (opt.no_ascii, random_ascii()) {
         (false, Some(ascii)) => draw_ascii(ascii, &mut tmp_buffer),
@@ -331,14 +331,12 @@ fn main() -> Result<(), io::Error> {
 
     let tmp_buffer_area = tmp_buffer.area;
 
-    let theme_padding = theme.get_padding() as u16;
-
     draw_readout_data(
         readout_data,
         theme,
         &mut tmp_buffer,
         Rect::new(
-            ascii_area.x + ascii_area.width + theme_padding,
+            ascii_area.x + ascii_area.width + 2,
             ascii_area.y,
             tmp_buffer_area.width - ascii_area.width - 4,
             ascii_area.height,

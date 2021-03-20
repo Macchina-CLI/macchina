@@ -148,16 +148,13 @@ pub fn get_all_readouts<'a>(
         let total = memory_readout.total();
         let used = memory_readout.used();
 
-        match (total, used) {
-            (Ok(total), Ok(used)) => {
-                if use_bar {
-                    let bar = create_bar(theme, crate::bars::memory(used, total));
-                    vec.push(Readout::new(ReadoutKey::Memory, bar))
-                } else {
-                    vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
-                }
-            }
-            (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::Memory, e)),
+        match (total, used, use_bar) {
+            (Ok(total), Ok(used), true) => {
+                let bar = create_bar(theme, crate::bars::memory(used, total));
+                vec.push(Readout::new(ReadoutKey::Memory, bar))
+            },
+            (Ok(total), Ok(used), false) => vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used))),
+            (Err(e), _, _) | (_, Err(e), _) => vec.push(Readout::new_err(ReadoutKey::Memory, e)),
         }
     }
 
