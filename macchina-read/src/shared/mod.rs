@@ -16,7 +16,7 @@ use sysctl::SysctlError;
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 impl From<SysctlError> for ReadoutError {
     fn from(e: SysctlError) -> Self {
-        ReadoutError::Other(format!("Error while accessing system control: {:?}", e))
+        ReadoutError::Other(format!("Could not access system control: {:?}", e))
     }
 }
 
@@ -66,14 +66,15 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
             let fallback = env::var("XDG_CURRENT_DESKTOP").ok();
             let fallback = fallback
                 .as_deref()
-                .and_then(|s| if s.is_empty() { None } else { Some(s) })
-                .unwrap_or("Unknown");
+                .and_then(|s| if s.is_empty() { None } else { Some(s) });
 
-            if fallback == "Unknown" {
-                return Err(ReadoutError::MetricNotAvailable);
+            match fallback {
+                Some(output) => Ok(extra::ucfirst(output)),
+                None => Err(ReadoutError::Other(format!(
+                    "$DESKTOP_SESSION and $XDG_CURRENT_DESKTOP returned nothing, \
+                    you're probably running just a Window Manager.",
+                ))),
             }
-
-            Ok(extra::ucfirst(fallback))
         }
     }
 }
@@ -123,7 +124,9 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
         return Ok(window_man_name);
     }
 
-    Err(ReadoutError::MetricNotAvailable)
+    Err(ReadoutError::Other(format!(
+        "\"wmctrl\" must be installed to view your Window Manager."
+    )))
 }
 
 /// Read current terminal name using `ps`
@@ -195,7 +198,7 @@ pub(crate) fn whoami() -> Result<String, ReadoutError> {
     }
 
     Err(ReadoutError::Other(String::from(
-        "Unable to read username for current uid.",
+        "Unable to read username for the current UID.",
     )))
 }
 
@@ -216,7 +219,7 @@ pub(crate) fn shell(shorthand: bool) -> Result<String, ReadoutError> {
     }
 
     Err(ReadoutError::Other(String::from(
-        "Unable to read default shell for current uid.",
+        "Unable to read default shell for the current UID.",
     )))
 }
 
