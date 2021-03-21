@@ -43,4 +43,4 @@ Through this crate, you can access a variety of system information, such as:
 | GNU/Linux |        Yes         |
 | NetBSD    |        Yes         |
 | macOS     |        Yes         |
-| Windows   |        Partial     |
+| Windows   |        80%         |
