@@ -27,6 +27,8 @@ use tui::layout::{Margin, Rect};
 use tui::style::Color;
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
+use std::collections::HashMap;
+use unicode_width::UnicodeWidthStr;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
@@ -368,11 +370,17 @@ fn write_buffer_to_console(
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
     let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
+    let mut skip_n = 0;
 
     let iter = tmp_buffer
         .content
         .iter()
         .enumerate()
+        .filter(|(previous, cell)| {
+            let old_skip = skip_n;
+            skip_n = cell.symbol.width().saturating_sub(1);
+            return old_skip == 0;
+        })
         .map(|(idx, cell)| {
             let (x, y) = tmp_buffer.pos_of(idx);
             (x, y, cell)
