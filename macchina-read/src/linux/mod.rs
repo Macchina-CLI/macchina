@@ -275,9 +275,6 @@ impl PackageReadout for LinuxPackageReadout {
     /// - apt _(using dpkg)_
     /// - xbps _(using xbps-query)_
     /// - rpm
-
-    /// Returns `Err(ReadoutError::MetricNotAvailable)` for any package manager \
-    /// that isn't mentioned in the above list.
     fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
         let mut packages = Vec::new();
         // Instead of having a condition for each distribution.
@@ -309,7 +306,7 @@ impl PackageReadout for LinuxPackageReadout {
                 _ => (),
             }
         } else if extra::which("rpm") {
-            match LinuxPackageReadout::count_rpms() {
+            match LinuxPackageReadout::count_rpm() {
                 Ok(c) => packages.push((PackageManager::Pacman, c)),
                 _ => (),
             }
@@ -320,7 +317,7 @@ impl PackageReadout for LinuxPackageReadout {
 }
 
 impl LinuxPackageReadout {
-    fn count_rpms() -> Result<usize, ReadoutError> {
+    fn count_rpm() -> Result<usize, ReadoutError> {
         let path = "/var/lib/rpm/rpmdb.sqlite";
         let connection = sqlite::open(path);
         match connection {
@@ -331,10 +328,10 @@ impl LinuxPackageReadout {
                 return match statement.read::<Option<i64>>(0) {
                     Ok(Some(count)) => Ok(count as usize),
                     Ok(_) => Ok(0),
-                    Err(e) => Err(ReadoutError::Other(format!(
+                    Err(err) => Err(ReadoutError::Other(format!(
                         "Could not read package count \
                     from sqlite database table 'Installtid': {:?}",
-                        e
+                        err
                     ))),
                 };
             }
@@ -378,7 +375,8 @@ impl LinuxPackageReadout {
         String::from_utf8(final_output.stdout)
             .expect("ERROR: \"pacman -Qq | wc -l\" output was not valid UTF-8")
             .trim()
-            .parse::<usize>().ok()
+            .parse::<usize>()
+            .ok()
     }
 
     fn count_apt() -> Option<usize> {
@@ -406,7 +404,8 @@ impl LinuxPackageReadout {
         String::from_utf8(final_output.stdout)
             .expect("ERROR: \"dpkg -l | wc -l\" output was not valid UTF-8")
             .trim()
-            .parse::<usize>().ok()
+            .parse::<usize>()
+            .ok()
     }
 
     fn count_portage() -> Option<usize> {
@@ -434,7 +433,8 @@ impl LinuxPackageReadout {
         String::from_utf8(final_output.stdout)
             .expect("ERROR: \"qlist -I | wc -l\" output was not valid UTF-8")
             .trim()
-            .parse::<usize>().ok()
+            .parse::<usize>()
+            .ok()
     }
 
     fn count_xbps() -> Option<usize> {
@@ -471,7 +471,8 @@ impl LinuxPackageReadout {
         String::from_utf8(final_output.stdout)
             .expect("ERROR: \"xbps-query -l | grep ii | wc -l\" output was not valid UTF-8")
             .trim()
-            .parse::<usize>().ok()
+            .parse::<usize>()
+            .ok()
     }
 
     fn count_apk() -> Option<usize> {
@@ -499,6 +500,7 @@ impl LinuxPackageReadout {
         String::from_utf8(final_output.stdout)
             .expect("ERROR: \"apk info | wc -l\" output was not valid UTF-8")
             .trim()
-            .parse::<usize>().ok()
+            .parse::<usize>()
+            .ok()
     }
 }
