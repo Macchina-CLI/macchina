@@ -1,27 +1,53 @@
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
+pub enum Colors {
+    Red,
+    Green,
+    Blue,
+    Magenta,
+    Yellow,
+    Gray,
+    White,
+    Cyan,
+}
+
+impl Colors {
+    pub fn set(c: Color) -> Style {
+        match c {
+            Blue => Style::default().fg(Color::Blue),
+            Red => Style::default().fg(Color::Red),
+            Green => Style::default().fg(Color::Green),
+            Yellow => Style::default().fg(Color::Yellow),
+            Magenta => Style::default().fg(Color::Magenta),
+            Gray => Style::default().fg(Color::Gray),
+            White => Style::default().fg(Color::White),
+        }
+    }
+}
+
 #[cfg(target_os = "macos")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    let color = Style::default().fg(Color::Red);
-
     let art: Vec<Span> = vec![
-        Span::styled("                 ,MMMM.", color),
-        Span::raw("               .MMMMMM"),
-        Span::styled("               MMMMM,", color),
-        Span::raw("     .;MMMMM:' MMMMMMMMMM;."),
-        Span::styled("   MMMMMMMMMMMMNWMMMMMMMMMMM:", color),
-        Span::raw(" .MMMMMMMMMMMMMMMMMMMMMMMMWM."),
-        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMM.", color),
-        Span::raw(";MMMMMMMMMMMMMMMMMMMMMMMM:"),
-        Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", color),
-        Span::raw(".MMMMMMMMMMMMMMMMMMMMMMMMM."),
-        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", color),
-        Span::raw(" .MMMMMMMMMMMMMMMMMMMMMMMMMMMM"),
-        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", color),
-        Span::raw("    MMMMMMMMMMMMMMMMMMMMMMMM"),
-        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", color),
-        Span::raw("       .MMMM,.    .MMMM,."),
+        Span::styled("                 ,MMMM.", Colors::set(Color::Green)),
+        Span::styled("               .MMMMMM", Colors::set(Color::Green)),
+        Span::styled("               MMMMM,", Colors::set(Color::Green)),
+        Span::styled("     .;MMMMM:' MMMMMMMMMM;.", Colors::set(Color::Yellow)),
+        Span::styled("   MMMMMMMMMMMMNWMMMMMMMMMMM:", Colors::set(Color::Yellow)),
+        Span::styled(" .MMMMMMMMMMMMMMMMMMMMMMMMWM.", Colors::set(Color::Yellow)),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Red)),
+        Span::styled(";MMMMMMMMMMMMMMMMMMMMMMMM:", Colors::set(Color::Red)),
+        Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", Colors::set(Color::Red)),
+        Span::styled(".MMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
+        Span::styled(
+            " .MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+            Colors::set(Color::Magenta),
+        ),
+        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Blue)),
+        Span::styled("    MMMMMMMMMMMMMMMMMMMMMMMM", Colors::set(Color::Magenta)),
+        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
+        Span::styled("       .MMMM,.    .MMMM,.", Colors::set(Color::Magenta)),
     ];
 
     vec![Text::from(
