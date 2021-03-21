@@ -9,9 +9,9 @@ use structopt::StructOpt;
 #[macro_use]
 extern crate lazy_static;
 
+mod ascii;
 mod data;
 mod doctor;
-mod ascii;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
@@ -21,13 +21,12 @@ use data::Readout;
 use rand::Rng;
 use std::io::Stdout;
 use std::str::FromStr;
-use tui::backend::CrosstermBackend;
+use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::{Color};
-use tui::text::{Text};
+use tui::style::Color;
+use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
-use tui::Terminal;
 
 pub const AUTHORS: &str = crate_authors!();
 pub const ABOUT: &str = "System information fetcher";
@@ -179,10 +178,8 @@ pub struct Opt {
     box_title: Option<String>,
 }
 
-fn create_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, io::Error> {
-    let stdout = io::stdout();
-    let backend = CrosstermBackend::new(stdout);
-    Terminal::new(backend)
+fn create_backend() -> CrosstermBackend<Stdout> {
+    CrosstermBackend::new(io::stdout())
 }
 
 fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
@@ -324,12 +321,12 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
-    let mut terminal = create_terminal()?;
+    let mut backend = create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
     let ascii_area = match (opt.no_ascii, select_ascii()) {
         (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-        _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1)
+        _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
     };
 
     let tmp_buffer_area = tmp_buffer.area;
@@ -348,40 +345,39 @@ fn main() -> Result<(), io::Error> {
         opt.palette,
     );
 
-    write_buffer_to_console(&mut terminal, &mut tmp_buffer);
+    write_buffer_to_console(&mut backend, &mut tmp_buffer)?;
 
-    terminal.flush()?;
+    backend.flush()?;
     print!("\n\n");
 
     Ok(())
 }
 
-fn write_buffer_to_console(
-    terminal: &mut Terminal<CrosstermBackend<Stdout>>,
-    tmp_buffer: &mut Buffer,
-) {
+fn write_buffer_to_console(backend: &mut CrosstermBackend<Stdout>, tmp_buffer: &mut Buffer) -> Result<(), io::Error> {
     let (_, last_y) =
         find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
 
     print!("{}", "\n".repeat(last_y as usize + 1));
 
-    let (_, cursor_y) = terminal.get_cursor().unwrap();
-    let terminal_buf = terminal.current_buffer_mut();
-    let term_width = terminal_buf.area.width;
-    let tmp_width = tmp_buffer.area.width;
+    let (_, cursor_y) = backend.get_cursor().unwrap_or((0, 0));
+    let term_size = backend.size().unwrap_or_default();
 
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
     let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
 
-    for (y_tmp, y) in (starting_pos..cursor_y).enumerate() {
-        let start_index_term = (y * term_width) as usize;
-        let end_index_term = start_index_term + term_width as usize;
+    let iter = tmp_buffer
+        .content
+        .iter()
+        .enumerate()
+        .map(|(idx, cell)| {
+            let (x, y) = tmp_buffer.pos_of(idx);
+            (x, y, cell)
+        })
+        .filter(|(x, y, _)| *x < term_size.width && *y <= last_y)
+        .map(|(x, y, cell)| (x, y + starting_pos, cell))
+        .into_iter();
 
-        let start_index_tmp = y_tmp * tmp_width as usize;
-        let end_index_tmp = start_index_tmp + term_width as usize;
-
-        terminal_buf.content[start_index_term..end_index_term]
-            .clone_from_slice(&tmp_buffer.content[start_index_tmp..end_index_tmp]);
-    }
+    backend.draw(iter)?;
+    Ok(())
 }
