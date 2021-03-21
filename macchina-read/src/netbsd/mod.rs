@@ -171,7 +171,9 @@ impl GeneralReadout for NetBSDGeneralReadout {
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> {
-        crate::shared::distribution()
+        Err(ReadoutError::Warning(String::from(
+            "Since you're on NetBSD, there is no distribution to be read from the system.",
+        )))
     }
 
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
