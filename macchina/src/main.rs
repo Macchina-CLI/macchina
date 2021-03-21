@@ -385,7 +385,7 @@ fn write_buffer_to_console(
             }
 
             let old_skip = skip_n;
-            skip_n = curr_width;
+            skip_n = curr_width.saturating_sub(1);
             return old_skip == 0;
         })
         .map(|(idx, cell)| {
