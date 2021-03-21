@@ -415,7 +415,6 @@ impl Into<&'static str> for BatteryState {
 pub enum PackageManager {
     Homebrew,
     MacPorts,
-    Pkgin,
     Pacman,
     Portage,
     Apt,
@@ -430,7 +429,6 @@ impl ToString for PackageManager {
     fn to_string(&self) -> String {
         String::from(match self {
             PackageManager::Homebrew => "Homebrew",
-            PackageManager::Pkgin => "pkgin",
             PackageManager::MacPorts => "MacPorts",
             PackageManager::Pacman => "pacman",
             PackageManager::Portage => "portage",

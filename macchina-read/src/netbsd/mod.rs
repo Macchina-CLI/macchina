@@ -287,7 +287,7 @@ impl PackageReadout for NetBSDPackageReadout {
         // if a certain package manager is installed
         if extra::which("pkgin") {
             match NetBSDPackageReadout::count_pkgin() {
-                Some(c) => packages.push((PackageManager::Pkgin, c)),
+                Some(c) => packages.push((PackageManager::Pkgsrc, c)),
                 _ => (),
             }
         }
