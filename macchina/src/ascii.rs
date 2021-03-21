@@ -63,22 +63,22 @@ WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#];
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     let art: Vec<Span> = vec![
-        Span::raw("         _nnnn_"),
-        Span::raw("        dGGGGMMb"),
-        Span::raw("       @p~qp~~qMb"),
-        Span::raw("       M|@||@) M|"),
-        Span::raw("       @,----.JM|"),
-        Span::raw("      JS^\__/  qKL"),
-        Span::raw("     dZP        qKRb"),
-        Span::raw("    dZP          qKKb"),
-        Span::raw("   fZP            SMMb"),
-        Span::raw("   HZM            MMMM"),
-        Span::raw("   FqM            MMMM"),
-        Span::raw(" __| ".        |\dS"qML"),
-        Span::raw(" |    `.       | `' \Zq"),
-        Span::raw("_)      \.___.,|     .'"),
-        Span::raw("\____   )MMMMMP|   .'"),
-        Span::raw("     `-'       `--'"),
+        Span::raw(r#"         _nnnn_"#),
+        Span::raw(r#"        dGGGGMMb"#),
+        Span::raw(r#"       @p~qp~~qMb"#),
+        Span::raw(r#"       M|@||@) M|"#),
+        Span::raw(r#"       @,----.JM|"#),
+        Span::raw(r#"      JS^\__/  qKL"#),
+        Span::raw(r#"     dZP        qKRb"#),
+        Span::raw(r#"    dZP          qKKb"#),
+        Span::raw(r#"   fZP            SMMb"#),
+        Span::raw(r#"   HZM            MMMM"#),
+        Span::raw(r#"   FqM            MMMM"#),
+        Span::raw(r#" __| "#.        |\dS"qML"),
+        Span::raw(r#" |    `.       | `' \Zq"#),
+        Span::raw(r#"_)      \.___.,|     .'"#),
+        Span::raw(r#"\____   )MMMMMP|   .'"#),
+        Span::raw(r#"     `-'       `--'"#),
     ];
 
     //todo add distribution specific art
