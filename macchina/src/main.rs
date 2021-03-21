@@ -6,6 +6,8 @@ use clap::arg_enum;
 use clap::crate_authors;
 use std::io;
 use structopt::StructOpt;
+#[macro_use]
+extern crate lazy_static;
 
 mod data;
 mod doctor;
@@ -298,12 +300,12 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     keys
 }
 
-fn random_ascii() -> Option<Text<'static>> {
+fn select_ascii() -> Option<Text<'static>> {
     let ascii_art = ascii::get_ascii_art();
     let mut rand = rand::thread_rng();
 
     if !ascii_art.is_empty() {
-        Some(ascii_art[rand.gen_range(0..ascii_art.len())].clone())
+        Some(ascii_art[rand.gen_range(0..ascii_art.len())].to_owned())
     } else {
         None
     }
@@ -323,7 +325,7 @@ fn main() -> Result<(), io::Error> {
     let mut terminal = create_terminal()?;
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
-    let ascii_area = match (opt.no_ascii, random_ascii()) {
+    let ascii_area = match (opt.no_ascii, select_ascii()) {
         (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
         _ => Rect::new(0, 0, 0, tmp_buffer.area.height)
     };

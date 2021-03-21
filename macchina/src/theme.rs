@@ -313,7 +313,7 @@ impl Theme for HeliumTheme {
             separator_color: Color::White,
             separator: "=>",
             spacing: 2,
-            padding: 4,
+            padding: 0,
             block_title: String::from("System Information"),
         })
     }
@@ -398,7 +398,7 @@ impl Theme for LithiumTheme {
             separator_color: Color::White,
             separator: "~",
             spacing: 2,
-            padding: 4,
+            padding: 0,
             block_title: String::from("System Information"),
         })
     }
@@ -487,7 +487,7 @@ impl Theme for EmojiTheme {
             separator_color: Color::White,
             separator: "👉",
             spacing: 2,
-            padding: 4,
+            padding: 0,
             block_title: title,
         })
     }

@@ -1,53 +1,35 @@
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
-pub enum Colors {
-    Red,
-    Green,
-    Blue,
-    Magenta,
-    Yellow,
-    Gray,
-    White,
-    Cyan,
-}
-
-impl Colors {
-    pub fn set(c: Color) -> Style {
-        match c {
-            Blue => Style::default().fg(Color::Blue),
-            Red => Style::default().fg(Color::Red),
-            Green => Style::default().fg(Color::Green),
-            Yellow => Style::default().fg(Color::Yellow),
-            Magenta => Style::default().fg(Color::Magenta),
-            Gray => Style::default().fg(Color::Gray),
-            White => Style::default().fg(Color::White),
-        }
-    }
+lazy_static! {
+    static ref BLUE: Style = Style::default().fg(Color::Blue);
+    static ref RED: Style = Style::default().fg(Color::Red);
+    static ref GREEN: Style = Style::default().fg(Color::Green);
+    static ref YELLOW: Style = Style::default().fg(Color::Yellow);
+    static ref MAGENTA: Style = Style::default().fg(Color::Magenta);
+    static ref GRAY: Style = Style::default().fg(Color::Gray);
+    static ref WHITE: Style = Style::default().fg(Color::White);
 }
 
 #[cfg(target_os = "macos")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     let art: Vec<Span> = vec![
-        Span::styled("                 ,MMMM.", Colors::set(Color::Green)),
-        Span::styled("               .MMMMMM", Colors::set(Color::Green)),
-        Span::styled("               MMMMM,", Colors::set(Color::Green)),
-        Span::styled("     .;MMMMM:' MMMMMMMMMM;.", Colors::set(Color::Yellow)),
-        Span::styled("   MMMMMMMMMMMMNWMMMMMMMMMMM:", Colors::set(Color::Yellow)),
-        Span::styled(" .MMMMMMMMMMMMMMMMMMMMMMMMWM.", Colors::set(Color::Yellow)),
-        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Red)),
-        Span::styled(";MMMMMMMMMMMMMMMMMMMMMMMM:", Colors::set(Color::Red)),
-        Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", Colors::set(Color::Red)),
-        Span::styled(".MMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
-        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
-        Span::styled(
-            " .MMMMMMMMMMMMMMMMMMMMMMMMMMMM",
-            Colors::set(Color::Magenta),
-        ),
-        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Blue)),
-        Span::styled("    MMMMMMMMMMMMMMMMMMMMMMMM", Colors::set(Color::Magenta)),
-        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", Colors::set(Color::Magenta)),
-        Span::styled("       .MMMM,.    .MMMM,.", Colors::set(Color::Magenta)),
+        Span::styled("                 ,MMMM.", *GREEN),
+        Span::styled("               .MMMMMM", *GREEN),
+        Span::styled("               MMMMM,", *GREEN),
+        Span::styled("     .;MMMMM:' MMMMMMMMMM;.", *YELLOW),
+        Span::styled("   MMMMMMMMMMMMNWMMMMMMMMMMM:", *YELLOW),
+        Span::styled(" .MMMMMMMMMMMMMMMMMMMMMMMMWM.", *YELLOW),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMM.", *RED),
+        Span::styled(";MMMMMMMMMMMMMMMMMMMMMMMM:", *RED),
+        Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", *RED),
+        Span::styled(".MMMMMMMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
+        Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
+        Span::styled(" .MMMMMMMMMMMMMMMMMMMMMMMMMMMM", *MAGENTA),
+        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", *BLUE),
+        Span::styled("    MMMMMMMMMMMMMMMMMMMMMMMM", *MAGENTA),
+        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
+        Span::styled("       .MMMM,.    .MMMM,.", *MAGENTA),
     ];
 
     vec![Text::from(
@@ -58,7 +40,7 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 }
 
 #[cfg(target_os = "windows")]
-pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
+pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     const ASCII_ARRAY: &[&str] = &[r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
 WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
 WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
@@ -79,7 +61,7 @@ WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#];
 }
 
 #[cfg(target_os = "linux")]
-pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
+pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     const ASCII_ARRAY: &[&str] = &[r#"         _nnnn_
         dGGGGMMb
        @p~qp~~qMb
@@ -102,7 +84,7 @@ _)      \.___.,|     .'
 }
 
 #[cfg(target_os = "netbsd")]
-pub(crate) fn get_ascii_art() -> Box<&'static [&'static str]> {
+pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     const ASCII_ARRAY: &[&str] = &[r#"                                 __,gnCCCOObaau
        _._                  __,gnnCCCPF"''
       (N\XCbngg,._____.,gnnndCCCCCCC___,
