@@ -9,6 +9,7 @@ lazy_static! {
     static ref MAGENTA: Style = Style::default().fg(Color::Magenta);
     static ref GRAY: Style = Style::default().fg(Color::Gray);
     static ref WHITE: Style = Style::default().fg(Color::White);
+    static ref CYAN: Style = Style::default().fg(Color::Cyan);
 }
 
 #[cfg(target_os = "macos")]
@@ -25,11 +26,10 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
         Span::styled(":MMMMMMMMMMMMMMMMMMMMMMMM:", *RED),
         Span::styled(".MMMMMMMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
         Span::styled(" MMMMMMMMMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
-        Span::styled(" .MMMMMMMMMMMMMMMMMMMMMMMMMMMM", *MAGENTA),
-        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", *BLUE),
-        Span::styled("    MMMMMMMMMMMMMMMMMMMMMMMM", *MAGENTA),
-        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
-        Span::styled("       .MMMM,.    .MMMM,.", *MAGENTA),
+        Span::styled("  .MMMMMMMMMMMMMMMMMMMMMMMMMM.", *MAGENTA),
+        Span::styled("    MMMMMMMMMMMMMMMMMMMMMMMM", *BLUE),
+        Span::styled("     ;MMMMMMMMMMMMMMMMMMMM.", *BLUE),
+        Span::styled("       .MMMM,.    .MMMM,.", *BLUE),
     ];
 
     vec![Text::from(
@@ -73,8 +73,8 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
         Span::raw(r#"         _nnnn_"#),
         Span::raw(r#"        dGGGGMMb"#),
         Span::raw(r#"       @p~qp~~qMb"#),
-        Span::raw(r#"       M|@||@) M|"#),
-        Span::raw(r#"       @,----.JM|"#),
+        Span::raw(r#"       M|@||@) Mb"#),
+        Span::raw(r#"       @,----.JMb"#),
         Span::raw(r#"      JS^\\__/  qKL"#),
         Span::raw(r#"     dZP        qKRb"#),
         Span::raw(r#"    dZP          qKKb"#),
@@ -98,24 +98,30 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 
 #[cfg(target_os = "netbsd")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    const ASCII_ARRAY: &[&str] = &[r#"                                 __,gnCCCOObaau
-       _._                  __,gnnCCCPF"''
-      (N\XCbngg,._____.,gnnndCCCCCCC___,
-       \N\XCCCCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv
-        \N\XCCCCCCCCCCCCCCCCCCCCCCCCCCCCPF"''
-         \N\XCCCCCCCCCCCCCCCCCCCCOF"'
-          \N\XCCCCCCCCCCCCCCCCF"'
-           \N\XCCCCCCCCCCCCCF"'
-            \N\"PCOCCCOC"
-             \N\
-              \N\
-               \N\
-                \N\
-                 \N\
-                  \N\
-                   \N\
-                    \N\
-                     \N\"#];
+    let art: Vec<Span> = vec![
+        Span::raw(r#"                              __,gnCCaau"#),
+        Span::raw(r#"                     __,gnnCCFFFF"#),
+        Span::raw(r#"(N\XCbngg,._____.,gnnndCCCCC___,"#),
+        Span::raw(r#" \N\XCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv"#),
+        Span::raw(r#"  \N\XCCCCCCCCCCCCCCCCCCCCCCCCCCPFP''"#),
+        Span::raw(r#"   \N\XCCCCCCCCCCCCCCCCCCCFF"'"#),
+        Span::raw(r#"    \N\XCCCCCCCCCCCCCCCCF"'"#),
+        Span::raw(r#"     \N\XCCCCCCCCCCCCCF"'"#),
+        Span::raw(r#"      \N\"PCOCCCOC""#),
+        Span::raw(r#"       \N\"#),
+        Span::raw(r#"        \N\"#),
+        Span::raw(r#"         \N\"#),
+        Span::raw(r#"          \N\"#),
+        Span::raw(r#"           \N\"#),
+        Span::raw(r#"            \N\"#),
+        Span::raw(r#"             \N\"#),
+        Span::raw(r#"              \N\"#),
+        Span::raw(r#"               \N\"#),
+    ];
 
-    Box::new(ASCII_ARRAY)
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }

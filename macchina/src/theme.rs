@@ -230,7 +230,7 @@ impl Theme for HydrogenTheme {
             separator: "—",
             spacing: 2,
             padding: 0,
-            block_title: String::from("System Information"),
+            block_title: String::from(" System Information "),
         })
     }
 

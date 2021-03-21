@@ -76,11 +76,7 @@ fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
 
     span_vector[2].content = Cow::from(colored_glyphs(glyph, 10 - blocks).to_string());
     if theme.get_color() == Color::White {
-        span_vector[2].content = Cow::from(
-            span_vector[2]
-                .content
-                .replace(glyph, " "),
-        );
+        span_vector[2].content = Cow::from(span_vector[2].content.replace(glyph, " "));
     }
 
     Spans::from(span_vector)
@@ -152,8 +148,10 @@ pub fn get_all_readouts<'a>(
             (Ok(total), Ok(used), true) => {
                 let bar = create_bar(theme, crate::bars::memory(used, total));
                 vec.push(Readout::new(ReadoutKey::Memory, bar))
-            },
-            (Ok(total), Ok(used), false) => vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used))),
+            }
+            (Ok(total), Ok(used), false) => {
+                vec.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+            }
             (Err(e), _, _) | (_, Err(e), _) => vec.push(Readout::new_err(ReadoutKey::Memory, e)),
         }
     }
@@ -165,6 +163,34 @@ pub fn get_all_readouts<'a>(
         use macchina_read::traits::GeneralReadout as _;
 
         let general_readout = GeneralReadout::new();
+
+        if should_display.contains(&ReadoutKey::Host) {
+            match (general_readout.username(), general_readout.hostname()) {
+                (Ok(u), Ok(h)) => vec.push(Readout::new(ReadoutKey::Host, format_host(&u, &h))),
+                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+            }
+        }
+
+        if should_display.contains(&ReadoutKey::Machine) {
+            match general_readout.machine() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Machine, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Machine, e)),
+            }
+        }
+
+        if should_display.contains(&ReadoutKey::OperatingSystem) {
+            match general_readout.os_name() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::OperatingSystem, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::OperatingSystem, e)),
+            }
+        }
+
+        if should_display.contains(&ReadoutKey::Distribution) {
+            match general_readout.distribution() {
+                Ok(s) => vec.push(Readout::new(ReadoutKey::Distribution, s)),
+                Err(e) => vec.push(Readout::new_err(ReadoutKey::Distribution, e)),
+            }
+        }
 
         if should_display.contains(&ReadoutKey::Uptime) {
             match general_readout.uptime() {
@@ -183,24 +209,10 @@ pub fn get_all_readouts<'a>(
             }
         }
 
-        if should_display.contains(&ReadoutKey::Host) {
-            match (general_readout.username(), general_readout.hostname()) {
-                (Ok(u), Ok(h)) => vec.push(Readout::new(ReadoutKey::Host, format_host(&u, &h))),
-                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
-            }
-        }
-
         if should_display.contains(&ReadoutKey::Processor) {
             match general_readout.cpu_model_name() {
                 Ok(s) => vec.push(Readout::new(ReadoutKey::Processor, format_cpu(&s))),
                 Err(e) => vec.push(Readout::new_err(ReadoutKey::Processor, e)),
-            }
-        }
-
-        if should_display.contains(&ReadoutKey::Machine) {
-            match general_readout.machine() {
-                Ok(s) => vec.push(Readout::new(ReadoutKey::Machine, s)),
-                Err(e) => vec.push(Readout::new_err(ReadoutKey::Machine, e)),
             }
         }
 
@@ -215,13 +227,6 @@ pub fn get_all_readouts<'a>(
             match general_readout.terminal() {
                 Ok(s) => vec.push(Readout::new(ReadoutKey::Terminal, s)),
                 Err(e) => vec.push(Readout::new_err(ReadoutKey::Terminal, e)),
-            }
-        }
-
-        if should_display.contains(&ReadoutKey::Distribution) {
-            match general_readout.distribution() {
-                Ok(s) => vec.push(Readout::new(ReadoutKey::Distribution, s)),
-                Err(e) => vec.push(Readout::new_err(ReadoutKey::Distribution, e)),
             }
         }
 
@@ -242,47 +247,39 @@ pub fn get_all_readouts<'a>(
                 ))
             }
             _ => {
-                if should_display.contains(&ReadoutKey::WindowManager) {
-                    match general_readout.window_manager() {
-                        Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
-                        Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
-                    }
-                }
-
                 if should_display.contains(&ReadoutKey::DesktopEnvironment) {
                     match general_readout.desktop_environment() {
                         Ok(s) => vec.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
                         Err(e) => vec.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e)),
                     }
                 }
-            }
-        }
-
-        if should_display.contains(&ReadoutKey::OperatingSystem) {
-            match general_readout.os_name() {
-                Ok(s) => vec.push(Readout::new(ReadoutKey::OperatingSystem, s)),
-                Err(e) => vec.push(Readout::new_err(ReadoutKey::OperatingSystem, e)),
+                if should_display.contains(&ReadoutKey::WindowManager) {
+                    match general_readout.window_manager() {
+                        Ok(s) => vec.push(Readout::new(ReadoutKey::WindowManager, s)),
+                        Err(e) => vec.push(Readout::new_err(ReadoutKey::WindowManager, e)),
+                    }
+                }
             }
         }
     }
 
-    if should_display.contains(&ReadoutKey::Battery) {
-        battery_readout(&mut readout_values, theme, opt.bar);
+    general_readout(&mut readout_values, &should_display, &opt);
+
+    if should_display.contains(&ReadoutKey::Kernel) {
+        kernel_readout(&mut readout_values);
     }
 
     if should_display.contains(&ReadoutKey::Packages) {
         package_readout(&mut readout_values);
     }
 
-    if should_display.contains(&ReadoutKey::Kernel) {
-        kernel_readout(&mut readout_values);
+    if should_display.contains(&ReadoutKey::Battery) {
+        battery_readout(&mut readout_values, theme, opt.bar);
     }
 
     if should_display.contains(&ReadoutKey::Memory) {
         memory_readout(&mut readout_values, theme, opt.bar);
     }
-
-    general_readout(&mut readout_values, &should_display, &opt);
 
     readout_values
 }

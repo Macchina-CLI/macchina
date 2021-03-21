@@ -167,7 +167,10 @@ pub struct Opt {
     #[structopt(long = "no-ascii", help = "Removes the ascii art")]
     no_ascii: bool,
 
-    #[structopt(long = "no-box", help = "Removes the system information borders")]
+    #[structopt(
+        long = "no-box",
+        help = "Removes the box surrounding system information"
+    )]
     no_box: bool,
 
     #[structopt(
