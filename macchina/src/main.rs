@@ -71,10 +71,9 @@ pub struct Opt {
     #[structopt(
         short = "P",
         long = "padding",
-        default_value = "4",
         help = "Specifies the amount of left padding to use"
     )]
-    padding: usize,
+    padding: Option<usize>,
 
     #[structopt(
         short = "s",
@@ -204,8 +203,8 @@ fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
 
 fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     let ascii_rect = Rect {
-        x: 0,
-        y: 0,
+        x: 1,
+        y: 1,
         width: ascii.width() as u16,
         height: ascii.height() as u16,
     };
@@ -251,7 +250,10 @@ fn create_theme(opt: &Opt) -> Box<dyn Theme> {
             .get_color()
     };
 
-    theme.set_padding(opt.padding);
+    if let Some(padding) = opt.padding {
+        theme.set_padding(padding);
+    }
+
     if let Some(spacing) = opt.spacing {
         theme.set_spacing(spacing);
     }
@@ -327,7 +329,7 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area = match (opt.no_ascii, select_ascii()) {
         (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-        _ => Rect::new(0, 0, 0, tmp_buffer.area.height)
+        _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1)
     };
 
     let tmp_buffer_area = tmp_buffer.area;
@@ -349,7 +351,7 @@ fn main() -> Result<(), io::Error> {
     write_buffer_to_console(&mut terminal, &mut tmp_buffer);
 
     terminal.flush()?;
-    println!();
+    print!("\n\n");
 
     Ok(())
 }

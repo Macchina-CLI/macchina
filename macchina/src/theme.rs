@@ -229,7 +229,7 @@ impl Theme for HydrogenTheme {
             separator_color: Color::White,
             separator: "—",
             spacing: 2,
-            padding: 4,
+            padding: 0,
             block_title: String::from("System Information"),
         })
     }

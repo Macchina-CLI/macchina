@@ -41,23 +41,30 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 
 #[cfg(target_os = "windows")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    const ASCII_ARRAY: &[&str] = &[r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
+    let art: Vec<Span> = vec![
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#" "#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+    ];
 
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW
-WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#];
-
-    Box::new(ASCII_ARRAY)
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }
 
 #[cfg(target_os = "linux")]
