@@ -27,7 +27,6 @@ use tui::layout::{Margin, Rect};
 use tui::style::Color;
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
-use std::collections::HashMap;
 use unicode_width::UnicodeWidthStr;
 
 pub const AUTHORS: &str = crate_authors!();
@@ -379,7 +378,7 @@ fn write_buffer_to_console(
         .content
         .iter()
         .enumerate()
-        .filter(|(previous, cell)| {
+        .filter(|(_, cell)| {
             let old_skip = skip_n;
             skip_n = cell.symbol.width().saturating_sub(1);
             return old_skip == 0;
