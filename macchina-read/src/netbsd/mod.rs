@@ -8,7 +8,9 @@ pub struct NetBSDBatteryReadout;
 
 pub struct NetBSDKernelReadout;
 
-pub struct NetBSDGeneralReadout;
+pub struct NetBSDGeneralReadout {
+    local_ip: Option<String>,
+}
 
 pub struct NetBSDMemoryReadout;
 
@@ -21,7 +23,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
         NetBSDBatteryReadout
     }
 
-    fn percentage(&self) -> Result<String, ReadoutError> {
+    fn percentage(&self) -> Result<u8, ReadoutError> {
         if extra::which("envstat") {
             let envstat = Command::new("envstat")
                 .args(&["-s", "acpibat0:charge"])
@@ -44,8 +46,8 @@ impl BatteryReadout for NetBSDBatteryReadout {
                             .to_string()
                             .replace("%", "");
                         let percentage_f = percentage.parse::<f32>().unwrap();
-                        let percentage_i = percentage_f.round() as i32;
-                        return Ok(percentage_i.to_string());
+                        let percentage_i = percentage_f.round() as u8;
+                        return Ok(percentage_i);
                     }
                     None => return Err(ReadoutError::MetricNotAvailable),
                 }
@@ -55,7 +57,7 @@ impl BatteryReadout for NetBSDBatteryReadout {
         Err(ReadoutError::MetricNotAvailable)
     }
 
-    fn status(&self) -> Result<String, ReadoutError> {
+    fn status(&self) -> Result<BatteryState, ReadoutError> {
         if extra::which("envstat") {
             let envstat = Command::new("envstat")
                 .args(&["-s", "acpibat0:charging"])
@@ -70,14 +72,14 @@ impl BatteryReadout for NetBSDBatteryReadout {
                 return Err(ReadoutError::MetricNotAvailable);
             } else {
                 if envstat_out.contains("TRUE") {
-                    return Ok(String::from("TRUE"));
+                    return Ok(BatteryState::Charging);
                 } else {
-                    return Ok(String::from("FALSE"));
+                    return Ok(BatteryState::Discharging);
                 }
             }
         }
 
-        Err(ReadoutError::MetricNotAvailable)
+        Err(ReadoutError::Other(format!("envstat is not installed")))
     }
 }
 
@@ -118,7 +120,9 @@ impl KernelReadout for NetBSDKernelReadout {
 
 impl GeneralReadout for NetBSDGeneralReadout {
     fn new() -> Self {
-        NetBSDGeneralReadout
+        NetBSDGeneralReadout {
+            local_ip: local_ipaddress::get(),
+        }
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
@@ -152,6 +156,14 @@ impl GeneralReadout for NetBSDGeneralReadout {
         Ok(format!("{} {} {}", vendor, product, version))
     }
 
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Ok(self
+            .local_ip
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .to_string())
+    }
+
     fn username(&self) -> Result<String, ReadoutError> {
         crate::shared::whoami()
     }
@@ -171,7 +183,9 @@ impl GeneralReadout for NetBSDGeneralReadout {
     }
 
     fn distribution(&self) -> Result<String, ReadoutError> {
-        crate::shared::distribution()
+        Err(ReadoutError::Warning(String::from(
+            "Since you're on NetBSD, there is no distribution to be read from the system.",
+        )))
     }
 
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
@@ -194,7 +208,7 @@ impl GeneralReadout for NetBSDGeneralReadout {
         Ok(crate::shared::cpu_model_name())
     }
 
-    fn uptime(&self) -> Result<String, ReadoutError> {
+    fn uptime(&self) -> Result<usize, ReadoutError> {
         crate::shared::uptime()
     }
 
@@ -280,33 +294,48 @@ impl PackageReadout for NetBSDPackageReadout {
         NetBSDPackageReadout
     }
 
-    fn count_pkgs(&self) -> Result<String, ReadoutError> {
-        if extra::which("pkg_info") {
-            let pkg_info = Command::new("pkg_info")
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to spawn \"pkg_info\" process");
-
-            let pkg_out = pkg_info
-                .stdout
-                .expect("ERROR: failed to open \"pkg_info\" stdout");
-
-            let count = Command::new("wc")
-                .arg("-l")
-                .stdin(Stdio::from(pkg_out))
-                .stdout(Stdio::piped())
-                .spawn()
-                .expect("ERROR: failed to start \"wc\" process");
-
-            let output = count
-                .wait_with_output()
-                .expect("ERROR: failed to wait on for \"wc\" process to exit");
-            return Ok(String::from_utf8(output.stdout)
-                .expect("ERROR: \"pkg_info | wc -l\" output was not valid UTF-8")
-                .trim()
-                .to_string());
+    fn count_pkgs(&self) -> Vec<(PackageManager, usize)> {
+        let mut packages = Vec::new();
+        // Instead of having a condition for each distribution.
+        // we will try and extract package count by checking
+        // if a certain package manager is installed
+        if extra::which("pkgin") {
+            match NetBSDPackageReadout::count_pkgin() {
+                Some(c) => packages.push((PackageManager::Pkgsrc, c)),
+                _ => (),
+            }
         }
 
-        Err(ReadoutError::MetricNotAvailable)
+        packages
+    }
+}
+
+impl NetBSDPackageReadout {
+    /// Counts the number of packages for the pkgin package manager
+    fn count_pkgin() -> Option<usize> {
+        let pkg_info = Command::new("pkg_info")
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to spawn \"pkg_info\" process");
+
+        let pkg_out = pkg_info
+            .stdout
+            .expect("ERROR: failed to open \"pkg_info\" stdout");
+
+        let count = Command::new("wc")
+            .arg("-l")
+            .stdin(Stdio::from(pkg_out))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("ERROR: failed to start \"wc\" process");
+
+        let output = count
+            .wait_with_output()
+            .expect("ERROR: failed to wait on for \"wc\" process to exit");
+        String::from_utf8(output.stdout)
+            .expect("ERROR: \"pkg_info | wc -l\" output was not valid UTF-8")
+            .trim()
+            .parse::<usize>()
+            .ok()
     }
 }

@@ -8,7 +8,6 @@ mod bindings {
     ::windows::include_bindings!();
 }
 
-use crate::traits::ReadoutError::MetricNotAvailable;
 use bindings::{
     windows::win32::system_services::GetSystemPowerStatus,
     windows::win32::system_services::GlobalMemoryStatusEx,
@@ -25,23 +24,29 @@ impl BatteryReadout for WindowsBatteryReadout {
         WindowsBatteryReadout {}
     }
 
-    fn percentage(&self) -> Result<String, ReadoutError> {
+    fn percentage(&self) -> Result<u8, ReadoutError> {
         let power_state = WindowsBatteryReadout::get_power_status()?;
 
-        if power_state.battery_life_percent != 255 {
-            return Ok(power_state.battery_life_percent.to_string());
+        match power_state.battery_life_percent {
+            s if s != 255 => Ok(s),
+            s => Err(ReadoutError::Warning(format!(
+                "Windows reported a battery percentage of {}, which means there is \
+                no battery available. Are you on a desktop system?",
+                s
+            ))),
         }
-
-        Err(ReadoutError::MetricNotAvailable)
     }
 
-    fn status(&self) -> Result<String, ReadoutError> {
+    fn status(&self) -> Result<BatteryState, ReadoutError> {
         let power_state = WindowsBatteryReadout::get_power_status()?;
 
         return match power_state.ac_line_status {
-            0 => Ok(String::from("FALSE")),
-            1 => Ok(String::from("TRUE")),
-            _ => Err(MetricNotAvailable),
+            0 => Ok(BatteryState::Discharging),
+            1 => Ok(BatteryState::Charging),
+            a => Err(ReadoutError::Other(format!(
+                "Unexpected value for ac_line_status from win32 api: {}",
+                a
+            ))),
         };
     }
 }
@@ -235,11 +240,11 @@ impl GeneralReadout for WindowsGeneralReadout {
         Ok(processor_name)
     }
 
-    fn uptime(&self) -> Result<String, ReadoutError> {
+    fn uptime(&self) -> Result<usize, ReadoutError> {
         let tick_count = unsafe { GetTickCount64() };
         let duration = std::time::Duration::from_millis(tick_count);
 
-        Ok(duration.as_secs().to_string())
+        Ok(duration.as_secs() as usize)
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
@@ -253,25 +258,60 @@ impl GeneralReadout for WindowsGeneralReadout {
     }
 
     fn os_name(&self) -> Result<String, ReadoutError> {
-        let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
-        let nt_current = hklm.open_subkey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")?;
+        let win_version = WindowsVersionInfo::get();
 
-        let product_name: String = nt_current.get_value("ProductName").unwrap();
-        let product_version: String = nt_current.get_value("DisplayVersion").unwrap();
-        let release_id: String = nt_current.get_value("ReleaseId").unwrap();
-
-        Ok(format!(
-            "{} {} ({})",
-            product_name, product_version, release_id
-        ))
+        match win_version {
+            Ok(v) => Ok(format!("{} {} ({})", v.name, v.version, v.release_id)),
+            Err(e) => Err(ReadoutError::Other(format!(
+                "Trying to get the windows version information \
+            from the registry failed with an error: {:?}",
+                e
+            ))),
+        }
     }
+
+
 }
 
-pub struct WindowsProductReadout;
+pub struct WindowsProductReadout {
+    version_info: Result<WindowsVersionInfo, std::io::Error>,
+}
 
 impl ProductReadout for WindowsProductReadout {
     fn new() -> Self {
-        WindowsProductReadout {}
+        WindowsProductReadout {
+            version_info: WindowsVersionInfo::get(),
+        }
+    }
+
+    fn version(&self) -> Result<String, ReadoutError> {
+        match &self.version_info {
+            Ok(v) => Ok(v.version.clone()),
+            Err(e) => Err(ReadoutError::Other(format!(
+                "Trying to get the windows version information \
+            from the registry failed with an error: {:?}",
+                e
+            ))),
+        }
+    }
+
+    fn vendor(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Microsoft"))
+    }
+
+    fn family(&self) -> Result<String, ReadoutError> {
+        Ok(String::from("Windows"))
+    }
+
+    fn name(&self) -> Result<String, ReadoutError> {
+        match &self.version_info {
+            Ok(v) => Ok(v.name.clone()),
+            Err(e) => Err(ReadoutError::Other(format!(
+                "Trying to get the windows version information \
+            from the registry failed with an error: {:?}",
+                e
+            ))),
+        }
     }
 }
 
@@ -280,5 +320,28 @@ pub struct WindowsPackageReadout;
 impl PackageReadout for WindowsPackageReadout {
     fn new() -> Self {
         WindowsPackageReadout {}
+    }
+}
+
+struct WindowsVersionInfo {
+    name: String,
+    version: String,
+    release_id: String,
+}
+
+impl WindowsVersionInfo {
+    fn get() -> Result<Self, std::io::Error> {
+        let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
+        let nt_current = hklm.open_subkey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")?;
+
+        let product_name: String = nt_current.get_value("ProductName").unwrap();
+        let product_version: String = nt_current.get_value("DisplayVersion").unwrap();
+        let release_id: String = nt_current.get_value("ReleaseId").unwrap();
+
+        Ok(WindowsVersionInfo {
+            name: product_name,
+            version: product_version,
+            release_id,
+        })
     }
 }

@@ -1,62 +1,16 @@
 #![allow(dead_code)]
+use crate::data::ReadoutKey;
 use clap::arg_enum;
-use colored::{Color, ColoredString, Colorize};
+use rand::Rng;
 use std::collections::HashMap;
-
-/// `Misc` contains several elements that make up a `Theme`, such as the: \
-/// - Separator glyph
-/// - Separator color
-/// - Key color
-/// - Amount of padding
-/// - Amount of spacing
-/// - Longest key of the current `Theme`
-pub struct Misc {
-    pub separator: &'static str,
-    pub separator_color: Color,
-    pub color: Color,
-    pub padding: usize,
-    pub spacing: usize,
-    pub longest_key: String,
-}
-
-impl Misc {
-    fn dash() -> Misc {
-        Misc {
-            color: Color::Red,
-            separator_color: Color::White,
-            separator: "—",
-            spacing: 2,
-            padding: 4,
-            longest_key: String::new(),
-        }
-    }
-    fn arrow() -> Misc {
-        Misc {
-            color: Color::Green,
-            separator_color: Color::White,
-            separator: "=>",
-            spacing: 2,
-            padding: 4,
-            longest_key: String::new(),
-        }
-    }
-    fn squiggly() -> Misc {
-        Misc {
-            color: Color::Yellow,
-            separator_color: Color::White,
-            separator: "~",
-            spacing: 2,
-            padding: 4,
-            longest_key: String::new(),
-        }
-    }
-}
+use tui::style::Color;
 
 /// `Bar` contains several elements that make up a `Theme`, such as the: \
 /// - `Bar` glyph
 /// - `Bar` opening symbol
 /// - `Bar` closing symbol
-pub struct Bar {
+#[derive(Debug, Clone)]
+pub struct BarStyle {
     /// This is the glyph/symbol that represents the usage.
     pub glyph: &'static str,
     /// This is used to indicate the beginning of a bar.
@@ -66,23 +20,25 @@ pub struct Bar {
 }
 
 /// This implements all the different ways a `Bar` can look.
-impl Bar {
-    fn squared() -> Bar {
-        Bar {
+impl BarStyle {
+    fn squared() -> BarStyle {
+        BarStyle {
             glyph: "■",
             symbol_open: '[',
             symbol_close: ']',
         }
     }
-    fn rounded() -> Bar {
-        Bar {
+
+    fn rounded() -> BarStyle {
+        BarStyle {
             glyph: "●",
             symbol_open: '(',
             symbol_close: ')',
         }
     }
-    fn angled() -> Bar {
-        Bar {
+
+    fn angled() -> BarStyle {
+        BarStyle {
             glyph: "×",
             symbol_open: '<',
             symbol_close: '>',
@@ -91,33 +47,12 @@ impl Bar {
 }
 
 arg_enum! {
-    /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[derive(Debug, PartialEq)]
-    pub enum ReadoutKey {
-        Host,
-        Machine,
-        Kernel,
-        Distribution,
-        OperatingSystem,
-        DesktopEnvironment,
-        WindowManager,
-        Packages,
-        Shell,
-        Terminal,
-        Uptime,
-        Processor,
-        Memory,
-        Battery,
-        LocalIP,
-    }
-}
-
-arg_enum! {
     #[derive(Debug, PartialEq)]
     pub enum Themes {
         Hydrogen,
         Helium,
-        Lithium
+        Lithium,
+        Emoji,
     }
 }
 
@@ -127,6 +62,7 @@ impl Themes {
             Themes::Hydrogen => HydrogenTheme::new(),
             Themes::Helium => HeliumTheme::new(),
             Themes::Lithium => LithiumTheme::new(),
+            Themes::Emoji => EmojiTheme::new(),
         }
     }
 }
@@ -236,14 +172,29 @@ pub trait Theme {
     where
         Self: Sized;
 
-    fn bar(&self) -> &Bar;
-    fn misc(&self) -> &Misc;
-    fn bar_mut(&mut self) -> &mut Bar;
-    fn misc_mut(&mut self) -> &mut Misc;
+    fn get_bar_style(&self) -> &BarStyle;
+
+    fn get_separator(&self) -> &'static str;
+    fn set_separator(&mut self, separator: &'static str);
+
+    fn get_separator_color(&self) -> Color;
+    fn set_separator_color(&mut self, color: Color);
+
+    fn get_color(&self) -> Color;
+    fn set_color(&mut self, color: Color);
+
+    fn get_padding(&self) -> usize;
+    fn set_padding(&mut self, size: usize);
+
+    fn get_spacing(&self) -> usize;
+    fn set_spacing(&mut self, spacing: usize);
+
+    fn get_block_title(&self) -> &str;
+    fn set_block_title(&mut self, s: &str);
 
     fn default_abbreviation(&self) -> &AbbreviationType;
 
-    fn key(&self, readout_key: ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
+    fn key(&self, readout_key: &ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
         let abbreviated_names = readout_key.get_common_name();
         let name_entry = abbreviated_names.get(&abbreviation);
 
@@ -253,58 +204,86 @@ pub trait Theme {
             abbreviated_names.values().next().unwrap()
         }
     }
-
-    fn get_colored_separator(&self) -> ColoredString {
-        ColoredString::from(self.misc().separator).color(self.misc().separator_color)
-    }
-
-    fn key_to_colored_string(&self, readout_key: ReadoutKey) -> ColoredString {
-        let key_name = self.key(readout_key, self.default_abbreviation());
-        ColoredString::from(key_name)
-            .color(self.misc().color)
-            .bold()
-    }
-
-    fn padding(&self) -> String {
-        " ".repeat(self.misc().padding)
-    }
-
-    fn spacing(&self) -> String {
-        " ".repeat(self.misc().spacing)
-    }
 }
 
 /// This structure's implementation utilizes the following:
 /// - _Rounded_ bar through `Bar::rounded()`
 /// - _Dash_ style through `Misc::dash()`
 /// - _Classic_ abbreviation type through `AbbreviationType::Classic`
+#[derive(Debug, Clone)]
 pub struct HydrogenTheme {
-    bar: Bar,
-    misc: Misc,
+    bar: BarStyle,
+    color: Color,
+    separator_color: Color,
+    separator: &'static str,
+    spacing: usize,
+    padding: usize,
+    block_title: String,
 }
 
 impl Theme for HydrogenTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(HydrogenTheme {
-            bar: Bar::rounded(),
-            misc: Misc::dash(),
+            bar: BarStyle::rounded(),
+            color: Color::Red,
+            separator_color: Color::White,
+            separator: "—",
+            spacing: 2,
+            padding: 0,
+            block_title: String::from(" System Information "),
         })
     }
 
-    fn bar(&self) -> &Bar {
+    fn get_bar_style(&self) -> &BarStyle {
         &self.bar
     }
 
-    fn misc(&self) -> &Misc {
-        &self.misc
+    fn get_separator(&self) -> &'static str {
+        self.separator
     }
 
-    fn bar_mut(&mut self) -> &mut Bar {
-        &mut self.bar
+    fn set_separator(&mut self, separator: &'static str) {
+        self.separator = separator
     }
 
-    fn misc_mut(&mut self) -> &mut Misc {
-        &mut self.misc
+    fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    fn get_color(&self) -> Color {
+        self.color
+    }
+
+    fn set_color(&mut self, color: Color) {
+        self.color = color
+    }
+
+    fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -315,33 +294,80 @@ impl Theme for HydrogenTheme {
 /// - _Squared_ bar through `Bar::squared()`
 /// - _Arrow_ style through `Misc::arrow()`
 /// - _Alternative_ abbreviation type through `AbbreviationType::Alternative`
+#[derive(Debug, Clone)]
 pub struct HeliumTheme {
-    bar: Bar,
-    misc: Misc,
+    bar: BarStyle,
+    color: Color,
+    separator_color: Color,
+    separator: &'static str,
+    spacing: usize,
+    padding: usize,
+    block_title: String,
 }
 
 impl Theme for HeliumTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(HeliumTheme {
-            bar: Bar::squared(),
-            misc: Misc::arrow(),
+            bar: BarStyle::squared(),
+            color: Color::Green,
+            separator_color: Color::White,
+            separator: "=>",
+            spacing: 2,
+            padding: 0,
+            block_title: String::from("System Information"),
         })
     }
 
-    fn bar(&self) -> &Bar {
+    fn get_bar_style(&self) -> &BarStyle {
         &self.bar
     }
 
-    fn misc(&self) -> &Misc {
-        &self.misc
+    fn get_separator(&self) -> &'static str {
+        self.separator
     }
 
-    fn bar_mut(&mut self) -> &mut Bar {
-        &mut self.bar
+    fn set_separator(&mut self, separator: &'static str) {
+        self.separator = separator
     }
 
-    fn misc_mut(&mut self) -> &mut Misc {
-        &mut self.misc
+    fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    fn get_color(&self) -> Color {
+        self.color
+    }
+
+    fn set_color(&mut self, color: Color) {
+        self.color = color
+    }
+
+    fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
@@ -353,36 +379,182 @@ impl Theme for HeliumTheme {
 /// - _Angled_ bar through `Bar::angled()`
 /// - _Squiggly_ style through `Misc::squiggly()`
 /// - _Long_ abbreviation type through `AbbreviationType::Long`
+#[derive(Debug, Clone)]
 pub struct LithiumTheme {
-    bar: Bar,
-    misc: Misc,
+    bar: BarStyle,
+    color: Color,
+    separator_color: Color,
+    separator: &'static str,
+    spacing: usize,
+    padding: usize,
+    block_title: String,
 }
 
 impl Theme for LithiumTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(LithiumTheme {
-            bar: Bar::angled(),
-            misc: Misc::squiggly(),
+            bar: BarStyle::angled(),
+            color: Color::Yellow,
+            separator_color: Color::White,
+            separator: "~",
+            spacing: 2,
+            padding: 0,
+            block_title: String::from("System Information"),
         })
     }
 
-    fn bar(&self) -> &Bar {
+    fn get_bar_style(&self) -> &BarStyle {
         &self.bar
     }
 
-    fn misc(&self) -> &Misc {
-        &self.misc
+    fn get_separator(&self) -> &'static str {
+        self.separator
     }
 
-    fn bar_mut(&mut self) -> &mut Bar {
-        &mut self.bar
+    fn set_separator(&mut self, separator: &'static str) {
+        self.separator = separator
     }
 
-    fn misc_mut(&mut self) -> &mut Misc {
-        &mut self.misc
+    fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    fn get_color(&self) -> Color {
+        self.color
+    }
+
+    fn set_color(&mut self, color: Color) {
+        self.color = color
+    }
+
+    fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
     }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
         &AbbreviationType::Long
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct EmojiTheme {
+    bar: BarStyle,
+    color: Color,
+    separator_color: Color,
+    separator: &'static str,
+    spacing: usize,
+    padding: usize,
+    block_title: String,
+}
+
+impl Theme for EmojiTheme {
+    fn new() -> Box<dyn Theme> {
+        let emoji = Self::get_random_emoji();
+        let emoji_width = unicode_width::UnicodeWidthChar::width(*emoji).unwrap_or(1);
+        let title = format!(
+            "{}{}System Information",
+            emoji,
+            " ".repeat(3usize.saturating_sub(emoji_width))
+        );
+
+        Box::new(EmojiTheme {
+            bar: BarStyle::rounded(),
+            color: Color::Blue,
+            separator_color: Color::White,
+            separator: "👉",
+            spacing: 2,
+            padding: 0,
+            block_title: title,
+        })
+    }
+
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
+    }
+
+    fn get_separator(&self) -> &'static str {
+        self.separator
+    }
+
+    fn set_separator(&mut self, separator: &'static str) {
+        self.separator = separator
+    }
+
+    fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    fn get_color(&self) -> Color {
+        self.color
+    }
+
+    fn set_color(&mut self, color: Color) {
+        self.color = color
+    }
+
+    fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, _: &str) {}
+
+    fn default_abbreviation(&self) -> &AbbreviationType {
+        &AbbreviationType::Long
+    }
+}
+
+impl EmojiTheme {
+    fn get_random_emoji() -> &'static char {
+        //Only single-codepoint emojis are supported.
+        const AVAILABLE_EMOJIS: &[char] = &[
+            '🖥', '🔋', '💻', '💡', '🦀', '🍺', '🚀', '🧨', '🔥', '✨', '🎉', '🏆', '🎒', '🔌', '🔬',
+        ];
+        let mut rand = rand::thread_rng();
+
+        &AVAILABLE_EMOJIS[rand.gen_range(0..AVAILABLE_EMOJIS.len())]
     }
 }

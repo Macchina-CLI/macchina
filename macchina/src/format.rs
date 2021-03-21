@@ -1,12 +1,13 @@
-use crate::READOUTS;
 use bytesize::ByteSize;
-use macchina_read::traits::{BatteryReadout, GeneralReadout, MemoryReadout, ReadoutError};
+use macchina_read::traits::{PackageManager, ReadoutError, BatteryState};
+
+//TODO: rework documentation
 
 /// This function should return a new `String` constructed from the value \
 /// returned by `READOUTS.general.uptime()`
-pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
+pub fn uptime(uptime: usize, shorthand: bool) -> String {
     let mut formatted_uptime = String::new();
-    let uptime: f32 = READOUTS.general.uptime()?.parse().unwrap();
+    let uptime: f32 = uptime as f32;
     // Uptime is formatted to "x days, y hours, z minutes" if the system
     // has been up for longer than 60 seconds, and "x seconds" if not.
 
@@ -72,54 +73,59 @@ pub fn uptime(shorthand: bool) -> Result<String, ReadoutError> {
         }
     }
 
-    Ok(formatted_uptime.trim().to_string())
+    formatted_uptime.trim().to_string()
 }
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.general.username()` and `READOUTS.general.hostname()`
-pub fn host() -> Result<String, ReadoutError> {
-    let username = READOUTS.general.username()?;
-    let hostname = READOUTS.general.hostname()?;
-
-    Ok(format!("{}@{}", username, hostname))
+pub fn host(username: &str, hostname: &str) -> String {
+    format!("{}@{}", username, hostname)
 }
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.battery.percentage()` and `READOUTS.battery.status()`
-pub fn battery() -> Result<String, ReadoutError> {
-    let percentage = READOUTS.battery.percentage()?;
-    let status_from_read_func = READOUTS.battery.status()?;
-    if !percentage.is_empty() && !status_from_read_func.is_empty() {
-        // Holds either "Charging" or "Discharging" values
-        return if percentage != "100" {
-            if status_from_read_func == "TRUE" {
-                Ok(format!("{}% & Charging", percentage))
-            } else {
-                Ok(format!("{}% & Discharging", percentage))
-            }
-        } else {
-            Ok(String::from("Full"))
-        };
+pub fn battery(percentage: u8, state: BatteryState) -> String {
+    // Holds either "Charging" or "Discharging" values
+    if percentage != 100 {
+        format!("{}% & {}", percentage, Into::<&'static str>::into(state))
+    } else {
+        String::from("Full")
     }
-
-    Err(ReadoutError::MetricNotAvailable)
 }
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.memory.total()` and `READOUTS.memory.used()`
-pub fn memory() -> Result<String, ReadoutError> {
-    let total = ByteSize::kb(READOUTS.memory.total()?);
-    let used = ByteSize::kb(READOUTS.memory.used()?);
+pub fn memory(total: u64, used: u64) -> String {
+    let total = ByteSize::kb(total);
+    let used = ByteSize::kb(used);
 
-    Ok(format!("{}/{}", used, total))
+    format!("{}/{}", used, total)
 }
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `READOUTS.general.cpu_model_name()` and `num_cpus::get()`
-pub fn cpu() -> Result<String, ReadoutError> {
-    let cpu_model = READOUTS.general.cpu_model_name()?;
-
-    Ok(format!("{} ({})", cpu_model, num_cpus::get())
+pub fn cpu(model_name: &str) -> String {
+    format!("{} ({})", model_name, num_cpus::get())
         .replace("(TM)", "™")
-        .replace("(R)", "®"))
+        .replace("(R)", "®")
+}
+
+pub fn packages(
+    packages: Vec<(PackageManager, usize)>,
+) -> Result<String, ReadoutError> {
+    let len = packages.len();
+    if len == 0 {
+        return Err(ReadoutError::Other(String::from("No packages found.")));
+    }
+
+    // pre-allocate some estimated size
+    let mut string = String::with_capacity(len * 7);
+
+    for (i, (pm, count)) in packages.iter().enumerate() {
+        let add_comma = if i + 1 < len { ", " } else { "" };
+
+        string.push_str(&format!("{} ({}){}", count, pm.to_string(), add_comma));
+    }
+
+    Ok(string)
 }

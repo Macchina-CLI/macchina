@@ -1,27 +1,17 @@
 #![allow(dead_code)]
+#![allow(unused_imports)]
+
 use crate::traits::ReadoutError;
 
+use crate::extra;
 use std::ffi::CStr;
 use std::io::Error;
 use std::path::Path;
+use std::process::{Command, Stdio};
+use std::{env, fs};
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 use sysctl::SysctlError;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use crate::extra;
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use std::process::{Command, Stdio};
-
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
-use std::{env, fs};
-
-impl From<std::io::Error> for ReadoutError {
-    fn from(e: Error) -> Self {
-        ReadoutError::Other(e.to_string())
-    }
-}
 
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 impl From<SysctlError> for ReadoutError {
@@ -30,13 +20,25 @@ impl From<SysctlError> for ReadoutError {
     }
 }
 
+impl From<std::io::Error> for ReadoutError {
+    fn from(e: Error) -> Self {
+        ReadoutError::Other(e.to_string())
+    }
+}
+
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-pub(crate) fn uptime() -> Result<String, ReadoutError> {
-    Ok(fs::read_to_string("/proc/uptime")?
-        .split_whitespace()
-        .next()
-        .unwrap()
-        .to_string())
+pub(crate) fn uptime() -> Result<usize, ReadoutError> {
+    let uptime_file_text = fs::read_to_string("/proc/uptime")?;
+    let uptime_text = uptime_file_text.split_whitespace().next().unwrap();
+    let parsed_uptime = uptime_text.parse::<f64>();
+
+    match parsed_uptime {
+        Ok(s) => Ok(s as usize),
+        Err(e) => Err(ReadoutError::Other(format!(
+            "Could not convert '{}' to a digit: {:?}",
+            uptime_text, e
+        ))),
+    }
 }
 
 /// This function should return the distribution name, e.g. "Arch Linux"
@@ -56,7 +58,7 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
     match desktop_env {
         Ok(ret) => {
             if ret.contains('/') {
-                return Ok(format_desktop_environment(ret));
+                return Ok(basename(ret));
             }
             Ok(extra::ucfirst(ret))
         }
@@ -76,12 +78,12 @@ pub(crate) fn desktop_environment() -> Result<String, ReadoutError> {
     }
 }
 
-/// This function should return the basename of the path to a program
+/// This function should return the basename of the path to a program with first letter is uppercased
 #[cfg(any(target_os = "linux", target_os = "netbsd"))]
-fn format_desktop_environment(mut session_name: String) -> String {
-    let last_occurence_index = session_name.rfind('/').unwrap() + 1;
-    session_name.replace_range(0..last_occurence_index, "");
-    extra::ucfirst(&session_name)
+fn basename(mut path: String) -> String {
+    let last_occurence_index = path.rfind('/').unwrap() + 1;
+    path.replace_range(0..last_occurence_index, "");
+    extra::ucfirst(&path)
 }
 
 /// Read window manager using `wmctrl -m | grep Name:`
@@ -99,19 +101,19 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
             .stdout
             .expect("ERROR: failed to open \"wmctrl\" stdout");
 
-        let grep = Command::new("grep")
-            .arg("Name:")
+        let grep = Command::new("head")
+            .args(&["-n", "1"])
             .stdin(Stdio::from(wmctrl_out))
             .stdout(Stdio::piped())
             .spawn()
-            .expect("ERROR: failed to spawn \"grep\" process");
+            .expect("ERROR: failed to spawn \"head\" process");
 
         let output = grep
             .wait_with_output()
-            .expect("ERROR: failed to wait for \"grep\" process to exit");
+            .expect("ERROR: failed to wait for \"head\" process to exit");
 
         let window_manager = String::from_utf8(output.stdout)
-            .expect("ERROR: \"wmctrl -m | grep Name:\" process stdout was not valid UTF-8");
+            .expect("ERROR: \"wmctrl -m | head -n1\" process stdout was not valid UTF-8");
 
         let window_man_name =
             extra::pop_newline(String::from(window_manager.replace("Name:", "").trim()));
@@ -125,7 +127,7 @@ pub(crate) fn window_manager() -> Result<String, ReadoutError> {
 }
 
 /// Read current terminal name using `ps`
-#[cfg(any(target_os = "linux", target_os = "netbsd"))]
+#[cfg(any(target_os = "linux", target_os = "netbsd", target_os = "macos"))]
 pub(crate) fn terminal() -> Result<String, ReadoutError> {
     //  ps -p $(ps -p $$ -o ppid=) o comm=
     //  $$ doesn't work natively in rust but its value can be
