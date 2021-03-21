@@ -1,8 +1,6 @@
 //! This module contains all the traits and types for creating a cross-platform API to query
 //! different readouts from various operating systems. For each operating system, there must be an implementation of these traits.
 
-use ReadoutError::MetricNotAvailable;
-
 /// This enum contains possible error types when doing sensor & variable readouts.
 #[derive(Debug, Clone)]
 pub enum ReadoutError {
@@ -36,6 +34,12 @@ impl From<&ReadoutError> for ReadoutError {
     fn from(r: &ReadoutError) -> Self {
         r.to_owned()
     }
+}
+
+lazy_static! {
+    static ref STANDARD_NO_IMPL: ReadoutError = ReadoutError::Warning(String::from(
+        "This metric is not available on this platform or is not yet implemented by macchina."
+    ));
 }
 
 /// This trait provides the necessary functions for querying battery statistics from the host
@@ -76,14 +80,14 @@ pub trait BatteryReadout {
     /// This function is used for querying the current battery percentage. The expected value is
     /// a u8 in the range of `0` to `100`.
     fn percentage(&self) -> Result<u8, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function is used for querying the current battery charging state. If the battery is
     /// currently being charged, we expect a return value of `BatteryState::Charging`, otherwise
     /// `BatteryState::Discharging`.
     fn status(&self) -> Result<BatteryState, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 }
 
@@ -120,12 +124,12 @@ pub trait KernelReadout {
 
     /// This function should return the version of the kernel (e. g. `20.3.0` on macOS for Darwin).
     fn os_release(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the kernel name as a string (e. g. `Darwin` on macOS).
     fn os_type(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function is used for getting the kernel name and version in a pretty format.
@@ -175,32 +179,32 @@ pub trait MemoryReadout {
 
     /// This function should return the total available memory in kilobytes.
     fn total(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the free available memory in kilobytes.
     fn free(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the current memory value for buffers in kilobytes.
     fn buffers(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the amount of cached content in memory in kilobytes.
     fn cached(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the amount of reclaimable memory in kilobytes.
     fn reclaimable(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the amount of currently used memory in kilobytes.
     fn used(&self) -> Result<u64, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 }
 
@@ -276,27 +280,27 @@ pub trait ProductReadout {
 
     /// This function should return the version of the host's operating system.
     fn version(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the vendor name of the host's operating system.
     fn vendor(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the family name of the host's operating system.
     fn family(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the host's operating system.
     fn name(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the product name of the hosts operating system.
     fn product(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 }
 
@@ -332,37 +336,37 @@ pub trait GeneralReadout {
 
     /// This function should return the username of the current logged on user.
     fn username(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the hostname of the hosts computer.
     fn hostname(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the distribution of the operating system.
     fn distribution(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the user's local ip address
     fn local_ip(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the used desktop environment.
     fn desktop_environment(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the used window manager.
     fn window_manager(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the used terminal emulator.
     fn terminal(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the current used shell (e. g. `bash` or `zsh`).
@@ -372,29 +376,29 @@ pub trait GeneralReadout {
     /// **_shorthand**: If the caller expects the full path to the used shell (e.g. `/bin/bash`) or
     /// just a shorthand of it (e.g. only the binary name).
     fn shell(&self, _shorthand: bool) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the full name of the CPU.
     fn cpu_model_name(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the uptime of the OS in seconds.
     fn uptime(&self) -> Result<usize, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the physical machine (e.g. MacBookPro11,5 on a
     /// MacBook Pro).
     fn machine(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 
     /// This function should return the name of the OS in a pretty format (e.g. macOS 11.2.2 Big
     /// Sur)
     fn os_name(&self) -> Result<String, ReadoutError> {
-        Err(MetricNotAvailable)
+        Err(STANDARD_NO_IMPL.clone())
     }
 }
 

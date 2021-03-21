@@ -8,7 +8,9 @@ pub struct NetBSDBatteryReadout;
 
 pub struct NetBSDKernelReadout;
 
-pub struct NetBSDGeneralReadout;
+pub struct NetBSDGeneralReadout {
+    local_ip: Option<String>,
+}
 
 pub struct NetBSDMemoryReadout;
 
@@ -118,7 +120,9 @@ impl KernelReadout for NetBSDKernelReadout {
 
 impl GeneralReadout for NetBSDGeneralReadout {
     fn new() -> Self {
-        NetBSDGeneralReadout
+        NetBSDGeneralReadout {
+            local_ip: local_ipaddress::get(),
+        }
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
@@ -150,6 +154,14 @@ impl GeneralReadout for NetBSDGeneralReadout {
         }
 
         Ok(format!("{} {} {}", vendor, product, version))
+    }
+
+    fn local_ip(&self) -> Result<String, ReadoutError> {
+        Ok(self
+            .local_ip
+            .as_ref()
+            .ok_or(ReadoutError::MetricNotAvailable)?
+            .to_string())
     }
 
     fn username(&self) -> Result<String, ReadoutError> {
