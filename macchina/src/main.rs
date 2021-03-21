@@ -379,8 +379,13 @@ fn write_buffer_to_console(
         .iter()
         .enumerate()
         .filter(|(_, cell)| {
+            let curr_width = cell.symbol.width();
+            if curr_width == 0 {
+                return false;
+            }
+
             let old_skip = skip_n;
-            skip_n = cell.symbol.width().saturating_sub(1);
+            skip_n = curr_width;
             return old_skip == 0;
         })
         .map(|(idx, cell)| {
