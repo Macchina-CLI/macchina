@@ -145,7 +145,7 @@ pub struct Opt {
     )]
     show_only: Option<Vec<data::ReadoutKey>>,
 
-    #[structopt(short = "d", long = "doctor", help = "Checks the system for failures.")]
+    #[structopt(short = "d", long = "doctor", help = "Checks the system for failures")]
     doctor: bool,
 
     #[structopt(short = "U", long = "short-uptime", help = "Shortens uptime output")]
@@ -164,15 +164,15 @@ pub struct Opt {
     )]
     theme: theme::Themes,
 
-    #[structopt(long = "no-ascii", help = "Removes the ascii art.")]
+    #[structopt(long = "no-ascii", help = "Removes the ascii art")]
     no_ascii: bool,
 
-    #[structopt(long = "no-box", help = "Removes the system information borders.")]
+    #[structopt(long = "no-box", help = "Removes the system information borders")]
     no_box: bool,
 
     #[structopt(
         long = "box-title",
-        help = "Overrides the title of the box.",
+        help = "Overrides the title of the box",
         conflicts_with = "no_box"
     )]
     box_title: Option<String>,
@@ -353,7 +353,10 @@ fn main() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn write_buffer_to_console(backend: &mut CrosstermBackend<Stdout>, tmp_buffer: &mut Buffer) -> Result<(), io::Error> {
+fn write_buffer_to_console(
+    backend: &mut CrosstermBackend<Stdout>,
+    tmp_buffer: &mut Buffer,
+) -> Result<(), io::Error> {
     let (_, last_y) =
         find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
 
