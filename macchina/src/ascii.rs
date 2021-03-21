@@ -62,25 +62,31 @@ WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#];
 
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    const ASCII_ARRAY: &[&str] = &[r#"         _nnnn_
-        dGGGGMMb
-       @p~qp~~qMb
-       M|@||@) M|
-       @,----.JM|
-      JS^\__/  qKL
-     dZP        qKRb
-    dZP          qKKb
-   fZP            SMMb
-   HZM            MMMM
-   FqM            MMMM
- __| ".        |\dS"qML
- |    `.       | `' \Zq
-_)      \.___.,|     .'
-\____   )MMMMMP|   .'
-     `-'       `--'"#];
+    let art: Vec<Span> = vec![
+        Span::raw("         _nnnn_"),
+        Span::raw("        dGGGGMMb"),
+        Span::raw("       @p~qp~~qMb"),
+        Span::raw("       M|@||@) M|"),
+        Span::raw("       @,----.JM|"),
+        Span::raw("      JS^\__/  qKL"),
+        Span::raw("     dZP        qKRb"),
+        Span::raw("    dZP          qKKb"),
+        Span::raw("   fZP            SMMb"),
+        Span::raw("   HZM            MMMM"),
+        Span::raw("   FqM            MMMM"),
+        Span::raw(" __| ".        |\dS"qML"),
+        Span::raw(" |    `.       | `' \Zq"),
+        Span::raw("_)      \.___.,|     .'"),
+        Span::raw("\____   )MMMMMP|   .'"),
+        Span::raw("     `-'       `--'"),
+    ];
 
     //todo add distribution specific art
-    Box::new(ASCII_ARRAY)
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }
 
 #[cfg(target_os = "netbsd")]
