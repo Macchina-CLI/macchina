@@ -1,20 +1,21 @@
-![Macchina preview image](screenshots/banner.png)
+![Macchina preview image](screenshots/preview.png)
 
 [![Crates.io](https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66)](https://crates.io/crates/macchina)
 [![Crates.io](https://img.shields.io/crates/d/macchina?style=for-the-badge&label=DOWNLOADS&color=0D3B66)](https://crates.io/crates/macchina)
-![reposize](https://img.shields.io/github/repo-size/grtcdr/macchina?color=0D3B66&logo=github&style=for-the-badge)
 ![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=0D3B66&label=Lines%20of%20Code&logo=rust&style=for-the-badge)
 
 ---
 
 # About Macchina
 _Macchina_ is a fetching program.
-If you're interested in its library, check out [macchina-read](https://crates.io/crates/macchina-read).
+If you're interested in the library, check out [macchina-read](https://crates.io/crates/macchina-read).
 
-_Macchina_ lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
-It provides you with convenient features and customization options but doesn't lose sight of its two main priorities: minimalism and performance.
+It lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
+It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, minimalism and performance.
 
-![Macchina preview image](screenshots/preview.png)
+If you're ricing your desktop and would like a program to display your system information, or you want it to load as soon as you open your terminal, like I do, then _Macchina_ has you covered.
+
+If you're wondering what _Macchina_ means, it's italian for __Machine__.
 
 ---
 
@@ -32,6 +33,14 @@ _Macchina_ is pretty fast, see for yourself!
 
 __Summary__: `macchina` runs __19.24 ± 0.70__ times __faster__ than `neofetch`
 
+## 🪟 Windows
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `macchina` | 9.0 ± 0.4 | 8.2 | 11.7 | 1.00 |
+| `neofetch` | 2207.7 ± 53.8 | 2127.1 | 2325.9 | 244.38 ± 13.43 |
+
+__Summary__: `macchina` runs __244.38 ± 13.43__ times __faster__ than `neofetch`
+
 ## 👩🏽‍💻 macOS
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
@@ -45,10 +54,10 @@ __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 21.6 ± 2.6 | 18.9 | 31.3 | 1.00 |
-| `neofetch` | 269.9 ± 10.5 | 256.2 | 290.0 | 12.51 ± 1.58 |
+| `macchina` | 20.9 ± 2.0 | 19.3 | 30.9 | 1.00 |
+| `neofetch` | 380.6 ± 26.0 | 344.8 | 422.1 | 18.25 ± 2.16 |
 
-__Summary__: `macchina` runs __12.51 ± 1.58__ times __faster__ than `neofetch`
+__Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 
 ---
 
