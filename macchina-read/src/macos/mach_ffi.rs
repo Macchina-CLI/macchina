@@ -78,6 +78,4 @@ extern "C" {
     ) -> kern_return_t;
 
     pub fn IOObjectRelease(object: io_object_t) -> kern_return_t;
-
-    pub fn OSKextCopyLoadedKextInfo(bundle_ids: CFArrayRef, unknown: CFArrayRef) -> CFDictionaryRef;
 }

@@ -7,7 +7,7 @@ use crate::traits::ReadoutError::MetricNotAvailable;
 use crate::traits::*;
 use core_foundation::base::{TCFType, ToVoid};
 use core_foundation::dictionary::{
-    CFDictionary, CFDictionaryRef, CFMutableDictionary, CFMutableDictionaryRef,
+    CFMutableDictionary, CFMutableDictionaryRef,
 };
 use core_foundation::number::{CFNumber, CFNumberRef};
 use core_foundation::string::{CFString};
@@ -284,19 +284,13 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
-        let hackintosh = MacOSGeneralReadout::is_hackintosh();
-
         let mac_model = self
             .hw_model_ctl
             .as_ref()
             .ok_or(MetricNotAvailable)?
             .value_string()?;
 
-        if hackintosh {
-            Ok(format!("Hackintosh ({})", mac_model))
-        } else {
-            Ok(mac_model)
-        }
+        Ok(mac_model)
     }
 
     fn os_name(&self) -> Result<String, ReadoutError> {
@@ -308,25 +302,6 @@ impl GeneralReadout for MacOSGeneralReadout {
             macos_version_to_name(&product_readout.operating_system_version()?);
 
         Ok(format!("{} {} {}", name, version, major_version_name))
-    }
-}
-
-impl MacOSGeneralReadout {
-    fn is_hackintosh() -> bool {
-        let dict_ref =
-            unsafe { mach_ffi::OSKextCopyLoadedKextInfo(std::ptr::null(), std::ptr::null()) };
-        let dict: CFDictionary<CFString, CFDictionaryRef> =
-            unsafe { CFDictionary::wrap_under_create_rule(dict_ref) };
-
-        //TODO: add null checks etc. etc.
-
-        let virtual_smc_str = CFString::from_static_string("as.vit9696.VirtualSMC");
-        let fake_smc_str = CFString::from_static_string("org.netkas.driver.FakeSMC");
-
-        let virtual_smc = dict.contains_key(&virtual_smc_str);
-        let fake_smc = dict.contains_key(&fake_smc_str);
-
-        virtual_smc || fake_smc
     }
 }
 
