@@ -66,7 +66,7 @@ extern "C" {
     pub fn IOServiceMatching(name: *const c_char) -> CFMutableDictionaryRef;
 
     pub fn IOServiceGetMatchingService(
-        masterPort: mach_port_t,
+        master_port: mach_port_t,
         matching: CFDictionaryRef,
     ) -> io_service_t;
 
