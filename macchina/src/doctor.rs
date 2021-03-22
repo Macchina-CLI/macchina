@@ -1,16 +1,21 @@
-use colored::Colorize;
-use macchina_read::traits::ReadoutError;
 use crate::data::Readout;
+use colored::Colorize;
+use libmacchina::traits::ReadoutError;
 
-fn split_failed_items<'a>(failed_items: &'a [&Readout]) -> (Vec<&'a Readout<'a>>,
-                                                              Vec<&'a Readout<'a>>) {
-    let err_items: Vec<_> = failed_items.iter().filter(|p| {
-        !matches!(p.1.as_ref().err(), Some(ReadoutError::Warning(_)))
-    }).copied().collect();
+fn split_failed_items<'a>(
+    failed_items: &'a [&Readout],
+) -> (Vec<&'a Readout<'a>>, Vec<&'a Readout<'a>>) {
+    let err_items: Vec<_> = failed_items
+        .iter()
+        .filter(|p| !matches!(p.1.as_ref().err(), Some(ReadoutError::Warning(_))))
+        .copied()
+        .collect();
 
-    let warn_items: Vec<_> = failed_items.iter().filter(|p| {
-        matches!(p.1.as_ref().err(), Some(ReadoutError::Warning(_)))
-    }).copied().collect();
+    let warn_items: Vec<_> = failed_items
+        .iter()
+        .filter(|p| matches!(p.1.as_ref().err(), Some(ReadoutError::Warning(_))))
+        .copied()
+        .collect();
 
     (err_items, warn_items)
 }
@@ -20,8 +25,7 @@ fn print_errors<'a>(err_items: &[&'a Readout<'a>]) {
         println!("  🎉 You are good to go! No failures detected.");
     }
 
-    for failed_item in err_items
-    {
+    for failed_item in err_items {
         let key = failed_item.0;
         let error = failed_item.1.as_ref().err().unwrap().to_string();
 
@@ -78,5 +82,4 @@ pub(crate) fn print_doctor(data: &[Readout]) {
 
     print_errors(&err_items);
     print_warnings(&warn_items, failed_items.len());
-
 }

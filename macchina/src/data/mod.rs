@@ -1,8 +1,8 @@
 use crate::theme::Theme;
 use crate::Opt;
 use clap::arg_enum;
-use macchina_read::traits::ReadoutError;
-use macchina_read::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
+use libmacchina::traits::ReadoutError;
+use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use std::borrow::Cow;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
@@ -91,7 +91,7 @@ pub fn get_all_readouts<'a>(
 
     fn battery_readout(vec: &mut Vec<Readout>, theme: &Box<dyn Theme>, use_bar: bool) {
         use crate::format::battery as format_bat;
-        use macchina_read::traits::BatteryReadout as _;
+        use libmacchina::traits::BatteryReadout as _;
 
         let battery_readout = BatteryReadout::new();
         let key = ReadoutKey::Battery;
@@ -114,7 +114,7 @@ pub fn get_all_readouts<'a>(
 
     fn package_readout(vec: &mut Vec<Readout>) {
         use crate::format::packages as format_pkgs;
-        use macchina_read::traits::PackageReadout as _;
+        use libmacchina::traits::PackageReadout as _;
 
         let package_readout = PackageReadout::new();
 
@@ -126,7 +126,7 @@ pub fn get_all_readouts<'a>(
     }
 
     fn kernel_readout(vec: &mut Vec<Readout>) {
-        use macchina_read::traits::KernelReadout as _;
+        use libmacchina::traits::KernelReadout as _;
 
         let kernel_readout = KernelReadout::new();
 
@@ -138,7 +138,7 @@ pub fn get_all_readouts<'a>(
 
     fn memory_readout(vec: &mut Vec<Readout>, theme: &Box<dyn Theme>, use_bar: bool) {
         use crate::format::memory as format_mem;
-        use macchina_read::traits::MemoryReadout as _;
+        use libmacchina::traits::MemoryReadout as _;
 
         let memory_readout = MemoryReadout::new();
         let total = memory_readout.total();
@@ -160,7 +160,7 @@ pub fn get_all_readouts<'a>(
         use crate::format::cpu as format_cpu;
         use crate::format::host as format_host;
         use crate::format::uptime as format_uptime;
-        use macchina_read::traits::GeneralReadout as _;
+        use libmacchina::traits::GeneralReadout as _;
 
         let general_readout = GeneralReadout::new();
 

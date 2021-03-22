@@ -333,31 +333,11 @@ dependencies = [
  "jemallocator",
  "lazy_static",
  "libmacchina",
- "macchina-read",
  "num_cpus",
  "rand",
  "structopt",
  "tui",
  "unicode-width",
-]
-
-[[package]]
-name = "macchina-read"
-version = "0.1.3"
-dependencies = [
- "cfg-if",
- "core-foundation",
- "lazy_static",
- "libc",
- "local_ipaddress",
- "mach",
- "nix",
- "os-release",
- "regex",
- "sqlite",
- "sysctl",
- "windows",
- "winreg",
 ]
 
 [[package]]

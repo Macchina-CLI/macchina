@@ -3,9 +3,9 @@ name = "macchina"
 version = "0.6.1"
 authors = ["grtcdr <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
-description = "A fast and minimal system information fetcher."
+description = "A system information fetcher, with a focus on performance and minimalism."
 keywords = ["system", "fetch", "cli"]
-repository = "https://github.com/grtcdr/macchina"
+repository = "https://github.com/Macchina-CLI/macchina"
 license = "MIT"
 readme = "../README_CARGO.md"
 
@@ -20,7 +20,6 @@ structopt = "0.3.21"
 rand = "0.8.3"
 unicode-width = "0.1.8"
 lazy_static = "1.4.0"
-macchina-read = { version = "0.1.3", path = "../macchina-read" }
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = "0.3.2"

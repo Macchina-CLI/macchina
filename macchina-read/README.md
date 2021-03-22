@@ -1,1 +1,0 @@
-This crate has moved to [libmacchina](https://github.com/Macchina-CLI/libmacchina).

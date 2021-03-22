@@ -1,5 +1,5 @@
 use bytesize::ByteSize;
-use macchina_read::traits::{PackageManager, ReadoutError, BatteryState};
+use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 
 //TODO: rework documentation
 
@@ -110,9 +110,7 @@ pub fn cpu(model_name: &str) -> String {
         .replace("(R)", "®")
 }
 
-pub fn packages(
-    packages: Vec<(PackageManager, usize)>,
-) -> Result<String, ReadoutError> {
+pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, ReadoutError> {
     let len = packages.len();
     if len == 0 {
         return Err(ReadoutError::Other(String::from("No packages found.")));
