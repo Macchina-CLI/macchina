@@ -6,9 +6,11 @@ use crate::macos::mach_ffi::{
 use crate::traits::ReadoutError::MetricNotAvailable;
 use crate::traits::*;
 use core_foundation::base::{TCFType, ToVoid};
-use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef};
+use core_foundation::dictionary::{
+    CFMutableDictionary, CFMutableDictionaryRef,
+};
 use core_foundation::number::{CFNumber, CFNumberRef};
-use core_foundation::string::CFString;
+use core_foundation::string::{CFString};
 use mach::kern_return::KERN_SUCCESS;
 use std::ffi::CString;
 use sysctl::{Ctl, Sysctl};
@@ -230,15 +232,31 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        if let Ok(t) = crate::shared::terminal() {
-            return Ok(t);
+        use std::env::var;
+
+        let mut terminal: Option<String> = None;
+        if let Ok(mut terminal_str) = var("TERM_PROGRAM") {
+            terminal_str = terminal_str.to_lowercase();
+            terminal = match terminal_str.as_str() {
+                "iterm.app" => Some(String::from("iTerm2")),
+                "apple_terminal" => Some(String::from("Apple Terminal")),
+                "hyper" => Some(String::from("HyperTerm")),
+                s => Some(String::from(s)),
+            }
         }
 
-        if let Ok(terminal_env) = std::env::var("TERM") {
+        if let Some(terminal) = terminal {
+            if let Ok(version) = var("TERM_PROGRAM_VERSION") {
+                return Ok(format!("{} (Version {})", terminal, version));
+            }
+
+            return Ok(terminal)
+        }
+
+        if let Ok(terminal_env) = var("TERM") {
             return Ok(terminal_env);
         }
 
-        //TODO check common macos terminal software such as iTerm2.
         Err(MetricNotAvailable)
     }
 
