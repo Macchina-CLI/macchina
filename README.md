@@ -152,6 +152,7 @@ _Macchina_ is available on:
 - [crates.io](https://crates.io/crates/macchina)
 - [AUR](https://aur.archlinux.org/packages/macchina/)
 - [pkgsrc](https://pkgsrc.se/sysutils/macchina)
+- [Homebrew Tap](https://github.com/Macchina-CLI/homebrew-tap)
 
 ### 🍻 Homebrew
 
