@@ -86,9 +86,11 @@ __Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 ## Themes
 ![Theme preview](screenshots/themes.png)
 
-The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can use.
+The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can switch between using the `--theme` flag.
 
 ## Bars
+Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
+
 ![Preview of bar argument](screenshots/bars.png)
 
 ## What it fetches
@@ -98,6 +100,7 @@ The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains 
 - Product
 - Kernel
 - Distribution
+- Operating System
 - Desktop Environment
 - Window Manager
 - Package Count <sup>[[1]](https://github.com/grtcdr/macchina/wiki/Platform-Support)</sup>
@@ -148,7 +151,7 @@ _Macchina_ is available on:
 - [AUR](https://aur.archlinux.org/packages/macchina/)
 - [pkgsrc](https://pkgsrc.se/sysutils/macchina)
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) also lists multiple other ways you can install it. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) can help you install the program, and also lists multiple other ways you can do so. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
 

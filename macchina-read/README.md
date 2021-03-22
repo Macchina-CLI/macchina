@@ -19,6 +19,7 @@ Through this crate, you can access a variety of system information, such as:
   - Type
   - Version
 - Distribution
+- Operating System
 - Desktop Environment
 - Window Manager
 - Package Count
