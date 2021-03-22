@@ -232,16 +232,28 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        if let Ok(terminal_program) = std::env::var("TERM_PROGRAM") {
-            //check for TERM_VERSION env variable too
-            match &terminal_program.to_lowercase()[..] {
-                "iterm.app" => return Ok(String::from("iTerm2")),
-                "apple_terminal" => return Ok(String::from("Apple Terminal")),
-                _ => (),
+        use std::env::var;
+
+        let mut terminal: Option<String> = None;
+        if let Ok(mut terminal_str) = var("TERM_PROGRAM") {
+            terminal_str = terminal_str.to_lowercase();
+            terminal = match terminal_str.as_str() {
+                "iterm.app" => Some(String::from("iTerm2")),
+                "apple_terminal" => Some(String::from("Apple Terminal")),
+                "hyper" => Some(String::from("HyperTerm")),
+                s => Some(String::from(s)),
             }
         }
 
-        if let Ok(terminal_env) = std::env::var("TERM") {
+        if let Some(terminal) = terminal {
+            if let Ok(version) = var("TERM_PROGRAM_VERSION") {
+                return Ok(format!("{} (Version {})", terminal, version));
+            }
+
+            return Ok(terminal)
+        }
+
+        if let Ok(terminal_env) = var("TERM") {
             return Ok(terminal_env);
         }
 
