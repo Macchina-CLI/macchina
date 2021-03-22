@@ -1,5 +1,5 @@
 [workspace]
-members = [ "macchina", "macchina-read" ]
+members = ["macchina"]
 
 [profile.release]
 opt-level = 3

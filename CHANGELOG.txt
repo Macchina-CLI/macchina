@@ -1,3 +1,7 @@
 # Changelog
+- Move `macchina-read` to its own repository, named `libmacchina`
+- Add a TUI and ASCII art
+- Fix several bugs
+- Added local IP address entry
 - Add a _README_ for the `macchina-read` crate
 - `macchina-read` Cargo.toml now links to _Macchina's_ repository
