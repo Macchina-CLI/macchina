@@ -6,9 +6,11 @@ use crate::macos::mach_ffi::{
 use crate::traits::ReadoutError::MetricNotAvailable;
 use crate::traits::*;
 use core_foundation::base::{TCFType, ToVoid};
-use core_foundation::dictionary::{CFMutableDictionary, CFMutableDictionaryRef};
+use core_foundation::dictionary::{
+    CFDictionary, CFDictionaryRef, CFMutableDictionary, CFMutableDictionaryRef,
+};
 use core_foundation::number::{CFNumber, CFNumberRef};
-use core_foundation::string::CFString;
+use core_foundation::string::{CFString};
 use mach::kern_return::KERN_SUCCESS;
 use std::ffi::CString;
 use sysctl::{Ctl, Sysctl};
@@ -230,15 +232,19 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn terminal(&self) -> Result<String, ReadoutError> {
-        if let Ok(t) = crate::shared::terminal() {
-            return Ok(t);
+        if let Ok(terminal_program) = std::env::var("TERM_PROGRAM") {
+            //check for TERM_VERSION env variable too
+            match &terminal_program.to_lowercase()[..] {
+                "iterm.app" => return Ok(String::from("iTerm2")),
+                "apple_terminal" => return Ok(String::from("Apple Terminal")),
+                _ => (),
+            }
         }
 
         if let Ok(terminal_env) = std::env::var("TERM") {
             return Ok(terminal_env);
         }
 
-        //TODO check common macos terminal software such as iTerm2.
         Err(MetricNotAvailable)
     }
 
@@ -278,13 +284,19 @@ impl GeneralReadout for MacOSGeneralReadout {
     }
 
     fn machine(&self) -> Result<String, ReadoutError> {
+        let hackintosh = MacOSGeneralReadout::is_hackintosh();
+
         let mac_model = self
             .hw_model_ctl
             .as_ref()
             .ok_or(MetricNotAvailable)?
             .value_string()?;
 
-        Ok(mac_model)
+        if hackintosh {
+            Ok(format!("Hackintosh ({})", mac_model))
+        } else {
+            Ok(mac_model)
+        }
     }
 
     fn os_name(&self) -> Result<String, ReadoutError> {
@@ -296,6 +308,25 @@ impl GeneralReadout for MacOSGeneralReadout {
             macos_version_to_name(&product_readout.operating_system_version()?);
 
         Ok(format!("{} {} {}", name, version, major_version_name))
+    }
+}
+
+impl MacOSGeneralReadout {
+    fn is_hackintosh() -> bool {
+        let dict_ref =
+            unsafe { mach_ffi::OSKextCopyLoadedKextInfo(std::ptr::null(), std::ptr::null()) };
+        let dict: CFDictionary<CFString, CFDictionaryRef> =
+            unsafe { CFDictionary::wrap_under_create_rule(dict_ref) };
+
+        //TODO: add null checks etc. etc.
+
+        let virtual_smc_str = CFString::from_static_string("as.vit9696.VirtualSMC");
+        let fake_smc_str = CFString::from_static_string("org.netkas.driver.FakeSMC");
+
+        let virtual_smc = dict.contains_key(&virtual_smc_str);
+        let fake_smc = dict.contains_key(&fake_smc_str);
+
+        virtual_smc || fake_smc
     }
 }
 
