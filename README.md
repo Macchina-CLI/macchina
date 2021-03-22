@@ -151,6 +151,12 @@ _Macchina_ is available on:
 - [AUR](https://aur.archlinux.org/packages/macchina/)
 - [pkgsrc](https://pkgsrc.se/sysutils/macchina)
 
+### 🍻 Homebrew
+
+```bash
+brew install Macchina-CLI/homebrew-tap/macchina
+```
+
 _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) can help you install the program, and also lists multiple other ways you can do so. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
