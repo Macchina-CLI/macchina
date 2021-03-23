@@ -93,9 +93,9 @@ __Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can switch between using the `--theme` flag.
 
 ## Bars
-Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
-
 ![Preview of bar argument](screenshots/bars.png)
+
+Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
 
 ## What it fetches
 - Host
@@ -122,11 +122,11 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Palette
 
 ## Meet Doctor
-_Macchina_ comes with a very special flag, allowing you to know why certain elements, for example, your operating system information might not be appearing, it can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
+![Doctor flag preview](screenshots/doctor.png)
+
+_Macchina_ comes with a very special flag, allowing you to know why certain elements, for example, your operating system information might not be appearing. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
 
 To use this feature, run `macchina --doctor`
-
-![Doctor flag preview](screenshots/doctor.png)
 
 ---
 

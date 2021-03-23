@@ -8,14 +8,12 @@
 
 # About Macchina
 _Macchina_ is a fetching program.
-If you're interested in the library, check out [macchina-read](https://crates.io/crates/macchina-read).
+If you're interested in the library, check out [libmacchina](https://crates.io/crates/libmacchina).
 
 It lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
 It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, minimalism and performance.
 
 If you're ricing your desktop and would like a program to display your system information, or you want it to load as soon as you open your terminal, like I do, then _Macchina_ has you covered.
-
-If you're wondering what _Macchina_ means, it's italian for __Machine__.
 
 ---
 
@@ -68,9 +66,9 @@ __Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can switch between using the `--theme` flag.
 
 ## Bars
-Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
-
 ![Preview of bar argument](screenshots/bars.png)
+
+Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
 
 ## What it fetches
 - Host
@@ -97,11 +95,11 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Palette
 
 ## Meet Doctor
-_Macchina_ comes with a very special flag, allowing you to know why certain elements, for example, your operating system information might not be appearing, it can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
+![Doctor flag preview](screenshots/doctor.png)
+
+_Macchina_ comes with a very special flag, allowing you to know why certain elements, for example, your operating system information might not be appearing. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
 
 To use this feature, run `macchina --doctor`
-
-![Doctor flag preview](screenshots/doctor.png)
 
 ---
 
@@ -122,7 +120,7 @@ The [usage wiki page](https://github.com/grtcdr/macchina/wiki/Usage) can tell yo
 
 The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencies) explains why these dependencies exist.
 
----
+-	--
 
 # Installation <a name="install"></a>
 
