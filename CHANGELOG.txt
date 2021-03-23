@@ -1,7 +1,9 @@
 # Changelog
 - Move `macchina-read` to its own repository, named `libmacchina`
-- Add a TUI and ASCII art
+- Add a TUI, and provide all the customizations options one might need
+- Add ASCII art
 - Fix several bugs
+- Use jemalloc for improved performance
+- Add `--doctor`, a more verbose and helpful debugger
 - Added local IP address entry
-- Add a _README_ for the `macchina-read` crate
-- `macchina-read` Cargo.toml now links to _Macchina's_ repository
+- More miscellaneous improvements and changes
