@@ -1,9 +1,2 @@
 # Changelog
-- Move `macchina-read` to its own repository, named `libmacchina`
-- Add a TUI, and provide all the customizations options one might need
-- Add ASCII art
-- Fix several bugs
-- Use jemalloc for improved performance
-- Add `--doctor`, a more verbose and helpful debugger
-- Added local IP address entry
-- More miscellaneous improvements and changes
+- Fix a bug where `--hide` behaves the same as `--show-only` 
