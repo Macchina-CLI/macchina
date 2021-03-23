@@ -8,14 +8,16 @@ Linux • macOS • Windows • NetBSD
 <img src="screenshots/preview.png" alt="Preview" />
 
 <a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66" alt="Version" />
+    <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
 </a>
 
 <a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/d/macchina?style=for-the-badge&label=DOWNLOADS&color=0D3B66" alt="Downloads" />
+    <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
 </a>
 
-<img src="https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=0D3B66&label=Lines%20of%20Code&logo=rust&style=for-the-badge" alt="Lines of Code">
+<a href="https://saythanks.io/to/ba.tahaaziz@gmail.com">
+    <img src="https://img.shields.io/badge/Say-Thanks-1EAEDB.svg" alt="Say Thanks" />
+</a>
 </div>
 
 

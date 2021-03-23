@@ -1,8 +1,8 @@
 ![Macchina preview image](screenshots/preview.png)
 
-[![Crates.io](https://img.shields.io/crates/v/macchina?style=for-the-badge&label=VERSION&color=0D3B66)](https://crates.io/crates/macchina)
-[![Crates.io](https://img.shields.io/crates/d/macchina?style=for-the-badge&label=DOWNLOADS&color=0D3B66)](https://crates.io/crates/macchina)
-![loc](https://img.shields.io/tokei/lines/github/grtcdr/macchina?color=0D3B66&label=Lines%20of%20Code&logo=rust&style=for-the-badge)
+[![Crates.io](https://img.shields.io/crates/v/macchina?label=Version)](https://crates.io/crates/macchina)
+[![Crates.io](https://img.shields.io/crates/d/macchina?label=Downloads)](https://crates.io/crates/macchina)
+[![Say Thanks](https://img.shields.io/badge/Say-Thanks-1EAEDB.svg)](https://saythanks.io/to/ba.tahaaziz@gmail.com)
 
 ---
 
