@@ -149,18 +149,29 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 # Installation <a name="install"></a>
 _Macchina_ is available on:
 
-- [crates.io](https://crates.io/crates/macchina)
-- [AUR](https://aur.archlinux.org/packages/macchina/)
-- [pkgsrc](https://pkgsrc.se/sysutils/macchina)
-- [Homebrew Tap](https://github.com/Macchina-CLI/homebrew-tap)
+### 📦 crates.io
+```
+cargo install macchina
+```
+
+### AUR
+```
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+### pkgsrc
+```
+pkgin install macchina
+```
 
 ### 🍻 Homebrew
-
-```bash
+```
 brew install Macchina-CLI/homebrew-tap/macchina
 ```
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) can help you install the program, and also lists multiple other ways you can do so. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) also lists the other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
 
