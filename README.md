@@ -147,8 +147,6 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 ---
 
 # Installation <a name="install"></a>
-_Macchina_ is available on:
-
 ### 📦 crates.io
 ```
 cargo install macchina

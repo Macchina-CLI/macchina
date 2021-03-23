@@ -314,7 +314,7 @@ impl Theme for HeliumTheme {
             separator: "=>",
             spacing: 2,
             padding: 0,
-            block_title: String::from("System Information"),
+            block_title: String::from(" System Information "),
         })
     }
 
@@ -399,7 +399,7 @@ impl Theme for LithiumTheme {
             separator: "~",
             spacing: 2,
             padding: 0,
-            block_title: String::from("System Information"),
+            block_title: String::from(" System Information "),
         })
     }
 
@@ -476,7 +476,7 @@ impl Theme for EmojiTheme {
         let emoji = Self::get_random_emoji();
         let emoji_width = unicode_width::UnicodeWidthChar::width(*emoji).unwrap_or(1);
         let title = format!(
-            "{}{}System Information",
+            " {}{}System Information ",
             emoji,
             " ".repeat(3usize.saturating_sub(emoji_width))
         );
