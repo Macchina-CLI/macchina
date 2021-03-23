@@ -10,6 +10,7 @@ lazy_static! {
     static ref GRAY: Style = Style::default().fg(Color::Gray);
     static ref WHITE: Style = Style::default().fg(Color::White);
     static ref CYAN: Style = Style::default().fg(Color::Cyan);
+    static ref BLACK: Style = Style::default().fg(Color::Black);
 }
 
 #[cfg(target_os = "macos")]
@@ -69,31 +70,50 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    let art: Vec<Span> = vec![
-        Span::raw(r#"         _nnnn_"#),
-        Span::raw(r#"        dGGGGMMb"#),
-        Span::raw(r#"       @p~qp~~qMb"#),
-        Span::raw(r#"       M|@||@) Mb"#),
-        Span::raw(r#"       @,----.JMb"#),
-        Span::raw(r#"      JS^\\__/  qKL"#),
-        Span::raw(r#"     dZP        qKRb"#),
-        Span::raw(r#"    dZP          qKKb"#),
-        Span::raw(r#"   fZP            SMMb"#),
-        Span::raw(r#"   HZM            MMMM"#),
-        Span::raw(r#"   FqM            MMMM"#),
-        Span::raw(r#" __| ".        |\\dS"qML"#),
-        Span::raw(r#" |    `.       | `' \\Zq"#),
-        Span::raw(r#"_)      \.___.,|     .'"#),
-        Span::raw(r#"\____   )MMMMMP|   .'"#),
-        Span::raw(r#"     `-'       `--'"#),
+    let art: Vec<Spans> = vec![
+        Spans::from(vec![Span::styled("         _nnnn_", *WHITE)]),
+        Spans::from(vec![Span::styled("        dbMGGMbb", *WHITE)]),
+        Spans::from(vec![Span::styled("       dbbbbbbbdb", *WHITE)]),
+        Spans::from(vec![
+            Span::styled("       d ", *WHITE),
+            Span::styled("(@)(@)", *WHITE),
+            Span::styled(" Mb", *WHITE),
+        ]),
+        Spans::from(vec![
+            Span::styled("       d  ", *WHITE),
+            Span::styled("____", *YELLOW),
+            Span::styled("  db", *WHITE),
+        ]),
+        Spans::from(vec![
+            Span::styled("      dp ", *WHITE),
+            Span::styled("\\'__'/", *YELLOW),
+            Span::styled(" qzb", *WHITE),
+        ]),
+        Spans::from(vec![Span::styled("     dzp        qzzb", *WHITE)]),
+        Spans::from(vec![Span::styled("    dzp          qzzb", *WHITE)]),
+        Spans::from(vec![Span::styled("   dzp            qzzb", *WHITE)]),
+        Spans::from(vec![Span::styled("   dzp            qzzb", *WHITE)]),
+        Spans::from(vec![Span::styled("   dzp            qzzb", *WHITE)]),
+        Spans::from(vec![
+            Span::styled(" __| '.", *YELLOW),
+            Span::styled("        |\\ ", *YELLOW),
+            Span::styled("qzzzb", *WHITE),
+        ]),
+        Spans::from(vec![
+            Span::styled(" |    `.       | `' \\\\", *YELLOW),
+            Span::styled("b", *WHITE),
+        ]),
+        Spans::from(vec![Span::styled("_)      '      |     .'", *YELLOW)]),
+        Spans::from(vec![
+            Span::styled("\\____   |", *YELLOW),
+            Span::styled("______", *WHITE),
+            Span::styled("|   .'", *YELLOW),
+        ]),
+        Spans::from(vec![Span::styled("     `-/       `--'", *YELLOW)]),
     ];
 
     //todo add distribution specific art
-    vec![Text::from(
-        art.iter()
-            .map(|f| Spans::from(f.to_owned()))
-            .collect::<Vec<Spans>>(),
-    )]
+    vec![Text::from(art)]
 }
 
 #[cfg(target_os = "netbsd")]
