@@ -7,7 +7,7 @@ description = "A system information fetcher, with a focus on performance and min
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/Macchina-CLI/macchina"
 license = "MIT"
-readme = "../README_CARGO.md"
+readme = "README_CARGO.md"
 
 [profile.release]
 opt-level = 3
