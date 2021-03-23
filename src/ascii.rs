@@ -43,22 +43,22 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 #[cfg(target_os = "windows")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
     let art: Vec<Span> = vec![
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
         Span::raw(r#" "#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
-        Span::raw(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
+        Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
     ];
 
     vec![Text::from(
@@ -118,30 +118,53 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
 
 #[cfg(target_os = "netbsd")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
-    let art: Vec<Span> = vec![
-        Span::raw(r#"                              __,gnCCaau"#),
-        Span::raw(r#"                     __,gnnCCFFFF"#),
-        Span::raw(r#"(N\XCbngg,._____.,gnnndCCCCC___,"#),
-        Span::raw(r#" \N\XCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv"#),
-        Span::raw(r#"  \N\XCCCCCCCCCCCCCCCCCCCCCCCCCCPFP''"#),
-        Span::raw(r#"   \N\XCCCCCCCCCCCCCCCCCCCFF"'"#),
-        Span::raw(r#"    \N\XCCCCCCCCCCCCCCCCF"'"#),
-        Span::raw(r#"     \N\XCCCCCCCCCCCCCF"'"#),
-        Span::raw(r#"      \N\"PCOCCCOC""#),
-        Span::raw(r#"       \N\"#),
-        Span::raw(r#"        \N\"#),
-        Span::raw(r#"         \N\"#),
-        Span::raw(r#"          \N\"#),
-        Span::raw(r#"           \N\"#),
-        Span::raw(r#"            \N\"#),
-        Span::raw(r#"             \N\"#),
-        Span::raw(r#"              \N\"#),
-        Span::raw(r#"               \N\"#),
+    let art: Vec<Spans> = vec![
+        Spans::from(vec![Span::styled(
+            "                              __,gnCCaau",
+            *YELLOW,
+        )]),
+        Spans::from(vec![Span::styled(
+            "                     __,gnnCCFFFF",
+            *YELLOW,
+        )]),
+        Spans::from(vec![
+            Span::styled("(N\\", *WHITE),
+            Span::styled("XCbngg,._____.,gnnndCCCCC___,", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled(" \\N\\", *WHITE),
+            Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("  \\N\\", *WHITE),
+            Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCCPFP''", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("   \\N\\", *WHITE),
+            Span::styled("XCCCCCCCCCCCCCCCCCCCFF\"'", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("    \\N\\", *WHITE),
+            Span::styled("XCCCCCCCCCCCCCCCCF\"'", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("     \\N\\", *WHITE),
+            Span::styled("XCCCCCCCCCCCCCF\"'", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("      \\N\\", *WHITE),
+            Span::styled("\"PCOCCCOC\"", *YELLOW),
+        ]),
+        Spans::from(vec![Span::styled("       \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("        \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("         \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("          \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("           \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("            \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("             \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("              \\N\\", *WHITE)]),
+        Spans::from(vec![Span::styled("               \\N\\", *WHITE)]),
     ];
 
-    vec![Text::from(
-        art.iter()
-            .map(|f| Spans::from(f.to_owned()))
-            .collect::<Vec<Spans>>(),
-    )]
+    vec![Text::from(art)]
 }
