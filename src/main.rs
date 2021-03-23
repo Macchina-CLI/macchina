@@ -301,7 +301,7 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
         .map(|f| ReadoutKey::from_str(f).unwrap())
         .collect();
     if let Some(hide) = opt.hide.to_owned() {
-        keys.retain(|f| hide.contains(f));
+        keys.retain(|f| !hide.contains(f));
     }
 
     keys
