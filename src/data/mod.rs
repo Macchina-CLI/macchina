@@ -2,6 +2,7 @@ use crate::theme::Theme;
 use crate::Opt;
 use clap::arg_enum;
 use libmacchina::traits::ReadoutError;
+use libmacchina::traits::ShellFormat;
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use std::borrow::Cow;
 use tui::style::{Color, Style};
@@ -217,9 +218,15 @@ pub fn get_all_readouts<'a>(
         }
 
         if should_display.contains(&ReadoutKey::Shell) {
-            match general_readout.shell(opt.short_shell) {
-                Ok(s) => vec.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => vec.push(Readout::new_err(ReadoutKey::Shell, e)),
+            match opt.short_shell {
+                true => match general_readout.shell(ShellFormat::Relative) {
+                    Ok(s) => vec.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => vec.push(Readout::new_err(ReadoutKey::Shell, e)),
+                },
+                false => match general_readout.shell(ShellFormat::Absolute) {
+                    Ok(s) => vec.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => vec.push(Readout::new_err(ReadoutKey::Shell, e)),
+                },
             }
         }
 

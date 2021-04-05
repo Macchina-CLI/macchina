@@ -1,2 +1,2 @@
 # Changelog
-- Fix a bug where `--hide` behaves the same as `--show-only` 
+- Update libmacchina dependency to its latest version, 0.1.7.
