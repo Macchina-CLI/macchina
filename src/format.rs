@@ -4,7 +4,7 @@ use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 //TODO: rework documentation
 
 /// This function should return a new `String` constructed from the value \
-/// returned by `READOUTS.general.uptime()`
+/// returned by `traits::GeneralReadout::uptime()`
 pub fn uptime(uptime: usize, shorthand: bool) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = uptime as f32;
@@ -77,13 +77,13 @@ pub fn uptime(uptime: usize, shorthand: bool) -> String {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `READOUTS.general.username()` and `READOUTS.general.hostname()`
+/// returned by `traits::GeneralReadout::username()` and `traits::GeneralReadout::hostname()`
 pub fn host(username: &str, hostname: &str) -> String {
     format!("{}@{}", username, hostname)
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `READOUTS.battery.percentage()` and `READOUTS.battery.status()`
+/// returned by `traits::BatteryReadout::percentage()` and `traits::BatteryReadout::status()`
 pub fn battery(percentage: u8, state: BatteryState) -> String {
     // Holds either "Charging" or "Discharging" values
     if percentage != 100 {
@@ -94,7 +94,7 @@ pub fn battery(percentage: u8, state: BatteryState) -> String {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `READOUTS.memory.total()` and `READOUTS.memory.used()`
+/// returned by `traits::MemoryReadout::used()` and `traits::MemoryReadout::total()`
 pub fn memory(total: u64, used: u64) -> String {
     let total = ByteSize::kb(total);
     let used = ByteSize::kb(used);
@@ -103,7 +103,7 @@ pub fn memory(total: u64, used: u64) -> String {
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `READOUTS.general.cpu_model_name()` and `num_cpus::get()`
+/// returned by `traits::GeneralReadout::cpu_model_name()` and `num_cpus::get()`
 pub fn cpu(model_name: &str) -> String {
     format!("{} ({})", model_name, num_cpus::get())
         .replace("(TM)", "™")
@@ -113,15 +113,17 @@ pub fn cpu(model_name: &str) -> String {
 pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, ReadoutError> {
     let len = packages.len();
     if len == 0 {
-        return Err(ReadoutError::Other(String::from("No packages found.")));
+        return Err(ReadoutError::Other(String::from(
+            "No packages found — Do you have a package manager installed?",
+        )));
     }
 
-    // pre-allocate some estimated size
+    // Pre-allocate an estimated size to reduce the number
+    // of reallocations when manipulating the string
     let mut string = String::with_capacity(len * 7);
 
     for (i, (pm, count)) in packages.iter().enumerate() {
         let add_comma = if i + 1 < len { ", " } else { "" };
-
         string.push_str(&format!("{} ({}){}", count, pm.to_string(), add_comma));
     }
 

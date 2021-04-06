@@ -549,10 +549,8 @@ impl Theme for EmojiTheme {
 
 impl EmojiTheme {
     fn get_random_emoji() -> &'static char {
-        //Only single-codepoint emojis are supported.
-        const AVAILABLE_EMOJIS: &[char] = &[
-            '🖥', '🔋', '💻', '💡', '🦀', '🍺', '🚀', '🧨', '🔥', '✨', '🎉', '🏆', '🎒', '🔌', '🔬',
-        ];
+        // Only single-codepoint emojis are supported.
+        const AVAILABLE_EMOJIS: &[char] = &['💻', '💡', '🦀', '🍺', '🚀', '🔥', '✨', '🎉', '🔌'];
         let mut rand = rand::thread_rng();
 
         &AVAILABLE_EMOJIS[rand.gen_range(0..AVAILABLE_EMOJIS.len())]

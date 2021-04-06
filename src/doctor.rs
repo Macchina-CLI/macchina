@@ -30,7 +30,7 @@ fn print_errors<'a>(err_items: &[&'a Readout<'a>]) {
         let error = failed_item.1.as_ref().err().unwrap().to_string();
 
         println!(
-            "  ⚠️  Readout \"{}\" failed with message: {}",
+            "Readout \"{}\" failed with message: {}",
             key.to_string().bright_blue(),
             error.bright_red()
         );
@@ -45,7 +45,7 @@ fn print_warnings<'a>(warn_items: &[&'a Readout<'a>], total_failed_items: usize)
     let warn_len = warn_items.len().to_string().bright_yellow();
     let err_len = total_failed_items.to_string().bright_red();
     println!(
-        "\n👩‍⚕️ {} of the {} unsuccessful read(s) resulted in a warning:",
+        "\n{} of the {} unsuccessful read(s) resulted in a warning:",
         warn_len, err_len
     );
 
@@ -54,7 +54,7 @@ fn print_warnings<'a>(warn_items: &[&'a Readout<'a>], total_failed_items: usize)
         let warn = warn_item.1.as_ref().err().unwrap().to_string();
 
         println!(
-            "  🤔 Readout \"{}\" threw a warning with message: {}",
+            "Readout \"{}\" threw a warning with message: {}",
             key.to_string().bright_blue(),
             warn.yellow()
         );
@@ -66,12 +66,12 @@ pub(crate) fn print_doctor(data: &[Readout]) {
     let (err_items, warn_items) = split_failed_items(&failed_items);
 
     println!(
-        "👩‍⚕️ Let's check your system for {}... Here's a summary:\n",
+        "Let's check your system for {}... Here's a summary:\n",
         "errors".bright_red()
     );
 
     println!(
-        "⏳ We've collected {} {}, including {} {} and {} read(s) which resulted in a {}.",
+        "We've collected {} {}, including {} {} and {} read(s) which resulted in a {}.",
         data.len().to_string().bright_green(),
         "readouts".bright_green(),
         err_items.len().to_string().bright_red(),
