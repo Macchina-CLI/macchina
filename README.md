@@ -3,7 +3,7 @@
 
 Fast, minimal and customizable system information fetcher.
 
-Linux • macOS • Windows • NetBSD
+Linux • macOS • Windows • NetBSD • OpenWrt
 
 <img src="screenshots/preview.png" alt="Preview" />
 
@@ -183,6 +183,7 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 | NetBSD    |        Yes         |
 | macOS     |        Yes         |
 | Windows   |        80%         |
+| OpenWrt   |        Yes         |
 
 # 🌍 Contributors <a name="contributors"></a>
 
@@ -192,3 +193,4 @@ _Macchina_, like many other open-source projects, would not be where it is right
 
 - Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
 - Support for __macOS__ and __Windows__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+- Support for __OpenWrt__ was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)

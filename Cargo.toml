@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.6.5"
+version = "0.6.6"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "A system information fetcher, with a focus on performance and minimalism."
@@ -17,7 +17,7 @@ codegen-units = 1
 
 [dependencies]
 num_cpus = "1.13.0"
-libmacchina = "0.1.9"
+libmacchina = "0.2.0"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }

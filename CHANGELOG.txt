@@ -1,2 +1,2 @@
 # Changelog
-- Update libmacchina dependency to its latest version, 0.1.7.
+- libmacchina: Merge OpenWrt support PR by @uttarayan21
