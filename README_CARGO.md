@@ -61,7 +61,7 @@ __Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
 
 # Features
 ## Themes
-![Theme preview](screenshots/themes.png)
+![Theme preview](screenshots/theme.png)
 
 The [themes wiki page](https://github.com/grtcdr/macchina/wiki/Themes) contains a list of all the built-in themes that you can switch between using the `--theme` flag.
 
@@ -81,13 +81,14 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Desktop Environment
 - Window Manager
 - Package Count [[1]](https://github.com/grtcdr/macchina/wiki/Platform-Support)
-- Shell
 - Terminal
+- Shell
+- Uptime
 - Processor
   - Model
-  - Thread count
+  - Logical Cores
 - Local IP Address
-- Uptime
+- Processor Usage
 - Memory Usage
 - Battery
   - Percentage

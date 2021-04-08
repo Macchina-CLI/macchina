@@ -1,2 +1,5 @@
 # Changelog
-- libmacchina: Merge OpenWrt support PR by @uttarayan21
+- Reorder the readouts
+- libmacchina can now fetch CPU usage, and Macchina can now display it
+- Fixed a bug where LocalIP will be marked as failed when username or hostname fails to fetch
+- Updated some of the example images in README files

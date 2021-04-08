@@ -250,6 +250,28 @@ pub fn get_all_readouts<'a>(
         }
     }
 
+    if should_display.contains(&ReadoutKey::Memory) {
+        use crate::format::memory as format_mem;
+        use libmacchina::traits::MemoryReadout as _;
+
+        let memory_readout = MemoryReadout::new();
+        let total = memory_readout.total();
+        let used = memory_readout.used();
+
+        match (total, used, opt.bar) {
+            (Ok(total), Ok(used), true) => {
+                let bar = create_bar(theme, crate::bars::memory(used, total));
+                readout_values.push(Readout::new(ReadoutKey::Memory, bar))
+            }
+            (Ok(total), Ok(used), false) => {
+                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+            }
+            (Err(e), _, _) | (_, Err(e), _) => {
+                readout_values.push(Readout::new_err(ReadoutKey::Memory, e))
+            }
+        }
+    }
+
     if should_display.contains(&ReadoutKey::Battery) {
         use crate::format::battery as format_bat;
         use libmacchina::traits::BatteryReadout as _;
@@ -270,28 +292,6 @@ pub fn get_all_readouts<'a>(
                 }
             }
             (Err(e), _) | (_, Err(e)) => readout_values.push(Readout::new_err(key, e)),
-        }
-    }
-
-    if should_display.contains(&ReadoutKey::Memory) {
-        use crate::format::memory as format_mem;
-        use libmacchina::traits::MemoryReadout as _;
-
-        let memory_readout = MemoryReadout::new();
-        let total = memory_readout.total();
-        let used = memory_readout.used();
-
-        match (total, used, opt.bar) {
-            (Ok(total), Ok(used), true) => {
-                let bar = create_bar(theme, crate::bars::memory(used, total));
-                readout_values.push(Readout::new(ReadoutKey::Memory, bar))
-            }
-            (Ok(total), Ok(used), false) => {
-                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
-            }
-            (Err(e), _, _) | (_, Err(e), _) => {
-                readout_values.push(Readout::new_err(ReadoutKey::Memory, e))
-            }
         }
     }
 
