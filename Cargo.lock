@@ -304,9 +304,9 @@ checksum = "8916b1f6ca17130ec6568feccee27c156ad12037880833a3b842a823236502e7"
 
 [[package]]
 name = "libmacchina"
-version = "0.2.0"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5369a268d24c187f74aea28dd08d0fb499e8bdd64c47a9937daa9ea3c2d3dec0"
+checksum = "eb257bda10b1364049a6bcd84ab082fa2579d819f9519d80456eed380568cb9d"
 dependencies = [
  "cfg-if",
  "core-foundation",
@@ -317,6 +317,7 @@ dependencies = [
  "local_ipaddress",
  "mach",
  "nix",
+ "num_cpus",
  "os-release",
  "regex",
  "sqlite",
@@ -351,7 +352,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "0.6.6"
+version = "0.6.7"
 dependencies = [
  "bytesize",
  "clap",
@@ -359,7 +360,6 @@ dependencies = [
  "jemallocator",
  "lazy_static",
  "libmacchina",
- "num_cpus",
  "rand",
  "structopt",
  "tui",

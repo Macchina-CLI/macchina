@@ -145,6 +145,11 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Alternative, "Cpu");
                 values.insert(&AbbreviationType::Long, "Processor");
             }
+            ReadoutKey::ProcessorUsage => {
+                values.insert(&AbbreviationType::Classic, "CPU%");
+                values.insert(&AbbreviationType::Alternative, "Cp%");
+                values.insert(&AbbreviationType::Long, "Processor Usage");
+            }
             ReadoutKey::LocalIP => {
                 values.insert(&AbbreviationType::Classic, "Local IP");
                 values.insert(&AbbreviationType::Alternative, "Adr");

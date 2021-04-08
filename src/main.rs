@@ -144,7 +144,7 @@ pub struct Opt {
     long = "show-only",
     possible_values = & data::ReadoutKey::variants(),
     case_insensitive = true,
-    help = " Displays only the specified elements",
+    help = "Displays only the specified elements",
     min_values = 1,
     conflicts_with = "hide"
     )]
@@ -184,6 +184,13 @@ pub struct Opt {
         conflicts_with = "no_box"
     )]
     box_title: Option<String>,
+
+    #[structopt(
+        long = "no-title",
+        help = "Do not display a box title",
+        conflicts_with = "box_title"
+    )]
+    no_title: bool,
 }
 
 fn create_backend() -> CrosstermBackend<Stdout> {
@@ -273,6 +280,10 @@ fn create_theme(opt: &Opt) -> Box<dyn Theme> {
 
     if let Some(box_title) = &opt.box_title {
         theme.set_block_title(&box_title[..]);
+    }
+
+    if opt.no_title {
+        theme.set_block_title("");
     }
 
     if opt.random_color {

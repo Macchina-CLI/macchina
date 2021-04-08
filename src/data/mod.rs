@@ -24,6 +24,7 @@ arg_enum! {
         Terminal,
         Uptime,
         Processor,
+        ProcessorUsage,
         Memory,
         Battery,
         LocalIP,
@@ -103,7 +104,7 @@ pub fn get_all_readouts<'a>(
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
                 if use_bar {
-                    let bar = create_bar(theme, crate::bars::battery(p));
+                    let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     vec.push(Readout::new(key, bar));
                 } else {
                     vec.push(Readout::new(key, format_bat(p, s)));
@@ -157,8 +158,15 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    fn general_readout(vec: &mut Vec<Readout>, should_display: &[ReadoutKey], opt: &Opt) {
+    fn general_readout(
+        vec: &mut Vec<Readout>,
+        should_display: &[ReadoutKey],
+        theme: &Box<dyn Theme>,
+        opt: &Opt,
+        use_bar: bool,
+    ) {
         use crate::format::cpu as format_cpu;
+        use crate::format::cpu_usage as format_cpu_usage;
         use crate::format::host as format_host;
         use crate::format::uptime as format_uptime;
         use libmacchina::traits::GeneralReadout as _;
@@ -168,7 +176,7 @@ pub fn get_all_readouts<'a>(
         if should_display.contains(&ReadoutKey::Host) {
             match (general_readout.username(), general_readout.hostname()) {
                 (Ok(u), Ok(h)) => vec.push(Readout::new(ReadoutKey::Host, format_host(&u, &h))),
-                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::Host, e)),
             }
         }
 
@@ -211,9 +219,26 @@ pub fn get_all_readouts<'a>(
         }
 
         if should_display.contains(&ReadoutKey::Processor) {
-            match general_readout.cpu_model_name() {
-                Ok(s) => vec.push(Readout::new(ReadoutKey::Processor, format_cpu(&s))),
-                Err(e) => vec.push(Readout::new_err(ReadoutKey::Processor, e)),
+            match (
+                general_readout.cpu_model_name(),
+                general_readout.cpu_cores(),
+            ) {
+                (Ok(m), Ok(c)) => vec.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c))),
+                (Err(e), _) | (_, Err(e)) => vec.push(Readout::new_err(ReadoutKey::Processor, e)),
+            }
+        }
+
+        if should_display.contains(&ReadoutKey::ProcessorUsage) {
+            match (general_readout.cpu_usage(), use_bar) {
+                (Ok(u), true) => {
+                    let bar = create_bar(theme, crate::bars::num_to_blocks(u as u8));
+                    vec.push(Readout::new(ReadoutKey::ProcessorUsage, bar))
+                }
+                (Ok(u), false) => vec.push(Readout::new(
+                    ReadoutKey::ProcessorUsage,
+                    format_cpu_usage(u),
+                )),
+                (Err(e), _) => vec.push(Readout::new_err(ReadoutKey::ProcessorUsage, e)),
             }
         }
 
@@ -270,7 +295,7 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    general_readout(&mut readout_values, &should_display, &opt);
+    general_readout(&mut readout_values, &should_display, theme, &opt, opt.bar);
 
     if should_display.contains(&ReadoutKey::Kernel) {
         kernel_readout(&mut readout_values);

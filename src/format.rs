@@ -104,10 +104,14 @@ pub fn memory(total: u64, used: u64) -> String {
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `traits::GeneralReadout::cpu_model_name()` and `num_cpus::get()`
-pub fn cpu(model_name: &str) -> String {
-    format!("{} ({})", model_name, num_cpus::get())
+pub fn cpu(model_name: &str, cpu_cores: usize) -> String {
+    format!("{} ({})", model_name, cpu_cores)
         .replace("(TM)", "™")
         .replace("(R)", "®")
+}
+
+pub fn cpu_usage(used: usize) -> String {
+    format!("{}%", used)
 }
 
 pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, ReadoutError> {
