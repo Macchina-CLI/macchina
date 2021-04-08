@@ -34,7 +34,8 @@ use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use unicode_width::UnicodeWidthStr;
 
 pub const AUTHORS: &str = crate_authors!();
-pub const ABOUT: &str = "System information fetcher";
+pub const ABOUT: &str =
+    "A system information fetcher, with an emphasis on performance and minimalism.";
 
 arg_enum! {
     #[derive(Debug)]
