@@ -1,9 +1,9 @@
 [package]
 name = "macchina"
-version = "0.6.6"
+version = "0.6.7"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
-description = "A system information fetcher, with a focus on performance and minimalism."
+description = "A system information fetcher, with an emphasis on performance and minimalism."
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/Macchina-CLI/macchina"
 license = "MIT"
@@ -16,8 +16,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-num_cpus = "1.13.0"
-libmacchina = "0.2.0"
+libmacchina = "0.2.2"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }

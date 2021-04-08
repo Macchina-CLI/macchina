@@ -1,9 +1,16 @@
+/**
+Returns a `usize` whose value can range from 0 up to 10 based on the given `value`.
+This is used to calculate the number of blocks to show
+in a bar.
 
-/// Returns a usize [0..10] based on the battery percentage,
-/// `display::show_bar` takes this function as a parameter to handle
-/// displaying the bar
-pub fn battery(percentage: u8) -> usize {
-    match percentage {
+For example:
+- __CPU Usage__ ranges from 0 to 100%, this function can return a `usize`
+that tells the bar how many of its blocks should be represented as being used.
+
+The same goes for __battery percentage__, as it ranges from 0 to 100%.
+*/
+pub fn num_to_blocks(value: u8) -> usize {
+    match value {
         0..=10 => 1,
         11..=20 => 2,
         21..=30 => 3,
@@ -19,9 +26,8 @@ pub fn battery(percentage: u8) -> usize {
     }
 }
 
-/// Returns a usize [0..10] based on the memory usage,
-/// `display::show_bar` takes this function as a parameter to handle
-/// displaying the bar
+/// Returns a `usize` whose value can range from 0 up to 10 based on the given `value`.
+/// This is very similar to `num_to_blocks` but the calculations are done in a different way.
 pub fn memory(used: u64, total: u64) -> usize {
     let used = used as f64;
     let total = total as f64;
