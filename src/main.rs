@@ -91,6 +91,21 @@ pub struct Opt {
     no_color: bool,
 
     #[structopt(
+        short = "K",
+        long = "no-separator",
+        help = "Hides the separator character",
+        conflicts_with = "separator_color"
+    )]
+    no_separator: bool,
+
+    #[structopt(
+        short = "D",
+        long = "no-bar-delimiter",
+        help = "Hides the bar's delimiters"
+    )]
+    no_bar_delimiter: bool,
+
+    #[structopt(
     short = "c",
     long = "color",
     possible_values = & MacchinaColor::variants(),
@@ -285,6 +300,15 @@ fn create_theme(opt: &Opt) -> Box<dyn Theme> {
 
     if opt.no_title {
         theme.set_block_title("");
+    }
+
+    if opt.no_separator {
+        theme.set_separator("");
+    }
+
+    if opt.no_bar_delimiter {
+        let new_bar = theme.get_bar_style().hide_delimiters();
+        theme.set_bar_style(new_bar.clone());
     }
 
     if opt.random_color {

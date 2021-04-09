@@ -44,6 +44,14 @@ impl BarStyle {
             symbol_close: '>',
         }
     }
+
+    pub fn hide_delimiters(&self) -> BarStyle {
+        BarStyle {
+            glyph: self.glyph,
+            symbol_open: '\0',
+            symbol_close: '\0',
+        }
+    }
 }
 
 arg_enum! {
@@ -178,6 +186,7 @@ pub trait Theme {
         Self: Sized;
 
     fn get_bar_style(&self) -> &BarStyle;
+    fn set_bar_style(&mut self, bar: BarStyle);
 
     fn get_separator(&self) -> &'static str;
     fn set_separator(&mut self, separator: &'static str);
@@ -241,6 +250,10 @@ impl Theme for HydrogenTheme {
 
     fn get_bar_style(&self) -> &BarStyle {
         &self.bar
+    }
+
+    fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
     }
 
     fn get_separator(&self) -> &'static str {
@@ -327,6 +340,10 @@ impl Theme for HeliumTheme {
         &self.bar
     }
 
+    fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
+    }
+
     fn get_separator(&self) -> &'static str {
         self.separator
     }
@@ -410,6 +427,10 @@ impl Theme for LithiumTheme {
 
     fn get_bar_style(&self) -> &BarStyle {
         &self.bar
+    }
+
+    fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
     }
 
     fn get_separator(&self) -> &'static str {
@@ -499,6 +520,10 @@ impl Theme for EmojiTheme {
 
     fn get_bar_style(&self) -> &BarStyle {
         &self.bar
+    }
+
+    fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
     }
 
     fn get_separator(&self) -> &'static str {
