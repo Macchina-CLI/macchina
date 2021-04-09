@@ -1,5 +1,3 @@
 # Changelog
-- Reorder the readouts
-- libmacchina can now fetch CPU usage, and Macchina can now display it
-- Fixed a bug where LocalIP will be marked as failed when username or hostname fails to fetch
-- Updated some of the example images in README files
+- Added an option to hide the separator
+- Added an option to hide the bar's delimiters
