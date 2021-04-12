@@ -22,7 +22,7 @@ fn split_failed_items<'a>(
 
 fn print_errors<'a>(err_items: &[&'a Readout<'a>]) {
     if err_items.is_empty() {
-        println!("  🎉 You are good to go! No failures detected.");
+        println!("🎉 You are good to go! No failures detected.");
     }
 
     for failed_item in err_items {

@@ -52,7 +52,7 @@ arg_enum! {
 }
 
 impl MacchinaColor {
-    /// Convert arguments passed to `--color` to their respective color.
+    /// Convert the argument passed to a color flag to its respective color.
     fn get_color(&self) -> Color {
         match self {
             MacchinaColor::Red => Color::Red,
@@ -76,14 +76,14 @@ pub struct Opt {
     #[structopt(
         short = "P",
         long = "padding",
-        help = "Specifies the amount of left padding to use"
+        help = "Specify the amount of left padding to use"
     )]
     padding: Option<usize>,
 
     #[structopt(
         short = "s",
         long = "spacing",
-        help = "Specifies the amount of spacing to use"
+        help = "Specify the amount of spacing to use"
     )]
     spacing: Option<usize>,
 
@@ -93,7 +93,7 @@ pub struct Opt {
     #[structopt(
         short = "K",
         long = "no-separator",
-        help = "Hides the separator character",
+        help = "Hides the separator",
         conflicts_with = "separator_color"
     )]
     no_separator: bool,
@@ -110,7 +110,8 @@ pub struct Opt {
     long = "color",
     possible_values = & MacchinaColor::variants(),
     case_insensitive = true,
-    help = "Specifies the key color"
+    help = "Specify the key color",
+    conflicts_with = "no_color",
     )]
     color: Option<MacchinaColor>,
 
@@ -126,7 +127,8 @@ pub struct Opt {
     long = "separator-color",
     possible_values = & MacchinaColor::variants(),
     case_insensitive = true,
-    help = "Specifies the separator color"
+    help = "Specify the separator color",
+    conflicts_with = "no_color",
     )]
     separator_color: Option<MacchinaColor>,
 
@@ -181,7 +183,7 @@ pub struct Opt {
     default_value = "Hydrogen",
     possible_values = & theme::Themes::variants(),
     case_insensitive = true,
-    help = "Specifies the theme to use"
+    help = "Specify the theme"
     )]
     theme: theme::Themes,
 
@@ -203,7 +205,7 @@ pub struct Opt {
 
     #[structopt(
         long = "no-title",
-        help = "Do not display a box title",
+        help = "Hides the box title",
         conflicts_with = "box_title"
     )]
     no_title: bool,
@@ -320,8 +322,8 @@ fn create_theme(opt: &Opt) -> Box<dyn Theme> {
     }
 
     if opt.no_color {
-        theme.set_separator_color(Color::Reset);
-        theme.set_color(Color::Reset);
+        theme.set_separator_color(Color::White);
+        theme.set_color(Color::White);
     }
 
     theme
@@ -345,10 +347,9 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
 
 fn select_ascii() -> Option<Text<'static>> {
     let ascii_art = ascii::get_ascii_art();
-    let mut rand = rand::thread_rng();
 
     if !ascii_art.is_empty() {
-        Some(ascii_art[rand.gen_range(0..ascii_art.len())].to_owned())
+        Some(ascii_art[0].to_owned())
     } else {
         None
     }
