@@ -23,7 +23,8 @@ Linux • macOS • Windows • NetBSD • OpenWrt
 
 # Table of Contents
 - [About](#about)
-- [Benchmarks](#bench)
+- [Minimalism](#minimal)
+- [Performance](#perf)
 - [Features](#features)
 - [Dependencies](#deps)
 - [Usage](#usage)
@@ -34,7 +35,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt
 
 # About Macchina <a name="about"></a>
 _Macchina_ lets you view basic system information, like your hostname, kernel, uptime, memory usage, and much more.
-It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, minimalism and performance.
+It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, [minimalism](#minimal) and [performance](#perf).
 
 Are you ricing your desktop and would like a program to display your system information, or you want it to load as soon as you open your terminal?
 
@@ -44,11 +45,24 @@ If you're interested in the library _Macchina_ uses to fetch your system informa
 
 ---
 
-# Benchmarks <a name="bench"></a>
+# Minimalism <a name="minimal"></a>
+
+_Macchina_ first started as a barebones fetcher, but has evolved to incorporate the many aspects people love to see in their fetcher. This evolution however did not discard the minimalistic look that I envisioned for it.
+
+Here's what you can make it look like using the various supported flags.
+
+```
+macchina -c white --no-box --no-ascii --no-separator --no-bar-delimiter --bar
+```
+
+![Minimal Output Preview](screenshots/minimal.png)
+
+---
+
+# Performance <a name="perf"></a>
 _Macchina_ is pretty fast, see for yourself!
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
-- Hiding elements with `--hide` significantly improves speed
 
 ## 🐧 Linux
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
@@ -56,15 +70,7 @@ _Macchina_ is pretty fast, see for yourself!
 | `macchina` | 19.5 ± 0.7 | 18.6 | 21.5 | 1.00 |
 | `neofetch` | 375.6 ± 4.2 | 371.0 | 391.1 | 19.24 ± 0.70 |
 
-__Summary__: `macchina` runs __19.24 ± 0.70__ times __faster__ than `neofetch`
-
-## 🪟 Windows
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `macchina` | 9.0 ± 0.4 | 8.2 | 11.7 | 1.00 |
-| `neofetch` | 2207.7 ± 53.8 | 2127.1 | 2325.9 | 244.38 ± 13.43 |
-
-__Summary__: `macchina` runs __244.38 ± 13.43__ times __faster__ than `neofetch`
+`macchina` runs __19.24 ± 0.70__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
@@ -73,7 +79,7 @@ __Summary__: `macchina` runs __244.38 ± 13.43__ times __faster__ than `neofetch
 | `macchina` | 5.0 ± 0.2 | 4.7 | 5.9 | 1.00 |
 | `neofetch` | 484.5 ± 4.3 | 477.2 | 492.3 | 97.10 ± 3.84 |
 
-__Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
+`macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 
 ## 🚩 NetBSD
 
@@ -82,7 +88,15 @@ __Summary__: `macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
 | `macchina` | 20.9 ± 2.0 | 19.3 | 30.9 | 1.00 |
 | `neofetch` | 380.6 ± 26.0 | 344.8 | 422.1 | 18.25 ± 2.16 |
 
-__Summary__: `macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
+`macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
+
+## 💻 Windows
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+|:---|---:|---:|---:|---:|
+| `macchina` | 9.0 ± 0.4 | 8.2 | 11.7 | 1.00 |
+| `neofetch` | 2207.7 ± 53.8 | 2127.1 | 2325.9 | 244.38 ± 13.43 |
+
+`macchina` runs __244.38 ± 13.43__ times __faster__ than `neofetch`
 
 ---
 
@@ -123,9 +137,11 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Palette
 
 ## Meet Doctor
-_Macchina_ comes with a very special flag, allowing you to know why certain elements, for example, your operating system information might not be appearing. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
+_Macchina_ comes with a very special flag, allowing you analyze which elements failed to fetch, and why. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
 
-To use this feature, run `macchina --doctor`
+```
+macchina --doctor
+```
 
 ![Doctor flag preview](screenshots/doctor.png)
 
