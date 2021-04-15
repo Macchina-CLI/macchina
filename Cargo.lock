@@ -354,6 +354,7 @@ dependencies = [
 name = "macchina"
 version = "0.6.9"
 dependencies = [
+ "atty",
  "bytesize",
  "clap",
  "colored",

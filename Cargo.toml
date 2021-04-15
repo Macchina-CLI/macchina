@@ -20,6 +20,7 @@ libmacchina = "0.2.3"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
+atty="0.2.14"
 colored = "2.0.0"
 structopt = "0.3.21"
 rand = "0.8.3"
