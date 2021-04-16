@@ -174,8 +174,19 @@ cargo install macchina
 ```
 
 ### AUR
+You have two options:
+- Download and install the latest release:
+
 ```
 git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+- Download and install the latest from upstream:
+
+```
+git clone https://aur.archlinux.org/packages/macchina-git macchina
 cd macchina
 makepkg -si
 ```
