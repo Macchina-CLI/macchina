@@ -408,38 +408,41 @@ fn write_buffer_to_console(
 
     print!("{}", "\n".repeat(last_y as usize + 1));
 
+    let mut cursor_y: u16 = 0;
+
     if atty::is(Stream::Stdout) {
-        let (_, cursor_y) = backend.get_cursor().unwrap_or((0, 0));
-        let term_size = backend.size().unwrap_or_default();
-        // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
-        // cursor_y is smaller than (last_y - 1).
-        let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
-        let mut skip_n = 0;
-
-        let iter = tmp_buffer
-            .content
-            .iter()
-            .enumerate()
-            .filter(|(_previous, cell)| {
-                let curr_width = cell.symbol.width();
-                if curr_width == 0 {
-                    return false;
-                }
-
-                let old_skip = skip_n;
-                skip_n = curr_width.saturating_sub(1);
-                return old_skip == 0;
-            })
-            .map(|(idx, cell)| {
-                let (x, y) = tmp_buffer.pos_of(idx);
-                (x, y, cell)
-            })
-            .filter(|(x, y, _)| *x < term_size.width && *y <= last_y)
-            .map(|(x, y, cell)| (x, y + starting_pos, cell))
-            .into_iter();
-
-        backend.draw(iter)?;
+        cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
     }
+
+    let term_size = backend.size().unwrap_or_default();
+    // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
+    // cursor_y is smaller than (last_y - 1).
+    let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
+    let mut skip_n = 0;
+
+    let iter = tmp_buffer
+        .content
+        .iter()
+        .enumerate()
+        .filter(|(_previous, cell)| {
+            let curr_width = cell.symbol.width();
+            if curr_width == 0 {
+                return false;
+            }
+
+            let old_skip = skip_n;
+            skip_n = curr_width.saturating_sub(1);
+            return old_skip == 0;
+        })
+        .map(|(idx, cell)| {
+            let (x, y) = tmp_buffer.pos_of(idx);
+            (x, y, cell)
+        })
+        .filter(|(x, y, _)| *x < term_size.width && *y <= last_y)
+        .map(|(x, y, cell)| (x, y + starting_pos, cell))
+        .into_iter();
+
+    backend.draw(iter)?;
 
     Ok(())
 }
