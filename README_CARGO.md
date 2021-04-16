@@ -166,3 +166,4 @@ _Macchina_, like many other open-source projects, would not be where it is right
 
 - Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
 - Support for __macOS__ and __Windows__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+- Support for __OpenWrt__ was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)

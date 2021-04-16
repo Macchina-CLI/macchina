@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.6.9"
+version = "0.7.0"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance and minimalism."
@@ -8,6 +8,17 @@ keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/Macchina-CLI/macchina"
 license = "MIT"
 readme = "README_CARGO.md"
+build = "build.rs"
+
+[build-dependencies]
+libmacchina = "0.2.3"
+bytesize = "1.0.1"
+clap = "2.33.3"
+tui = { version = "0.14.0", default-features = false }
+colored = "2.0.0"
+structopt = "0.3.21"
+rand = "0.8.3"
+unicode-width = "0.1.8"
 
 [profile.release]
 opt-level = 3

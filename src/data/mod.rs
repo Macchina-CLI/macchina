@@ -1,5 +1,5 @@
+use crate::cli::Opt;
 use crate::theme::Theme;
-use crate::Opt;
 use clap::arg_enum;
 use libmacchina::traits::ReadoutError;
 use libmacchina::traits::ShellFormat;

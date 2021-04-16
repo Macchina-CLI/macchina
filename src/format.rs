@@ -35,29 +35,26 @@ pub fn uptime(uptime: usize, shorthand: bool) -> String {
             }
             false => {
                 if up_days != 0.0 {
+                    formatted_uptime.push_str(&up_days.to_string());
                     if (up_days - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(&up_days.to_string());
                         formatted_uptime.push_str(" day ");
                     } else {
-                        formatted_uptime.push_str(&up_days.to_string());
                         formatted_uptime.push_str(" days ");
                     }
                 }
                 if up_hours != 0.0 {
+                    formatted_uptime.push_str(&up_hours.to_string());
                     if (up_hours - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(&up_hours.to_string());
                         formatted_uptime.push_str(" hour ");
                     } else {
-                        formatted_uptime.push_str(&up_hours.to_string());
                         formatted_uptime.push_str(" hours ");
                     }
                 }
                 if up_minutes != 0.0 {
+                    formatted_uptime.push_str(&up_minutes.to_string());
                     if (up_minutes - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(&up_minutes.to_string());
                         formatted_uptime.push_str(" minute");
                     } else {
-                        formatted_uptime.push_str(&up_minutes.to_string());
                         formatted_uptime.push_str(" minutes");
                     }
                 }
