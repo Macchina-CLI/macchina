@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use crate::data::ReadoutKey;
 use clap::arg_enum;
 use rand::Rng;
