@@ -229,12 +229,12 @@ fn write_buffer_to_console(
         find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
 
     print!("{}", "\n".repeat(last_y as usize + 1));
-    let cursor_y: u16;
+
+    let mut cursor_y: u16 = 0;
     if atty::is(Stream::Stdout) {
         cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
-    } else {
-        cursor_y = 0
     }
+
     let term_size = backend.size().unwrap_or_default();
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).

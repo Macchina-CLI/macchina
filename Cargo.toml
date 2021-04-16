@@ -42,6 +42,5 @@ macchina = { path = "." }
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = "0.3.2"
 
-
 [features]
 openwrt = ["libmacchina/openwrt"]
