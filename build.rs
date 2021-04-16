@@ -23,6 +23,11 @@ fn main() {
         None => return,
         Some(outdir) => outdir,
     };
+
+    let stamp_path = std::path::Path::new(&outdir).join("macchina-stamp");
+    if let Err(err) = std::fs::File::create(&stamp_path) {
+        panic!("failed to write {}: {}", stamp_path.display(), err);
+    }
     cli::Opt::clap().gen_completions(name, Shell::Fish, &outdir);
     cli::Opt::clap().gen_completions(name, Shell::Bash, &outdir);
     // cli::Opt::clap().gen_completions(name, Shell::Zsh, &outdir);
