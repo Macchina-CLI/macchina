@@ -1,8 +1,6 @@
 use bytesize::ByteSize;
 use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 
-//TODO: rework documentation
-
 /// This function should return a new `String` constructed from the value \
 /// returned by `traits::GeneralReadout::uptime()`
 pub fn uptime(uptime: usize, shorthand: bool) -> String {

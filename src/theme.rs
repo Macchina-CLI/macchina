@@ -59,6 +59,7 @@ arg_enum! {
         Hydrogen,
         Helium,
         Lithium,
+        Beryllium,
         Emoji,
     }
 }
@@ -69,6 +70,7 @@ impl Themes {
             Themes::Hydrogen => HydrogenTheme::new(),
             Themes::Helium => HeliumTheme::new(),
             Themes::Lithium => LithiumTheme::new(),
+            Themes::Beryllium => BerylliumTheme::new(),
             Themes::Emoji => EmojiTheme::new(),
         }
     }
@@ -243,7 +245,7 @@ impl Theme for HydrogenTheme {
             separator: "—",
             spacing: 2,
             padding: 0,
-            block_title: String::from(" System Information "),
+            block_title: String::from(" Hydrogen "),
         })
     }
 
@@ -331,7 +333,7 @@ impl Theme for HeliumTheme {
             separator: "=>",
             spacing: 2,
             padding: 0,
-            block_title: String::from(" System Information "),
+            block_title: String::from(" Helium "),
         })
     }
 
@@ -415,12 +417,12 @@ impl Theme for LithiumTheme {
     fn new() -> Box<dyn Theme> {
         Box::new(LithiumTheme {
             bar: BarStyle::angled(),
-            color: Color::Yellow,
+            color: Color::Magenta,
             separator_color: Color::White,
             separator: "~",
             spacing: 2,
             padding: 0,
-            block_title: String::from(" System Information "),
+            block_title: String::from(" Lithium "),
         })
     }
 
@@ -486,6 +488,91 @@ impl Theme for LithiumTheme {
 }
 
 #[derive(Debug, Clone)]
+pub struct BerylliumTheme {
+    bar: BarStyle,
+    color: Color,
+    separator_color: Color,
+    separator: &'static str,
+    spacing: usize,
+    padding: usize,
+    block_title: String,
+}
+
+impl Theme for BerylliumTheme {
+    fn new() -> Box<dyn Theme> {
+        Box::new(BerylliumTheme {
+            bar: BarStyle::rounded(),
+            color: Color::Yellow,
+            separator_color: Color::White,
+            separator: "->",
+            spacing: 2,
+            padding: 0,
+            block_title: String::from(" Berryllium "),
+        })
+    }
+
+    fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
+    }
+
+    fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
+    }
+
+    fn get_separator(&self) -> &'static str {
+        self.separator
+    }
+
+    fn set_separator(&mut self, separator: &'static str) {
+        self.separator = separator
+    }
+
+    fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    fn get_color(&self) -> Color {
+        self.color
+    }
+
+    fn set_color(&mut self, color: Color) {
+        self.color = color
+    }
+
+    fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+
+    fn get_block_title(&self) -> &str {
+        &self.block_title
+    }
+
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
+    }
+
+    fn default_abbreviation(&self) -> &AbbreviationType {
+        &AbbreviationType::Alternative
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct EmojiTheme {
     bar: BarStyle,
     color: Color,
@@ -501,7 +588,7 @@ impl Theme for EmojiTheme {
         let emoji = Self::get_random_emoji();
         let emoji_width = unicode_width::UnicodeWidthChar::width(*emoji).unwrap_or(1);
         let title = format!(
-            " {}{}System Information ",
+            " {}{}Emoji ",
             emoji,
             " ".repeat(3usize.saturating_sub(emoji_width))
         );

@@ -37,12 +37,14 @@ _Macchina_ is pretty fast, see for yourself!
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
 ## 🐧 Linux
+
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 19.5 ± 0.7 | 18.6 | 21.5 | 1.00 |
-| `neofetch` | 375.6 ± 4.2 | 371.0 | 391.1 | 19.24 ± 0.70 |
+| `macchina` | 19.4 ± 1.3 | 17.3 | 22.3 | 1.00 |
+| `neofetch` | 222.3 ± 2.6 | 218.8 | 225.9 | 11.47 ± 0.76 |
 
-`macchina` runs __19.24 ± 0.70__ times __faster__ than `neofetch`
+
+`macchina` runs __11.47 ± 0.76__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
@@ -57,10 +59,10 @@ _Macchina_ is pretty fast, see for yourself!
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 20.9 ± 2.0 | 19.3 | 30.9 | 1.00 |
-| `neofetch` | 380.6 ± 26.0 | 344.8 | 422.1 | 18.25 ± 2.16 |
+| `macchina` | 23.0 ± 2.5 | 21.2 | 32.0 | 1.00 |
+| `neofetch` | 275.9 ± 11.3 | 267.4 | 296.0 | 12.00 ± 1.38 |
 
-`macchina` runs __18.25 ± 2.16__ times __faster__ than `neofetch`
+`macchina` runs __12.00 ± 1.38__ times __faster__ than `neofetch`
 
 ## 💻 Windows
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |

@@ -1,5 +1,8 @@
 # Changelog
 - Benchmarking with hyperfine has now been fixed.
+- Added a new theme: Berryllium.
+- Each theme now prints its own name as the box title.
+- Update Linux Benchmarks.
 
 @uttarayan21 has added:
 - Shell argument auto-completion for bash and fish.
