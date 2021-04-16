@@ -1,4 +1,5 @@
 # Changelog
-- Fixed a bug that caused bars to seem 100% full when using --no-color
-- Slight modifications to the wording used in the help text
-- No longer generate a random number when picking which ASCII art to display
+- Benchmarking with hyperfine has now been fixed.
+
+@uttarayan21 has added:
+- Shell argument auto-completion for bash and fish.
