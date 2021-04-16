@@ -166,7 +166,14 @@ impl<'a> ReadoutList<'a> {
             .collect();
 
         let spans = Spans::from(span_vector);
-        let area = Rect::new(list_area.x, list_area.y + *height + 1, list_area.width, 1);
+        let padding = self.theme.get_padding() as u16;
+
+        let area = Rect::new(
+            list_area.x + padding,
+            list_area.y + *height + 1,
+            list_area.width - padding,
+            1,
+        );
 
         Paragraph::new(spans).render(area, buf);
 
