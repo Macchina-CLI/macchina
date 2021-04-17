@@ -56,6 +56,46 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             .collect::<Vec<Spans>>(),
     )]
 }
+#[cfg(target_os = "android")]
+pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
+    if !small {
+        let art: Vec<Span> = vec![
+            Span::styled("    .        .", *GREEN),
+            Span::styled("     \\      /", *GREEN),
+            Span::styled("    .oooooooo.", *GREEN),
+            Span::styled("   .oooooooooo. ", *GREEN),
+            Span::styled("   ooo  oo  ooo", *GREEN),
+            Span::styled("   oooooooooooo", *GREEN),
+            Span::styled("   ____________", *GREEN),
+            Span::styled("oo oooooooooooo oo", *GREEN),
+            Span::styled("oo oooooooooooo oo", *GREEN),
+            Span::styled("oo oooooooooooo oo", *GREEN),
+            Span::styled("   oooooooooooo", *GREEN),
+            Span::styled("     ooo   ooo", *GREEN),
+            Span::styled("     ooo   ooo", *GREEN),
+        ];
+
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
+    }
+
+    let art: Vec<Span> = vec![
+        Span::styled("  .        .   ", *GREEN),
+        Span::styled("   \\      /   ", *GREEN),
+        Span::styled("  .oooooooo.   ", *GREEN),
+        Span::styled(" .oooooooooo.  ", *GREEN),
+        Span::styled(" ooo  oo  ooo  ", *GREEN),
+        Span::styled(" oooooooooooo  ", *GREEN),
+    ];
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
+}
 
 #[cfg(target_os = "windows")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
