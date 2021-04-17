@@ -68,11 +68,10 @@ _Macchina_ is pretty fast, see for yourself!
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 19.4 ± 1.3 | 17.3 | 22.3 | 1.00 |
-| `neofetch` | 222.3 ± 2.6 | 218.8 | 225.9 | 11.47 ± 0.76 |
+| `macchina` | 18.8 ± 1.5 | 17.0 | 21.8 | 1.00 |
+| `neofetch` | 218.3 ± 1.8 | 216.0 | 222.8 | 11.64 ± 0.92 |
 
-
-`macchina` runs __11.47 ± 0.76__ times __faster__ than `neofetch`
+`macchina` runs __11.64 ± 0.92__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
@@ -168,19 +167,12 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 ---
 
 # Installation <a name="install"></a>
-### 📦 crates.io
+### 🦀 crates.io
 ```
 cargo install macchina
 ```
 
-### AUR
-```
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
-
-### pkgsrc
+### 📦 pkgsrc
 ```
 pkgin install macchina
 ```
@@ -190,7 +182,24 @@ pkgin install macchina
 brew install Macchina-CLI/homebrew-tap/macchina
 ```
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) also lists the other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+### AUR
+- _Macchina_ — latest release:
+
+```
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+- _Macchina_ — `main` branch:
+
+```
+git clone https://aur.archlinux.org/packages/macchina-git macchina
+cd macchina
+makepkg -si
+```
+
+_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) lists other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
 

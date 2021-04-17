@@ -147,17 +147,14 @@ impl<'a> ReadoutList<'a> {
     fn print_palette(&self, buf: &mut Buffer, list_area: &Rect, height: &mut u16) {
         let colors = [
             // Bright Black
-            Color::Rgb(169, 169, 169),
+            Color::Black,
             Color::LightRed,
             Color::LightGreen,
             Color::LightYellow,
             Color::LightBlue,
-            // Bright Purple
-            Color::Rgb(218, 112, 214),
-            // Bright Cyan
-            Color::Rgb(65, 253, 254),
-            //Bright White
-            Color::Rgb(249, 249, 249),
+            Color::LightMagenta,
+            Color::LightCyan,
+            Color::White,
         ];
 
         let span_vector: Vec<_> = colors
@@ -166,7 +163,14 @@ impl<'a> ReadoutList<'a> {
             .collect();
 
         let spans = Spans::from(span_vector);
-        let area = Rect::new(list_area.x, list_area.y + *height + 1, list_area.width, 1);
+        let padding = self.theme.get_padding() as u16;
+
+        let area = Rect::new(
+            list_area.x + padding,
+            list_area.y + *height + 1,
+            list_area.width - padding,
+            1,
+        );
 
         Paragraph::new(spans).render(area, buf);
 
