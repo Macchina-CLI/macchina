@@ -34,7 +34,11 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             Span::styled("       .MMMM,.    .MMMM,.", *BLUE),
         ];
 
-        return vec![Text::from(art)];
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
     }
 
     // ASCII ART BY JGS
@@ -52,7 +56,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 }
 
 #[cfg(target_os = "windows")]
-pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
+pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
         let art: Vec<Span> = vec![
             Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
@@ -73,7 +77,11 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
             Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
         ];
 
-        return vec![Text::from(art)];
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
     }
 
     let art: Vec<Span> = vec![
@@ -134,7 +142,11 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             Spans::from(vec![Span::styled("     `-/       `--'", *YELLOW)]),
         ];
 
-        return vec![Text::from(art)];
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
     }
 
     let art: Vec<Spans> = vec![
@@ -205,21 +217,29 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             Spans::from(vec![Span::styled("               \\N\\", *WHITE)]),
         ];
 
-        return vec![Text::from(art)];
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
     }
 
     let art: Vec<Spans> = vec![
-        Spans::from(vec![Span::styled("    .--.", *WHITE)]),
-        Spans::from(vec![Span::styled("   |o o |", *WHITE)]),
         Spans::from(vec![
-            Span::styled("   |", *WHITE),
-            Span::styled("\\_/", *YELLOW),
-            Span::styled(" |", *WHITE),
+            Span::styled("()", *WHITE),
+            Span::styled("ncncncncncncncn", *YELLOW),
         ]),
-        Spans::from(vec![Span::styled("  //   \\ \\", *WHITE)]),
-        Spans::from(vec![Span::styled(" (|     | )", *WHITE)]),
-        Spans::from(vec![Span::styled("/'\\_   _/`\\", *WHITE)]),
-        Spans::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
+        Spans::from(vec![
+            Span::styled(" \\\\", *WHITE),
+            Span::styled("ncncncncncn", *YELLOW),
+        ]),
+        Spans::from(vec![
+            Span::styled("  \\\\", *WHITE),
+            Span::styled("ncncncncncncnc", *YELLOW),
+        ]),
+        Spans::from(vec![Span::styled("   \\\\", *WHITE)]),
+        Spans::from(vec![Span::styled("    \\\\", *WHITE)]),
+        Spans::from(vec![Span::styled("     \\\\", *WHITE)]),
     ];
 
     vec![Text::from(art)]
