@@ -8,7 +8,7 @@ I'm very grateful that people find Macchina as interesting as I do. Our codebase
 glued-together set of instructions, to two independent packages, providing users and developers
 the opportunity to inspect the code and actually enjoy doing so :)
 
-Let's take a look at the new changes:
+**Let's take a look at the new changes:**
 
 - ASCII art now adapts to how many readouts are displayed, as suggested by @Ramiferous.
 - A "Beryllium" theme has appeared!
@@ -16,11 +16,12 @@ Let's take a look at the new changes:
 - Benchmarking with hyperfine has finally been fixed.
 - Update Linux and NetBSD benchmarks.
 
-@123marvin123 has fixed:
-- An issue where the palette doesn't respect the user-provided padding value.
+@123marvin123:
+- Fixed an issue where the palette doesn't respect the user-provided padding value.
 
-@uttarayan21 has added:
-- Command autocompletion for bash and fish.
+@uttarayan21:
+- Added command autocompletion for bash and fish.
+- Made some refactoring work in libmacchina, fixing a lot of clippy's warnings.
 
 Changes unrelated to the release:
 - `macchina` AUR package no longer pulls from main but downloads the most recent release.

@@ -7,9 +7,7 @@ lazy_static! {
     static ref GREEN: Style = Style::default().fg(Color::Green);
     static ref YELLOW: Style = Style::default().fg(Color::Yellow);
     static ref MAGENTA: Style = Style::default().fg(Color::Magenta);
-    static ref GRAY: Style = Style::default().fg(Color::Gray);
     static ref WHITE: Style = Style::default().fg(Color::White);
-    static ref CYAN: Style = Style::default().fg(Color::Cyan);
     static ref BLACK: Style = Style::default().fg(Color::Black);
 }
 
@@ -187,42 +185,42 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
                 *YELLOW,
             )]),
             Spans::from(vec![
-                Span::styled("(N\\", *WHITE),
+                Span::styled("(N\\", *BLACK),
                 Span::styled("XCbngg,._____.,gnnndCCCCC___,", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled(" \\N\\", *WHITE),
+                Span::styled(" \\N\\", *BLACK),
                 Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("  \\N\\", *WHITE),
+                Span::styled("  \\N\\", *BLACK),
                 Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCCPFP''", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("   \\N\\", *WHITE),
+                Span::styled("   \\N\\", *BLACK),
                 Span::styled("XCCCCCCCCCCCCCCCCCCCFF\"'", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("    \\N\\", *WHITE),
+                Span::styled("    \\N\\", *BLACK),
                 Span::styled("XCCCCCCCCCCCCCCCCF\"'", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("     \\N\\", *WHITE),
+                Span::styled("     \\N\\", *BLACK),
                 Span::styled("XCCCCCCCCCCCCCF\"'", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("      \\N\\", *WHITE),
+                Span::styled("      \\N\\", *BLACK),
                 Span::styled("\"PCOCCCOC\"", *YELLOW),
             ]),
-            Spans::from(vec![Span::styled("       \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("        \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("         \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("          \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("           \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("            \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("             \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("              \\N\\", *WHITE)]),
-            Spans::from(vec![Span::styled("               \\N\\", *WHITE)]),
+            Spans::from(vec![Span::styled("       \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("        \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("         \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("          \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("           \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("            \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("             \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("              \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("               \\N\\", *BLACK)]),
         ];
 
         return vec![Text::from(
@@ -234,20 +232,20 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 
     let art: Vec<Spans> = vec![
         Spans::from(vec![
-            Span::styled("()", *WHITE),
+            Span::styled("()", *BLACK),
             Span::styled("ncncncncncnc", *YELLOW),
         ]),
         Spans::from(vec![
-            Span::styled(" \\\\", *WHITE),
+            Span::styled(" \\\\", *BLACK),
             Span::styled("ncncncnc", *YELLOW),
         ]),
         Spans::from(vec![
-            Span::styled("  \\\\", *WHITE),
+            Span::styled("  \\\\", *BLACK),
             Span::styled("ncncncncncn", *YELLOW),
         ]),
-        Spans::from(vec![Span::styled("   \\\\", *WHITE)]),
-        Spans::from(vec![Span::styled("    \\\\", *WHITE)]),
-        Spans::from(vec![Span::styled("     \\\\", *WHITE)]),
+        Spans::from(vec![Span::styled("   \\\\", *BLACK)]),
+        Spans::from(vec![Span::styled("    \\\\", *BLACK)]),
+        Spans::from(vec![Span::styled("     \\\\", *BLACK)]),
     ];
 
     vec![Text::from(art)]
