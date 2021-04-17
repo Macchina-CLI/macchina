@@ -1,6 +1,6 @@
 use crate::{data, theme};
-use clap::arg_enum;
-use structopt::{self, StructOpt};
+use clap::{arg_enum, App};
+use structopt::StructOpt;
 use tui::style::Color;
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
@@ -177,4 +177,9 @@ pub struct Opt {
         conflicts_with = "box_title"
     )]
     pub no_title: bool,
+}
+
+#[allow(dead_code)]
+pub fn build_cli() -> App<'static, 'static> {
+    Opt::clap()
 }
