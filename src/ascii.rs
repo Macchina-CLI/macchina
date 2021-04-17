@@ -42,7 +42,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     }
 
     // ASCII ART BY JGS
-    let art: Vec<Spans> = vec![
+    let art: Vec<Span> = vec![
         Span::styled("        .:'", *GREEN),
         Span::styled("    __ :'__", *GREEN),
         Span::styled(" .'`  `-'  ``.", *YELLOW),
@@ -52,7 +52,11 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Span::styled("  `.__.-.__.'", *MAGENTA),
     ];
 
-    vec![Text::from(art)]
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }
 
 #[cfg(target_os = "windows")]
@@ -84,7 +88,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
-    let art: Vec<Spans> = vec![
+    let art: Vec<Span> = vec![
         Span::styled("wwww  wwww", *BLUE),
         Span::styled("wwww  wwww", *BLUE),
         Span::styled("wwww  wwww", *BLUE),
@@ -94,7 +98,11 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Span::styled("wwww  wwww", *BLUE),
     ];
 
-    vec![Text::from(art)]
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
 }
 
 #[cfg(target_os = "linux")]
