@@ -42,7 +42,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     }
 
     // ASCII ART BY JGS
-    let art: Vec<Span> = vec![
+    let art: Vec<Spans> = vec![
         Span::styled("        .:'", *GREEN),
         Span::styled("    __ :'__", *GREEN),
         Span::styled(" .'`  `-'  ``.", *YELLOW),
@@ -84,7 +84,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
-    let art: Vec<Span> = vec![
+    let art: Vec<Spans> = vec![
         Span::styled("wwww  wwww", *BLUE),
         Span::styled("wwww  wwww", *BLUE),
         Span::styled("wwww  wwww", *BLUE),
