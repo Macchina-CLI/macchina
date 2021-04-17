@@ -235,15 +235,15 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     let art: Vec<Spans> = vec![
         Spans::from(vec![
             Span::styled("()", *WHITE),
-            Span::styled("ncncncncncncncn", *YELLOW),
+            Span::styled("ncncncncncnc", *YELLOW),
         ]),
         Spans::from(vec![
             Span::styled(" \\\\", *WHITE),
-            Span::styled("ncncncncncn", *YELLOW),
+            Span::styled("ncncncnc", *YELLOW),
         ]),
         Spans::from(vec![
             Span::styled("  \\\\", *WHITE),
-            Span::styled("ncncncncncncnc", *YELLOW),
+            Span::styled("ncncncncncn", *YELLOW),
         ]),
         Spans::from(vec![Span::styled("   \\\\", *WHITE)]),
         Spans::from(vec![Span::styled("    \\\\", *WHITE)]),
