@@ -147,7 +147,7 @@ The [dependencies wiki page](https://github.com/grtcdr/macchina/wiki/Dependencie
 cargo install macchina
 ```
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) can help you install the program, and also lists multiple other ways you can do so. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) lists other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
   
 ---
 
@@ -159,6 +159,7 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 | NetBSD      |        Yes         |
 | macOS       |        Yes         |
 | Windows     |        80%         |
+| OpenWrt     |        Yes         |
 
 # 🌍 Contributors
 

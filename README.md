@@ -184,7 +184,7 @@ brew install Macchina-CLI/homebrew-tap/macchina
 ```
 
 ### AUR
-- Macchina — latest release:
+- _Macchina_ — latest release:
 
 ```
 git clone https://aur.archlinux.org/macchina.git
@@ -192,7 +192,7 @@ cd macchina
 makepkg -si
 ```
 
-- Macchina — `main` branch:
+- _Macchina_ — `main` branch:
 
 ```
 git clone https://aur.archlinux.org/packages/macchina-git macchina
@@ -200,7 +200,7 @@ cd macchina
 makepkg -si
 ```
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) also lists the other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) lists other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
 
