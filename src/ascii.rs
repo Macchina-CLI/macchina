@@ -39,6 +39,46 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
             .collect::<Vec<Spans>>(),
     )]
 }
+#[cfg(target_os = "android")]
+pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
+    let art: Vec<Span> = vec![
+        Span::styled("                                           ", *GREEN),
+        Span::styled("              A             A              ", *GREEN),
+        Span::styled("              AA           AA              ", *GREEN),
+        Span::styled("               AAAAAAAAAAAAA               ", *GREEN),
+        Span::styled("             AAAAAAAAAAAAAAAAA             ", *GREEN),
+        Span::styled("           AAAAa aAAAAAAAa aAAAA           ", *GREEN),
+        Span::styled("          AAAAAa aAAAAAAAa aAAAAA          ", *GREEN),
+        Span::styled("         AAAAAAAAAAAAAAAAAAAAAAAAA         ", *GREEN),
+        Span::styled("         AAAAAAAAAAAAAAAAAAAAAAAAA         ", *GREEN),
+        Span::styled("                                           ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled(" AAAAA  AAAAAAAAAAAAAAAAAAAAAAAAAA  AAAAA  ", *GREEN),
+        Span::styled("  AAA   AAAAAAAAAAAAAAAAAAAAAAAAAA   AAA   ", *GREEN),
+        Span::styled("        AAAAAAAAAAAAAAAAAAAAAAAAAA         ", *GREEN),
+        Span::styled("        AAAAAAAAAAAAAAAAAAAAAAAAAA         ", *GREEN),
+        Span::styled("        AAAAAAAAAAAAAAAAAAAAAAAAAA         ", *GREEN),
+        Span::styled("              AAAAAA    AAAAA              ", *GREEN),
+        Span::styled("              AAAAAA    AAAAA              ", *GREEN),
+        Span::styled("              AAAAAA    AAAAA              ", *GREEN),
+        Span::styled("              AAAAAA    AAAAA              ", *GREEN),
+        Span::styled("              AAAAAA    AAAAA              ", *GREEN),
+        Span::styled("                                           ", *GREEN),
+    ];
+
+    vec![Text::from(
+        art.iter()
+            .map(|f| Spans::from(f.to_owned()))
+            .collect::<Vec<Spans>>(),
+    )]
+}
 
 #[cfg(target_os = "windows")]
 pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {

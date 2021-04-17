@@ -11,7 +11,7 @@ readme = "README_CARGO.md"
 build = "build.rs"
 
 [build-dependencies]
-libmacchina = "0.2.3"
+libmacchina = { git = "https://github.com/uttarayan21/libmacchina" }
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false }
@@ -27,7 +27,7 @@ lto = true
 codegen-units = 1
 
 [dependencies]
-libmacchina = "0.2.3"
+libmacchina = { git = "https://github.com/uttarayan21/libmacchina" }
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
