@@ -212,6 +212,7 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 | macOS     |        Yes         |
 | Windows   |        80%         |
 | OpenWrt   |        Yes         |
+| Android   |        Soon        |
 
 # 🌍 Contributors <a name="contributors"></a>
 
