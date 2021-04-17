@@ -507,7 +507,7 @@ impl Theme for BerylliumTheme {
             separator: "->",
             spacing: 2,
             padding: 0,
-            block_title: String::from(" Berryllium "),
+            block_title: String::from(" Beryllium "),
         })
     }
 

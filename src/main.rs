@@ -168,8 +168,8 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     keys
 }
 
-fn select_ascii() -> Option<Text<'static>> {
-    let ascii_art = ascii::get_ascii_art();
+fn select_ascii(small: bool) -> Option<Text<'static>> {
+    let ascii_art = ascii::get_ascii_art(small);
 
     if !ascii_art.is_empty() {
         Some(ascii_art[0].to_owned())
@@ -192,10 +192,19 @@ fn main() -> Result<(), io::Error> {
     let mut backend = create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
-    let ascii_area = match (opt.no_ascii, select_ascii()) {
-        (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-        _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-    };
+    let ascii_area;
+
+    if readout_data.len() <= 6 {
+        ascii_area = match (opt.no_ascii, select_ascii(true)) {
+            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+        };
+    } else {
+        ascii_area = match (opt.no_ascii, select_ascii(false)) {
+            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+        };
+    }
 
     let tmp_buffer_area = tmp_buffer.area;
 
