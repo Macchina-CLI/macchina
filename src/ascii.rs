@@ -60,22 +60,6 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
         let art: Vec<Span> = vec![
-            Span::styled("        A         A       ", *GREEN),
-            Span::styled("         A       A        ", *GREEN),
-            Span::styled("         AAAAAAAA         ", *GREEN),
-            Span::styled("       AAAAAAAAAAAA       ", *GREEN),
-            Span::styled("      AAAA AAAA AAAA      ", *GREEN),
-            Span::styled("      AAAAAAAAAAAAAA      ", *GREEN),
-            Span::styled("                          ", *GREEN),
-            Span::styled("AAAA  AAAAAAAAAAAAAA  AAAA", *GREEN),
-            Span::styled("AAAA  AAAAAAAAAAAAAA  AAAA", *GREEN),
-            Span::styled("AAAA  AAAAAAAAAAAAAA  AAAA", *GREEN),
-            Span::styled(" AA   AAAAAAAAAAAAAA   AA ", *GREEN),
-            Span::styled("      AAAAAAAAAAAAAA      ", *GREEN),
-            Span::styled("        AAAA  AAAA        ", *GREEN),
-            Span::styled("        AAAA  AAAA        ", *GREEN),
-        ];
-        let art: Vec<Span> = vec![
             Span::styled("    .        .", *GREEN),
             Span::styled("     \\      /", *GREEN),
             Span::styled("    .oooooooo.", *GREEN),
@@ -99,7 +83,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     }
 
     let art: Vec<Span> = vec![
-        Span::styled("  :        :   ", *GREEN),
+        Span::styled("  .        .   ", *GREEN),
         Span::styled("   \\      /   ", *GREEN),
         Span::styled("  .oooooooo.   ", *GREEN),
         Span::styled(" .oooooooooo.  ", *GREEN),
