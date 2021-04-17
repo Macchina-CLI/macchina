@@ -34,11 +34,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             Span::styled("       .MMMM,.    .MMMM,.", *BLUE),
         ];
 
-        vec![Text::from(
-            art.iter()
-                .map(|f| Spans::from(f.to_owned()))
-                .collect::<Vec<Spans>>(),
-        )]
+        return vec![Text::from(art)];
     }
 
     // ASCII ART BY JGS
@@ -52,11 +48,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Span::styled("  `.__.-.__.'", *MAGENTA),
     ];
 
-    vec![Text::from(
-        art.iter()
-            .map(|f| Spans::from(f.to_owned()))
-            .collect::<Vec<Spans>>(),
-    )]
+    vec![Text::from(art)]
 }
 
 #[cfg(target_os = "windows")]
@@ -81,11 +73,7 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
             Span::styled(r#"WWWWWWWWWWWWWW  WWWWWWWWWWWWWW"#, *BLUE),
         ];
 
-        vec![Text::from(
-            art.iter()
-                .map(|f| Spans::from(f.to_owned()))
-                .collect::<Vec<Spans>>(),
-        )]
+        return vec![Text::from(art)];
     }
 
     let art: Vec<Span> = vec![
@@ -98,11 +86,7 @@ pub(crate) fn get_ascii_art() -> Vec<Text<'static>> {
         Span::styled("wwww  wwww", *BLUE),
     ];
 
-    vec![Text::from(
-        art.iter()
-            .map(|f| Spans::from(f.to_owned()))
-            .collect::<Vec<Spans>>(),
-    )]
+    vec![Text::from(art)]
 }
 
 #[cfg(target_os = "linux")]
@@ -167,7 +151,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Spans::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
     ];
 
-    return vec![Text::from(art)];
+    vec![Text::from(art)]
 }
 
 #[cfg(target_os = "netbsd")]
@@ -221,7 +205,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             Spans::from(vec![Span::styled("               \\N\\", *WHITE)]),
         ];
 
-        vec![Text::from(art)]
+        return vec![Text::from(art)];
     }
 
     let art: Vec<Spans> = vec![
@@ -238,5 +222,5 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Spans::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
     ];
 
-    return vec![Text::from(art)];
+    vec![Text::from(art)]
 }
