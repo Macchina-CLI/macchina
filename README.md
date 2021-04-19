@@ -20,6 +20,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt
 </a>
 </div>
 
+---
 
 # Table of Contents
 - [About](#about)
