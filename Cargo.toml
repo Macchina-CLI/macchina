@@ -11,7 +11,7 @@ readme = "README_CARGO.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = "0.2.4"
+libmacchina = "0.2.5"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
@@ -23,7 +23,7 @@ unicode-width = "0.1.8"
 lazy_static = "1.4.0"
 
 [build-dependencies]
-libmacchina = "0.2.4"
+libmacchina = "0.2.5"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false }
@@ -36,9 +36,6 @@ opt-level = 3
 debug = false
 lto = true
 codegen-units = 1
-
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-jemallocator = "0.3.2"
 
 [features]
 openwrt = ["libmacchina/openwrt"]

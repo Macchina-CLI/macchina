@@ -60,7 +60,7 @@ arg_enum! {
         Helium,
         Lithium,
         Beryllium,
-        Emoji,
+        Boron,
     }
 }
 
@@ -71,7 +71,7 @@ impl Themes {
             Themes::Helium => HeliumTheme::new(),
             Themes::Lithium => LithiumTheme::new(),
             Themes::Beryllium => BerylliumTheme::new(),
-            Themes::Emoji => EmojiTheme::new(),
+            Themes::Boron => BoronTheme::new(),
         }
     }
 }
@@ -573,7 +573,7 @@ impl Theme for BerylliumTheme {
 }
 
 #[derive(Debug, Clone)]
-pub struct EmojiTheme {
+pub struct BoronTheme {
     bar: BarStyle,
     color: Color,
     separator_color: Color,
@@ -583,21 +583,21 @@ pub struct EmojiTheme {
     block_title: String,
 }
 
-impl Theme for EmojiTheme {
+impl Theme for BoronTheme {
     fn new() -> Box<dyn Theme> {
         let emoji = Self::get_random_emoji();
         let emoji_width = unicode_width::UnicodeWidthChar::width(*emoji).unwrap_or(1);
         let title = format!(
-            " {}{}Emoji ",
+            " {}{}Boron ",
             emoji,
             " ".repeat(3usize.saturating_sub(emoji_width))
         );
 
-        Box::new(EmojiTheme {
+        Box::new(BoronTheme {
             bar: BarStyle::rounded(),
             color: Color::Blue,
             separator_color: Color::White,
-            separator: "👉",
+            separator: "•",
             spacing: 2,
             padding: 0,
             block_title: title,
@@ -656,14 +656,16 @@ impl Theme for EmojiTheme {
         &self.block_title
     }
 
-    fn set_block_title(&mut self, _: &str) {}
+    fn set_block_title(&mut self, s: &str) {
+        self.block_title = s.into()
+    }
 
     fn default_abbreviation(&self) -> &AbbreviationType {
         &AbbreviationType::Long
     }
 }
 
-impl EmojiTheme {
+impl BoronTheme {
     fn get_random_emoji() -> &'static char {
         // Only single-codepoint emojis are supported.
         const AVAILABLE_EMOJIS: &[char] = &['💻', '💡', '🦀', '🍺', '🚀', '🔥', '✨', '🎉', '🔌'];

@@ -9,10 +9,6 @@ use structopt::StructOpt;
 #[macro_use]
 extern crate lazy_static;
 
-#[cfg(not(target_env = "msvc"))]
-#[global_allocator]
-static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
-
 mod ascii;
 mod data;
 mod doctor;

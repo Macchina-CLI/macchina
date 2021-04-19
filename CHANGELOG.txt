@@ -9,19 +9,29 @@ glued-together set of instructions, to two independent packages, providing users
 the opportunity to inspect the code and actually enjoy doing so :)
 
 **Let's take a look at the new changes:**
-
 - ASCII art now adapts to how many readouts are displayed, as suggested by @Ramiferous.
+- Updated Linux big ASCII art variant.
+- The title of "Emoji" theme, now named "Boron", can now be changed, and its separator has been modified too.
+- Removed jemallocator from the dependency list, this is due to build errors primarily with libc,  
+we started using this a while back, because its performance improvements were promising,  
+but I have just come to the conclusion that the headaches it causes aren't worth it for the most part.
 - A "Beryllium" theme has appeared!
 - Themes now print their own name in the box title.
 - Benchmarking with hyperfine has finally been fixed.
 - Update Linux and NetBSD benchmarks.
+- libmacchina: Optimizations for Linux, Android and OpenWrt by implementing an interface for `sysinfo`  
+struct and using that when possible.
+- libmacchina (Linux): Optimize terminal fetching by utilizing a custom implementation instead of calling `ps`.
+- libmacchina (Linux): Distribution should now return NAME and VERSION whenever possible,  
+previously it was NAME and VERSION_ID.
 
 @123marvin123:
 - Fixed an issue where the palette doesn't respect the user-provided padding value.
 
 @uttarayan21:
 - Added command autocompletion for bash and fish.
-- Made some refactoring work in libmacchina, fixing a lot of clippy's warnings.
+- libmacchina: Refactored many functions, fixing a lot of clippy's warnings.
+- libmacchina: Added Android support.
 
 Changes unrelated to the release:
 - `macchina` AUR package no longer pulls from main but downloads the most recent release.

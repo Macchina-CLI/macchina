@@ -40,10 +40,10 @@ _Macchina_ is pretty fast, see for yourself!
 
 | Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `macchina` | 18.8 ± 1.5 | 17.0 | 21.8 | 1.00 |
-| `neofetch` | 218.3 ± 1.8 | 216.0 | 222.8 | 11.64 ± 0.92 |
+| `macchina` | 10.0 ± 0.5 | 7.0 | 10.8 | 1.00 |
+| `neofetch` | 214.9 ± 1.4 | 213.0 | 216.6 | 21.39 ± 1.01 |
 
-`macchina` runs __11.64 ± 0.92__ times __faster__ than `neofetch`
+`macchina` runs __21.39 ± 1.01__ times __faster__ than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
@@ -159,7 +159,7 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 | macOS       |        Yes         |
 | Windows     |        80%         |
 | OpenWrt     |        Yes         |
-| Android     |        Soon        |
+| Android     |        Yes         |
 
 # 🌍 Contributors
 
@@ -167,6 +167,6 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 
 _Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
 
-- Support for __NetBSD__ would not be possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for __macOS__ and __Windows__ would not be possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
-- Support for __OpenWrt__ was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)
+- Support for __NetBSD__ would not have been possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
+- Support for __macOS__ and __Windows__ would not have been possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+- Support for __OpenWrt__ and __Android__ was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)
