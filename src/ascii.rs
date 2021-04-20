@@ -16,13 +16,25 @@ lazy_static! {
 
 // TODO: Parse the file given more thorougly and use the custom colours supplied in the file
 // instead of some preset
-pub fn get_ascii_from_file(file_path: &Path) -> Result<Vec<Text<'static>>, io::Error> {
+pub fn get_ascii_from_file(
+    file_path: &Path,
+    override_color: Option<Color>,
+) -> Result<Vec<Text<'static>>, io::Error> {
     let file = File::open(file_path)?;
     let reader = BufReader::new(file);
     return Ok(vec![Text::from(
         reader
             .lines()
-            .map(|line| Spans::from(Span::styled(line.unwrap(), *BLUE)))
+            .map(|line| {
+                if let Some(override_color) = override_color {
+                    Spans::from(Span::styled(
+                        line.unwrap(),
+                        Style::default().fg(override_color),
+                    ))
+                } else {
+                    Spans::from(Span::from(line.unwrap()))
+                }
+            })
             .collect::<Vec<Spans>>(),
     )]);
 }

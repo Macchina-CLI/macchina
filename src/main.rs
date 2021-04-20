@@ -193,7 +193,11 @@ fn main() -> Result<(), io::Error> {
 
     if let Some(file_path) = opt.custom_ascii {
         let file_path = PathBuf::from(file_path);
-        let ascii_art = &ascii::get_ascii_from_file(&file_path)?[0];
+        let override_color = match opt.custom_ascii_color {
+            Some(color) => Some(color.get_color()),
+            None => None,
+        };
+        let ascii_art = &ascii::get_ascii_from_file(&file_path, override_color)?[0];
         // If the file is empty just default to disabled
         if ascii_art.width() != 0 {
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);

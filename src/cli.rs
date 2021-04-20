@@ -166,6 +166,14 @@ pub struct Opt {
     pub custom_ascii: Option<String>,
 
     #[structopt(
+        long = "custom-ascii-color",
+        help = "Overrides all colors in the ascii art with a specified one",
+        requires = "custom-ascii",
+        conflicts_with = "no_ascii"
+    )]
+    pub custom_ascii_color: Option<MacchinaColor>,
+
+    #[structopt(
         long = "no-box",
         help = "Removes the box surrounding system information"
     )]
