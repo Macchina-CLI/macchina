@@ -21,6 +21,7 @@ use atty::Stream;
 use data::Readout;
 use rand::Rng;
 use std::io::Stdout;
+use std::path::PathBuf;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
@@ -190,16 +191,26 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-    if readout_data.len() <= 6 {
-        ascii_area = match (opt.no_ascii, select_ascii(true)) {
-            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-        };
+    if let Some(file_path) = opt.custom_ascii {
+        let file_path = PathBuf::from(file_path);
+        let ascii_art = ascii::get_ascii_from_file(&file_path)?;
+        if !ascii_art.is_empty() {
+            ascii_area = draw_ascii(ascii_art[0].to_owned(), &mut tmp_buffer);
+        } else {
+            panic!("no text found");
+        }
     } else {
-        ascii_area = match (opt.no_ascii, select_ascii(false)) {
-            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-        };
+        if readout_data.len() <= 6 {
+            ascii_area = match (opt.no_ascii, select_ascii(true)) {
+                (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+                _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+            };
+        } else {
+            ascii_area = match (opt.no_ascii, select_ascii(false)) {
+                (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+                _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+            };
+        }
     }
 
     let tmp_buffer_area = tmp_buffer.area;

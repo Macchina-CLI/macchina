@@ -159,6 +159,13 @@ pub struct Opt {
     pub no_ascii: bool,
 
     #[structopt(
+        long = "custom-ascii",
+        help = "Specify your own ascii art from a file",
+        conflicts_with = "no_ascii"
+    )]
+    pub custom_ascii: Option<String>,
+
+    #[structopt(
         long = "no-box",
         help = "Removes the box surrounding system information"
     )]
