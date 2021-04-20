@@ -166,6 +166,7 @@ pub struct Opt {
     pub custom_ascii: Option<String>,
 
     #[structopt(
+        short = "A",
         long = "custom-ascii-color",
         help = "Overrides all colors in the ascii art with a specified one",
         requires = "custom-ascii",
