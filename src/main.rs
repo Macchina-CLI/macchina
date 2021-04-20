@@ -193,11 +193,12 @@ fn main() -> Result<(), io::Error> {
 
     if let Some(file_path) = opt.custom_ascii {
         let file_path = PathBuf::from(file_path);
-        let ascii_art = ascii::get_ascii_from_file(&file_path)?;
-        if !ascii_art.is_empty() {
-            ascii_area = draw_ascii(ascii_art[0].to_owned(), &mut tmp_buffer);
+        let ascii_art = &ascii::get_ascii_from_file(&file_path)?[0];
+        // If the file is empty just default to disabled
+        if ascii_art.width() != 0 {
+            ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
         } else {
-            panic!("no text found");
+            ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
         }
     } else {
         if readout_data.len() <= 6 {
