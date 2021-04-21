@@ -180,7 +180,7 @@ pkgin install macchina
 
 ### 🍻 Homebrew
 ```
-brew install Macchina-CLI/homebrew-tap/macchina
+brew install macchina
 ```
 
 ### AUR
