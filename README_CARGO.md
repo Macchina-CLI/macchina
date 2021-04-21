@@ -91,12 +91,6 @@ macchina -c white --no-box --no-ascii --no-separator --no-bar-delimiter --bar
 _Macchina_ comes equipped with built-in themes that style their readouts, bars and separators differently.
 No extra configuration required.
 
-```
-macchina --theme Boron
-```
-
-![Theme preview](screenshots/theme.png)
-
 ## Bars
 Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
 
