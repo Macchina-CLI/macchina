@@ -1,38 +1,11 @@
 # Changelog
-### Release v0.7.0, Codename "Cobalt".
 
-Okay, before I tell you all about the new features and bug fixes, I'd like to thank
-everybody that is actively using Macchina, and especially our contributors.
-
-I'm very grateful that people find Macchina as interesting as I do. Our codebase has grown from a small,
-glued-together set of instructions, to two independent packages, providing users and developers
-the opportunity to inspect the code and actually enjoy doing so :)
-
-**Let's take a look at the new changes:**
-- ASCII art now adapts to how many readouts are displayed, as suggested by @Ramiferous.
-- Updated Linux big ASCII art variant.
-- The title of "Emoji" theme, now named "Boron", can now be changed, and its separator has been modified too.
-- Removed jemallocator from the dependency list, this is due to build errors primarily with libc,  
-we started using this a while back, because its performance improvements were promising,  
-but I have just come to the conclusion that the headaches it causes aren't worth it for the most part.
-- A "Beryllium" theme has appeared!
-- Themes now print their own name in the box title.
-- Benchmarking with hyperfine has finally been fixed.
-- Update Linux and NetBSD benchmarks.
-- libmacchina: Optimizations for Linux, Android and OpenWrt by implementing an interface for `sysinfo`  
-struct and using that when possible.
-- libmacchina (Linux): Optimize terminal fetching by utilizing a custom implementation instead of calling `ps`.
-- libmacchina (Linux): Distribution should now return NAME and VERSION whenever possible,  
-previously it was NAME and VERSION_ID.
-
-@123marvin123:
-- Fixed an issue where the palette doesn't respect the user-provided padding value.
-
-@uttarayan21:
-- Added command autocompletion for bash and fish.
-- libmacchina: Refactored many functions, fixing a lot of clippy's warnings.
-- libmacchina: Added Android support.
-
-Changes unrelated to the release:
-- `macchina` AUR package no longer pulls from main but downloads the most recent release.
-- A new AUR package, `macchina-git`, has been created and is being maintained by @uttarayan21.
+- libmacchina: (Distribution Readout) try to fetch VERSION before attempting to fetch VERSION_ID.
+- libmacchina: (NetBSD) Performance improvements thanks to a super fast custom terminal fetching implementation.
+- libmacchina: (macOS) Fixed an issue where the program might panic if the battery doesn't.
+- libmacchina: A check has been added to ensure that in case of a failure during the terminal fetching process,  
+- libmacchina: Is now able to properly fetch snaps and dpkg packages.
+- libmacchina: Added more checks to ensure package managers don't return '0'.
+the program should not return any unexpected value: terminal_name() will
+only continue if it receives a PID that is not -1.
+- Changes to the README as well as an update to the benchmarks.
