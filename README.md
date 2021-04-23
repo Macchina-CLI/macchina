@@ -107,7 +107,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 
 <div align="center">
 <img src="screenshots/bars.png" alt="Preview of the bar flag" />
-<div>
+</div>
 
 ## What it fetches
 - Host Information
