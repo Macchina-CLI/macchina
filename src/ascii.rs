@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::{self, BufRead, BufReader};
+use std::path::Path;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
@@ -9,6 +12,31 @@ lazy_static! {
     static ref MAGENTA: Style = Style::default().fg(Color::Magenta);
     static ref WHITE: Style = Style::default().fg(Color::White);
     static ref BLACK: Style = Style::default().fg(Color::Black);
+}
+
+// TODO: Parse the file given more thorougly and use the custom colours supplied in the file
+// instead of some preset
+pub fn get_ascii_from_file(
+    file_path: &Path,
+    override_color: Option<Color>,
+) -> Result<Vec<Text<'static>>, io::Error> {
+    let file = File::open(file_path)?;
+    let reader = BufReader::new(file);
+    return Ok(vec![Text::from(
+        reader
+            .lines()
+            .map(|line| {
+                if let Some(override_color) = override_color {
+                    Spans::from(Span::styled(
+                        line.unwrap(),
+                        Style::default().fg(override_color),
+                    ))
+                } else {
+                    Spans::from(Span::from(line.unwrap()))
+                }
+            })
+            .collect::<Vec<Spans>>(),
+    )]);
 }
 
 #[cfg(target_os = "macos")]
