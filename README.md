@@ -175,7 +175,7 @@ cd macchina
 makepkg -si
 
 # Or you can use the AUR package that pulls straight from the main branch
-git clone https://aur.archlinux.org/packages/macchina-git macchina
+git clone https://aur.archlinux.org/macchina-git.git macchina
 cd macchina
 makepkg -si
 ```
