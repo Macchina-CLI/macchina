@@ -258,8 +258,16 @@ pub fn get_all_readouts<'a>(
     if should_display.contains(&ReadoutKey::ProcessorUsage) {
         match (general_readout.cpu_usage(), opt.bar) {
             (Ok(u), true) => {
-                let bar = create_bar(theme, crate::bars::num_to_blocks(u as u8));
-                readout_values.push(Readout::new(ReadoutKey::ProcessorUsage, bar))
+                if u > 100 {
+                    readout_values.push(Readout::new(
+                        ReadoutKey::ProcessorUsage,
+                        create_bar(theme, crate::bars::num_to_blocks(100 as u8)),
+                    ))
+                }
+                readout_values.push(Readout::new(
+                    ReadoutKey::ProcessorUsage,
+                    create_bar(theme, crate::bars::num_to_blocks(u as u8)),
+                ))
             }
             (Ok(u), false) => readout_values.push(Readout::new(
                 ReadoutKey::ProcessorUsage,

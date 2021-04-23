@@ -105,7 +105,9 @@ No extra configuration required.
 ## Bars
 Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
 
-![Preview of the bar flag](screenshots/bars.png)
+<div align="center">
+<img src="screenshots/bars.png" alt="Preview of the bar flag" />
+<div>
 
 ## What it fetches
 - Host Information

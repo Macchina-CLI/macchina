@@ -1,11 +1,7 @@
 # Changelog
 
-- libmacchina: (Distribution Readout) try to fetch VERSION before attempting to fetch VERSION_ID.
-- libmacchina: (NetBSD) Performance improvements thanks to a super fast custom terminal fetching implementation.
-- libmacchina: (macOS) Fixed an issue where the program might panic if the battery doesn't.
-- libmacchina: A check has been added to ensure that in case of a failure during the terminal fetching process,  
-- libmacchina: Is now able to properly fetch snaps and dpkg packages.
-- libmacchina: Added more checks to ensure package managers don't return '0'.
-the program should not return any unexpected value: terminal_name() will
-only continue if it receives a PID that is not -1.
-- Changes to the README as well as an update to the benchmarks.
+- CPU Usage is allowed to exceed a 100% when bars are disabled, and appears capped at 100% when they are enabled.
+- Merged a PR by @CuriouslyCurious that adds the ability to use custom ASCII art:
+  - `--custom-ascii` lets you import your own ASCII art, overriding the default one.
+  - `--custom-ascii-color` lets you change your custom ASCII art color.
+- libmacchina: (Android) Performance improvements.

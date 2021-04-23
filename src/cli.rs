@@ -74,6 +74,22 @@ pub struct Opt {
     pub no_bar_delimiter: bool,
 
     #[structopt(
+        long = "no-title",
+        help = "Hides the box title",
+        conflicts_with = "box_title"
+    )]
+    pub no_title: bool,
+
+    #[structopt(long = "no-ascii", help = "Removes the ascii art")]
+    pub no_ascii: bool,
+
+    #[structopt(
+        long = "no-box",
+        help = "Removes the box surrounding system information"
+    )]
+    pub no_box: bool,
+
+    #[structopt(
     short = "c",
     long = "color",
     possible_values = & MacchinaColor::variants(),
@@ -155,31 +171,6 @@ pub struct Opt {
     )]
     pub theme: theme::Themes,
 
-    #[structopt(long = "no-ascii", help = "Removes the ascii art")]
-    pub no_ascii: bool,
-
-    #[structopt(
-        long = "custom-ascii",
-        help = "Specify your own ascii art from a file",
-        conflicts_with = "no_ascii"
-    )]
-    pub custom_ascii: Option<String>,
-
-    #[structopt(
-        short = "A",
-        long = "custom-ascii-color",
-        help = "Overrides all colors in the ascii art with a specified one",
-        requires = "custom-ascii",
-        conflicts_with = "no_ascii"
-    )]
-    pub custom_ascii_color: Option<MacchinaColor>,
-
-    #[structopt(
-        long = "no-box",
-        help = "Removes the box surrounding system information"
-    )]
-    pub no_box: bool,
-
     #[structopt(
         long = "box-title",
         help = "Overrides the title of the box",
@@ -188,11 +179,20 @@ pub struct Opt {
     pub box_title: Option<String>,
 
     #[structopt(
-        long = "no-title",
-        help = "Hides the box title",
-        conflicts_with = "box_title"
+        long = "custom-ascii",
+        help = "Specify your own ASCII art from a file",
+        conflicts_with = "no_ascii"
     )]
-    pub no_title: bool,
+    pub custom_ascii: Option<String>,
+
+    #[structopt(
+        short = "A",
+        long = "custom-ascii-color",
+        help = "Overrides all colors in the ASCII art with a specified one",
+        requires = "custom-ascii",
+        conflicts_with = "no_ascii"
+    )]
+    pub custom_ascii_color: Option<MacchinaColor>,
 }
 
 #[allow(dead_code)]
