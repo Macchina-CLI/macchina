@@ -1,6 +1,9 @@
-use std::fs::File;
-use std::io::{self, BufRead, BufReader};
-use std::path::Path;
+use std::{fs::File, process::Command};
+use std::{
+    io::{self, BufRead, BufReader},
+    process::Stdio,
+};
+use std::{path::Path, process::Output};
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
@@ -37,6 +40,24 @@ pub fn get_ascii_from_file(
             })
             .collect::<Vec<Spans>>(),
     )]);
+}
+
+pub fn get_ascii_from_backend(
+    file_path: &Path,
+    _backend: Option<String>,
+) -> Result<Vec<Text<'static>>, io::Error> {
+    let buffer = Command::new("jp2a")
+        .args(&[
+            file_path.to_str().unwrap(),
+            "--color",
+            "--width=30",
+            "--invert",
+        ])
+        .stdout(Stdio::piped())
+        .output()
+        .unwrap();
+    let text = ansi4tui::bytes_to_text(&buffer.stdout as &[u8]);
+    Ok(vec![text])
 }
 
 #[cfg(target_os = "macos")]

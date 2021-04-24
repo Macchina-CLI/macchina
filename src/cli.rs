@@ -193,6 +193,14 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii_color: Option<MacchinaColor>,
+
+    #[structopt(
+        long = "jp2a",
+        help = "Use jp2a to display ascii from jpg/png",
+        requires = "custom-ascii",
+        conflicts_with = "no_ascii"
+    )]
+    pub jp2a_ascii_backend: bool,
 }
 
 #[allow(dead_code)]

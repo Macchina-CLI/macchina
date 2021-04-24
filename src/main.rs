@@ -197,7 +197,13 @@ fn main() -> Result<(), io::Error> {
             Some(color) => Some(color.get_color()),
             None => None,
         };
-        let ascii_art = &ascii::get_ascii_from_file(&file_path, override_color)?[0];
+
+        let ascii_art = &ascii::get_ascii_from_backend(&file_path, None)?[0];
+        // if opt.jp2a_ascii_backend {
+        // ascii_art = &ascii::get_ascii_from_backend(&file_path, None)?[0];
+        // } else {
+        // ascii_art = &ascii::get_ascii_from_file(&file_path, override_color)?[0];
+        // }
         // If the file is empty just default to disabled
         if ascii_art.width() != 0 {
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);

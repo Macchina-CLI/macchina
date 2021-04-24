@@ -21,6 +21,7 @@ structopt = "0.3.21"
 rand = "0.8.3"
 unicode-width = "0.1.8"
 lazy_static = "1.4.0"
+ansi4tui = "0.2.0"
 
 [build-dependencies]
 libmacchina = "0.2.9"
