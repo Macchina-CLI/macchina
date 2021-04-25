@@ -13,8 +13,8 @@ dependencies = [
 
 [[package]]
 name = "ansi-to-tui"
-version = "0.1.0"
-source = "git+https://github.com/uttarayan21/ansi-to-tui#8581b1ab0f9840391505f808d24ece44e49a2ef4"
+version = "0.1.1"
+source = "git+https://github.com/uttarayan21/ansi-to-tui#a3585bad0004a03223174bb94376e985813d8fd9"
 dependencies = [
  "tui",
  "unicode-width",
@@ -310,8 +310,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "0.2.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64b19ae7c8206810bff4b4d1c4275a41b0d8380a829646d574ba4ef8eecc2016"
+source = "git+https://github.com/uttarayan21/libmacchina#d55ccc885ae1971f886734731fc7c0becc6265a6"
 dependencies = [
  "bindgen",
  "cfg-if",
