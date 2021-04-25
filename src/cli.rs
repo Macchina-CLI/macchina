@@ -184,23 +184,21 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii: Option<String>,
-
-    #[structopt(
-        short = "A",
-        long = "custom-ascii-color",
-        help = "Overrides all colors in the ASCII art with a specified one",
-        requires = "custom-ascii",
-        conflicts_with = "no_ascii"
-    )]
-    pub custom_ascii_color: Option<MacchinaColor>,
-
-    #[structopt(
-        long = "jp2a",
-        help = "Use jp2a to display ascii from jpg/png",
-        requires = "custom-ascii",
-        conflicts_with = "no_ascii"
-    )]
-    pub jp2a_ascii_backend: bool,
+    // #[structopt(
+    //     short = "A",
+    //     long = "custom-ascii-color",
+    //     help = "Overrides all colors in the ASCII art with a specified one",
+    //     requires = "custom-ascii",
+    //     conflicts_with = "no_ascii"
+    // )]
+    // pub custom_ascii_color: Option<MacchinaColor>,
+    // #[structopt(
+    //     long = "jp2a",
+    //     help = "Use jp2a to display ascii from jpg/png",
+    //     requires = "custom-ascii",
+    //     conflicts_with = "no_ascii"
+    // )]
+    // pub jp2a_ascii_backend: bool,
 }
 
 #[allow(dead_code)]

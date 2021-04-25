@@ -1,9 +1,7 @@
-use std::{fs::File, process::Command};
-use std::{
-    io::{self, BufRead, BufReader},
-    process::Stdio,
-};
-use std::{path::Path, process::Output};
+use io::Read;
+use std::fs::File;
+use std::io::{self, BufReader};
+use std::path::Path;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
@@ -19,45 +17,12 @@ lazy_static! {
 
 // TODO: Parse the file given more thorougly and use the custom colours supplied in the file
 // instead of some preset
-pub fn get_ascii_from_file(
-    file_path: &Path,
-    override_color: Option<Color>,
-) -> Result<Vec<Text<'static>>, io::Error> {
+pub fn get_ascii_from_file(file_path: &Path) -> Result<Vec<Text<'static>>, io::Error> {
     let file = File::open(file_path)?;
-    let reader = BufReader::new(file);
-    return Ok(vec![Text::from(
-        reader
-            .lines()
-            .map(|line| {
-                if let Some(override_color) = override_color {
-                    Spans::from(Span::styled(
-                        line.unwrap(),
-                        Style::default().fg(override_color),
-                    ))
-                } else {
-                    Spans::from(Span::from(line.unwrap()))
-                }
-            })
-            .collect::<Vec<Spans>>(),
-    )]);
-}
-
-pub fn get_ascii_from_backend(
-    file_path: &Path,
-    _backend: Option<String>,
-) -> Result<Vec<Text<'static>>, io::Error> {
-    let buffer = Command::new("jp2a")
-        .args(&[
-            file_path.to_str().unwrap(),
-            "--color",
-            "--width=30",
-            "--invert",
-        ])
-        .stdout(Stdio::piped())
-        .output()
-        .unwrap();
-    let text = ansi4tui::bytes_to_text(&buffer.stdout as &[u8]);
-    Ok(vec![text])
+    let mut reader = BufReader::new(file);
+    let mut buffer: Vec<u8> = Vec::new();
+    reader.read_to_end(&mut buffer).unwrap();
+    Ok(vec![ansi_to_tui::ansi_to_text(buffer).unwrap()])
 }
 
 #[cfg(target_os = "macos")]
