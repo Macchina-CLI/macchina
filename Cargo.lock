@@ -14,8 +14,8 @@ dependencies = [
 [[package]]
 name = "ansi-to-tui"
 version = "0.1.5"
+source = "git+https://github.com/uttarayan21/ansi-to-tui?branch=master#2e47e63b3f9c03df5a62407e1a494400bfe55e0f"
 dependencies = [
- "simdutf8",
  "tui",
 ]
 
@@ -309,7 +309,8 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "0.2.9"
-source = "git+https://github.com/uttarayan21/libmacchina#d55ccc885ae1971f886734731fc7c0becc6265a6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64b19ae7c8206810bff4b4d1c4275a41b0d8380a829646d574ba4ef8eecc2016"
 dependencies = [
  "bindgen",
  "cfg-if",
@@ -655,12 +656,6 @@ checksum = "16f1d0fef1604ba8f7a073c7e701f213e056707210e9020af4528e0101ce11a6"
 dependencies = [
  "libc",
 ]
-
-[[package]]
-name = "simdutf8"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f4f3d445e9015cf5e72cec4a3b3a84f8d54f34207afee609fd152de1c0212b1"
 
 [[package]]
 name = "smallvec"

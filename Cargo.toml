@@ -11,8 +11,7 @@ readme = "README_CARGO.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = { git = "https://github.com/uttarayan21/libmacchina" }
-# libmacchina = "0.2.9"
+libmacchina = "0.2.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
@@ -22,13 +21,10 @@ structopt = "0.3.21"
 rand = "0.8.3"
 unicode-width = "0.1.8"
 lazy_static = "1.4.0"
-ansi-to-tui = { git = "https://github.com/uttarayan21/ansi-to-tui" }
-# ansi-to-tui = { version = "0.1.5", git = "https://github.com/uttarayan21/ansi-to-tui" , tag = "v0.1.5"}
-# ansi-to-tui = { path = "../rust/ansitui", features = ["simd"] }
+ansi-to-tui = { git = "https://github.com/uttarayan21/ansi-to-tui", branch = "master" }
 
 [build-dependencies]
-libmacchina = { git = "https://github.com/uttarayan21/libmacchina" }
-# libmacchina = "0.2.9"
+libmacchina = "0.2.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false }
