@@ -21,7 +21,8 @@ structopt = "0.3.21"
 rand = "0.8.3"
 unicode-width = "0.1.8"
 lazy_static = "1.4.0"
-ansi-to-tui = { git = "https://github.com/uttarayan21/ansi-to-tui", branch = "master" }
+ansi-to-tui = "0.1.6"
+
 
 [build-dependencies]
 libmacchina = "0.2.9"

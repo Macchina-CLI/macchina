@@ -13,8 +13,9 @@ dependencies = [
 
 [[package]]
 name = "ansi-to-tui"
-version = "0.1.5"
-source = "git+https://github.com/uttarayan21/ansi-to-tui?branch=master#2e47e63b3f9c03df5a62407e1a494400bfe55e0f"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "75e82e8374f1b6978b98bc904c255ac91ea4e120fc863630ba61b38e2a33a2a1"
 dependencies = [
  "tui",
 ]
@@ -586,9 +587,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
+checksum = "85dd92e586f7355c633911e11f77f3d12f04b1b1bd76a198bd34ae3af8341ef2"
 dependencies = [
  "bitflags",
 ]
@@ -731,9 +732,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
+checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -818,9 +819,9 @@ checksum = "9337591893a19b88d8d87f2cec1e73fad5cdfd10e5a6f349f498ad6ea2ffb1e3"
 
 [[package]]
 name = "unicode-xid"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7fe0bb3479651439c9112f72b6c505038574c9fbb575ed1bf3b797fa39dd564"
+checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 
 [[package]]
 name = "vec_map"
