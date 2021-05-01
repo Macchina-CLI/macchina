@@ -25,6 +25,8 @@ pub fn get_ascii_from_file(file_path: &Path) -> Result<Vec<Text<'static>>, io::E
     Ok(vec![ansi_to_tui::ansi_to_text(buffer).unwrap()])
 }
 
+// The following is a slightly modified
+// version of neofetch's Apple ASCII art.
 #[cfg(target_os = "macos")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -53,7 +55,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
-    // ASCII ART BY JGS
+    // The following Apple ASCII art was made by Joan Stark (jgs)
     let art: Vec<Span> = vec![
         Span::styled("        .:'", *GREEN),
         Span::styled("    __ :'__", *GREEN),
@@ -70,6 +72,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             .collect::<Vec<Spans>>(),
     )]
 }
+
 #[cfg(target_os = "android")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -157,6 +160,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     )]
 }
 
+// The following penguin ASCII art was made by Joan Stark (jgs)
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -212,6 +216,10 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
+    // The following penguin ASCII art was found and
+    // taken from: https://asciiart.website/index.php
+    // Artist attribution missing.
+    // Thank you to whoever made it :^)
     let art: Vec<Spans> = vec![
         Spans::from(vec![Span::styled("    .--.", *WHITE)]),
         Spans::from(vec![
@@ -237,51 +245,29 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
         let art: Vec<Spans> = vec![
-            Spans::from(vec![Span::styled(
-                "                              __,gnCCaau",
-                *YELLOW,
-            )]),
-            Spans::from(vec![Span::styled(
-                "                     __,gnnCCFFFF",
-                *YELLOW,
-            )]),
             Spans::from(vec![
-                Span::styled("(N\\", *BLACK),
-                Span::styled("XCbngg,._____.,gnnndCCCCC___,", *YELLOW),
+                Span::styled("\\\\", *WHITE),
+                Span::styled("`-______,----__", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled(" \\N\\", *BLACK),
-                Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCOOOOPYv", *YELLOW),
+                Span::styled(" \\\\", *WHITE),
+                Span::styled("        __,---`.", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("  \\N\\", *BLACK),
-                Span::styled("XCCCCCCCCCCCCCCCCCCCCCCCCCCPFP''", *YELLOW),
+                Span::styled("  \\\\", *WHITE),
+                Span::styled("       `.____", *YELLOW),
             ]),
             Spans::from(vec![
-                Span::styled("   \\N\\", *BLACK),
-                Span::styled("XCCCCCCCCCCCCCCCCCCCFF\"'", *YELLOW),
+                Span::styled("   \\\\", *WHITE),
+                Span::styled("-______,----`.", *YELLOW),
             ]),
-            Spans::from(vec![
-                Span::styled("    \\N\\", *BLACK),
-                Span::styled("XCCCCCCCCCCCCCCCCF\"'", *YELLOW),
-            ]),
-            Spans::from(vec![
-                Span::styled("     \\N\\", *BLACK),
-                Span::styled("XCCCCCCCCCCCCCF\"'", *YELLOW),
-            ]),
-            Spans::from(vec![
-                Span::styled("      \\N\\", *BLACK),
-                Span::styled("\"PCOCCCOC\"", *YELLOW),
-            ]),
-            Spans::from(vec![Span::styled("       \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("        \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("         \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("          \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("           \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("            \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("             \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("              \\N\\", *BLACK)]),
-            Spans::from(vec![Span::styled("               \\N\\", *BLACK)]),
+            Spans::from(vec![Span::styled("    \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("     \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("      \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("       \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("        \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("         \\\\", *WHITE)]),
+            Spans::from(vec![Span::styled("          \\\\", *WHITE)]),
         ];
 
         return vec![Text::from(
