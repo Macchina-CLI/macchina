@@ -15,8 +15,6 @@ lazy_static! {
     static ref BLACK: Style = Style::default().fg(Color::Black);
 }
 
-// TODO: Parse the file given more thorougly and use the custom colours supplied in the file
-// instead of some preset
 pub fn get_ascii_from_file(file_path: &Path) -> Result<Vec<Text<'static>>, io::Error> {
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
