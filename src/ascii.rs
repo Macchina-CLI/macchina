@@ -39,6 +39,8 @@ pub fn get_ascii_from_file(
     )]);
 }
 
+// The following is a slightly modified
+// version of neofetch's Apple ASCII art.
 #[cfg(target_os = "macos")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -67,7 +69,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
-    // ASCII ART BY JGS
+    // The following Apple ASCII art was made by Joan Stark (jgs)
     let art: Vec<Span> = vec![
         Span::styled("        .:'", *GREEN),
         Span::styled("    __ :'__", *GREEN),
@@ -84,6 +86,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
             .collect::<Vec<Spans>>(),
     )]
 }
+
 #[cfg(target_os = "android")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -171,6 +174,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     )]
 }
 
+// The following penguin ASCII art was made by Joan Stark (jgs)
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
@@ -226,6 +230,10 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         )];
     }
 
+    // The following penguin ASCII art was found and
+    // taken from: https://asciiart.website/index.php
+    // Artist attribution missing.
+    // Thank you to whoever made it :^)
     let art: Vec<Spans> = vec![
         Spans::from(vec![Span::styled("    .--.", *WHITE)]),
         Spans::from(vec![
@@ -247,6 +255,8 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     vec![Text::from(art)]
 }
 
+// The following NetBSD ASCII art was found and taken
+// from: http://www.netbsd.org/gallery/mobile-logos.html
 #[cfg(target_os = "netbsd")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     if !small {
