@@ -193,12 +193,19 @@ fn main() -> Result<(), io::Error> {
 
     if let Some(file_path) = opt.custom_ascii {
         let file_path = PathBuf::from(file_path);
-        // let override_color = match opt.custom_ascii_color {
-        //     Some(color) => Some(color.get_color()),
-        //     None => None,
-        // };
+        let ascii_art;
+        match opt.custom_ascii_color {
+            Some(color) => {
+                ascii_art = ascii::get_ascii_from_file_override_color(
+                    &file_path,
+                    color.get_color().to_owned(),
+                )?;
+            }
 
-        let ascii_art = &ascii::get_ascii_from_file(&file_path)?[0];
+            None => {
+                ascii_art = ascii::get_ascii_from_file(&file_path)?;
+            }
+        };
 
         // If the file is empty just default to disabled
         if ascii_art.width() != 0 {

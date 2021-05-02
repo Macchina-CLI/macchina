@@ -15,12 +15,25 @@ lazy_static! {
     static ref BLACK: Style = Style::default().fg(Color::Black);
 }
 
-pub fn get_ascii_from_file(file_path: &Path) -> Result<Vec<Text<'static>>, io::Error> {
+pub fn get_ascii_from_file_override_color(
+    file_path: &Path,
+    color: Color,
+) -> Result<Text<'static>, io::Error> {
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
     let mut buffer: Vec<u8> = Vec::new();
-    reader.read_to_end(&mut buffer).unwrap();
-    Ok(vec![ansi_to_tui::ansi_to_text(buffer).unwrap()])
+    reader.read_to_end(&mut buffer)?;
+    Ok(
+        ansi_to_tui::ansi_to_text_override_style(buffer, Style::default().fg(color))
+            .unwrap_or_default(),
+    )
+}
+pub fn get_ascii_from_file(file_path: &Path) -> Result<Text<'static>, io::Error> {
+    let file = File::open(file_path)?;
+    let mut reader = BufReader::new(file);
+    let mut buffer: Vec<u8> = Vec::new();
+    reader.read_to_end(&mut buffer)?;
+    Ok(ansi_to_tui::ansi_to_text(buffer).unwrap_or_default())
 }
 
 // The following is a slightly modified
