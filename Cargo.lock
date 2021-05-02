@@ -13,8 +13,9 @@ dependencies = [
 
 [[package]]
 name = "ansi-to-tui"
-version = "0.1.6"
-source = "git+https://github.com/uttarayan21/ansi-to-tui#0694221f34a468ab9dd1070e7b2b363876e65791"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68e641c53cff9ac29d24dad584fbd0aabfe19ac8169202f664c01f493e884e3e"
 dependencies = [
  "tui",
 ]

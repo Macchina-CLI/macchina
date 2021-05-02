@@ -208,23 +208,22 @@ fn main() -> Result<(), io::Error> {
         };
 
         // If the file is empty just default to disabled
-        if ascii_art.width() != 0 {
+        if ascii_art.width() != 0 && ascii_art.height() < 50 {
+            // because tmp_buffer height is 50
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
         } else {
             ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
         }
+    } else if readout_data.len() <= 6 {
+        ascii_area = match (opt.no_ascii, select_ascii(true)) {
+            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+        };
     } else {
-        if readout_data.len() <= 6 {
-            ascii_area = match (opt.no_ascii, select_ascii(true)) {
-                (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-                _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-            };
-        } else {
-            ascii_area = match (opt.no_ascii, select_ascii(false)) {
-                (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-                _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-            };
-        }
+        ascii_area = match (opt.no_ascii, select_ascii(false)) {
+            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
+            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
+        };
     }
 
     let tmp_buffer_area = tmp_buffer.area;
