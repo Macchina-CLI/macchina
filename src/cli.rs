@@ -184,7 +184,6 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii: Option<String>,
-
     #[structopt(
         short = "A",
         long = "custom-ascii-color",
