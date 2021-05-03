@@ -42,3 +42,5 @@ jobs:
         run: cargo build
       - name: Test
         run: cargo test
+      - name: Run Doctor
+        run: cargo run -- --doctor
