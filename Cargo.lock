@@ -309,9 +309,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "0.3.1"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c993e5e06109035cc8df534cbf93e904dc5a8277209299074ed4c547d4b1c73a"
+checksum = "3294b858ddc72e4760c16941c1c706a75c33e1e4cb892f12e2d445efb7790403"
 dependencies = [
  "bindgen",
  "cfg-if",
@@ -358,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "ansi-to-tui",
  "atty",
