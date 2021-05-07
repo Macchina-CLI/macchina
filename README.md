@@ -182,6 +182,12 @@ cd macchina
 makepkg -si
 ```
 
+### Termux
+
+```
+pkg install macchina
+```
+
 _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) lists the other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
 
 ---
