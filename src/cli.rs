@@ -192,6 +192,12 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii_color: Option<MacchinaColor>,
+    #[structopt(
+        long = "small-ascii",
+        help = "Prefer smaller ASCII variants",
+        conflicts_with = "no_ascii"
+    )]
+    pub small_ascii: bool,
 }
 
 #[allow(dead_code)]
