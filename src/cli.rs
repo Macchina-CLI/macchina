@@ -198,6 +198,13 @@ pub struct Opt {
     pub custom_ascii_color: Option<MacchinaColor>,
 
     #[structopt(
+        long = "small-ascii",
+        help = "Prefer smaller ASCII variants",
+        conflicts_with = "no_ascii"
+    )]
+    pub small_ascii: bool,
+
+    #[structopt(
         long = "export-config",
         help = "Prints the config file to stdout",
         conflicts_with = "doctor"
@@ -237,8 +244,10 @@ impl Default for Opt {
             theme: None,
 
             box_title: None,
+
             custom_ascii: None,
             custom_ascii_color: None,
+            small_ascii: false,
 
             export_config: false,
         }
