@@ -4,13 +4,14 @@ use clap::arg_enum;
 use libmacchina::traits::ReadoutError;
 use libmacchina::traits::ShellFormat;
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash,Serialize, Deserialize)]
     pub enum ReadoutKey {
         Host,
         Machine,

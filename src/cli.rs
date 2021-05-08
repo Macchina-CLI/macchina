@@ -1,12 +1,14 @@
 use crate::{data, theme};
 use clap::{arg_enum, App};
+use serde::{Deserialize, Serialize};
+use std::default::Default;
 use structopt::StructOpt;
 use tui::style::Color;
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
 
 arg_enum! {
-    #[derive(Debug)]
+    #[derive(Debug,Serialize, Deserialize)]
     pub enum MacchinaColor {
         Red,
         Green,
@@ -35,8 +37,9 @@ impl MacchinaColor {
     }
 }
 
-#[derive(StructOpt, Debug)]
+#[derive(StructOpt, Debug, Serialize, Deserialize)]
 #[structopt(author = AUTHORS, about = ABOUT)]
+#[serde(default, deny_unknown_fields)]
 pub struct Opt {
     #[structopt(short = "p", long = "palette", help = "Displays color palette")]
     pub palette: bool,
@@ -153,6 +156,7 @@ pub struct Opt {
     pub show_only: Option<Vec<data::ReadoutKey>>,
 
     #[structopt(short = "d", long = "doctor", help = "Checks the system for failures")]
+    #[serde(skip_serializing, skip_deserializing)]
     pub doctor: bool,
 
     #[structopt(short = "U", long = "short-uptime", help = "Shortens uptime output")]
@@ -164,12 +168,12 @@ pub struct Opt {
     #[structopt(
     short = "t",
     long = "theme",
-    default_value = "Hydrogen",
+    // default_value = "Hydrogen",
     possible_values = & theme::Themes::variants(),
     case_insensitive = true,
     help = "Specify the theme"
     )]
-    pub theme: theme::Themes,
+    pub theme: Option<theme::Themes>,
 
     #[structopt(
         long = "box-title",
@@ -192,6 +196,53 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii_color: Option<MacchinaColor>,
+
+    #[structopt(
+        long = "export-config",
+        help = "Prints the config file to stdout",
+        conflicts_with = "doctor"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub export_config: bool,
+}
+impl Default for Opt {
+    fn default() -> Self {
+        Opt {
+            palette: false,
+            padding: None,
+            spacing: None,
+
+            no_color: false,
+            no_separator: false,
+            no_bar_delimiter: false,
+            no_title: false,
+            no_ascii: false,
+            no_box: false,
+
+            color: None,
+            bar: false,
+
+            separator_color: None,
+            random_color: false,
+            random_sep_color: false,
+
+            hide: None,
+            show_only: None,
+
+            doctor: false,
+
+            short_uptime: false,
+            short_shell: false,
+
+            theme: None,
+
+            box_title: None,
+            custom_ascii: None,
+            custom_ascii_color: None,
+
+            export_config: false,
+        }
+    }
 }
 
 #[allow(dead_code)]

@@ -1,11 +1,14 @@
 mod bars;
 mod cli;
+mod config;
 mod format;
 mod theme;
+// mod error;
 
 use cli::{MacchinaColor, Opt};
 use std::io;
 use structopt::StructOpt;
+// use config::
 #[macro_use]
 extern crate lazy_static;
 
@@ -91,7 +94,12 @@ fn draw_readout_data(
 }
 
 fn create_theme(opt: &Opt) -> Box<dyn Theme> {
-    let mut theme = opt.theme.create_instance();
+    let mut theme;
+    if let Some(opt_theme) = &opt.theme {
+        theme = opt_theme.create_instance();
+    } else {
+        theme = theme::Themes::Hydrogen.create_instance();
+    }
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
@@ -176,7 +184,24 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn main() -> Result<(), io::Error> {
-    let opt = Opt::from_args();
+    let opt: Opt;
+    let config_opt = Opt::from_config();
+    let arg_opt = Opt::from_args();
+
+    if arg_opt.export_config {
+        println!("{}",toml::to_string(&arg_opt).unwrap());
+        return Ok(());
+    }
+
+    if let Ok(mut config_opt) = config_opt {
+        config_opt.patch_args(arg_opt).unwrap();
+        opt = config_opt;
+    } else {
+        println!("\x1b[33mWarning:\x1b[0m Invalid config file");
+        opt = arg_opt;
+    }
+
+
     let should_display = should_display(&opt);
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);

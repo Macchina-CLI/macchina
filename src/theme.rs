@@ -1,6 +1,7 @@
 use crate::data::ReadoutKey;
 use clap::arg_enum;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use tui::style::Color;
 
@@ -54,7 +55,7 @@ impl BarStyle {
 }
 
 arg_enum! {
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, PartialEq,Serialize, Deserialize)]
     pub enum Themes {
         Hydrogen,
         Helium,
