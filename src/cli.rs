@@ -198,6 +198,22 @@ pub struct Opt {
         conflicts_with = "no_ascii"
     )]
     pub small_ascii: bool,
+
+    #[structopt(
+    help = "Sets the border margin on the x axis for the box.",
+    long = "box-border-margin-x",
+    conflicts_with = "no_box",
+    default_value = "1"
+    )]
+    pub box_border_margin_x: u16,
+
+    #[structopt(
+        help = "Sets the border margin on the y axis for the box.",
+        long = "box-border-margin-y",
+        conflicts_with = "no_box",
+        default_value = "1"
+    )]
+    pub box_border_margin_y: u16,
 }
 
 #[allow(dead_code)]
