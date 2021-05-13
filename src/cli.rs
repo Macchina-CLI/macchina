@@ -200,18 +200,20 @@ pub struct Opt {
     pub small_ascii: bool,
 
     #[structopt(
-    help = "Sets the border margin on the x axis for the box.",
-    long = "box-border-margin-x",
-    conflicts_with = "no_box",
-    default_value = "1"
+        help = "Sets the border margin on the x axis for the box.",
+        long = "box-inner-margin-x",
+        short = "L",
+        conflicts_with = "no_box",
+        default_value = "1"
     )]
     pub box_border_margin_x: u16,
 
     #[structopt(
         help = "Sets the border margin on the y axis for the box.",
-        long = "box-border-margin-y",
+        long = "box-inner-margin-y",
+        short = "J",
         conflicts_with = "no_box",
-        default_value = "1"
+        default_value = "0"
     )]
     pub box_border_margin_y: u16,
 }
