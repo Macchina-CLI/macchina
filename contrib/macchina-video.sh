@@ -68,7 +68,7 @@ for img in $(seq 1 999999);do # increasing this too much will break it
         if [ $count -ge $WAIT ];then break;fi
     done
     printf '\x1b[s' # saves cursor position
-    macchina --custom-ascii <(jp2a --color --width=50 $DIR/out_$img.png)
+    target/debug/macchina --custom-ascii <(jp2a --color --width=50 $DIR/out_$img.png)
     # jp2a --color --width=50 $DIR/out_$img.png # just display the video wihout macchina
     printf '\x1b[u'
     if [ -f  "$DIR/out_$img.png" ];then

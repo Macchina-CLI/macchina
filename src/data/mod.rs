@@ -11,7 +11,7 @@ use tui::text::{Span, Spans, Text};
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash,Serialize, Deserialize)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum ReadoutKey {
         Host,
         Machine,
@@ -59,12 +59,12 @@ fn colored_glyphs(glyph: &str, blocks: usize) -> String {
         .join(" ")
 }
 
-fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
+fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     if theme.get_bar_style().symbol_open == '\0' {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
-        let glyph = theme.get_bar_style().glyph;
-        let glyphs = colored_glyphs(glyph, blocks);
+        let glyph = theme.get_bar_style().glyph.clone();
+        let glyphs = colored_glyphs(&glyph, blocks);
 
         if blocks == 10 {
             span_vector[0].content = Cow::from(glyphs);
@@ -73,9 +73,9 @@ fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
         }
         span_vector[0].style = Style::default().fg(theme.get_color());
 
-        span_vector[1].content = Cow::from(colored_glyphs(glyph, 10 - blocks).to_string());
+        span_vector[1].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
         if theme.get_color() == Color::White {
-            span_vector[1].content = Cow::from(span_vector[1].content.replace(glyph, " "));
+            span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
         return Spans::from(span_vector);
     }
@@ -87,8 +87,8 @@ fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
         Span::raw(format!(" {}", theme.get_bar_style().symbol_close)),
     ];
 
-    let glyph = theme.get_bar_style().glyph;
-    let glyphs = colored_glyphs(glyph, blocks);
+    let glyph = theme.get_bar_style().glyph.clone();
+    let glyphs = colored_glyphs(&glyph, blocks);
 
     if blocks == 10 {
         span_vector[1].content = Cow::from(glyphs);
@@ -97,16 +97,16 @@ fn create_bar<'a>(theme: &Box<dyn Theme>, blocks: usize) -> Spans<'a> {
     }
     span_vector[1].style = Style::default().fg(theme.get_color());
 
-    span_vector[2].content = Cow::from(colored_glyphs(glyph, 10 - blocks).to_string());
+    span_vector[2].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
     if theme.get_color() == Color::White {
-        span_vector[2].content = Cow::from(span_vector[2].content.replace(glyph, " "));
+        span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
     return Spans::from(span_vector);
 }
 
 pub fn get_all_readouts<'a>(
     opt: &Opt,
-    theme: &Box<dyn Theme>,
+    theme: &Theme,
     should_display: Vec<ReadoutKey>,
 ) -> Vec<Readout<'a>> {
     use crate::format::cpu as format_cpu;

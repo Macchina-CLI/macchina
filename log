@@ -1,1 +1,0 @@
-"palette = true\nno_color = false\nno_separator = false\nno_bar_delimiter = false\nno_title = true\nno_ascii = true\nno_box = true\nbar = true\nrandom_color = false\nrandom_sep_color = false\nshow_only = [\"Battery\"]\nshort_uptime = false\nshort_shell = true\ntheme = \"Boron\"\ncustom_ascii = \"/home/fs0c131y/.config/ascii/archlinux.ascii\"\n"

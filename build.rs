@@ -10,7 +10,7 @@ mod data {
     include!("src/data/mod.rs");
 }
 mod theme {
-    include!("src/theme.rs");
+    include!("src/theme/mod.rs");
 }
 mod cli {
     include!("src/cli.rs");

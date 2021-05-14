@@ -11,13 +11,13 @@ pub struct ReadoutList<'a> {
     block: Option<Block<'a>>,
     style: Style,
     items: Vec<Readout<'a>>,
-    theme: &'a Box<dyn Theme>,
+    theme: &'a Theme,
     block_inner_margin: Margin,
     palette: bool,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
-    pub fn new<T>(items: T, theme: &'a Box<dyn Theme>) -> ReadoutList<'a>
+    pub fn new<T>(items: T, theme: &'a Theme) -> ReadoutList<'a>
     where
         T: Into<Vec<Readout<'a>>>,
     {
@@ -44,7 +44,7 @@ impl<'a, 'b> ReadoutList<'a> {
         self
     }
 
-    pub fn theme(mut self, theme: &'a Box<dyn Theme>) -> ReadoutList<'a> {
+    pub fn theme(mut self, theme: &'a Theme) -> ReadoutList<'a> {
         self.theme = theme;
         self
     }
@@ -187,6 +187,7 @@ impl<'a> ReadoutList<'a> {
                     i.0,
                     Text::styled(
                         self.theme.key(&i.0, self.theme.default_abbreviation()),
+                        // "some",
                         color_style,
                     ),
                 )

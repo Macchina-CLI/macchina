@@ -68,7 +68,7 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 
 fn draw_readout_data(
     data: Vec<Readout>,
-    theme: Box<dyn Theme>,
+    theme: Theme,
     buf: &mut Buffer,
     area: Rect,
     show_box: bool,
@@ -93,12 +93,17 @@ fn draw_readout_data(
     list.render(area, buf);
 }
 
-fn create_theme(opt: &Opt) -> Box<dyn Theme> {
+fn create_theme(opt: &Opt) -> Theme {
     let mut theme;
     if let Some(opt_theme) = &opt.theme {
-        theme = opt_theme.create_instance();
+        let ts = theme::Themes::from_str(opt_theme);
+        if ts.is_ok() {
+            theme = Theme::new(theme::Themes::from_str(opt_theme).unwrap());
+        } else {
+            theme = Theme::from(theme::CustomTheme::get_theme(opt_theme));
+        }
     } else {
-        theme = theme::Themes::Hydrogen.create_instance();
+        theme = theme::Theme::default();
     }
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
@@ -189,7 +194,7 @@ fn main() -> Result<(), io::Error> {
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
-        println!("{}",toml::to_string(&arg_opt).unwrap());
+        println!("{}", toml::to_string(&arg_opt).unwrap());
         return Ok(());
     }
 
@@ -200,7 +205,6 @@ fn main() -> Result<(), io::Error> {
         println!("\x1b[33mWarning:\x1b[0m Invalid config file");
         opt = arg_opt;
     }
-
 
     let should_display = should_display(&opt);
     let theme = create_theme(&opt);

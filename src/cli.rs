@@ -1,4 +1,4 @@
-use crate::{data, theme};
+use crate::data;
 use clap::{arg_enum, App};
 use serde::{Deserialize, Serialize};
 use std::default::Default;
@@ -169,11 +169,11 @@ pub struct Opt {
     short = "t",
     long = "theme",
     // default_value = "Hydrogen",
-    possible_values = & theme::Themes::variants(),
+    // possible_values = & theme::Themes::variants(),
     case_insensitive = true,
     help = "Specify the theme"
     )]
-    pub theme: Option<theme::Themes>,
+    pub theme: Option<String>,
 
     #[structopt(
         long = "box-title",
