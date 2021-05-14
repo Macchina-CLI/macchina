@@ -71,16 +71,15 @@ fn draw_readout_data(
     theme: Theme,
     buf: &mut Buffer,
     area: Rect,
-    show_box: bool,
-    palette: bool,
+    config: &Opt
 ) {
-    let mut list = ReadoutList::new(data, &theme).palette(palette);
+    let mut list = ReadoutList::new(data, &theme).palette(config.palette);
 
-    if show_box {
+    if !config.no_box {
         list = list
             .block_inner_margin(Margin {
-                horizontal: 1,
-                vertical: 1,
+                horizontal: config.box_border_margin_x,
+                vertical: config.box_border_margin_y,
             })
             .block(
                 Block::default()
@@ -220,11 +219,11 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-    if let Some(file_path) = opt.custom_ascii {
+    if let Some(ref file_path) = opt.custom_ascii {
         let file_path = PathBuf::from(file_path);
         let ascii_art;
         match opt.custom_ascii_color {
-            Some(color) => {
+            Some(ref color) => {
                 ascii_art = ascii::get_ascii_from_file_override_color(
                     &file_path,
                     color.get_color().to_owned(),
@@ -267,8 +266,7 @@ fn main() -> Result<(), io::Error> {
             tmp_buffer_area.width - ascii_area.width - 4,
             ascii_area.height,
         ),
-        !opt.no_box,
-        opt.palette,
+        &opt,
     );
 
     write_buffer_to_console(&mut backend, &mut tmp_buffer)?;
