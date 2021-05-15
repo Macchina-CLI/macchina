@@ -101,7 +101,7 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     if theme.get_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
-    return Spans::from(span_vector);
+    Spans::from(span_vector)
 }
 
 pub fn get_all_readouts<'a>(
@@ -262,7 +262,7 @@ pub fn get_all_readouts<'a>(
                 if u > 100 {
                     readout_values.push(Readout::new(
                         ReadoutKey::ProcessorUsage,
-                        create_bar(theme, crate::bars::num_to_blocks(100 as u8)),
+                        create_bar(theme, crate::bars::num_to_blocks(100_u8)),
                     ))
                 }
                 readout_values.push(Readout::new(

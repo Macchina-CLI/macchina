@@ -13,6 +13,7 @@ pub enum AbbreviationType {
     Classic,
     Alternative,
     Long,
+    Custom(String),
 }
 
 /// This implements all the different ways a `Key` can be named using \
@@ -365,18 +366,18 @@ pub struct CustomTheme {
 }
 
 impl CustomTheme {
-    pub fn get_theme(name: &str) -> Self {
+    pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
         // check if the name exists in ~/.local/share/macchina/themes/{name}.toml
         let mut theme_path = std::path::PathBuf::new();
-        theme_path.push(dirs::data_local_dir().unwrap());
-        theme_path.push(std::path::Path::new(&format!("macchina/{}.toml", name)));
+        theme_path.push(dirs::data_local_dir().ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound,"Data local dir not found"))?);
+        theme_path.push(std::path::Path::new(&format!("macchina/themes/{}.toml", name)));
 
         let mut buffer: Vec<u8> = Vec::new();
-        let mut theme = std::fs::File::open(theme_path).unwrap();
-        theme.read_to_end(&mut buffer).unwrap();
+        let mut theme = std::fs::File::open(theme_path)?;
+        theme.read_to_end(&mut buffer)?;
 
-        toml::from_slice(&buffer).unwrap()
+        toml::from_slice(&buffer).map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme"))
     }
 }
 

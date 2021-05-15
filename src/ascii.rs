@@ -222,7 +222,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 
         return vec![Text::from(
             art.iter()
-                .map(|f| Spans::from(f.to_owned()))
+                .map(|f| f.to_owned())
                 .collect::<Vec<Spans>>(),
         )];
     }

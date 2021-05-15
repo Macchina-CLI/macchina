@@ -249,7 +249,7 @@ impl<'a> ReadoutList<'a> {
 }
 
 impl<'a> ReadoutList<'a> {
-    fn create_layout(area: &Rect, constraints: &Vec<u16>) -> Vec<Rect> {
+    fn create_layout(area: &Rect, constraints: &[u16]) -> Vec<Rect> {
         let mut layout: Vec<Rect> = Vec::with_capacity(constraints.len());
         layout.push(Rect {
             x: area.x,

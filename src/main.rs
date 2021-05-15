@@ -66,13 +66,7 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     ascii_rect
 }
 
-fn draw_readout_data(
-    data: Vec<Readout>,
-    theme: Theme,
-    buf: &mut Buffer,
-    area: Rect,
-    config: &Opt
-) {
+fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
     let mut list = ReadoutList::new(data, &theme).palette(config.palette);
 
     if !config.no_box {
@@ -95,14 +89,16 @@ fn draw_readout_data(
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme;
     if let Some(opt_theme) = &opt.theme {
-        let ts = theme::Themes::from_str(opt_theme);
-        if ts.is_ok() {
-            theme = Theme::new(theme::Themes::from_str(opt_theme).unwrap());
+        if let Ok(ts) = theme::Themes::from_str(opt_theme) {
+            theme = Theme::new(ts);
+        } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
+            theme = Theme::from(custom_theme);
         } else {
-            theme = Theme::from(theme::CustomTheme::get_theme(opt_theme));
+            println!("\x1b[33mWarning:\x1b[0m Invalid theme, falling back to default");
+            theme = Theme::default();
         }
     } else {
-        theme = theme::Theme::default();
+        theme = Theme::default();
     }
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
