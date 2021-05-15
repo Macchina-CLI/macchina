@@ -8,7 +8,7 @@ use tui::style::Color;
 /// - `AbbreviationType::Classic` -> OS \
 /// - `AbbreviationType::Alternative` -> Ope \
 /// - `AbbreviationType::Long` -> Operating System
-#[derive(Eq, PartialEq, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum AbbreviationType {
     Classic,
     Alternative,
@@ -168,7 +168,6 @@ pub enum Themes {
     Lithium,
     Beryllium,
     Boron,
-    // Custom(String),
 }
 
 impl FromStr for Themes {
@@ -194,6 +193,7 @@ pub struct Theme {
     spacing: usize,
     padding: usize,
     block_title: String,
+    abbreviation: AbbreviationType,
 }
 
 impl Default for Theme {
@@ -206,6 +206,7 @@ impl Default for Theme {
             spacing: 2,
             padding: 0,
             block_title: String::from(" Hydrogen "),
+            abbreviation: AbbreviationType::Classic,
         }
     }
 }
@@ -221,6 +222,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Hydrogen "),
+                abbreviation: AbbreviationType::Classic,
             },
             Themes::Helium => Theme {
                 bar: BarStyle::new(BarStyles::Squared),
@@ -230,6 +232,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Helium "),
+                abbreviation: AbbreviationType::Alternative,
             },
             Themes::Lithium => Theme {
                 bar: BarStyle::new(BarStyles::Angled),
@@ -239,6 +242,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Lithium "),
+                abbreviation: AbbreviationType::Long,
             },
             Themes::Beryllium => Theme {
                 bar: BarStyle::new(BarStyles::Rounded),
@@ -248,6 +252,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Beryllium "),
+                abbreviation: AbbreviationType::Alternative,
             },
             Themes::Boron => Theme {
                 // will implement random emoji later
@@ -258,6 +263,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Boron "),
+                abbreviation: AbbreviationType::Long,
             },
             // Themes::Custom =>  Theme::default(),
             // Theme {
@@ -347,41 +353,89 @@ impl From<CustomTheme> for Theme {
             spacing: custom.spacing,
             padding: custom.padding,
             block_title: custom.block_title,
+            abbreviation: custom.abbreviation,
         }
     }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct CustomTheme {
-    name: String,
     bar: BarStyles,
+
     #[serde(with = "ColorDef")]
     color: Color,
+
+    separator: String,
     #[serde(with = "ColorDef")]
     separator_color: Color,
-    separator: String,
+
     spacing: usize,
     padding: usize,
     block_title: String,
+    abbreviation: AbbreviationType,
+}
+impl Default for CustomTheme {
+    fn default() -> Self {
+        Self {
+            bar: BarStyles::Squared,
+            color: Color::Red,
+            separator: "->>".to_string(),
+            separator_color: Color::Yellow,
+            spacing: 0,
+            padding: 2,
+            block_title: " Hydrogen ".to_string(),
+            abbreviation: AbbreviationType::Classic,
+       }
+    }
 }
 
 impl CustomTheme {
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
-        // check if the name exists in ~/.local/share/macchina/themes/{name}.toml
+        // check if the name exists in ~/.local/share/macchina/themes/{name}.json
+
+        // Self::__print_theme_test();
         let mut theme_path = std::path::PathBuf::new();
-        theme_path.push(dirs::data_local_dir().ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound,"Data local dir not found"))?);
-        theme_path.push(std::path::Path::new(&format!("macchina/themes/{}.toml", name)));
+        theme_path.push(dirs::data_local_dir().ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::NotFound, "Data local dir not found")
+        })?);
+        theme_path.push(std::path::Path::new(&format!(
+            "macchina/themes/{}.json",
+            name
+        )));
 
         let mut buffer: Vec<u8> = Vec::new();
         let mut theme = std::fs::File::open(theme_path)?;
         theme.read_to_end(&mut buffer)?;
 
-        toml::from_slice(&buffer).map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme"))
+        serde_json::from_slice(&buffer).map_err(|_| {
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme")
+        })
+    }
+
+    pub fn __print_theme_test() {
+        let cust = CustomTheme {
+            bar: BarStyles::Custom(BarStyle {
+                glyph: "x".to_string(),
+                symbol_open: '[',
+                symbol_close: ']',
+            }),
+            separator: "=====>".to_string(),
+            spacing: 10,
+            padding: 10,
+            block_title: "SomeTitle".to_string(),
+
+            color: Color::Rgb(10, 33, 51),
+            separator_color: Color::Indexed(100),
+            abbreviation: AbbreviationType::Long,
+        };
+        // println!("{:?}", serde_json::to_string(&cust));
+        println!("{}", serde_json::to_string_pretty(&cust).unwrap());
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(remote = "Color")]
 enum ColorDef {
     Reset,

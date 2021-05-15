@@ -25,6 +25,7 @@ ansi-to-tui = "0.1.8"
 serde = { version = "1.0.125", features = ["derive"] }
 dirs = "3.0.2"
 toml = "0.5.8"
+serde_json = "1.0.64"
 
 [build-dependencies]
 libmacchina = "0.3.3"
@@ -37,6 +38,7 @@ unicode-width = "0.1.8"
 serde = { version = "1.0.125", features = ["derive"] }
 dirs = "3.0.2"
 toml = "0.5.8"
+serde_json = "1.0.64"
 
 [profile.release]
 opt-level = 3
