@@ -13,7 +13,6 @@ pub enum AbbreviationType {
     Classic,
     Alternative,
     Long,
-    Custom(String),
 }
 
 /// This implements all the different ways a `Key` can be named using \
@@ -339,7 +338,7 @@ impl Theme {
     }
 
     pub fn default_abbreviation(&self) -> &AbbreviationType {
-        &AbbreviationType::Long
+        &self.abbreviation
     }
 }
 
@@ -380,13 +379,13 @@ impl Default for CustomTheme {
         Self {
             bar: BarStyles::Squared,
             color: Color::Red,
-            separator: "->>".to_string(),
-            separator_color: Color::Yellow,
+            separator: "->".to_string(),
+            separator_color: Color::White,
             spacing: 0,
             padding: 2,
             block_title: " Hydrogen ".to_string(),
             abbreviation: AbbreviationType::Classic,
-       }
+        }
     }
 }
 
@@ -394,8 +393,7 @@ impl CustomTheme {
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
         // check if the name exists in ~/.local/share/macchina/themes/{name}.json
-
-        // Self::__print_theme_test();
+        // need to add other data paths later ( /usr/share/macchina/themes/{name}.json )
         let mut theme_path = std::path::PathBuf::new();
         theme_path.push(dirs::data_local_dir().ok_or_else(|| {
             std::io::Error::new(std::io::ErrorKind::NotFound, "Data local dir not found")
@@ -414,7 +412,8 @@ impl CustomTheme {
         })
     }
 
-    pub fn __print_theme_test() {
+    // private function to print a custom theme
+    fn __print_theme_test() {
         let cust = CustomTheme {
             bar: BarStyles::Custom(BarStyle {
                 glyph: "x".to_string(),
@@ -430,7 +429,6 @@ impl CustomTheme {
             separator_color: Color::Indexed(100),
             abbreviation: AbbreviationType::Long,
         };
-        // println!("{:?}", serde_json::to_string(&cust));
         println!("{}", serde_json::to_string_pretty(&cust).unwrap());
     }
 }

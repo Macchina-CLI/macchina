@@ -187,7 +187,6 @@ impl<'a> ReadoutList<'a> {
                     i.0,
                     Text::styled(
                         self.theme.key(&i.0, self.theme.default_abbreviation()),
-                        // "some",
                         color_style,
                     ),
                 )
