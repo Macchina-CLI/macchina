@@ -89,7 +89,7 @@ pub fn battery(percentage: u8, state: BatteryState, health: u64) -> String {
             health
         )
     } else {
-        String::from("Full")
+        format!("Full — {}% Health", health)
     }
 }
 
