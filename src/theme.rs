@@ -358,6 +358,38 @@ impl From<CustomTheme> for Theme {
 }
 
 /// This is the struct which stores the CustomThemes which is serialized from a json file.
+/// ## Example theme carbon
+/// ```json
+/// {
+///   "name": "Carbon",
+///   "bar": {
+///     "Custom": {
+///       "glyph": "ߋ",
+///       "symbol_open": "[",
+///       "symbol_close": "]"
+///     }
+///   },
+///   "color": {
+///     "Rgb": [
+///       231,
+///       198,
+///       100
+///     ]
+///   },
+///   "separator": "⇉",
+///   "separator_color": {
+///     "Rgb": [
+///       158,
+///       208,
+///       114
+///     ]
+///   },
+///   "spacing": 2,
+///   "padding": 0,
+///   "block_title": "┤ Carbon ├",
+///   "abbreviation" : "Classic"
+/// }
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct CustomTheme {
