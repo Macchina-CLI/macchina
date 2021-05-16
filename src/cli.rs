@@ -205,22 +205,22 @@ pub struct Opt {
     pub small_ascii: bool,
 
     #[structopt(
-        help = "Sets the border margin on the x axis for the box.",
+        help = "Specify the horizontal inner margin value of the box",
         long = "box-inner-margin-x",
         short = "L",
         conflicts_with = "no_box",
         default_value = "1"
     )]
-    pub box_border_margin_x: u16,
+    pub box_inner_margin_x: u16,
 
     #[structopt(
-        help = "Sets the border margin on the y axis for the box.",
+        help = "Specify the vertical inner margin value of the box",
         long = "box-inner-margin-y",
         short = "J",
         conflicts_with = "no_box",
         default_value = "0"
     )]
-    pub box_border_margin_y: u16,
+    pub box_inner_margin_y: u16,
     #[structopt(
         long = "export-config",
         help = "Prints the config file to stdout",
@@ -266,8 +266,8 @@ impl Default for Opt {
             custom_ascii_color: None,
             small_ascii: false,
 
-            box_border_margin_x: 0,
-            box_border_margin_y: 0,
+            box_inner_margin_x: 1,
+            box_inner_margin_y: 0,
             export_config: false,
         }
     }
