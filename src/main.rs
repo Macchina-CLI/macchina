@@ -94,7 +94,7 @@ fn create_theme(opt: &Opt) -> Theme {
         } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
             theme = Theme::from(custom_theme);
         } else {
-            println!("\x1b[33mWarning:\x1b[0m Invalid theme, falling back to default");
+            println!("\x1b[33mWarning:\x1b[0m Invalid theme {}, falling back to default",opt_theme);
             theme = Theme::default();
         }
     } else {
