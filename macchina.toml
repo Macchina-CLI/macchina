@@ -1,0 +1,65 @@
+# Displays a palette of your active colorscheme
+palette = true 
+
+# Disables color
+no_color = false
+
+# Hides the separator
+no_separator = false 
+
+# Hides bar delimiters
+no_bar_delimiter = false
+
+# Hides the title of the box surrounding system information
+no_title = true 
+
+# Disables the box surrounding system information
+no_box = false
+
+# Disables ASCII art
+no_ascii = true 
+
+# Turns data into bars for specific readouts 
+bar = false
+
+# Randomizes the color of the keys each time your run the program 
+random_color = false
+
+# Randomizes the color of the separator each time your run the program 
+random_sep_color = false
+
+# Specify a color for the keys
+# Accepted values (case-sensitive):
+#   - White
+#   - Black
+#   - Blue
+#   - Cyan
+#   - Green
+#   - Yellow
+#   - Red
+#   - Magenta
+color = "Blue"
+
+# Specify a color for the separator 
+# Accepted values (case-sensitive):
+#   - White
+#   - Black
+#   - Blue
+#   - Cyan
+#   - Green
+#   - Yellow
+#   - Red
+#   - Magenta
+separator_color = "Blue"
+
+# Shorten the uptime format
+short_uptime = true 
+
+# Shorten the shell output
+short_shell = true 
+
+# Specify the horizontal inner margin value of the box surrounding system information
+box_inner_margin_x = 1
+
+# Specify the vertical inner margin value of the box surrounding system information
+box_inner_margin_y = 0

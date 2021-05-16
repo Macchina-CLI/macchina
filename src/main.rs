@@ -72,8 +72,8 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
     if !config.no_box {
         list = list
             .block_inner_margin(Margin {
-                horizontal: config.box_border_margin_x,
-                vertical: config.box_border_margin_y,
+                horizontal: config.box_inner_margin_x,
+                vertical: config.box_inner_margin_y,
             })
             .block(
                 Block::default()
