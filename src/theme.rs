@@ -108,6 +108,7 @@ impl ReadoutKey {
     }
 }
 
+/// This struct stores the BarStyle to display when --bar or bar config option is used.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BarStyle {
     pub glyph: String,
@@ -115,6 +116,7 @@ pub struct BarStyle {
     pub symbol_close: char,
 }
 
+/// This stores the predefined BarStyle's
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum BarStyles {
     Squared,
@@ -160,6 +162,7 @@ impl BarStyle {
     }
 }
 
+/// This stores the pre-defined themes
 #[derive(Debug)]
 pub enum Themes {
     Hydrogen,
@@ -183,6 +186,7 @@ impl FromStr for Themes {
     }
 }
 
+/// This is the struct which defines predefined as well as custom themes.
 #[derive(Debug, Clone)]
 pub struct Theme {
     bar: BarStyle,
@@ -264,10 +268,6 @@ impl Theme {
                 block_title: String::from(" Boron "),
                 abbreviation: AbbreviationType::Long,
             },
-            // Themes::Custom =>  Theme::default(),
-            // Theme {
-
-            // }
         }
     }
     pub fn get_bar_style(&self) -> &BarStyle {
@@ -357,6 +357,7 @@ impl From<CustomTheme> for Theme {
     }
 }
 
+/// This is the struct which stores the CustomThemes which is serialized from a json file.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct CustomTheme {
@@ -390,6 +391,8 @@ impl Default for CustomTheme {
 }
 
 impl CustomTheme {
+    /// Get custom theme from ~/.local/share/macchina/themes/{name}.json
+    /// Check the repo for example themes
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
         // check if the name exists in ~/.local/share/macchina/themes/{name}.json
@@ -412,7 +415,7 @@ impl CustomTheme {
         })
     }
 
-    // private function to print a custom theme
+    // private function to print a custom theme for testing
     fn __print_theme_test() {
         let cust = CustomTheme {
             bar: BarStyles::Custom(BarStyle {

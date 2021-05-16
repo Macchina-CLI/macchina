@@ -23,7 +23,7 @@ impl Opt {
         }
         Ok(Opt::default())
     }
-    pub fn patch_args(&mut self, args: Self) -> Result<(), ()> {
+    pub fn patch_args(&mut self, args: Self) {
         // Only values to true if args says it is.
         if args.bar {
             self.bar = true;
@@ -97,7 +97,5 @@ impl Opt {
         if args.theme.is_some() {
             self.theme = args.theme
         }
-
-        Ok(())
     }
 }

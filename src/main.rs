@@ -194,7 +194,7 @@ fn main() -> Result<(), io::Error> {
     }
 
     if let Ok(mut config_opt) = config_opt {
-        config_opt.patch_args(arg_opt).unwrap();
+        config_opt.patch_args(arg_opt);
         opt = config_opt;
     } else {
         println!("\x1b[33mWarning:\x1b[0m Invalid config file");
