@@ -63,3 +63,46 @@ box_inner_margin_x = 1
 
 # Specify the vertical inner margin value of the box surrounding system information
 box_inner_margin_y = 0
+
+# Hides the specified readouts
+# Don't use with 'show_only'
+# Accepted values (case-sensitive):
+#   - Host
+#   - Machine 
+#   - Kernel
+#   - Distribution
+#   - OperatingSystem
+#   - DesktopEnvironment
+#   - WindowManager
+#   - Packages
+#   - LocalIP
+#   - Terminal
+#   - Shell
+#   - Uptime
+#   - Processor
+#   - ProcessorUsage
+#   - Memory
+#   - Battery
+# hide = ["...", "..."] 
+
+# Displays only the specified readouts
+# Don't use with 'hide'
+# Accepted values (case-sensitive):
+#   - Host
+#   - Machine 
+#   - Kernel
+#   - Distribution
+#   - OperatingSystem
+#   - DesktopEnvironment
+#   - WindowManager
+#   - Packages
+#   - LocalIP
+#   - Terminal
+#   - Shell
+#   - Uptime
+#   - Processor
+#   - ProcessorUsage
+#   - Memory
+#   - Battery
+# show_only = ["...", "..."] 
+
