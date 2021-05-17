@@ -3,12 +3,11 @@ mod cli;
 mod config;
 mod format;
 mod theme;
-// mod error;
 
 use cli::{MacchinaColor, Opt};
 use std::io;
 use structopt::StructOpt;
-// use config::
+
 #[macro_use]
 extern crate lazy_static;
 
@@ -94,7 +93,10 @@ fn create_theme(opt: &Opt) -> Theme {
         } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
             theme = Theme::from(custom_theme);
         } else {
-            println!("\x1b[33mWarning:\x1b[0m Invalid theme {}, falling back to default",opt_theme);
+            println!(
+                "\x1b[33mWarning:\x1b[0m Invalid theme {}, falling back to default",
+                opt_theme
+            );
             theme = Theme::default();
         }
     } else {
@@ -184,7 +186,7 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn main() -> Result<(), io::Error> {
-    let opt: Opt;
+    let mut opt: Opt;
     let config_opt = Opt::from_config();
     let arg_opt = Opt::from_args();
 
@@ -194,8 +196,16 @@ fn main() -> Result<(), io::Error> {
     }
 
     if let Ok(mut config_opt) = config_opt {
-        config_opt.patch_args(arg_opt);
+        config_opt.patch_args(Opt::from_args());
         opt = config_opt;
+        let conflicts = opt.check_conflicts();
+        if !conflicts.is_empty() {
+            println!("\x1b[33mWarning:\x1b[0m Conflicting keys in config file:");
+            for i in 0..conflicts.len() {
+                println!("• {}", conflicts[i]);
+            }
+            opt = arg_opt;
+        }
     } else {
         println!("\x1b[33mWarning:\x1b[0m Invalid config file");
         opt = arg_opt;

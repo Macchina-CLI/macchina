@@ -431,7 +431,10 @@ impl CustomTheme {
         // need to add other data paths later ( /usr/share/macchina/themes/{name}.json )
         let mut theme_path = std::path::PathBuf::new();
         theme_path.push(dirs::data_local_dir().ok_or_else(|| {
-            std::io::Error::new(std::io::ErrorKind::NotFound, "Data local dir not found")
+            std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "data_local_dir (e.g. ~/.local/share) not found",
+            )
         })?);
         theme_path.push(std::path::Path::new(&format!(
             "macchina/themes/{}.json",

@@ -47,14 +47,14 @@ pub struct Opt {
     #[structopt(
         short = "P",
         long = "padding",
-        help = "Specify the amount of left padding to use"
+        help = "Specify the amount of left padding to use (when the box is hidden)"
     )]
     pub padding: Option<usize>,
 
     #[structopt(
         short = "s",
         long = "spacing",
-        help = "Specify the amount of spacing to use"
+        help = "Specify the amount of spacing between to use"
     )]
     pub spacing: Option<usize>,
 
@@ -229,6 +229,7 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub export_config: bool,
 }
+
 impl Default for Opt {
     fn default() -> Self {
         Opt {
