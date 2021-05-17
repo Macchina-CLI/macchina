@@ -5,8 +5,10 @@ mod format;
 mod theme;
 
 use cli::{MacchinaColor, Opt};
+use colored::Colorize;
 use std::io;
 use structopt::StructOpt;
+use theme::Themes;
 
 #[macro_use]
 extern crate lazy_static;
@@ -185,6 +187,42 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
     }
 }
 
+fn list_themes() {
+    let themes = Themes::variants();
+    themes
+        .iter()
+        .for_each(|x| println!("• {} (Built-in)", x.bright_green()));
+
+    if let Some(dir) = dirs::data_local_dir() {
+        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+        if !entries.is_empty() {
+            let custom_themes = entries.iter().filter(|&x| {
+                if let Some(ext) = libmacchina::extra::path_extension(&x) {
+                    ext == "json"
+                } else {
+                    false
+                }
+            });
+
+            if custom_themes.clone().count() == 0 {
+                println!(
+                    "\nNo custom themes were found in {}",
+                    dir.join("macchina/themes")
+                        .to_string_lossy()
+                        .bright_yellow()
+                )
+            }
+
+            custom_themes.for_each(|x| {
+                if let Some(theme) = x.file_name() {
+                    let name = theme.to_string_lossy().replace(".json", "");
+                    println!("• {}", name.bright_blue());
+                }
+            });
+        }
+    }
+}
+
 fn main() -> Result<(), io::Error> {
     let mut opt: Opt;
     let config_opt = Opt::from_config();
@@ -201,8 +239,8 @@ fn main() -> Result<(), io::Error> {
         let conflicts = opt.check_conflicts();
         if !conflicts.is_empty() {
             println!("\x1b[33mWarning:\x1b[0m Conflicting keys in config file:");
-            for i in 0..conflicts.len() {
-                println!("• {}", conflicts[i]);
+            for conflict in conflicts {
+                println!("• {}", conflict);
             }
             opt = arg_opt;
         }
@@ -217,6 +255,11 @@ fn main() -> Result<(), io::Error> {
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);
+        return Ok(());
+    }
+
+    if opt.list_themes {
+        list_themes();
         return Ok(());
     }
 

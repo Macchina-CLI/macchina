@@ -97,6 +97,9 @@ impl Opt {
         if args.theme.is_some() {
             self.theme = args.theme;
         }
+        if args.list_themes {
+            self.list_themes = true;
+        }
     }
 
     // Checks for conflicts between the different flags.

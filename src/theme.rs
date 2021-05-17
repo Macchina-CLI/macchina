@@ -1,7 +1,7 @@
 use crate::data::ReadoutKey;
+use clap::arg_enum;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::str::FromStr;
 use tui::style::Color;
 
 /// Defines the different ways a key can be named, let's take the _OperatingSystem variant_ for example: \
@@ -162,27 +162,14 @@ impl BarStyle {
     }
 }
 
-/// This stores the pre-defined themes
-#[derive(Debug)]
-pub enum Themes {
+arg_enum! {
+    #[derive(Debug)]
+    pub enum Themes {
     Hydrogen,
     Helium,
     Lithium,
     Beryllium,
     Boron,
-}
-
-impl FromStr for Themes {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(match s.to_ascii_lowercase().as_str() {
-            "hydrogen" => Self::Hydrogen,
-            "helium" => Self::Helium,
-            "lithium" => Self::Lithium,
-            "beryllium" => Self::Beryllium,
-            "boron" => Self::Boron,
-            &_ => return Err(s.to_ascii_lowercase()),
-        })
     }
 }
 

@@ -1,11 +1,12 @@
-name: Macchina Create Release
 on:
   push:
     tags:
       - 'v*'
 
+name: Release macchina
+
 jobs:
-  create_release:
+  changelog:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,73 +17,91 @@ jobs:
           body_path: CHANGELOG.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish:
+    name: ${{ matrix.name }} (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-msvc
+          - x86_64-unknown-netbsd
+          - aarch64-linux-android
+          - aarch64-unknown-linux-gnu
+        include:
+          - os: ubuntu-latest
+            name: Linux
+            target: x86_64-unknown-linux-gnu
+            artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
+            release_name: macchina-linux
+            cross: false
+            strip: true
 
-  build_linux:
-    runs-on: ubuntu-latest
+          - os: macos-latest
+            name: Macos
+            target: x86_64-apple-darwin
+            artifact_name: target/x86_64-apple-darwin/release/macchina
+            release_name: macchina-macos
+            cross: false
+            strip: true
+
+          - os: windows-latest
+            name: Windows
+            target: x86_64-pc-windows-msvc
+            artifact_name: target/x86_64-pc-windows-msvc/release/macchina.exe
+            release_name: macchina-windows.exe
+            cross: false
+            strip: true
+
+          - os: ubuntu-latest
+            name: Netbsd
+            target: x86_64-unknown-netbsd
+            artifact_name: target/x86_64-unknown-netbsd/release/macchina
+            release_name: macchina-bsd
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Android
+            target: aarch64-linux-android
+            artifact_name: target/aarch64-linux-android/release/macchina
+            release_name: macchina-android
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux aarch64
+            target: aarch64-unknown-linux-gnu
+            artifact_name: target/aarch64-unknown-linux-gnu/release/macchina
+            release_name: macchina-linux-aarch64
+            cross: true
+            strip: true
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          fetch-depth: 1
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@master
+          toolchain: stable
+          target: ${{ matrix.target }}
+
+      - name: Cargo Build
+        uses: actions-rs/cargo@v1
         with:
-          rust-version: stable
-      - name: Build Release
-        run: cargo build --release
-      - name: Strip Symbols
-        run: strip target/release/macchina
-      - name: Rename Binary
-        run: mv target/release/macchina target/release/macchina-linux
-      - name: Upload Binary
+          command: build
+          args: --target=${{ matrix.target }} --release
+          use-cross: ${{ matrix.cross }}
+
+      - name: Move binaries
+        run: mv ${{ matrix.artifact_name }} ${{ matrix.release_name }}
+
+      - name: Upload Binaries
         uses: softprops/action-gh-release@v1
         with:
-          files: target/release/macchina-linux
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build_macos:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@master
-        with:
-          rust-version: stable
-      - name: Build Release
-        run: cargo build --release
-      - name: Strip Symbols
-        run: strip target/release/macchina
-      - name: Rename Binary
-        run: mv target/release/macchina target/release/macchina-macos
-      - name: Upload Binary
-        uses: softprops/action-gh-release@v1
-        with:
-          files: target/release/macchina-macos
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build_windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@master
-        with:
-          rust-version: stable
-      - name: Build Release
-        run: cargo build --release
-      - name: Rename Binary
-        run: mv target/release/macchina.exe target/release/macchina-windows.exe
-      - name: Upload Binary
-        uses: softprops/action-gh-release@v1
-        with:
-          files: target/release/macchina-windows.exe
+          files: ${{ matrix.release_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
