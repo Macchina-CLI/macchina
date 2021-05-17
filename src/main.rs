@@ -198,7 +198,7 @@ fn list_themes() {
         if !entries.is_empty() {
             let custom_themes = entries
                 .iter()
-                .find(|&x| {
+                .filter(|&x| {
                     if let Some(ext) = libmacchina::extra::path_extension(&x) {
                         return ext == "json";
                     }
