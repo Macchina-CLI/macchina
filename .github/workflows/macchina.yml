@@ -1,46 +1,102 @@
-name: Macchina Test
+on: [push, pull_request]
 
-on:
-  # Build master branch only
-  push:
-    branches:
-      - main
-  # Build pull requests targeting main branch only
-  pull_request:
-    branches:
-      - main
-
-  workflow_dispatch:
+name: Check target
 
 jobs:
-  test:
-    name: ${{ matrix.os }}
+  checks:
+    name: ${{ matrix.name }} (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-msvc
+          - x86_64-unknown-netbsd
+          - aarch64-linux-android
+          - aarch64-unknown-linux-gnu
         include:
-          - rust: stable
+          - os: ubuntu-latest
+            name: Linux
+            target: x86_64-unknown-linux-gnu
+            cross: false
+            strip: true
+            test: true
+
+          - os: macos-latest
+            name: Macos
+            target: x86_64-apple-darwin
+            cross: false
+            strip: true
+            test: true
+
+          - os: windows-latest
+            name: Windows
+            target: x86_64-pc-windows-msvc
+            cross: false
+            strip: true
+            test: true
+
+          - os: ubuntu-latest
+            name: Netbsd
+            target: x86_64-unknown-netbsd
+            cross: true
+            strip: true
+            test: false
+
+          - os: ubuntu-latest
+            name: Android
+            target: aarch64-linux-android
+            cross: true
+            strip: true
+            test: false
+
+          - os: ubuntu-latest
+            name: Linux aarch64
+            target: aarch64-unknown-linux-gnu
+            cross: true
+            strip: true
+            test: true
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          fetch-depth: 1
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@master
+          toolchain: stable
+          components: clippy
+          target: ${{ matrix.target }}
+
+      - name: Cargo Clippy
+        uses: actions-rs/cargo@v1
         with:
-          rust-version: stable
-          components: rustfmt,clippy
-      - name: Rust Fmt
-        run: cargo fmt --all -- --check
+          command: clippy
+          args: --target=${{ matrix.target }} -- --no-deps -D clippy::all
+          use-cross: ${{ matrix.cross }}
         continue-on-error: true
-      - name: Clippy Linter
-        run: cargo clippy -- --no-deps -D clippy::all
-        continue-on-error: true
-      - name: Build
-        run: cargo build
-      - name: Test
-        run: cargo test
-      - name: Run Doctor
-        run: cargo run -- --doctor
+
+      - name: Cargo Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --target=${{ matrix.target }}
+          use-cross: ${{ matrix.cross }}
+
+      - name: Cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --target=${{ matrix.target }}
+          use-cross: ${{ matrix.cross }}
+        if: ${{ matrix.test }}
+
+      - name: Doctor
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --target=${{ matrix.target }} -- --doctor
+          use-cross: ${{ matrix.cross }}
+        if: ${{ matrix.test }}
