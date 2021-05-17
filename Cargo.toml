@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.7.4"
+version = "0.8.0"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance and minimalism."
@@ -22,7 +22,10 @@ rand = "0.8.3"
 unicode-width = "0.1.8"
 lazy_static = "1.4.0"
 ansi-to-tui = "0.1.8"
-
+serde = { version = "1.0.125", features = ["derive"] }
+dirs = "3.0.2"
+toml = "0.5.8"
+serde_json = "1.0.64"
 
 [build-dependencies]
 libmacchina = "0.3.3"
@@ -32,6 +35,10 @@ tui = { version = "0.14.0", default-features = false }
 structopt = "0.3.21"
 rand = "0.8.3"
 unicode-width = "0.1.8"
+serde = { version = "1.0.125", features = ["derive"] }
+dirs = "3.0.2"
+toml = "0.5.8"
+serde_json = "1.0.64"
 
 [profile.release]
 opt-level = 3

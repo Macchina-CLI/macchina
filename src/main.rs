@@ -1,11 +1,13 @@
 mod bars;
 mod cli;
+mod config;
 mod format;
 mod theme;
 
 use cli::{MacchinaColor, Opt};
 use std::io;
 use structopt::StructOpt;
+
 #[macro_use]
 extern crate lazy_static;
 
@@ -63,20 +65,14 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     ascii_rect
 }
 
-fn draw_readout_data(
-    data: Vec<Readout>,
-    theme: Box<dyn Theme>,
-    buf: &mut Buffer,
-    area: Rect,
-    config: &Opt
-) {
+fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
     let mut list = ReadoutList::new(data, &theme).palette(config.palette);
 
     if !config.no_box {
         list = list
             .block_inner_margin(Margin {
-                horizontal: config.box_border_margin_x,
-                vertical: config.box_border_margin_y,
+                horizontal: config.box_inner_margin_x,
+                vertical: config.box_inner_margin_y,
             })
             .block(
                 Block::default()
@@ -89,8 +85,23 @@ fn draw_readout_data(
     list.render(area, buf);
 }
 
-fn create_theme(opt: &Opt) -> Box<dyn Theme> {
-    let mut theme = opt.theme.create_instance();
+fn create_theme(opt: &Opt) -> Theme {
+    let mut theme;
+    if let Some(opt_theme) = &opt.theme {
+        if let Ok(ts) = theme::Themes::from_str(opt_theme) {
+            theme = Theme::new(ts);
+        } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
+            theme = Theme::from(custom_theme);
+        } else {
+            println!(
+                "\x1b[33mWarning:\x1b[0m Invalid theme {}, falling back to default",
+                opt_theme
+            );
+            theme = Theme::default();
+        }
+    } else {
+        theme = Theme::default();
+    }
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
@@ -175,7 +186,31 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn main() -> Result<(), io::Error> {
-    let opt = Opt::from_args();
+    let mut opt: Opt;
+    let config_opt = Opt::from_config();
+    let arg_opt = Opt::from_args();
+
+    if arg_opt.export_config {
+        println!("{}", toml::to_string(&arg_opt).unwrap());
+        return Ok(());
+    }
+
+    if let Ok(mut config_opt) = config_opt {
+        config_opt.patch_args(Opt::from_args());
+        opt = config_opt;
+        let conflicts = opt.check_conflicts();
+        if !conflicts.is_empty() {
+            println!("\x1b[33mWarning:\x1b[0m Conflicting keys in config file:");
+            for i in 0..conflicts.len() {
+                println!("• {}", conflicts[i]);
+            }
+            opt = arg_opt;
+        }
+    } else {
+        println!("\x1b[33mWarning:\x1b[0m Invalid config file");
+        opt = arg_opt;
+    }
+
     let should_display = should_display(&opt);
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);

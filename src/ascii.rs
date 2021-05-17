@@ -213,17 +213,11 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
                 Span::styled(".___.d", *WHITE),
                 Span::styled("|    .'", *YELLOW),
             ]),
-            Spans::from(vec![
-                Span::styled("`--..__)", *YELLOW),
-                Span::styled("8888P", *WHITE),
-                Span::styled("`._.'", *YELLOW),
-            ]),
+            Spans::from(vec![Span::styled("`--..__)     `._.'", *YELLOW)]),
         ];
 
         return vec![Text::from(
-            art.iter()
-                .map(|f| Spans::from(f.to_owned()))
-                .collect::<Vec<Spans>>(),
+            art.iter().map(|f| f.to_owned()).collect::<Vec<Spans>>(),
         )];
     }
 
