@@ -153,9 +153,11 @@ macchina --doctor
 
 _Macchina_ can be configured through a dotfile, [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml) is an example dotfile that you can use and build on top of to make it your own.
 
-- In order of Macchina to read your dotfile, you need to place it in `$XDG_CONFIG_HOME/macchina` and it must be named `macchina.toml`.
+- In order for Macchina to read your dotfile, you need to place it in `$XDG_CONFIG_HOME/macchina` and it must be named `macchina.toml`.
 
-You can also create custom themes in `JSON` format and use them instead of the built-in themes that we provide, they need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of a custom theme:
+You can also create custom themes in `JSON` format and use them instead of the built-in themes that we provide.
+
+- In order for Macchina to find your custom themes, they need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of a custom theme:
 
 ```json
 {

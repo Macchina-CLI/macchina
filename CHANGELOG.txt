@@ -1,3 +1,6 @@
 # Changelog
-### Bugfixes
-- Fix build errors on macOS and Windows
+- Merged a PR by @uttarayan21 that adds support for configuring `macchina`  
+through a dotfile.
+- The same PR also adds support for using custom themes that allow you  
+to customize `macchina` the way you like instead of using the built-in themes  
+we provide.
