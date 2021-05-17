@@ -4,3 +4,5 @@ through a dotfile.
 - The same PR also adds support for using custom themes that allow you  
 to customize `macchina` the way you like instead of using the built-in themes  
 we provide.
+- Added the ability to list available and custom themes through `--list-themes` flag
+- Merged a PR by @uttarayan21 that adds more targets for our CI checks and releases
