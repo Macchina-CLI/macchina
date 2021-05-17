@@ -23,10 +23,12 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 ---
 
 # Table of Contents
+
 - [About](#about)
 - [Performance](#perf)
 - [Minimalism](#minimal)
 - [Features](#features)
+- [Configuratuon](#config)
 - [Dependencies](#deps)
 - [Installation](#install)
 - [Platform Support](#platform-support)
@@ -35,6 +37,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 ---
 
 # About Macchina <a name="about"></a>
+
 _Macchina_ lets you view system information, like your kernel and kernel version, uptime, memory usage, processor load and much more. It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, [performance](#perf) and [minimalism](#minimal).
 
 If you're interested in the library _Macchina_ uses to fetch your system information, check out [libmacchina](https://github.com/Macchina-CLI/libmacchina), any issues relating to _fetching_ should be filed on that repository.
@@ -42,44 +45,46 @@ If you're interested in the library _Macchina_ uses to fetch your system informa
 ---
 
 # Performance <a name="perf"></a>
+
 _Macchina_ is lightning fast, see for yourself!
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
 ## 🐧 Linux
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `macchina` | 8.2 ± 0.3 | 7.5 | 9.0 | 1.00 |
-| `neofetch` | 155.0 ± 5.1 | 149.5 | 165.9 | 19.02 ± 0.90 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :--------- | ----------: | -------: | -------: | -----------: |
+| `macchina` |   8.2 ± 0.3 |      7.5 |      9.0 |         1.00 |
+| `neofetch` | 155.0 ± 5.1 |    149.5 |    165.9 | 19.02 ± 0.90 |
 
-`macchina` runs __19.02 ± 0.90__ times __faster__ than `neofetch`
+`macchina` runs **19.02 ± 0.90** times **faster** than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `macchina` | 5.0 ± 0.2 | 4.7 | 5.9 | 1.00 |
-| `neofetch` | 484.5 ± 4.3 | 477.2 | 492.3 | 97.10 ± 3.84 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :--------- | ----------: | -------: | -------: | -----------: |
+| `macchina` |   5.0 ± 0.2 |      4.7 |      5.9 |         1.00 |
+| `neofetch` | 484.5 ± 4.3 |    477.2 |    492.3 | 97.10 ± 3.84 |
 
-`macchina` runs __97.10 ± 3.84__ times __faster__ than `neofetch`
+`macchina` runs **97.10 ± 3.84** times **faster** than `neofetch`
 
 ## 🚩 NetBSD
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `macchina` | 17.7 ± 1.6 | 16.8 | 27.2 | 1.00 |
-| `neofetch` | 190.2 ± 2.4 | 187.9 | 195.8 | 10.76 ± 0.97 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :--------- | ----------: | -------: | -------: | -----------: |
+| `macchina` |  17.7 ± 1.6 |     16.8 |     27.2 |         1.00 |
+| `neofetch` | 190.2 ± 2.4 |    187.9 |    195.8 | 10.76 ± 0.97 |
 
-`macchina` runs __10.76 ± 0.97__ times __faster__ than `neofetch`
+`macchina` runs **10.76 ± 0.97** times **faster** than `neofetch`
 
 ## 💻 Windows
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
-|:---|---:|---:|---:|---:|
-| `macchina` | 9.0 ± 0.4 | 8.2 | 11.7 | 1.00 |
-| `neofetch` | 2207.7 ± 53.8 | 2127.1 | 2325.9 | 244.38 ± 13.43 |
 
-`macchina` runs __244.38 ± 13.43__ times __faster__ than `neofetch`
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |       Relative |
+| :--------- | ------------: | -------: | -------: | -------------: |
+| `macchina` |     9.0 ± 0.4 |      8.2 |     11.7 |           1.00 |
+| `neofetch` | 2207.7 ± 53.8 |   2127.1 |   2325.9 | 244.38 ± 13.43 |
+
+`macchina` runs **244.38 ± 13.43** times **faster** than `neofetch`
 
 ---
 
@@ -98,11 +103,14 @@ macchina -c white --no-box --no-ascii --no-separator --no-bar-delimiter --bar
 ---
 
 # Features <a name="features"></a>
+
 ## Themes
+
 _Macchina_ comes equipped with built-in themes that style their readouts, bars and separators differently.
 No extra configuration required.
 
 ## Bars
+
 Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
 
 <div align="center">
@@ -110,6 +118,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 </div>
 
 ## What it fetches
+
 - Host Information
 - Product Information
 - Kernel Information
@@ -129,6 +138,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Palette
 
 ## Meet Doctor
+
 _Macchina_ comes with a very special flag, allowing you analyze which elements failed to fetch, and why. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
 
 ```
@@ -139,13 +149,51 @@ macchina --doctor
 
 ---
 
+# Configuration <a name="config"></a>
+
+_Macchina_ can be configured through a dotfile, [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml) is an example dotfile that you can use and build on top of to make it your own.
+
+- In order of Macchina to read your dotfile, you need to place it in `$XDG_CONFIG_HOME/macchina` and it must be named `macchina.toml`.
+
+You can also create custom themes in `JSON` format and use them instead of the built-in themes that we provide, they need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of a custom theme:
+
+```json
+{
+  "name": "Carbon",
+  "bar": {
+    "Custom": {
+      "glyph": "ߋ",
+      "symbol_open": "[",
+      "symbol_close": "]"
+    }
+  },
+  "color": {
+    "Rgb": [231, 198, 100]
+  },
+  "separator": "⇉",
+  "separator_color": {
+    "Rgb": [158, 208, 114]
+  },
+  "spacing": 2,
+  "padding": 0,
+  "block_title": "┤ Carbon ├",
+  "abbreviation": "Classic"
+}
+```
+
+---
+
 # Dependencies
+
 These dependencies are not required, but they extend what _Macchina_ can do.
 
 ### Linux:
+
 - `wmctrl`
-- __Gentoo__: `portage-utils`
+- **Gentoo**: `portage-utils`
+
 ### NetBSD:
+
 - `wmctrl`
 
 ---
@@ -154,19 +202,27 @@ These dependencies are not required, but they extend what _Macchina_ can do.
 
 ### 🦀 Cargo
 
-```
+````
+
 cargo install macchina
+
 ```
+
 ### 📦 Pkgsrc
 
 ```
+
 pkgin install macchina
+
 ```
 
 ### 🍻 Homebrew
+
 ```
+
 brew install macchina
-```
+
+````
 
 ### Arch Linux
 
@@ -194,14 +250,14 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 
 # Platform Support <a name="platform-support"></a>
 
-|  Platform |      Support       |
-| :-:       |        :-:         |
-| GNU/Linux |        Yes         |
-| NetBSD    |        Yes         |
-| macOS     |        Yes         |
-| Windows   |        80%         |
-| OpenWrt   |        Yes         |
-| Android   |        Yes         |
+| Platform  | Support |
+| :-------: | :-----: |
+| GNU/Linux |   Yes   |
+|  NetBSD   |   Yes   |
+|   macOS   |   Yes   |
+|  Windows  |   80%   |
+|  OpenWrt  |   Yes   |
+|  Android  |   Yes   |
 
 # 🌍 Contributors <a name="contributors"></a>
 
@@ -209,6 +265,6 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 
 _Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
 
-- Support for __NetBSD__ would not have been possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for __macOS__ and __Windows__ would not have been possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
-- Support for __OpenWrt__ and __Android__ was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)
+- Support for **NetBSD** would not have been possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
+- Support for **macOS** and **Windows** would not have been possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
+- Support for **OpenWrt** and **Android** was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)
