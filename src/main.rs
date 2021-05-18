@@ -7,6 +7,7 @@ mod theme;
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
 use std::io;
+use std::path::Path;
 use structopt::StructOpt;
 use theme::Themes;
 
@@ -91,6 +92,13 @@ fn create_theme(opt: &Opt) -> Theme {
     let mut theme;
     if let Some(opt_theme) = &opt.theme {
         if let Ok(ts) = theme::Themes::from_str(opt_theme) {
+            if let Some(dir) = dirs::data_local_dir() {
+                if !opt.list_themes
+                    && Path::exists(&dir.join(format!("macchina/themes/{}.json", opt_theme)))
+                {
+                    println!("\x1b[33mWarning:\x1b[0m Custom theme with conflicting inbuilt theme named {} found", &opt_theme);
+                }
+            }
             theme = Theme::new(ts);
         } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
             theme = Theme::from(custom_theme);
@@ -189,6 +197,16 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 
 fn list_themes() {
     let themes = Themes::variants();
+    if let Some(dir) = dirs::data_local_dir() {
+        for theme in themes.iter() {
+            if Path::exists(&dir.join(format!("macchina/themes/{}.json", theme))) {
+                println!(
+                    "\x1b[33mWarning:\x1b[0m Custom theme with conflicting inbuilt theme named {} found",
+                    theme
+                );
+            }
+        }
+    }
     themes
         .iter()
         .for_each(|x| println!("• {} (Built-in)", x.bright_green()));
