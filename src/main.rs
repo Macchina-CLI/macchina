@@ -96,7 +96,7 @@ fn create_theme(opt: &Opt) -> Theme {
                 if !opt.list_themes
                     && Path::exists(&dir.join(format!("macchina/themes/{}.json", opt_theme)))
                 {
-                    println!("\x1b[33mWarning:\x1b[0m Custom theme with conflicting inbuilt theme named {} found", &opt_theme);
+                    println!("\x1b[33mWarning:\x1b[0m Custom theme has the same name as built-in theme: {}", &opt_theme);
                 }
             }
             theme = Theme::new(ts);
@@ -201,7 +201,7 @@ fn list_themes() {
         for theme in themes.iter() {
             if Path::exists(&dir.join(format!("macchina/themes/{}.json", theme))) {
                 println!(
-                    "\x1b[33mWarning:\x1b[0m Custom theme with conflicting inbuilt theme named {} found",
+                    "\x1b[33mWarning:\x1b[0m Custom theme has the same name as built-in theme: {}",
                     theme
                 );
             }
