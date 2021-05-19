@@ -6,19 +6,33 @@ use std::path::Path;
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 impl Opt {
+    pub fn from_config_file<S: AsRef<std::ffi::OsStr> + ?Sized>(
+        path: &S,
+    ) -> Result<Opt, &'static str> {
+        let path = Path::new(path);
+        if Path::exists(path) {
+            if let Ok(mut file) = std::fs::File::open(path) {
+                let mut buffer: Vec<u8> = Vec::new();
+                if file.read_to_end(&mut buffer).is_ok() {
+                    toml::from_slice(&buffer).or(Err("Failed to parse config"))
+                } else {
+                    Err("Failed to read config file")
+                }
+            } else {
+                Err("Failed to open file")
+            }
+        } else {
+            Err("File doesn't exist")
+        }
+    }
     pub fn from_config() -> Result<Opt, &'static str> {
-        if let Some(mut path) = config_dir() {
+        if let Some(path) = std::env::var_os("MACCHINA_CONF") {
+            return Opt::from_config_file(&path);
+        } else if let Some(mut path) = config_dir() {
             path.push(PKG_NAME);
             path.push(format!("{}.toml", PKG_NAME));
             if Path::exists(&path) {
-                if let Ok(mut file) = std::fs::File::open(&path) {
-                    let mut buffer: String = String::new();
-                    if file.read_to_string(&mut buffer).is_ok() {
-                        return toml::from_str(&buffer).or(Err("Failed to parse config"));
-                    }
-                } else {
-                    return Err("Failed to open config file");
-                }
+                return Opt::from_config_file(&path);
             }
         }
         Ok(Opt::default())

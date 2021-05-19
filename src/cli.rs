@@ -233,7 +233,16 @@ pub struct Opt {
         long = "list-themes",
         help = "Lists all available themes: built-in and custom"
     )]
+    #[serde(skip_serializing, skip_deserializing)]
     pub list_themes: bool,
+
+    #[structopt(
+        long = "config",
+        help = "Specify the config file",
+        conflicts_with = "export_config"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub config: Option<std::path::PathBuf>,
 }
 
 impl Default for Opt {
@@ -277,6 +286,7 @@ impl Default for Opt {
             box_inner_margin_y: 0,
             export_config: false,
             list_themes: false,
+            config: None,
         }
     }
 }
