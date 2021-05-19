@@ -243,7 +243,6 @@ fn list_themes() {
 
 fn main() -> Result<(), io::Error> {
     let mut opt: Opt;
-    let config_opt = Opt::from_config();
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
@@ -251,6 +250,12 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
+    let config_opt;
+    if arg_opt.config.is_some() {
+        config_opt = Opt::from_config_file(&arg_opt.config.clone().unwrap());
+    } else {
+        config_opt = Opt::from_config();
+    }
     if let Ok(mut config_opt) = config_opt {
         config_opt.patch_args(Opt::from_args());
         opt = config_opt;
@@ -263,7 +268,7 @@ fn main() -> Result<(), io::Error> {
             opt = arg_opt;
         }
     } else {
-        println!("\x1b[33mWarning:\x1b[0m Invalid config file");
+        println!("\x1b[33mWarning:\x1b[0m {}", config_opt.unwrap_err());
         opt = arg_opt;
     }
 

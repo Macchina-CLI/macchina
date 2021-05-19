@@ -11,6 +11,7 @@ use tui::text::{Span, Spans, Text};
 
 arg_enum! {
     /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
+    #[allow(clippy::upper_case_acronyms)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum ReadoutKey {
         Host,
