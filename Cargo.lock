@@ -288,7 +288,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "ansi-to-tui",
  "atty",

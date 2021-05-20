@@ -1,8 +1,7 @@
 # Changelog
-- Merged a PR by @uttarayan21 that adds support for configuring `macchina`  
-through a dotfile.
-- The same PR also adds support for using custom themes that allow you  
-to customize `macchina` the way you like instead of using the built-in themes  
-we provide.
-- Added the ability to list available and custom themes through `--list-themes` flag
-- Merged a PR by @uttarayan21 that adds more targets for our CI checks and releases
+- Merged a PR by @uttarayan21 that adds support for reading the configuration  
+file by specifying a path to the config file using `--config`,  or using 
+`MACCHINA_CONF` environment variable.
+
+- Merged a PR by @uttarayan21 that displays a warning when one or more of the  
+custom themes is conflicting with a built-in theme. 
