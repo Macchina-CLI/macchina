@@ -97,12 +97,16 @@ pub fn memory(total: u64, used: u64) -> String {
     format!("{}/{}", used, total)
 }
 
+/// This function should return a new `String` constructed from the value \
+/// returned by `traits::GeneralReadout::cpu_model_name()`
+pub fn cpu_only(model_name: &str) -> String {
+    model_name.replace("(TM)", "™").replace("(R)", "®")
+}
+
 /// This function should return a new `String` constructed from the values \
 /// returned by `traits::GeneralReadout::cpu_model_name()` and `num_cpus::get()`
 pub fn cpu(model_name: &str, cpu_cores: usize) -> String {
-    format!("{} ({})", model_name, cpu_cores)
-        .replace("(TM)", "™")
-        .replace("(R)", "®")
+    format!("{} ({})", cpu_only(model_name), cpu_cores)
 }
 
 pub fn cpu_usage(used: usize) -> String {
