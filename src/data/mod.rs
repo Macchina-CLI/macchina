@@ -111,6 +111,7 @@ pub fn get_all_readouts<'a>(
     should_display: Vec<ReadoutKey>,
 ) -> Vec<Readout<'a>> {
     use crate::format::cpu as format_cpu;
+    use crate::format::cpu_only as format_cpu_only;
     use crate::format::cpu_usage as format_cpu_usage;
     use crate::format::host as format_host;
     use crate::format::uptime as format_uptime;
@@ -251,9 +252,10 @@ pub fn get_all_readouts<'a>(
             (Ok(m), Ok(c)) => {
                 readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
             }
-            (Err(e), _) | (_, Err(e)) => {
-                readout_values.push(Readout::new_err(ReadoutKey::Processor, e))
+            (Ok(m), _) => {
+                readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m)))
             }
+            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
         }
     }
 
