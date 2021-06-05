@@ -240,9 +240,9 @@ checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 
 [[package]]
 name = "libmacchina"
-version = "0.3.6"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e39de85468581f3c73bca83872ec41063a4b0c69c97e91c9f4fde3559c3ef864"
+checksum = "fde1550dcc1a8f976f3e7186c433ed19abf64ecf013ac28341141421087351ad"
 dependencies = [
  "cfg-if",
  "core-foundation",
@@ -260,6 +260,7 @@ dependencies = [
  "sysctl",
  "windows",
  "winreg",
+ "x11",
 ]
 
 [[package]]
@@ -891,4 +892,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d107f8c6e916235c4c01cabb3e8acf7bea8ef6a63ca2e7fa0527c049badfc48c"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "x11"
+version = "2.18.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77ecd092546cb16f25783a5451538e73afc8d32e242648d54f4ae5459ba1e773"
+dependencies = [
+ "libc",
+ "pkg-config",
 ]

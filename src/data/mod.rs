@@ -21,6 +21,7 @@ arg_enum! {
         OperatingSystem,
         DesktopEnvironment,
         WindowManager,
+        Resolution,
         Packages,
         Shell,
         Terminal,
@@ -278,6 +279,13 @@ pub fn get_all_readouts<'a>(
                 format_cpu_usage(u),
             )),
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorUsage, e)),
+        }
+    }
+
+    if should_display.contains(&ReadoutKey::Resolution) {
+        match general_readout.resolution() {
+            Ok(r) => readout_values.push(Readout::new(ReadoutKey::Resolution, r)),
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Resolution, e)),
         }
     }
 
