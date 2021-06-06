@@ -48,3 +48,4 @@ codegen-units = 1
 
 [features]
 openwrt = ["libmacchina/openwrt"]
+xserver = ["libmacchina/xserver"]
