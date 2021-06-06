@@ -1,8 +1,2 @@
 # Changelog
-- Merged a PR by @uttarayan21 that adds support for reading the configuration  
-file by specifying a path to the config file using `--config`,  or using 
-`MACCHINA_CONF` environment variable.
-- Merged a PR by @uttarayan21 that displays a warning when one or more of the  
-custom themes is conflicting with a built-in theme. 
-- Merged a PR by @FantasyTeddy that allows the processor readout to be printed  
-even if processor count fails to fetch.
+- Added a resolution readout
