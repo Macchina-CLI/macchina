@@ -1,2 +1,2 @@
 # Changelog
-- Added a resolution readout
+- Corrected the order of the resolution readout
