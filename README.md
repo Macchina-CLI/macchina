@@ -28,7 +28,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 - [Performance](#perf)
 - [Minimalism](#minimal)
 - [Features](#features)
-- [Configuratuon](#config)
+- [Configuration](#config)
 - [Dependencies](#deps)
 - [Installation](#install)
 - [Platform Support](#platform-support)
