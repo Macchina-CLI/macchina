@@ -126,7 +126,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Operating System
 - Desktop Environment
 - Window Manager
-- Package Count [[?]](https://github.com/grtcdr/macchina/wiki/Platform-Support)
+- Package Count [[?]](https://github.com/Macchina-CLI/macchina/wiki/Package-Manager-Support)
 - Shell
 - Terminal
 - Processor Information
