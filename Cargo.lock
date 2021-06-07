@@ -241,8 +241,7 @@ checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 [[package]]
 name = "libmacchina"
 version = "0.4.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f126ddba3a969e9aabfc3bc39e53d18226644bec17be143ba2ab31da0ce7af56"
+source = "git+https://github.com/macchina-cli/libmacchina?branch=backlight#1a5b94f626bfb41562cef6752f043df4becd6942"
 dependencies = [
  "cfg-if",
  "core-foundation",
