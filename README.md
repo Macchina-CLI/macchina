@@ -186,7 +186,7 @@ You can also create custom themes in `JSON` format and use them instead of the b
 
 ---
 
-# Dependencies
+# Dependencies <a name="deps"></a>
 
 These dependencies are not required, but they extend what _Macchina_ can do.
 
