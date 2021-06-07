@@ -1,7 +1,7 @@
 <div align="center">
-<h1>Macchina</h1>
+<h1>_Macchina_</h1>
 
-Fast, minimal and customizable system information fetcher.
+Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
@@ -38,7 +38,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 # About Macchina <a name="about"></a>
 
-_Macchina_ lets you view system information, like your kernel and kernel version, uptime, memory usage, processor load and much more. It provides you with convenient features and extensive customization options but doesn't lose sight of its two main priorities, [performance](#perf) and [minimalism](#minimal).
+_Macchina_ lets you view system information, like your kernel version, uptime, memory usage, processor load and much more. It provides you with convenient features and extensive customization options but still retains its two main fundamentals: [performance](#perf) and [minimalism](#minimal).
 
 If you're interested in the library _Macchina_ uses to fetch your system information, check out [libmacchina](https://github.com/Macchina-CLI/libmacchina), any issues relating to _fetching_ should be filed on that repository.
 
@@ -46,7 +46,7 @@ If you're interested in the library _Macchina_ uses to fetch your system informa
 
 # Performance <a name="perf"></a>
 
-_Macchina_ is lightning fast, see for yourself!
+_Macchina_ is lightning fast, see for yourself:
 
 - Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
@@ -90,7 +90,7 @@ _Macchina_ is lightning fast, see for yourself!
 
 # Minimalism <a name="minimal"></a>
 
-_Macchina_ first started as a barebones fetcher, but has evolved to incorporate the many aspects people love to see in their fetcher. This evolution however did not discard the minimalistic look that I envisioned for it.
+_Macchina_ first started as a barebones fetcher, but has evolved to incorporate the many aspects people love to see in their fetcher. This evolution however did not discard the minimalistic look that was envisioned for the program.
 
 Here's what you can make it look like using the various supported flags.
 
@@ -117,7 +117,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 <img src="screenshots/bars.png" alt="Preview of the bar flag" />
 </div>
 
-## What it fetches
+## What it displays
 
 - Host Information
 - Product Information
@@ -132,6 +132,7 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Processor Information
 - Processor Usage
 - Local IP Address
+- Display Resolution
 - Uptime
 - Memory Usage
 - Battery Information
@@ -153,11 +154,11 @@ macchina --doctor
 
 _Macchina_ can be configured through a dotfile, [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml) is an example dotfile that you can use and build on top of to make it your own.
 
-- In order for Macchina to read your dotfile, you need to place it in `$XDG_CONFIG_HOME/macchina` and it must be named `macchina.toml`.
+- In order for _Macchina_ to read your dotfile, you need to place `macchina.toml` in `$XDG_CONFIG_HOME/macchina`
 
 You can also create custom themes in `JSON` format and use them instead of the built-in themes that we provide.
 
-- In order for Macchina to find your custom themes, they need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of a custom theme:
+- In order for _Macchina_ to find your custom themes, which are **JSON** files. These files need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of such a theme:
 
 ```json
 {
