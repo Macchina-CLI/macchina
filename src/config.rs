@@ -96,8 +96,8 @@ impl Opt {
         if args.separator_color.is_some() {
             self.separator_color = args.separator_color;
         }
-        if args.short_shell {
-            self.short_shell = true;
+        if args.long_shell {
+            self.long_shell = true;
         }
         if args.short_uptime {
             self.short_uptime = true;

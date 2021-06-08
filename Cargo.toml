@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.9.1"
+version = "0.9.2"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance and minimalism."
@@ -11,7 +11,7 @@ readme = "README_CARGO.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = "0.4.8"
+libmacchina = "0.4.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false, features = ['crossterm'] }
@@ -28,7 +28,7 @@ toml = "0.5.8"
 serde_json = "1.0.64"
 
 [build-dependencies]
-libmacchina = "0.4.8"
+libmacchina = "0.4.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.14.0", default-features = false }
