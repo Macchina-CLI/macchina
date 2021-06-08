@@ -1,2 +1,3 @@
 # Changelog
-- Corrected the order of the resolution readout
+- NetBSD: Finally fixed resolution readout failing, due to linkage mistakes
+- NetBSD: Set a fallback, that tries to fetch resolution through the ACPIVGA driver
