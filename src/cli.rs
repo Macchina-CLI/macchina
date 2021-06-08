@@ -162,8 +162,8 @@ pub struct Opt {
     #[structopt(short = "U", long = "short-uptime", help = "Shortens uptime output")]
     pub short_uptime: bool,
 
-    #[structopt(short = "S", long = "short-shell", help = "Shortens shell output")]
-    pub short_shell: bool,
+    #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
+    pub long_shell: bool,
 
     #[structopt(
     short = "t",
@@ -272,7 +272,7 @@ impl Default for Opt {
             doctor: false,
 
             short_uptime: false,
-            short_shell: false,
+            long_shell: false,
 
             theme: None,
 

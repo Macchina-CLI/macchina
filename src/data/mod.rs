@@ -239,12 +239,12 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Shell) {
-        match opt.short_shell {
-            true => match general_readout.shell(ShellFormat::Relative) {
+        match opt.long_shell {
+            true => match general_readout.shell(ShellFormat::Absolute) {
                 Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
                 Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
             },
-            false => match general_readout.shell(ShellFormat::Absolute) {
+            false => match general_readout.shell(ShellFormat::Relative) {
                 Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
                 Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
             },
