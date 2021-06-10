@@ -255,12 +255,12 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 
 | Platform  | Support |
 | :-------: | :-----: |
-| GNU/Linux |   Yes   |
-|  NetBSD   |   Yes   |
-|   macOS   |   Yes   |
+| GNU/Linux |    ✓    |
+|  NetBSD   |    ✓    |
+|   macOS   |    ✓    |
 |  Windows  |   80%   |
-|  OpenWrt  |   Yes   |
-|  Android  |   Yes   |
+|  OpenWrt  |    ✓    |
+|  Android  |    ✓    |
 
 # 🌍 Contributors <a name="contributors"></a>
 
