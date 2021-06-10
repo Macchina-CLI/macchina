@@ -208,12 +208,12 @@ cargo install macchina
 
 | Platform  | Support |
 | :-------: | :-----: |
-| GNU/Linux |   Yes   |
-|  NetBSD   |   Yes   |
-|   macOS   |   Yes   |
+| GNU/Linux |    ✓    |
+|  NetBSD   |    ✓    |
+|   macOS   |    ✓    |
 |  Windows  |   80%   |
-|  OpenWrt  |   Yes   |
-|  Android  |   Yes   |
+|  OpenWrt  |    ✓    |
+|  Android  |    ✓    |
 
 ---
 
