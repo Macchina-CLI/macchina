@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "0.9.2"
+version = "0.9.3"
 authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance and minimalism."

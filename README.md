@@ -52,27 +52,27 @@ _Macchina_ is lightning fast, see for yourself:
 
 ## 🐧 Linux
 
-| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
-| :--------- | ----------: | -------: | -------: | -----------: |
-| `macchina` |   8.2 ± 0.3 |      7.5 |      9.0 |         1.00 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |
+| :--------- | ----------: | -------: | -------: |
+| `macchina` |   8.2 ± 0.3 |      7.5 |      9.0 |
 
 ## 👩🏽‍💻 macOS
 
-| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
-| :--------- | ----------: | -------: | -------: | -----------: |
-| `macchina` |   5.0 ± 0.2 |      4.7 |      5.9 |         1.00 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |
+| :--------- | ----------: | -------: | -------: |
+| `macchina` |   5.0 ± 0.2 |      4.7 |      5.9 |
 
 ## 🚩 NetBSD
 
-| Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
-| :--------- | ----------: | -------: | -------: | -----------: |
-| `macchina` |  17.7 ± 1.6 |     16.8 |     27.2 |         1.00 |
+| Command    |   Mean [ms] | Min [ms] | Max [ms] |
+| :--------- | ----------: | -------: | -------: |
+| `macchina` |  17.7 ± 1.6 |     16.8 |     27.2 |
 
 ## 💻 Windows
 
-| Command    |     Mean [ms] | Min [ms] | Max [ms] |       Relative |
-| :--------- | ------------: | -------: | -------: | -------------: |
-| `macchina` |     9.0 ± 0.4 |      8.2 |     11.7 |           1.00 |
+| Command    |     Mean [ms] | Min [ms] | Max [ms] |
+| :--------- | ------------: | -------: | -------: |
+| `macchina` |     9.0 ± 0.4 |      8.2 |     11.7 |
 
 ---
 
