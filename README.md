@@ -55,36 +55,24 @@ _Macchina_ is lightning fast, see for yourself:
 | Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
 | :--------- | ----------: | -------: | -------: | -----------: |
 | `macchina` |   8.2 ± 0.3 |      7.5 |      9.0 |         1.00 |
-| `neofetch` | 155.0 ± 5.1 |    149.5 |    165.9 | 19.02 ± 0.90 |
-
-`macchina` runs **19.02 ± 0.90** times **faster** than `neofetch`
 
 ## 👩🏽‍💻 macOS
 
 | Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
 | :--------- | ----------: | -------: | -------: | -----------: |
 | `macchina` |   5.0 ± 0.2 |      4.7 |      5.9 |         1.00 |
-| `neofetch` | 484.5 ± 4.3 |    477.2 |    492.3 | 97.10 ± 3.84 |
-
-`macchina` runs **97.10 ± 3.84** times **faster** than `neofetch`
 
 ## 🚩 NetBSD
 
 | Command    |   Mean [ms] | Min [ms] | Max [ms] |     Relative |
 | :--------- | ----------: | -------: | -------: | -----------: |
 | `macchina` |  17.7 ± 1.6 |     16.8 |     27.2 |         1.00 |
-| `neofetch` | 190.2 ± 2.4 |    187.9 |    195.8 | 10.76 ± 0.97 |
-
-`macchina` runs **10.76 ± 0.97** times **faster** than `neofetch`
 
 ## 💻 Windows
 
 | Command    |     Mean [ms] | Min [ms] | Max [ms] |       Relative |
 | :--------- | ------------: | -------: | -------: | -------------: |
 | `macchina` |     9.0 ± 0.4 |      8.2 |     11.7 |           1.00 |
-| `neofetch` | 2207.7 ± 53.8 |   2127.1 |   2325.9 | 244.38 ± 13.43 |
-
-`macchina` runs **244.38 ± 13.43** times **faster** than `neofetch`
 
 ---
 
