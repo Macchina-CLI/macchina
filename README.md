@@ -38,9 +38,15 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 # About Macchina <a name="about"></a>
 
-_Macchina_ lets you view system information, like your kernel version, uptime, memory usage, processor load and much more. It provides you with convenient features and extensive customization options but still retains its two main fundamentals: [performance](#perf) and [minimalism](#minimal).
+_Macchina_ lets you view system information, like your kernel version, uptime,
+memory usage, processor load and much more. It provides you with convenient
+features and extensive customization options but still retains its two main
+fundamentals: [performance](#perf) and [minimalism](#minimal).
 
-If you're interested in the library _Macchina_ uses to fetch your system information, check out [libmacchina](https://github.com/Macchina-CLI/libmacchina), any issues relating to _fetching_ should be filed on that repository.
+If you're interested in the library _Macchina_ uses to fetch your system
+information, check out
+[libmacchina](https://github.com/Macchina-CLI/libmacchina), any issues relating
+to _fetching_ should be filed on that repository.
 
 ---
 
@@ -48,7 +54,8 @@ If you're interested in the library _Macchina_ uses to fetch your system informa
 
 _Macchina_ is lightning fast, see for yourself:
 
-- Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
+- Execution time is measured using
+  [hyperfine](https://github.com/sharkdp/hyperfine)
 
 ## 🐧 Linux
 
@@ -78,7 +85,9 @@ _Macchina_ is lightning fast, see for yourself:
 
 # Minimalism <a name="minimal"></a>
 
-_Macchina_ first started as a barebones fetcher, but has evolved to incorporate the many aspects people love to see in their fetcher. This evolution however did not discard the minimalistic look that was envisioned for the program.
+_Macchina_ first started as a barebones fetcher, but has evolved to incorporate
+the many aspects people love to see in their fetcher. This evolution however did
+not discard the minimalistic look that was envisioned for the program.
 
 Here's what you can make it look like using the various supported flags.
 
@@ -94,12 +103,13 @@ macchina -c white --no-box --no-ascii --no-separator --no-bar-delimiter --bar
 
 ## Themes
 
-_Macchina_ comes equipped with built-in themes that style their readouts, bars and separators differently.
-No extra configuration required.
+_Macchina_ comes equipped with built-in themes that style their readouts, bars
+and separators differently. No extra configuration required.
 
 ## Bars
 
-Bars provide a way to visualize data, and each theme styles them differently. They can be enabled using the `--bar` flag.
+Bars provide a way to visualize data, and each theme styles them differently.
+They can be enabled using the `--bar` flag.
 
 <div align="center">
 <img src="screenshots/bars.png" alt="Preview of the bar flag" />
@@ -114,7 +124,8 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 - Operating System
 - Desktop Environment
 - Window Manager
-- Package Count [[?]](https://github.com/Macchina-CLI/macchina/wiki/Package-Manager-Support)
+- Package Count
+  [[?]](https://github.com/Macchina-CLI/macchina/wiki/Package-Manager-Support)
 - Shell
 - Terminal
 - Processor Information
@@ -128,7 +139,10 @@ Bars provide a way to visualize data, and each theme styles them differently. Th
 
 ## Meet Doctor
 
-_Macchina_ comes with a very special flag, allowing you analyze which elements failed to fetch, and why. It can differentiate between errors, and warnings, and its comprehensive output should help you understand where the issue is coming from.
+_Macchina_ comes with a very special flag, allowing you analyze which elements
+failed to fetch, and why. It can differentiate between errors, and warnings, and
+its comprehensive output should help you understand where the issue is coming
+from.
 
 ```
 macchina --doctor
@@ -140,13 +154,19 @@ macchina --doctor
 
 # Configuration <a name="config"></a>
 
-_Macchina_ can be configured through a dotfile, [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml) is an example dotfile that you can use and build on top of to make it your own.
+_Macchina_ can be configured through a dotfile,
+[macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
+is an example dotfile that you can use and build on top of to make it your own.
 
-- In order for _Macchina_ to read your dotfile, you need to place `macchina.toml` in `$XDG_CONFIG_HOME/macchina`
+- In order for _Macchina_ to read your dotfile, you need to place
+  `macchina.toml` in `$XDG_CONFIG_HOME/macchina`
 
-You can also create custom themes in `JSON` format and use them instead of the built-in themes that we provide.
+You can also create custom themes in `JSON` format and use them instead of the
+built-in themes that we provide.
 
-- In order for _Macchina_ to find your custom themes, which are **JSON** files. These files need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an example of such a theme:
+- In order for _Macchina_ to find your custom themes, which are **JSON** files.
+  These files need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an
+  example of such a theme:
 
 ```json
 {
@@ -235,7 +255,11 @@ makepkg -si
 nix-env -iA nixos.macchina
 ```
 
-_Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation) lists the other ways you can install the program. You might also prefer running the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds with your operating system.
+_Macchina's_
+[installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
+lists the other ways you can install the program. You might also prefer running
+the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that
+corresponds with your operating system.
 
 ---
 
@@ -254,8 +278,14 @@ _Macchina's_ [installation wiki page](https://github.com/grtcdr/macchina/wiki/In
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
-_Macchina_, like many other open-source projects, would not be where it is right now without the help of its contributors, thank you all so much!
+_Macchina_, like many other open-source projects, would not be where it is right
+now without the help of its contributors, thank you all so much!
 
-- Support for **NetBSD** would not have been possible without the help and testing of NetBSD/pkgsrc package maintainer [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for **macOS** and **Windows** would not have been possible without the help, testing and major contributions of [123marvin123](https://github.com/123marvin123)
-- Support for **OpenWrt** and **Android** was made possible through the contributions of [uttarayan21](https://github.com/uttarayan21)
+- Support for **NetBSD** would not have been possible without the help and
+  testing of NetBSD/pkgsrc package maintainer
+  [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
+- Support for **macOS** and **Windows** would not have been possible without the
+  help, testing and major contributions of
+  [123marvin123](https://github.com/123marvin123)
+- Support for **OpenWrt** and **Android** was made possible through the
+  contributions of [uttarayan21](https://github.com/uttarayan21)
