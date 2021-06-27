@@ -310,7 +310,6 @@ pub fn get_all_readouts<'a>(
                 } else {
                     readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
                 }
-                
             }
             (Err(e), _) | (_, Err(e)) => {
                 readout_values.push(Readout::new_err(ReadoutKey::Memory, e))

@@ -6,11 +6,11 @@ mod theme;
 
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
-use tui::text::Span;
 use std::io;
 use std::path::Path;
 use structopt::StructOpt;
 use theme::Themes;
+use tui::text::Span;
 
 #[macro_use]
 extern crate lazy_static;
@@ -277,7 +277,7 @@ fn main() -> Result<(), io::Error> {
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
-    if cfg!(feature = "tts") { 
+    if cfg!(feature = "tts") {
         use google_speech::{Lang, Speech};
 
         for readout in readout_data {
@@ -298,7 +298,6 @@ fn main() -> Result<(), io::Error> {
                         }
                     }
                 }
-                
             }
         }
 
