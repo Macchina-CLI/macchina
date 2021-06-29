@@ -1,9 +1,9 @@
 mod bars;
 mod cli;
 mod config;
+mod extra;
 mod format;
 mod theme;
-mod extra;
 
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
@@ -291,8 +291,6 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-
-    
     if let Some(ref file_path) = opt.custom_ascii {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         // let file_path = PathBuf::from(file_path);
