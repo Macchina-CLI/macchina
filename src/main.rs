@@ -11,7 +11,6 @@ use std::io;
 use std::path::Path;
 use structopt::StructOpt;
 use theme::Themes;
-use tui::text::Span;
 
 #[macro_use]
 extern crate lazy_static;
@@ -242,6 +241,34 @@ fn list_themes() {
     }
 }
 
+#[cfg(feature = "tts")]
+fn speak_readouts(readout_data: &Vec<Readout>) -> Result<(), ()> {
+    use google_speech::{Lang, Speech};
+
+    for readout in readout_data {
+        if let Ok(key) = Speech::new(readout.0.to_string(), Lang::en_us) {
+            if let Err(_speak) = key.play() {
+                return Ok(());
+            }
+        }
+
+        if let Ok(lines) = readout.1.to_owned() {
+            for line in lines {
+                let vec = line.0;
+                for val in vec {
+                    if let Ok(value) = Speech::new(val.content.to_string(), Lang::en_us) {
+                        if let Err(_speak) = value.play() {
+                            return Ok(());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return Ok(());
+}
+
 fn main() -> Result<(), io::Error> {
     let mut opt: Opt;
     let arg_opt = Opt::from_args();
@@ -277,30 +304,8 @@ fn main() -> Result<(), io::Error> {
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
-    if cfg!(feature = "tts") {
-        use google_speech::{Lang, Speech};
-
-        for readout in readout_data {
-            if let Ok(key) = Speech::new(readout.0.to_string(), Lang::en_us) {
-                if let Err(_speak) = key.play() {
-                    return Ok(());
-                }
-            }
-
-            if let Ok(lines) = readout.1 {
-                for line in lines {
-                    let vec = line.0;
-                    for val in vec {
-                        if let Ok(value) = Speech::new(val.content.to_string(), Lang::en_us) {
-                            if let Err(_speak) = value.play() {
-                                return Ok(());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
+    #[cfg(feature = "tts")]
+    if let Ok(_) = speak_readouts(&readout_data) {
         return Ok(());
     }
 
