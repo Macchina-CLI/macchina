@@ -11,6 +11,7 @@ use std::io;
 use std::path::Path;
 use structopt::StructOpt;
 use theme::Themes;
+use tui::text::Span;
 
 #[macro_use]
 extern crate lazy_static;
@@ -275,6 +276,33 @@ fn main() -> Result<(), io::Error> {
     let should_display = should_display(&opt);
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
+
+    if cfg!(feature = "tts") {
+        use google_speech::{Lang, Speech};
+
+        for readout in readout_data {
+            if let Ok(key) = Speech::new(readout.0.to_string(), Lang::en_us) {
+                if let Err(_speak) = key.play() {
+                    return Ok(());
+                }
+            }
+
+            if let Ok(lines) = readout.1 {
+                for line in lines {
+                    let vec = line.0;
+                    for val in vec {
+                        if let Ok(value) = Speech::new(val.content.to_string(), Lang::en_us) {
+                            if let Err(_speak) = value.play() {
+                                return Ok(());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return Ok(());
+    }
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);

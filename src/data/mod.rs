@@ -120,6 +120,11 @@ pub fn get_all_readouts<'a>(
     let mut readout_values = Vec::with_capacity(ReadoutKey::variants().len());
     let general_readout = GeneralReadout::new();
 
+    let mut tts = false;
+    if cfg!(feature = "tts") {
+        tts = true;
+    }
+
     if should_display.contains(&ReadoutKey::Host) {
         match (general_readout.username(), general_readout.hostname()) {
             (Ok(u), Ok(h)) => {
@@ -268,8 +273,8 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorUsage) {
-        match (general_readout.cpu_usage(), opt.bar) {
-            (Ok(u), true) => {
+        match (general_readout.cpu_usage(), opt.bar, tts) {
+            (Ok(u), true, false) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
                         ReadoutKey::ProcessorUsage,
@@ -281,11 +286,11 @@ pub fn get_all_readouts<'a>(
                     create_bar(theme, crate::bars::num_to_blocks(u as u8)),
                 ))
             }
-            (Ok(u), false) => readout_values.push(Readout::new(
+            (Ok(u), _, _) => readout_values.push(Readout::new(
                 ReadoutKey::ProcessorUsage,
                 format_cpu_usage(u),
             )),
-            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorUsage, e)),
+            (Err(e), _, _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorUsage, e)),
         }
     }
 
@@ -297,15 +302,16 @@ pub fn get_all_readouts<'a>(
         let total = memory_readout.total();
         let used = memory_readout.used();
 
-        match (total, used, opt.bar) {
-            (Ok(total), Ok(used), true) => {
-                let bar = create_bar(theme, crate::bars::memory(used, total));
-                readout_values.push(Readout::new(ReadoutKey::Memory, bar))
+        match (total, used) {
+            (Ok(total), Ok(used)) => {
+                if opt.bar && !tts {
+                    let bar = create_bar(theme, crate::bars::memory(used, total));
+                    readout_values.push(Readout::new(ReadoutKey::Memory, bar))
+                } else {
+                    readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+                }
             }
-            (Ok(total), Ok(used), false) => {
-                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
-            }
-            (Err(e), _, _) | (_, Err(e), _) => {
+            (Err(e), _) | (_, Err(e)) => {
                 readout_values.push(Readout::new_err(ReadoutKey::Memory, e))
             }
         }
@@ -323,7 +329,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if opt.bar {
+                if opt.bar && !tts {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {
