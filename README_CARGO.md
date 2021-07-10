@@ -47,7 +47,6 @@ _Macchina_ is lightning fast, see for yourself:
 | :--------- | --------: | -------: | -------: |
 | `macchina` | 3.6 ± 0.5 |      3.0 |      5.4 |
 
-
 ## 👩🏽‍💻 macOS
 
 | Command    | Mean [ms] | Min [ms] | Max [ms] |
