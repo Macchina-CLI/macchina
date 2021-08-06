@@ -136,22 +136,6 @@ impl Opt {
             conflicts.push("separator_color and no_color");
         }
 
-        if self.custom_ascii.is_some() && self.no_ascii {
-            conflicts.push("custom_ascii and no_ascii");
-        }
-
-        if self.custom_ascii_color.is_some() && self.no_ascii {
-            conflicts.push("custom_ascii_color and no_ascii");
-        }
-
-        if self.small_ascii && self.no_ascii {
-            conflicts.push("small_ascii and no_ascii");
-        }
-
-        if self.box_title.is_some() && self.no_box {
-            conflicts.push("box_title and no_box");
-        }
-
         if self.box_title.is_some() && self.no_title {
             conflicts.push("box_title and no_title");
         }
