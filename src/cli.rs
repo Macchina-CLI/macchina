@@ -38,6 +38,7 @@ impl MacchinaColor {
 }
 
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
+#[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
