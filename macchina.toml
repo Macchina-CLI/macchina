@@ -1,34 +1,34 @@
 # Disables color.
-no_color = false 
+no_color = false
 
 # Hides the separator.
-no_separator = false 
+no_separator = false
 
 # Hides bar delimiters
-no_bar_delimiter = true 
+no_bar_delimiter = true
 
 # Hides the title of the box surrounding system information
-no_title = false 
+no_title = false
 
 # Disables the box surrounding system information.
-no_box = false 
+no_box = false
 
 # Disables ASCII art
-no_ascii = false 
+no_ascii = false
 
 # Displays a palette of your active colorscheme
-palette = true 
+palette = true
 
-# Turns data into bars for specific readouts 
+# Turns data into bars for specific readouts
 bar = true
 
 # Prefer small ASCII variant.
-small_ascii = false 
+small_ascii = false
 
-# Randomizes the color of the keys each time your run the program 
+# Randomizes the color of the keys each time your run the program
 random_color = false
 
-# Randomizes the color of the separator each time your run the program 
+# Randomizes the color of the separator each time your run the program
 random_sep_color = false
 
 # Specify a color for the keys.
@@ -56,10 +56,10 @@ color = "Blue"
 separator_color = "Blue"
 
 # Shorten uptime format
-short_uptime = true 
+short_uptime = true
 
 # Lengthen shell output
-long_shell = false 
+long_shell = false
 
 # Specify the title of the box
 box_title = " Macchina "
@@ -80,8 +80,8 @@ box_inner_margin_y = 0
 #
 # Custom themes are also supported, they should be placed
 # in $XDG_DATA_HOME/macchina/themes and must be a JSON file.
-# 
-# To set 'foobar' as a theme, place foobar.json 
+#
+# To set 'foobar' as a theme, place foobar.json
 # in $XDG_DATA_HOME/macchina/themes
 # and set theme = "foobar" (case-sensitive)
 theme = "Beryllium"
@@ -90,7 +90,7 @@ theme = "Beryllium"
 # Conflicts with: show_only
 # Accepted values (case-sensitive):
 #   - Host
-#   - Machine 
+#   - Machine
 #   - Kernel
 #   - Distribution
 #   - OperatingSystem
@@ -111,10 +111,10 @@ theme = "Beryllium"
 hide = []
 
 # Displays only the specified readouts.
-# Conflicts with: hide 
+# Conflicts with: hide
 # Accepted values (case-sensitive):
 #   - Host
-#   - Machine 
+#   - Machine
 #   - Kernel
 #   - Distribution
 #   - OperatingSystem
