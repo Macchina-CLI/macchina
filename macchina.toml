@@ -1,20 +1,16 @@
 # Disables color.
-# Conflicts with: color, separator_color
 no_color = false 
 
 # Hides the separator.
-# Conflicts with: separator_color
 no_separator = false 
 
 # Hides bar delimiters
 no_bar_delimiter = true 
 
 # Hides the title of the box surrounding system information
-# Conflicts with: box_title
 no_title = false 
 
 # Disables the box surrounding system information.
-# Conflicts with: box_title
 no_box = false 
 
 # Disables ASCII art
@@ -27,7 +23,6 @@ palette = true
 bar = true
 
 # Prefer small ASCII variant.
-# Conflicts with: no_ascii
 small_ascii = false 
 
 # Randomizes the color of the keys each time your run the program 
@@ -37,7 +32,6 @@ random_color = false
 random_sep_color = false
 
 # Specify a color for the keys.
-# Conflicts with: no_color
 # Accepted values (case-sensitive):
 #   - White
 #   - Black
@@ -50,7 +44,6 @@ random_sep_color = false
 color = "Blue"
 
 # Specify a color for the separator.
-# Conflicts with: no_color
 # Accepted values (case-sensitive):
 #   - White
 #   - Black
@@ -69,15 +62,12 @@ short_uptime = true
 long_shell = false 
 
 # Specify the title of the box
-# Conflicts with: no_title.
 box_title = " Macchina "
 
 # Specify the horizontal inner margin value of the box surrounding system information.
-# Conflicts with: no_box
 box_inner_margin_x = 1
 
 # Specify the vertical inner margin value of the box surrounding system information.
-# Conflicts with: no_box
 box_inner_margin_y = 0
 
 # Specify the theme to use
@@ -111,8 +101,9 @@ theme = "Beryllium"
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - Processor
-#   - ProcessorUsage
+#   - CPU
+#   - GPU
+#   - CPULoad
 #   - Memory
 #   - Battery
 # Example:
@@ -134,8 +125,9 @@ hide = []
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - Processor
-#   - ProcessorUsage
+#   - CPU
+#   - GPU
+#   - CPULoad
 #   - Memory
 #   - Battery
 # Example:

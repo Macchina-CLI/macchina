@@ -260,28 +260,22 @@ impl Default for Opt {
             no_box: false,
 
             color: None,
-            bar: false,
-
             separator_color: None,
             random_color: false,
             random_sep_color: false,
-
-            hide: None,
-            show_only: None,
-
-            doctor: false,
-
-            short_uptime: false,
-            long_shell: false,
-
-            theme: None,
-
-            box_title: None,
 
             custom_ascii: None,
             custom_ascii_color: None,
             small_ascii: false,
 
+            bar: false,
+            hide: None,
+            show_only: None,
+            doctor: false,
+            short_uptime: false,
+            long_shell: false,
+            theme: None,
+            box_title: None,
             box_inner_margin_x: 1,
             box_inner_margin_y: 0,
             export_config: false,
