@@ -167,8 +167,8 @@ pub struct Opt {
 
     #[structopt(
         short = "W",
-        long = "which-shell",
-        help = "Toggles between the current shell or default one"
+        long = "current-shell",
+        help = "Toggles between the current shell or the default one"
     )]
     pub current_shell: bool,
 
