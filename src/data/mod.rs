@@ -1,7 +1,7 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::arg_enum;
-use libmacchina::traits::ReadoutError;
+use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::traits::ShellFormat;
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
@@ -236,15 +236,31 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Shell) {
-        match opt.long_shell {
-            true => match general_readout.shell(ShellFormat::Absolute) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+        match (opt.long_shell, opt.current_shell) {
+            (true, false) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Default) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
             },
-            false => match general_readout.shell(ShellFormat::Relative) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+            (false, true) => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Default) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
             },
+            (true, true) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            },
+            _ => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
         }
     }
 
