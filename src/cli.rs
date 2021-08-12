@@ -1,5 +1,5 @@
 use crate::data;
-use clap::{App, arg_enum};
+use clap::{arg_enum, App};
 use serde::{Deserialize, Serialize};
 use std::default::Default;
 use structopt::StructOpt;
@@ -165,7 +165,11 @@ pub struct Opt {
     #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
     pub long_shell: bool,
 
-    #[structopt(short = "W", long = "which-shell", help = "Toggles between the current shell or default one")]
+    #[structopt(
+        short = "W",
+        long = "which-shell",
+        help = "Toggles between the current shell or default one"
+    )]
     pub current_shell: bool,
 
     #[structopt(

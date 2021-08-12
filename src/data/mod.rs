@@ -1,8 +1,8 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::arg_enum;
-use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::traits::ShellFormat;
+use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -242,19 +242,19 @@ pub fn get_all_readouts<'a>(
                     Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
                 };
-            },
+            }
             (false, true) => {
-                match general_readout.shell(ShellFormat::Relative, ShellKind::Default) {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
                     Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
                 };
-            },
+            }
             (true, true) => {
                 match general_readout.shell(ShellFormat::Absolute, ShellKind::Current) {
                     Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
                 };
-            },
+            }
             _ => {
                 match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
                     Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
