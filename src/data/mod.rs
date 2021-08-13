@@ -27,7 +27,6 @@ arg_enum! {
         Terminal,
         Uptime,
         CPU,
-        GPU,
         CPULoad,
         Memory,
         Battery,
@@ -282,18 +281,6 @@ pub fn get_all_readouts<'a>(
             (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu(&m, c))),
             (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu_only(&m))),
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::CPU, e)),
-        }
-    }
-
-    if should_display.contains(&ReadoutKey::GPU) {
-        match general_readout.gpus() {
-            Ok(gpus) => {
-                for g in gpus {
-                    readout_values.push(Readout::new(ReadoutKey::GPU, g));
-                }
-            }
-
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Uptime, e)),
         }
     }
 
