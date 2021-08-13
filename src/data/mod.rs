@@ -1,8 +1,8 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::arg_enum;
-use libmacchina::traits::ReadoutError;
 use libmacchina::traits::ShellFormat;
+use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -27,7 +27,6 @@ arg_enum! {
         Terminal,
         Uptime,
         CPU,
-        GPU,
         CPULoad,
         Memory,
         Battery,
@@ -236,15 +235,31 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Shell) {
-        match opt.long_shell {
-            true => match general_readout.shell(ShellFormat::Absolute) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-            },
-            false => match general_readout.shell(ShellFormat::Relative) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-            },
+        match (opt.long_shell, opt.current_shell) {
+            (true, false) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Default) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            (false, true) => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            (true, true) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            _ => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
         }
     }
 
@@ -266,18 +281,6 @@ pub fn get_all_readouts<'a>(
             (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu(&m, c))),
             (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu_only(&m))),
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::CPU, e)),
-        }
-    }
-
-    if should_display.contains(&ReadoutKey::GPU) {
-        match general_readout.gpus() {
-            Ok(gpus) => {
-                for g in gpus {
-                    readout_values.push(Readout::new(ReadoutKey::GPU, g));
-                }
-            }
-
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Uptime, e)),
         }
     }
 
