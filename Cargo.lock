@@ -339,9 +339,9 @@ checksum = "a7f823d141fe0a24df1e23b4af4e3c7ba9e5966ec514ea068c93024aa7deb765"
 
 [[package]]
 name = "libmacchina"
-version = "0.7.8"
+version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "013d322b82a98e46d622d69bd66191d7670f96a4c353b9ef94d0f595f6427ffb"
+checksum = "44b8d600122e42e022eddfe1a95e2df98e87203428656471cd617f78fe09536a"
 dependencies = [
  "aparato",
  "cfg-if",
