@@ -124,22 +124,6 @@ impl Opt {
             conflicts.push("hide and show_only");
         }
 
-        if self.separator_color.is_some() && self.no_separator {
-            conflicts.push("separator_color and no_separator");
-        }
-
-        if self.color.is_some() && self.no_color {
-            conflicts.push("color and no_color");
-        }
-
-        if self.separator_color.is_some() && self.no_color {
-            conflicts.push("separator_color and no_color");
-        }
-
-        if self.box_title.is_some() && self.no_title {
-            conflicts.push("box_title and no_title");
-        }
-
         conflicts
     }
 }

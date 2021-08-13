@@ -1,43 +1,37 @@
 # Disables color.
-# Conflicts with: color, separator_color
-no_color = false 
+no_color = false
 
 # Hides the separator.
-# Conflicts with: separator_color
-no_separator = false 
+no_separator = false
 
 # Hides bar delimiters
-no_bar_delimiter = true 
+no_bar_delimiter = true
 
 # Hides the title of the box surrounding system information
-# Conflicts with: box_title
-no_title = false 
+no_title = false
 
 # Disables the box surrounding system information.
-# Conflicts with: box_title
-no_box = false 
+no_box = false
 
 # Disables ASCII art
-no_ascii = false 
+no_ascii = false
 
 # Displays a palette of your active colorscheme
-palette = true 
+palette = true
 
-# Turns data into bars for specific readouts 
+# Turns data into bars for specific readouts
 bar = true
 
 # Prefer small ASCII variant.
-# Conflicts with: no_ascii
-small_ascii = false 
+small_ascii = false
 
-# Randomizes the color of the keys each time your run the program 
+# Randomizes the color of the keys each time your run the program
 random_color = false
 
-# Randomizes the color of the separator each time your run the program 
+# Randomizes the color of the separator each time your run the program
 random_sep_color = false
 
 # Specify a color for the keys.
-# Conflicts with: no_color
 # Accepted values (case-sensitive):
 #   - White
 #   - Black
@@ -50,7 +44,6 @@ random_sep_color = false
 color = "Blue"
 
 # Specify a color for the separator.
-# Conflicts with: no_color
 # Accepted values (case-sensitive):
 #   - White
 #   - Black
@@ -63,21 +56,21 @@ color = "Blue"
 separator_color = "Blue"
 
 # Shorten uptime format
-short_uptime = true 
+short_uptime = true
 
 # Lengthen shell output
-long_shell = false 
+long_shell = false
+
+# Toggle between the current shell or the default one
+current_shell = no
 
 # Specify the title of the box
-# Conflicts with: no_title.
 box_title = " Macchina "
 
 # Specify the horizontal inner margin value of the box surrounding system information.
-# Conflicts with: no_box
 box_inner_margin_x = 1
 
 # Specify the vertical inner margin value of the box surrounding system information.
-# Conflicts with: no_box
 box_inner_margin_y = 0
 
 # Specify the theme to use
@@ -90,8 +83,8 @@ box_inner_margin_y = 0
 #
 # Custom themes are also supported, they should be placed
 # in $XDG_DATA_HOME/macchina/themes and must be a JSON file.
-# 
-# To set 'foobar' as a theme, place foobar.json 
+#
+# To set 'foobar' as a theme, place foobar.json
 # in $XDG_DATA_HOME/macchina/themes
 # and set theme = "foobar" (case-sensitive)
 theme = "Beryllium"
@@ -100,7 +93,7 @@ theme = "Beryllium"
 # Conflicts with: show_only
 # Accepted values (case-sensitive):
 #   - Host
-#   - Machine 
+#   - Machine
 #   - Kernel
 #   - Distribution
 #   - OperatingSystem
@@ -111,8 +104,9 @@ theme = "Beryllium"
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - Processor
-#   - ProcessorUsage
+#   - CPU
+#   - GPU
+#   - CPULoad
 #   - Memory
 #   - Battery
 # Example:
@@ -120,10 +114,10 @@ theme = "Beryllium"
 hide = []
 
 # Displays only the specified readouts.
-# Conflicts with: hide 
+# Conflicts with: hide
 # Accepted values (case-sensitive):
 #   - Host
-#   - Machine 
+#   - Machine
 #   - Kernel
 #   - Distribution
 #   - OperatingSystem
@@ -134,8 +128,9 @@ hide = []
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - Processor
-#   - ProcessorUsage
+#   - CPU
+#   - GPU
+#   - CPULoad
 #   - Memory
 #   - Battery
 # Example:

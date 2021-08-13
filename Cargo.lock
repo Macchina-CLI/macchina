@@ -31,9 +31,9 @@ dependencies = [
 
 [[package]]
 name = "aparato"
-version = "6.0.1"
+version = "6.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48892a7ae578d713f0af7a71ac3223bbe7d363717deadd6e62d626c340694cd8"
+checksum = "724b4da16efbef93119f185f1c34f573023b11bd90ef5a3fd857d99fed85e648"
 dependencies = [
  "cfg-if",
  "hex",
@@ -312,9 +312,9 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37d572918e350e82412fe766d24b15e6682fb2ed2bbe018280caa810397cb319"
+checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
 dependencies = [
  "either",
 ]
@@ -333,15 +333,15 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.98"
+version = "0.2.99"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "320cfe77175da3a483efed4bc0adc1968ca050b098ce4f2f1c13a56626128790"
+checksum = "a7f823d141fe0a24df1e23b4af4e3c7ba9e5966ec514ea068c93024aa7deb765"
 
 [[package]]
 name = "libmacchina"
-version = "0.6.0"
+version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7cb9a778a0b05c5058016ff13962974a660578c597e789c3634555b987bb08a"
+checksum = "013d322b82a98e46d622d69bd66191d7670f96a4c353b9ef94d0f595f6427ffb"
 dependencies = [
  "aparato",
  "cfg-if",
