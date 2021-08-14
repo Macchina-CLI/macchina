@@ -27,10 +27,7 @@ arg_enum! {
         Terminal,
         Uptime,
         CPU,
-<<<<<<< HEAD
         GPU,
-=======
->>>>>>> main
         CPULoad,
         Memory,
         Battery,
