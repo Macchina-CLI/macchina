@@ -62,7 +62,8 @@ short_uptime = true
 long_shell = false
 
 # Toggle between the current shell or the default one
-current_shell = false 
+# This feature has not yet landed in a release, only uncomment if using upstream
+# current_shell = false 
 
 # Specify the title of the box
 box_title = " Macchina "
