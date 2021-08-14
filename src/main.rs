@@ -33,7 +33,7 @@ use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
 use tui::style::Color;
 use tui::text::Text;
-use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
+use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget, Wrap};
 use unicode_width::UnicodeWidthStr;
 
 fn create_backend() -> CrosstermBackend<Stdout> {
@@ -64,7 +64,9 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
         height: ascii.height() as u16,
     };
 
-    Paragraph::new(ascii).render(ascii_rect, tmp_buffer);
+    Paragraph::new(ascii)
+        .wrap(Wrap { trim: false })
+        .render(ascii_rect, tmp_buffer);
     ascii_rect
 }
 

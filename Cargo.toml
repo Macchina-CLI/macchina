@@ -11,8 +11,8 @@ readme = "README_CARGO.md"
 build = "build.rs"
 
 [dependencies]
-# libmacchina = "0.6.2"
 libmacchina = { git = "https://github.com/macchina-cli/libmacchina", rev = "8f47048f5a40d6e39b0d7fcba020f1d4a2def439" }
+libmacchina = "0.7.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.15.0", default-features = false, features = ['crossterm'] }
@@ -30,8 +30,8 @@ serde_json = "1.0.64"
 google_speech = { version = "0.1.0" , optional = true }
 
 [build-dependencies]
-# libmacchina = "0.6.2"
 libmacchina = { git = "https://github.com/macchina-cli/libmacchina", rev = "8f47048f5a40d6e39b0d7fcba020f1d4a2def439" }
+libmacchina = "0.7.9"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.15.0", default-features = false, features = ['crossterm'] }

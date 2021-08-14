@@ -1,8 +1,8 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::arg_enum;
-use libmacchina::traits::ReadoutError;
 use libmacchina::traits::ShellFormat;
+use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -26,8 +26,8 @@ arg_enum! {
         Shell,
         Terminal,
         Uptime,
-        Processor,
-        ProcessorUsage,
+        CPU,
+        CPULoad,
         Memory,
         Battery,
         LocalIP,
@@ -235,15 +235,31 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Shell) {
-        match opt.long_shell {
-            true => match general_readout.shell(ShellFormat::Absolute) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-            },
-            false => match general_readout.shell(ShellFormat::Relative) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-            },
+        match (opt.long_shell, opt.current_shell) {
+            (true, false) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Default) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            (false, true) => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            (true, true) => {
+                match general_readout.shell(ShellFormat::Absolute, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
+            _ => {
+                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
+                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+                };
+            }
         }
     }
 
@@ -257,40 +273,35 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    if should_display.contains(&ReadoutKey::Processor) {
+    if should_display.contains(&ReadoutKey::CPU) {
         match (
             general_readout.cpu_model_name(),
             general_readout.cpu_cores(),
         ) {
-            (Ok(m), Ok(c)) => {
-                readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
-            }
-            (Ok(m), _) => {
-                readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m)))
-            }
-            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
+            (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu(&m, c))),
+            (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu_only(&m))),
+            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::CPU, e)),
         }
     }
 
-    if should_display.contains(&ReadoutKey::ProcessorUsage) {
+    if should_display.contains(&ReadoutKey::CPULoad) {
         match (general_readout.cpu_usage(), opt.bar, tts) {
             (Ok(u), true, false) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
-                        ReadoutKey::ProcessorUsage,
+                        ReadoutKey::CPULoad,
                         create_bar(theme, crate::bars::num_to_blocks(100_u8)),
                     ))
                 }
                 readout_values.push(Readout::new(
-                    ReadoutKey::ProcessorUsage,
+                    ReadoutKey::CPULoad,
                     create_bar(theme, crate::bars::num_to_blocks(u as u8)),
                 ))
             }
-            (Ok(u), _, _) => readout_values.push(Readout::new(
-                ReadoutKey::ProcessorUsage,
-                format_cpu_usage(u),
-            )),
-            (Err(e), _, _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorUsage, e)),
+            (Ok(u), _, _) => {
+                readout_values.push(Readout::new(ReadoutKey::CPULoad, format_cpu_usage(u)))
+            }
+            (Err(e), _, _) => readout_values.push(Readout::new_err(ReadoutKey::CPULoad, e)),
         }
     }
 
