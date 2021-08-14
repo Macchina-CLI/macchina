@@ -166,6 +166,13 @@ pub struct Opt {
     pub long_shell: bool,
 
     #[structopt(
+        short = "W",
+        long = "current-shell",
+        help = "Toggles between the current shell or the default one"
+    )]
+    pub current_shell: bool,
+
+    #[structopt(
     short = "t",
     long = "theme",
     // default_value = "Hydrogen",
@@ -221,6 +228,7 @@ pub struct Opt {
         default_value = "0"
     )]
     pub box_inner_margin_y: u16,
+
     #[structopt(
         long = "export-config",
         help = "Prints the config file to stdout",
@@ -274,6 +282,7 @@ impl Default for Opt {
             doctor: false,
             short_uptime: false,
             long_shell: false,
+            current_shell: false,
             theme: None,
             box_title: None,
             box_inner_margin_x: 1,
