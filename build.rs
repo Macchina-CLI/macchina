@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use vergen::{ShaKind,Config};
+use vergen::{Config, ShaKind};
 fn main() {
     let outdir = match std::env::var_os("OUT_DIR") {
         None => return,
@@ -14,6 +14,5 @@ fn main() {
     let mut config = Config::default();
     *config.git_mut().sha_kind_mut() = ShaKind::Short;
     // This will break builds if the git folder is removed
-    vergen::vergen(config).unwrap(); 
+    vergen::vergen(config).unwrap();
 }
-
