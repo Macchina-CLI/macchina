@@ -455,6 +455,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "0.7.9"
+source = "git+https://github.com/uttarayan21/libmacchina#4315ac0b92fb118fc59710608d8ec75d54b6ee24"
 dependencies = [
  "aparato",
  "cfg-if",
