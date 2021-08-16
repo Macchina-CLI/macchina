@@ -311,6 +311,17 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
+    if opt.version {
+        println!(
+            // "{} {} ({})",
+            // env!("CARGO_PKG_NAME"),
+            "macchina    {} ({})",
+            env!("CARGO_PKG_VERSION"),
+            env!("VERGEN_GIT_SHA_SHORT"),
+        );
+        println!("libmacchina {}", libmacchina::version());
+        return Ok(());
+    }
     if opt.doctor {
         doctor::print_doctor(&readout_data);
         return Ok(());

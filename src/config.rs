@@ -54,6 +54,9 @@ impl Opt {
         if args.custom_ascii_color.is_some() {
             self.custom_ascii_color = args.custom_ascii_color;
         }
+        if args.version {
+            self.version = true;
+        }
         if args.doctor {
             self.doctor = true;
         }

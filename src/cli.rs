@@ -38,12 +38,22 @@ impl MacchinaColor {
 }
 
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
-#[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
+// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")", libmacchina::version()))]
+// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
     #[structopt(short = "p", long = "palette", help = "Displays color palette")]
     pub palette: bool,
+
+    #[structopt(
+        short = "V",
+        long = "version",
+        help = "Prints version information",
+        conflicts_with = "doctor"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub version: bool,
 
     #[structopt(
         short = "P",
@@ -258,6 +268,7 @@ impl Default for Opt {
     fn default() -> Self {
         Opt {
             palette: false,
+            version: false,
             padding: None,
             spacing: None,
 
