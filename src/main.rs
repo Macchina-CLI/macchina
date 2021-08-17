@@ -40,13 +40,31 @@ fn create_backend() -> CrosstermBackend<Stdout> {
     CrosstermBackend::new(io::stdout())
 }
 
-fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
+fn find_widest_cell(buf: &Buffer, last_y: u16) -> u16 {
+    let area = &buf.area;
+    let mut widest: u16 = 0;
+    let empty_cell = Cell::default();
+
+    for y in 0..last_y {
+        for x in (0..area.width).rev() {
+            let current_cell = buf.get(x, y);
+            if current_cell.ne(&empty_cell) && x > widest {
+                widest = x
+            }
+        }
+    }
+
+    widest + 1
+}
+
+fn find_last_buffer_cell_index(buf: &Buffer, term_size: &(u16, u16)) -> Option<(u16, u16)> {
     let empty_cell = Cell::default();
 
     if let Some((idx, _)) = buf
         .content
         .iter()
         .enumerate()
+        .filter(|p| buf.pos_of(p.0).le(term_size))
         .filter(|p| !(*(p.1)).eq(&empty_cell))
         .last()
     {
@@ -389,8 +407,12 @@ fn write_buffer_to_console(
     backend: &mut CrosstermBackend<Stdout>,
     tmp_buffer: &mut Buffer,
 ) -> Result<(), io::Error> {
-    let (_, last_y) =
-        find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
+    let term_size = backend.size().unwrap_or_default();
+
+    let (_, last_y) = find_last_buffer_cell_index(tmp_buffer, &(term_size.width, term_size.height))
+        .expect("Error while writing to terminal buffer.");
+
+    let last_x = find_widest_cell(tmp_buffer, last_y);
 
     print!("{}", "\n".repeat(last_y as usize + 1));
 
@@ -399,7 +421,6 @@ fn write_buffer_to_console(
         cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
     }
 
-    let term_size = backend.size().unwrap_or_default();
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
     let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
@@ -423,7 +444,7 @@ fn write_buffer_to_console(
             let (x, y) = tmp_buffer.pos_of(idx);
             (x, y, cell)
         })
-        .filter(|(x, y, _)| *x < term_size.width && *y <= last_y)
+        .filter(|(x, y, _)| *x < last_x && *x < term_size.width && *y <= last_y)
         .map(|(x, y, cell)| (x, y + starting_pos, cell));
 
     backend.draw(iter)?;
