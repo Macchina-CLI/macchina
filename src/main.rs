@@ -49,7 +49,8 @@ fn find_widest_cell(buf: &Buffer, last_y: u16) -> u16 {
         for x in (0..area.width).rev() {
             let current_cell = buf.get(x, y);
             if current_cell.ne(&empty_cell) && x > widest {
-                widest = x
+                widest = x;
+                break;
             }
         }
     }
