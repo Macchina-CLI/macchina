@@ -82,6 +82,11 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Alternative, "Cpu");
                 values.insert(&AbbreviationType::Long, "Processor");
             }
+            ReadoutKey::GPU => {
+                values.insert(&AbbreviationType::Classic, "GPU");
+                values.insert(&AbbreviationType::Alternative, "Gpu");
+                values.insert(&AbbreviationType::Long, "Graphics Processor");
+            }
             ReadoutKey::CPULoad => {
                 values.insert(&AbbreviationType::Classic, "CPU%");
                 values.insert(&AbbreviationType::Alternative, "Cp%");
