@@ -15,9 +15,6 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
     <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
 </a>
 
-<a href="https://saythanks.io/to/ba.tahaaziz@gmail.com">
-    <img src="https://img.shields.io/badge/Say-Thanks-1EAEDB.svg" alt="Say Thanks" />
-</a>
 </div>
 
 ---
