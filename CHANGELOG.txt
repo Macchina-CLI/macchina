@@ -1,3 +1,16 @@
 # Changelog
-- NetBSD: Finally fixed resolution readout failing, due to linkage mistakes
-- NetBSD: Set a fallback, that tries to fetch resolution through the ACPIVGA driver
+## Bug fixes
+- Address an issue that causes text to overflow when the terminal  
+is reduced beyond its original size
+- Address an issue that causes terminal information to be incorrect  
+when in a nested shell situation
+
+## Features
+- Added the commit hash to `--version`
+- Added an option to toggle between displaying the current or default shell
+
+## Misc
+- Removed many build dependencies (breaking shell auto-completion)
+- Removed many annoying conflict checks in the configuration file
+- No longer capitalize shell output
+- Bumped most dependencies' versions
