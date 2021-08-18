@@ -1,22 +1,6 @@
 #![allow(dead_code)]
-use structopt::clap::Shell;
-mod format {
-    include!("src/format.rs");
-}
-mod bars {
-    include!("src/bars.rs");
-}
-mod data {
-    include!("src/data/mod.rs");
-}
-mod theme {
-    include!("src/theme.rs");
-}
-mod cli {
-    include!("src/cli.rs");
-}
+use vergen::{Config, ShaKind};
 fn main() {
-    let name = "macchina";
     let outdir = match std::env::var_os("OUT_DIR") {
         None => return,
         Some(outdir) => outdir,
@@ -27,7 +11,10 @@ fn main() {
         panic!("failed to write {}: {}", stamp_path.display(), err);
     }
 
-    let mut cli = cli::build_cli();
-    cli.gen_completions(name, Shell::Fish, &outdir);
-    cli.gen_completions(name, Shell::Bash, &outdir);
+    let mut config = Config::default();
+    *config.git_mut().sha_kind_mut() = ShaKind::Short;
+
+    if let Err(e) = vergen::vergen(config) {
+        eprintln!("{}", e)
+    }
 }

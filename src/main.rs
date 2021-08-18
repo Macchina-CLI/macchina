@@ -329,6 +329,15 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
+    if opt.version {
+        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
+            println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+        } else {
+            println!("macchina    {}", env!("CARGO_PKG_VERSION"));
+        }
+        println!("libmacchina {}", libmacchina::version());
+        return Ok(());
+    }
     if opt.doctor {
         doctor::print_doctor(&readout_data);
         return Ok(());
