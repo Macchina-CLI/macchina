@@ -331,7 +331,7 @@ fn main() -> Result<(), io::Error> {
     }
 
     if opt.version {
-        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA") {
+        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
             println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
         } else {
             println!("macchina    {}", env!("CARGO_PKG_VERSION"));
