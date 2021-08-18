@@ -13,6 +13,8 @@ fn main() {
 
     let mut config = Config::default();
     *config.git_mut().sha_kind_mut() = ShaKind::Short;
-    // This will break builds if the git folder is removed
-    vergen::vergen(config).unwrap();
+
+    if let Err(e) = vergen::vergen(config) {
+        eprintln!("{}", e)
+    }
 }

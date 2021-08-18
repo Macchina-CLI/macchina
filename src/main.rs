@@ -331,13 +331,11 @@ fn main() -> Result<(), io::Error> {
     }
 
     if opt.version {
-        println!(
-            // "{} {} ({})",
-            // env!("CARGO_PKG_NAME"),
-            "macchina    {} ({})",
-            env!("CARGO_PKG_VERSION"),
-            env!("VERGEN_GIT_SHA_SHORT"),
-        );
+        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA") {
+            println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+        } else {
+            println!("macchina    {}", env!("CARGO_PKG_VERSION"));
+        }
         println!("libmacchina {}", libmacchina::version());
         return Ok(());
     }
