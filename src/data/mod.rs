@@ -26,8 +26,8 @@ arg_enum! {
         Shell,
         Terminal,
         Uptime,
-        CPU,
-        CPULoad,
+        Processor,
+        ProcessorLoad,
         Memory,
         Battery,
         LocalIP,
@@ -273,35 +273,35 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    if should_display.contains(&ReadoutKey::CPU) {
+    if should_display.contains(&ReadoutKey::Processor) {
         match (
             general_readout.cpu_model_name(),
             general_readout.cpu_cores(),
         ) {
-            (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu(&m, c))),
-            (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::CPU, format_cpu_only(&m))),
-            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::CPU, e)),
+            (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c))),
+            (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m))),
+            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
         }
     }
 
-    if should_display.contains(&ReadoutKey::CPULoad) {
+    if should_display.contains(&ReadoutKey::ProcessorLoad) {
         match (general_readout.cpu_usage(), opt.bar, tts) {
             (Ok(u), true, false) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
-                        ReadoutKey::CPULoad,
+                        ReadoutKey::ProcessorLoad,
                         create_bar(theme, crate::bars::num_to_blocks(100_u8)),
                     ))
                 }
                 readout_values.push(Readout::new(
-                    ReadoutKey::CPULoad,
+                    ReadoutKey::ProcessorLoad,
                     create_bar(theme, crate::bars::num_to_blocks(u as u8)),
                 ))
             }
             (Ok(u), _, _) => {
-                readout_values.push(Readout::new(ReadoutKey::CPULoad, format_cpu_usage(u)))
+                readout_values.push(Readout::new(ReadoutKey::ProcessorLoad, format_cpu_usage(u)))
             }
-            (Err(e), _, _) => readout_values.push(Readout::new_err(ReadoutKey::CPULoad, e)),
+            (Err(e), _, _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorLoad, e)),
         }
     }
 

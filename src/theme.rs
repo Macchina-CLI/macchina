@@ -77,12 +77,12 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Alternative, "Upt");
                 values.insert(&AbbreviationType::Long, "Uptime");
             }
-            ReadoutKey::CPU => {
+            ReadoutKey::Processor => {
                 values.insert(&AbbreviationType::Classic, "CPU");
                 values.insert(&AbbreviationType::Alternative, "Cpu");
                 values.insert(&AbbreviationType::Long, "Processor");
             }
-            ReadoutKey::CPULoad => {
+            ReadoutKey::ProcessorLoad => {
                 values.insert(&AbbreviationType::Classic, "CPU%");
                 values.insert(&AbbreviationType::Alternative, "Cp%");
                 values.insert(&AbbreviationType::Long, "Processor Usage");
