@@ -107,7 +107,6 @@ theme = "Beryllium"
 #   - Shell
 #   - Uptime
 #   - CPU
-#   - GPU
 #   - CPULoad
 #   - Memory
 #   - Battery
@@ -132,7 +131,6 @@ hide = []
 #   - Shell
 #   - Uptime
 #   - CPU
-#   - GPU
 #   - CPULoad
 #   - Memory
 #   - Battery
