@@ -106,8 +106,8 @@ theme = "Beryllium"
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - CPU
-#   - CPULoad
+#   - Processor
+#   - ProcessorLoad
 #   - Memory
 #   - Battery
 # Example:
@@ -130,8 +130,8 @@ hide = []
 #   - Terminal
 #   - Shell
 #   - Uptime
-#   - CPU
-#   - CPULoad
+#   - Processor
+#   - ProcessorLoad
 #   - Memory
 #   - Battery
 # Example:
