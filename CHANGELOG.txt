@@ -10,6 +10,7 @@ when in a nested shell situation
 - Added an option to toggle between displaying the current or default shell
 
 ## Misc
+- Added macOS Monterey to list of macOS versions
 - Removed many build dependencies (breaking shell auto-completion)
 - Removed many annoying conflict checks in the configuration file
 - No longer capitalize shell output
