@@ -1,9 +1,9 @@
 [package]
 name = "macchina"
-version = "0.9.3"
-authors = ["Taha Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
+version = "1.0.0"
+authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
 edition = "2018"
-description = "A system information fetcher, with an emphasis on performance and minimalism."
+description = "A system information fetcher, with an emphasis on performance."
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/Macchina-CLI/macchina"
 license = "MIT"
