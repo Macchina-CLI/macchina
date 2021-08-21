@@ -58,14 +58,13 @@ fn find_widest_cell(buf: &Buffer, last_y: u16) -> u16 {
     widest + 1
 }
 
-fn find_last_buffer_cell_index(buf: &Buffer, term_size: &(u16, u16)) -> Option<(u16, u16)> {
+fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     let empty_cell = Cell::default();
 
     if let Some((idx, _)) = buf
         .content
         .iter()
         .enumerate()
-        .filter(|p| buf.pos_of(p.0).le(term_size))
         .filter(|p| !(*(p.1)).eq(&empty_cell))
         .last()
     {
@@ -83,8 +82,7 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
         height: ascii.height() as u16,
     };
 
-    Paragraph::new(ascii)
-        .render(ascii_rect, tmp_buffer);
+    Paragraph::new(ascii).render(ascii_rect, tmp_buffer);
     ascii_rect
 }
 
@@ -418,8 +416,8 @@ fn write_buffer_to_console(
 ) -> Result<(), io::Error> {
     let term_size = backend.size().unwrap_or_default();
 
-    let (_, last_y) = find_last_buffer_cell_index(tmp_buffer, &(term_size.width, term_size.height))
-        .expect("Error while writing to terminal buffer.");
+    let (_, last_y) =
+        find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
 
     let last_x = find_widest_cell(tmp_buffer, last_y);
 

@@ -235,32 +235,15 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Shell) {
-        match (opt.long_shell, opt.current_shell) {
-            (true, false) => {
-                match general_readout.shell(ShellFormat::Absolute, ShellKind::Default) {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-                };
-            }
-            (false, true) => {
-                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-                };
-            }
-            (true, true) => {
-                match general_readout.shell(ShellFormat::Absolute, ShellKind::Current) {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-                };
-            }
-            _ => {
-                match general_readout.shell(ShellFormat::Relative, ShellKind::Current) {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
-                    Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
-                };
-            }
-        }
+        let (ls, cs) = (
+            if opt.long_shell { ShellFormat::Absolute } else { ShellFormat::Relative },
+            if opt.current_shell { ShellKind::Current } else { ShellKind::Default },
+        );
+
+        match general_readout.shell(ls, cs) {
+            Ok(s) => readout_values.push(Readout::new(ReadoutKey::Shell, s)),
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Shell, e)),
+        };
     }
 
     if should_display.contains(&ReadoutKey::Uptime) {
@@ -278,8 +261,12 @@ pub fn get_all_readouts<'a>(
             general_readout.cpu_model_name(),
             general_readout.cpu_cores(),
         ) {
-            (Ok(m), Ok(c)) => readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c))),
-            (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m))),
+            (Ok(m), Ok(c)) => {
+                readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
+            }
+            (Ok(m), _) => {
+                readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m)))
+            }
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
         }
     }
