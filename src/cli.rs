@@ -202,7 +202,7 @@ pub struct Opt {
 
     #[structopt(
         long = "custom-ascii",
-        help = "Specify your own ASCII art from a file",
+        help = "Specify your own ASCII art from a text file (supports ANSI escape codes)",
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii: Option<String>,

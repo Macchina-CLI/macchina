@@ -16,14 +16,17 @@ no_box = false
 # Disables ASCII art
 no_ascii = false
 
+# Specify your own ASCII art from a text file (supports ANSI escape codes)
+# custom_ascii = "/path/to/text/file"
+
+# Prefer small ASCII variant.
+small_ascii = false
+
 # Displays a palette of your active colorscheme
 palette = true
 
 # Turns data into bars for specific readouts
 bar = true
-
-# Prefer small ASCII variant.
-small_ascii = false
 
 # Randomizes the color of the keys each time your run the program
 random_color = false
