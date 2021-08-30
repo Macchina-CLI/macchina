@@ -246,10 +246,12 @@ cd macchina
 makepkg -si
 ```
 
-### NixOS
+### Nix
+
+Where `<channel>` is probably `nixpkgs` or `nixos`:
 
 ```bash
-nix-env -iA nixos.macchina
+nix-env -iA <channel>.macchina
 ```
 
 _Macchina's_
