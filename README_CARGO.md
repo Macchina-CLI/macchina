@@ -40,9 +40,11 @@ _Macchina_ is lightning fast, see for yourself:
 
 ## 🐧 Linux
 
-| Command    | Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | --------: | -------: | -------: |
-| `macchina` | 3.6 ± 0.5 |      3.0 |      5.4 |
+This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
+
+| Command | Mean [ms] | Min [ms] | Max [ms] |
+|:---|---:|---:|---:|---:|
+| `macchina` | 4.8 ± 0.4 | 4.5 | 8.1 |
 
 ## 👩🏽‍💻 macOS
 
@@ -52,15 +54,11 @@ _Macchina_ is lightning fast, see for yourself:
 
 ## 🚩 NetBSD
 
+This benchmark was performed inside a virtual machine using an __Intel® Core™ i5-8265U CPU @ 1.60GHz__
+
 | Command    |  Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | ---------: | -------: | -------: |
 | `macchina` | 17.7 ± 1.6 |     16.8 |     27.2 |
-
-## 💻 Windows
-
-| Command    | Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | --------: | -------: | -------: |
-| `macchina` | 9.0 ± 0.4 |      8.2 |     11.7 |
 
 ---
 
