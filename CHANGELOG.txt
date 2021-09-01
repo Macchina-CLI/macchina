@@ -5,7 +5,7 @@
 - readme: benchmarks: disclose the environment/processor
 - readme: Nix's installation section now mentions all channels
 - actions: Bring back netbsd workflow after having removed all X11 code
-- libmacchina: Bump to version 1.0.0
+- libmacchina: Bump from v0.8.1 to v1.0.1
    - [*nix only] Implement a new readout, `disk_space()` which for now returns the used bytes of the root partition
    - Add macOS resolution (#56)
    - Address a panic caused by too much output in the resolution readout (#132)
