@@ -58,9 +58,9 @@ _Macchina_ is lightning fast, see for yourself:
 
 This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
 
-| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
+| Command | Mean [ms] | Min [ms] | Max [ms] |
 |:---|---:|---:|---:|---:|
-| `macchina` | 4.8 ± 0.4 | 4.5 | 8.1 | 1.00 |
+| `macchina` | 4.8 ± 0.4 | 4.5 | 8.1 |
 
 ## 👩🏽‍💻 macOS
 
