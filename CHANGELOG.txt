@@ -2,6 +2,7 @@
 - misc: Remove X11 feature from codebase after having replaced it with a built-in resolution parser (#135)
 - config: Fallback to original naming for some ReadoutKeys
 - readme: Remove saythanks badge
+- readme: benchmarks: disclose the environment/processor
 - readme: Nix's installation section now mentions all channels
 - actions: Bring back netbsd workflow after having removed all X11 code
 - libmacchina: Bump to version 0.8.6
