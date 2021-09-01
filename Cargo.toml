@@ -1,7 +1,7 @@
 [package]
 name = "macchina"
 version = "1.1.0"
-authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>"]
+authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>", "Uttarayan Mondal <email@uttarayan.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance."
 keywords = ["system", "fetch", "cli"]
