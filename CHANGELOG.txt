@@ -5,8 +5,12 @@
 - readme: benchmarks: disclose the environment/processor
 - readme: Nix's installation section now mentions all channels
 - actions: Bring back netbsd workflow after having removed all X11 code
-- libmacchina: Bump to version 0.8.6
-   - This includes a fix (added in version 0.8.3) that addresses a panic caused by too much output in the resolution readout (#132)
+- libmacchina: Bump to version 1.0.0
+   - [*nix only] Implement a new readout, `disk_space()` which for now returns the used bytes of the root partition
+   - Add macOS resolution (#56)
+   - Address a panic caused by too much output in the resolution readout (#132)
+   - src/macos/mach_ffi.rs: Remove useless CGError typedef
+   - src/macos/mod.rs: Search for "brew" rather than "homebrew" before getting package count
 - src/data/mods.rs: Significantly improve shell readout logic
 - macchina.toml: Be more specific in `small_ascii` description 
 - src/cli.rs: Be more specific in `small_ascii` description
