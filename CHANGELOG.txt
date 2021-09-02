@@ -1,5 +1,6 @@
 # Changelog
 - misc: Remove X11 feature from codebase after having replaced it with a built-in resolution parser (#135)
+- misc: Bump all dependencies' versions
 - config: Fallback to original naming for some ReadoutKeys
 - readme: Remove saythanks badge
 - readme: benchmarks: disclose the environment/processor
