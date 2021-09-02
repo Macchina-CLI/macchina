@@ -39,7 +39,7 @@ impl Opt {
                         .join(".config")
                         .join(PKG_NAME)
                         .join(format!("{}.toml", PKG_NAME));
-    
+
                     if Path::exists(&path) {
                         return Opt::from_config_file(&path);
                     }
