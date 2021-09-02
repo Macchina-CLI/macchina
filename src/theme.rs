@@ -6,12 +6,10 @@ use tui::style::Color;
 
 /// Defines the different ways a key can be named, let's take the _OperatingSystem variant_ for example: \
 /// - `AbbreviationType::Classic` -> OS \
-/// - `AbbreviationType::Alternative` -> Ope \
 /// - `AbbreviationType::Long` -> Operating System
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub enum AbbreviationType {
     Classic,
-    Alternative,
     Long,
 }
 
@@ -24,87 +22,74 @@ impl ReadoutKey {
         match self {
             ReadoutKey::Host => {
                 values.insert(&AbbreviationType::Classic, "Host");
-                values.insert(&AbbreviationType::Alternative, "Hos");
                 values.insert(&AbbreviationType::Long, "Host");
             }
             ReadoutKey::Machine => {
                 values.insert(&AbbreviationType::Classic, "Machine");
-                values.insert(&AbbreviationType::Alternative, "Mac");
                 values.insert(&AbbreviationType::Long, "Machine");
             }
             ReadoutKey::Kernel => {
                 values.insert(&AbbreviationType::Classic, "Kernel");
-                values.insert(&AbbreviationType::Alternative, "Ker");
                 values.insert(&AbbreviationType::Long, "Kernel");
             }
             ReadoutKey::Distribution => {
                 values.insert(&AbbreviationType::Classic, "Distro");
-                values.insert(&AbbreviationType::Alternative, "Dis");
                 values.insert(&AbbreviationType::Long, "Distribution");
             }
             ReadoutKey::OperatingSystem => {
                 values.insert(&AbbreviationType::Classic, "OS");
-                values.insert(&AbbreviationType::Alternative, "Ope");
                 values.insert(&AbbreviationType::Long, "Operating System");
             }
             ReadoutKey::DesktopEnvironment => {
                 values.insert(&AbbreviationType::Classic, "DE");
-                values.insert(&AbbreviationType::Alternative, "Des");
                 values.insert(&AbbreviationType::Long, "Desktop Environment");
             }
             ReadoutKey::WindowManager => {
                 values.insert(&AbbreviationType::Classic, "WM");
-                values.insert(&AbbreviationType::Alternative, "Win");
                 values.insert(&AbbreviationType::Long, "Window Manager");
             }
             ReadoutKey::Packages => {
                 values.insert(&AbbreviationType::Classic, "Packages");
-                values.insert(&AbbreviationType::Alternative, "Pac");
                 values.insert(&AbbreviationType::Long, "Packages");
             }
             ReadoutKey::Shell => {
                 values.insert(&AbbreviationType::Classic, "Shell");
-                values.insert(&AbbreviationType::Alternative, "She");
                 values.insert(&AbbreviationType::Long, "Shell");
             }
             ReadoutKey::Terminal => {
                 values.insert(&AbbreviationType::Classic, "Terminal");
-                values.insert(&AbbreviationType::Alternative, "Ter");
                 values.insert(&AbbreviationType::Long, "Terminal");
             }
             ReadoutKey::Uptime => {
                 values.insert(&AbbreviationType::Classic, "Uptime");
-                values.insert(&AbbreviationType::Alternative, "Upt");
                 values.insert(&AbbreviationType::Long, "Uptime");
             }
             ReadoutKey::Processor => {
                 values.insert(&AbbreviationType::Classic, "CPU");
-                values.insert(&AbbreviationType::Alternative, "Cpu");
                 values.insert(&AbbreviationType::Long, "Processor");
             }
             ReadoutKey::ProcessorLoad => {
                 values.insert(&AbbreviationType::Classic, "CPU%");
-                values.insert(&AbbreviationType::Alternative, "Cp%");
                 values.insert(&AbbreviationType::Long, "Processor Usage");
             }
             ReadoutKey::LocalIP => {
                 values.insert(&AbbreviationType::Classic, "Local IP");
-                values.insert(&AbbreviationType::Alternative, "Adr");
                 values.insert(&AbbreviationType::Long, "Local IP");
             }
             ReadoutKey::Resolution => {
                 values.insert(&AbbreviationType::Classic, "Resolution");
-                values.insert(&AbbreviationType::Alternative, "Res");
                 values.insert(&AbbreviationType::Long, "Resolution");
+            }
+            ReadoutKey::DiskUsage => {
+                values.insert(&AbbreviationType::Classic, "Disk (/)");
+                values.insert(&AbbreviationType::Long, "Disk (/)");
             }
             ReadoutKey::Memory => {
                 values.insert(&AbbreviationType::Classic, "Memory");
-                values.insert(&AbbreviationType::Alternative, "Mem");
                 values.insert(&AbbreviationType::Long, "Memory");
             }
             ReadoutKey::Battery => {
                 values.insert(&AbbreviationType::Classic, "Battery");
-                values.insert(&AbbreviationType::Alternative, "Bat");
                 values.insert(&AbbreviationType::Long, "Battery");
             }
         }
@@ -227,7 +212,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Helium "),
-                abbreviation: AbbreviationType::Alternative,
+                abbreviation: AbbreviationType::Classic,
             },
             Themes::Lithium => Theme {
                 bar: BarStyle::new(BarStyles::Angled),
@@ -247,7 +232,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Beryllium "),
-                abbreviation: AbbreviationType::Alternative,
+                abbreviation: AbbreviationType::Classic,
             },
             Themes::Boron => Theme {
                 // will implement random emoji later
