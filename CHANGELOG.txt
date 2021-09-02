@@ -1,17 +1,2 @@
 # Changelog
-- misc: Remove X11 feature from codebase after having replaced it with a built-in resolution parser (#135)
-- misc: Bump all dependencies' versions
-- config: Fallback to original naming for some ReadoutKeys
-- readme: Remove saythanks badge
-- readme: benchmarks: disclose the environment/processor
-- readme: Nix's installation section now mentions all channels
-- actions: Bring back netbsd workflow after having removed all X11 code
-- libmacchina: Bump from v0.8.1 to v1.0.1
-   - [*nix only] Implement a new readout, `disk_space()` which for now returns the used bytes of the root partition
-   - Add macOS resolution (#56)
-   - Address a panic caused by too much output in the resolution readout (#132)
-   - src/macos/mach_ffi.rs: Remove useless CGError typedef
-   - src/macos/mod.rs: Search for "brew" rather than "homebrew" before getting package count
-- src/data/mods.rs: Significantly improve shell readout logic
-- macchina.toml: Be more specific in `small_ascii` description 
-- src/cli.rs: Be more specific in `small_ascii` description
+- readme: Fix Linux benchmark table formatting
