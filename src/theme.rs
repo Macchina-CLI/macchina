@@ -80,10 +80,6 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Classic, "Resolution");
                 values.insert(&AbbreviationType::Long, "Resolution");
             }
-            ReadoutKey::DiskUsage => {
-                values.insert(&AbbreviationType::Classic, "Disk (/)");
-                values.insert(&AbbreviationType::Long, "Disk (/)");
-            }
             ReadoutKey::Memory => {
                 values.insert(&AbbreviationType::Classic, "Memory");
                 values.insert(&AbbreviationType::Long, "Memory");

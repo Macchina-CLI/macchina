@@ -28,7 +28,6 @@ arg_enum! {
         Uptime,
         Processor,
         ProcessorLoad,
-        DiskUsage,
         Memory,
         Battery,
         LocalIP,
