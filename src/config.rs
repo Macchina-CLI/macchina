@@ -33,16 +33,16 @@ impl Opt {
             path.push(format!("{}.toml", PKG_NAME));
             if Path::exists(&path) {
                 return Opt::from_config_file(&path);
-            }
-        } else if cfg!(target_os = "macos") {
-            if let Ok(home) = std::env::var("HOME") {
-                let path = PathBuf::from(home)
-                    .join(".config")
-                    .join(PKG_NAME)
-                    .join(format!("{}.toml", PKG_NAME));
-
-                if Path::exists(&path) {
-                    return Opt::from_config_file(&path);
+            } else if cfg!(target_os = "macos") {
+                if let Ok(home) = std::env::var("HOME") {
+                    let path = PathBuf::from(home)
+                        .join(".config")
+                        .join(PKG_NAME)
+                        .join(format!("{}.toml", PKG_NAME));
+    
+                    if Path::exists(&path) {
+                        return Opt::from_config_file(&path);
+                    }
                 }
             }
         }
