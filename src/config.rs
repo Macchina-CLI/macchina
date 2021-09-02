@@ -37,8 +37,7 @@ impl Opt {
         } else if cfg!(target_os = "macos") {
             if let Ok(home) = std::env::var("HOME") {
                 let path = PathBuf::from(home)
-                    .join("Library")
-                    .join("Application Support")
+                    .join(".config")
                     .join(PKG_NAME)
                     .join(format!("{}.toml", PKG_NAME));
 
