@@ -1,2 +1,2 @@
 # Changelog
-- readme: Fix Linux benchmark table formatting
+- macOS: manually look for config in `$HOME/.config/` (#138)
