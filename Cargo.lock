@@ -252,12 +252,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "doc-comment"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fea41bba32d969b513997752735605054bc0dfa92b4c56bf1189f2e174be7a10"
-
-[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -504,8 +498,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "1.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d34e65e6cfedbc01fc8d8ed3940050d4d7352ccdf3bc42e0f688130653083f6"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=1.0.4-alpha#d8e8ba915c3940fc3a9d02668ab8685ebc7f3621"
 dependencies = [
  "aparato",
  "byte-unit",
@@ -691,12 +684,6 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
-
-[[package]]
-name = "once_cell"
-version = "1.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "692fcb63b64b1758029e0a96ee63e049ce8c5948587f2f7208df04625e5f6b56"
 
 [[package]]
 name = "os-release"
@@ -1132,21 +1119,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sysinfo"
-version = "0.19.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e7de153d0438a648bb71e06e300e54fc641685e96af96d49b843f43172d341c"
-dependencies = [
- "cfg-if",
- "core-foundation-sys",
- "doc-comment",
- "libc",
- "ntapi",
- "once_cell",
- "winapi",
-]
-
-[[package]]
 name = "textwrap"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1305,7 +1277,6 @@ dependencies = [
  "git2",
  "rustc_version",
  "rustversion",
- "sysinfo",
  "thiserror",
 ]
 
