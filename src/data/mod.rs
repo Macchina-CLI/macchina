@@ -236,8 +236,16 @@ pub fn get_all_readouts<'a>(
 
     if should_display.contains(&ReadoutKey::Shell) {
         let (ls, cs) = (
-            if opt.long_shell { ShellFormat::Absolute } else { ShellFormat::Relative },
-            if opt.current_shell { ShellKind::Current } else { ShellKind::Default },
+            if opt.long_shell {
+                ShellFormat::Absolute
+            } else {
+                ShellFormat::Relative
+            },
+            if opt.current_shell {
+                ShellKind::Current
+            } else {
+                ShellKind::Default
+            },
         );
 
         match general_readout.shell(ls, cs) {
