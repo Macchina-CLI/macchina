@@ -1,2 +1,2 @@
 # Changelog
-- macOS: manually look for config in `$HOME/.config/` (#138)
+- Fix NetBSD build (#140)
