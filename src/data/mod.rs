@@ -21,16 +21,18 @@ arg_enum! {
         OperatingSystem,
         DesktopEnvironment,
         WindowManager,
-        Resolution,
         Packages,
         Shell,
         Terminal,
+        LocalIP,
+        Backlight,
+        Resolution,
         Uptime,
         Processor,
         ProcessorLoad,
         Memory,
         Battery,
-        LocalIP,
+
     }
 }
 
@@ -220,13 +222,6 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    if should_display.contains(&ReadoutKey::Resolution) {
-        match general_readout.resolution() {
-            Ok(r) => readout_values.push(Readout::new(ReadoutKey::Resolution, r)),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Resolution, e)),
-        }
-    }
-
     if should_display.contains(&ReadoutKey::Terminal) {
         match general_readout.terminal() {
             Ok(s) => readout_values.push(Readout::new(ReadoutKey::Terminal, s)),
@@ -276,6 +271,26 @@ pub fn get_all_readouts<'a>(
                 readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m)))
             }
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
+        }
+    }
+
+    if should_display.contains(&ReadoutKey::Resolution) {
+        match general_readout.resolution() {
+            Ok(r) => readout_values.push(Readout::new(ReadoutKey::Resolution, r)),
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Resolution, e)),
+        }
+    }
+
+    if should_display.contains(&ReadoutKey::Backlight) {
+        match (general_readout.backlight(), opt.bar) {
+            (Ok(b), false) => {
+                readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
+            }
+            (Ok(b), true) => readout_values.push(Readout::new(
+                ReadoutKey::Backlight,
+                create_bar(theme, crate::bars::num_to_blocks(b as u8)),
+            )),
+            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Backlight, e)),
         }
     }
 

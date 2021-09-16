@@ -69,12 +69,16 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Long, "Processor");
             }
             ReadoutKey::ProcessorLoad => {
-                values.insert(&AbbreviationType::Classic, "CPU%");
-                values.insert(&AbbreviationType::Long, "Processor Usage");
+                values.insert(&AbbreviationType::Classic, "CPU Load");
+                values.insert(&AbbreviationType::Long, "Processor Load");
             }
             ReadoutKey::LocalIP => {
                 values.insert(&AbbreviationType::Classic, "Local IP");
                 values.insert(&AbbreviationType::Long, "Local IP");
+            }
+            ReadoutKey::Backlight => {
+                values.insert(&AbbreviationType::Classic, "Brightness");
+                values.insert(&AbbreviationType::Long, "Brightness");
             }
             ReadoutKey::Resolution => {
                 values.insert(&AbbreviationType::Classic, "Resolution");
