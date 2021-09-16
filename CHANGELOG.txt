@@ -1,3 +1,2 @@
 # Changelog
-- NetBSD: Finally fixed resolution readout failing, due to linkage mistakes
-- NetBSD: Set a fallback, that tries to fetch resolution through the ACPIVGA driver
+- Fix NetBSD build (#140)

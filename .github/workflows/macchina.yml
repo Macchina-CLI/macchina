@@ -25,7 +25,7 @@ jobs:
             test: true
 
           - os: macos-latest
-            name: Macos
+            name: macOS
             target: x86_64-apple-darwin
             cross: false
             strip: true
@@ -39,7 +39,7 @@ jobs:
             test: true
 
           - os: ubuntu-latest
-            name: Netbsd
+            name: NetBSD
             target: x86_64-unknown-netbsd
             cross: true
             strip: true
@@ -53,7 +53,7 @@ jobs:
             test: false
 
           - os: ubuntu-latest
-            name: Linux aarch64
+            name: Linux
             target: aarch64-unknown-linux-gnu
             cross: true
             strip: true

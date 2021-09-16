@@ -1,7 +1,7 @@
 use crate::cli::Opt;
 use dirs::config_dir;
 use std::io::Read;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
@@ -33,6 +33,17 @@ impl Opt {
             path.push(format!("{}.toml", PKG_NAME));
             if Path::exists(&path) {
                 return Opt::from_config_file(&path);
+            } else if cfg!(target_os = "macos") {
+                if let Ok(home) = std::env::var("HOME") {
+                    let path = PathBuf::from(home)
+                        .join(".config")
+                        .join(PKG_NAME)
+                        .join(format!("{}.toml", PKG_NAME));
+
+                    if Path::exists(&path) {
+                        return Opt::from_config_file(&path);
+                    }
+                }
             }
         }
         Ok(Opt::default())
@@ -53,6 +64,9 @@ impl Opt {
         }
         if args.custom_ascii_color.is_some() {
             self.custom_ascii_color = args.custom_ascii_color;
+        }
+        if args.version {
+            self.version = true;
         }
         if args.doctor {
             self.doctor = true;
@@ -122,38 +136,6 @@ impl Opt {
 
         if self.hide.is_some() && self.show_only.is_some() {
             conflicts.push("hide and show_only");
-        }
-
-        if self.separator_color.is_some() && self.no_separator {
-            conflicts.push("separator_color and no_separator");
-        }
-
-        if self.color.is_some() && self.no_color {
-            conflicts.push("color and no_color");
-        }
-
-        if self.separator_color.is_some() && self.no_color {
-            conflicts.push("separator_color and no_color");
-        }
-
-        if self.custom_ascii.is_some() && self.no_ascii {
-            conflicts.push("custom_ascii and no_ascii");
-        }
-
-        if self.custom_ascii_color.is_some() && self.no_ascii {
-            conflicts.push("custom_ascii_color and no_ascii");
-        }
-
-        if self.small_ascii && self.no_ascii {
-            conflicts.push("small_ascii and no_ascii");
-        }
-
-        if self.box_title.is_some() && self.no_box {
-            conflicts.push("box_title and no_box");
-        }
-
-        if self.box_title.is_some() && self.no_title {
-            conflicts.push("box_title and no_title");
         }
 
         conflicts

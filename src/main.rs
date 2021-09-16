@@ -1,6 +1,7 @@
 mod bars;
 mod cli;
 mod config;
+mod extra;
 mod format;
 mod theme;
 
@@ -26,7 +27,6 @@ use atty::Stream;
 use data::Readout;
 use rand::Rng;
 use std::io::Stdout;
-use std::path::PathBuf;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
@@ -38,6 +38,24 @@ use unicode_width::UnicodeWidthStr;
 
 fn create_backend() -> CrosstermBackend<Stdout> {
     CrosstermBackend::new(io::stdout())
+}
+
+fn find_widest_cell(buf: &Buffer, last_y: u16) -> u16 {
+    let area = &buf.area;
+    let mut widest: u16 = 0;
+    let empty_cell = Cell::default();
+
+    for y in 0..last_y {
+        for x in (0..area.width).rev() {
+            let current_cell = buf.get(x, y);
+            if current_cell.ne(&empty_cell) && x > widest {
+                widest = x;
+                break;
+            }
+        }
+    }
+
+    widest + 1
 }
 
 fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
@@ -241,6 +259,34 @@ fn list_themes() {
     }
 }
 
+#[cfg(feature = "tts")]
+fn speak_readouts(readout_data: &Vec<Readout>) -> Result<(), ()> {
+    use google_speech::{Lang, Speech};
+
+    for readout in readout_data {
+        if let Ok(key) = Speech::new(readout.0.to_string(), Lang::en_us) {
+            if let Err(_speak) = key.play() {
+                return Ok(());
+            }
+        }
+
+        if let Ok(lines) = readout.1.to_owned() {
+            for line in lines {
+                let vec = line.0;
+                for val in vec {
+                    if let Ok(value) = Speech::new(val.content.to_string(), Lang::en_us) {
+                        if let Err(_speak) = value.play() {
+                            return Ok(());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return Ok(());
+}
+
 fn main() -> Result<(), io::Error> {
     let mut opt: Opt;
     let arg_opt = Opt::from_args();
@@ -276,6 +322,20 @@ fn main() -> Result<(), io::Error> {
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
+    #[cfg(feature = "tts")]
+    if let Ok(_) = speak_readouts(&readout_data) {
+        return Ok(());
+    }
+
+    if opt.version {
+        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
+            println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+        } else {
+            println!("macchina    {}", env!("CARGO_PKG_VERSION"));
+        }
+        println!("libmacchina {}", libmacchina::version());
+        return Ok(());
+    }
     if opt.doctor {
         doctor::print_doctor(&readout_data);
         return Ok(());
@@ -292,7 +352,8 @@ fn main() -> Result<(), io::Error> {
     let ascii_area;
 
     if let Some(ref file_path) = opt.custom_ascii {
-        let file_path = PathBuf::from(file_path);
+        let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
+        // let file_path = PathBuf::from(file_path);
         let ascii_art;
         match opt.custom_ascii_color {
             Some(ref color) => {
@@ -353,8 +414,12 @@ fn write_buffer_to_console(
     backend: &mut CrosstermBackend<Stdout>,
     tmp_buffer: &mut Buffer,
 ) -> Result<(), io::Error> {
+    let term_size = backend.size().unwrap_or_default();
+
     let (_, last_y) =
         find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
+
+    let last_x = find_widest_cell(tmp_buffer, last_y);
 
     print!("{}", "\n".repeat(last_y as usize + 1));
 
@@ -363,7 +428,6 @@ fn write_buffer_to_console(
         cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
     }
 
-    let term_size = backend.size().unwrap_or_default();
     // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
     let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
@@ -387,7 +451,7 @@ fn write_buffer_to_console(
             let (x, y) = tmp_buffer.pos_of(idx);
             (x, y, cell)
         })
-        .filter(|(x, y, _)| *x < term_size.width && *y <= last_y)
+        .filter(|(x, y, _)| *x < last_x && *x < term_size.width && *y <= last_y)
         .map(|(x, y, cell)| (x, y + starting_pos, cell));
 
     backend.draw(iter)?;

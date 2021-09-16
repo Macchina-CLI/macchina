@@ -38,11 +38,22 @@ impl MacchinaColor {
 }
 
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
+// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")", libmacchina::version()))]
+// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
     #[structopt(short = "p", long = "palette", help = "Displays color palette")]
     pub palette: bool,
+
+    #[structopt(
+        short = "V",
+        long = "version",
+        help = "Prints version information",
+        conflicts_with = "doctor"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub version: bool,
 
     #[structopt(
         short = "P",
@@ -166,6 +177,13 @@ pub struct Opt {
     pub long_shell: bool,
 
     #[structopt(
+        short = "W",
+        long = "current-shell",
+        help = "Toggles between the current shell or the default one"
+    )]
+    pub current_shell: bool,
+
+    #[structopt(
     short = "t",
     long = "theme",
     // default_value = "Hydrogen",
@@ -184,7 +202,7 @@ pub struct Opt {
 
     #[structopt(
         long = "custom-ascii",
-        help = "Specify your own ASCII art from a file",
+        help = "Specify your own ASCII art from a text file (supports ANSI escape codes)",
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii: Option<String>,
@@ -221,6 +239,7 @@ pub struct Opt {
         default_value = "0"
     )]
     pub box_inner_margin_y: u16,
+
     #[structopt(
         long = "export-config",
         help = "Prints the config file to stdout",
@@ -249,6 +268,7 @@ impl Default for Opt {
     fn default() -> Self {
         Opt {
             palette: false,
+            version: false,
             padding: None,
             spacing: None,
 
@@ -260,28 +280,23 @@ impl Default for Opt {
             no_box: false,
 
             color: None,
-            bar: false,
-
             separator_color: None,
             random_color: false,
             random_sep_color: false,
-
-            hide: None,
-            show_only: None,
-
-            doctor: false,
-
-            short_uptime: false,
-            long_shell: false,
-
-            theme: None,
-
-            box_title: None,
 
             custom_ascii: None,
             custom_ascii_color: None,
             small_ascii: false,
 
+            bar: false,
+            hide: None,
+            show_only: None,
+            doctor: false,
+            short_uptime: false,
+            long_shell: false,
+            current_shell: false,
+            theme: None,
+            box_title: None,
             box_inner_margin_x: 1,
             box_inner_margin_y: 0,
             export_config: false,
