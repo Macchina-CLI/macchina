@@ -78,7 +78,6 @@ impl ReadoutKey {
             }
             ReadoutKey::Backlight => {
                 values.insert(&AbbreviationType::Classic, "Brightness");
-                values.insert(&AbbreviationType::Alternative, "Bri");
                 values.insert(&AbbreviationType::Long, "Brightness");
             }
             ReadoutKey::Resolution => {

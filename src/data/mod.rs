@@ -230,9 +230,15 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match general_readout.backlight() {
-            Ok(b) => readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b))),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Backlight, e)),
+        match (general_readout.backlight(), opt.bar) {
+            (Ok(b), false) => {
+                readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
+            }
+            (Ok(b), true) => readout_values.push(Readout::new(
+                ReadoutKey::Backlight,
+                create_bar(theme, crate::bars::num_to_blocks(b as u8)),
+            )),
+            (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Backlight, e)),
         }
     }
 
