@@ -23,7 +23,6 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 - [About](#about)
 - [Performance](#perf)
-- [Minimalism](#minimal)
 - [Features](#features)
 - [Configuration](#config)
 - [Dependencies](#deps)
@@ -33,23 +32,21 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 ---
 
-# About Macchina <a name="about"></a>
+# About <a name="about"></a>
 
-_Macchina_ lets you view system information, like your kernel version, uptime,
-memory usage, processor load and much more. It provides you with convenient
-features and extensive customization options but still retains its two main
-fundamentals: [performance](#perf) and [minimalism](#minimal).
+_macchina_ lets you view system information, like your kernel version, uptime,
+memory usage, processor load and much more.
 
-If you're interested in the library _Macchina_ uses to fetch your system
-information, check out
-[libmacchina](https://github.com/Macchina-CLI/libmacchina), any issues relating
-to _fetching_ should be filed on that repository.
+If you're interested in the library _macchina_ uses to
+fetch system information, have a look at
+[libmacchina](https://github.com/Macchina-CLI/libmacchina);
+fetching-related issues should be filed on that repository.
 
 ---
 
 # Performance <a name="perf"></a>
 
-_Macchina_ is lightning fast, see for yourself:
+_macchina_ is lightning fast, see for yourself:
 
 - Execution time is measured using
   [hyperfine](https://github.com/sharkdp/hyperfine)
@@ -84,27 +81,11 @@ This benchmark was performed inside a virtual machine using an __Intel® Core™
 
 ---
 
-# Minimalism <a name="minimal"></a>
-
-_Macchina_ first started as a barebones fetcher, but has evolved to incorporate
-the many aspects people love to see in their fetcher. This evolution however did
-not discard the minimalistic look that was envisioned for the program.
-
-Here's what you can make it look like using the various supported flags.
-
-```
-macchina -c white --no-box --no-ascii --no-separator --no-bar-delimiter --bar
-```
-
-![Minimal Output Preview](screenshots/minimal.png)
-
----
-
 # Features <a name="features"></a>
 
 ## Themes
 
-_Macchina_ comes equipped with built-in themes that style their readouts, bars
+_macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. No extra configuration required.
 
 ## Bars
@@ -116,31 +97,9 @@ They can be enabled using the `--bar` flag.
 <img src="screenshots/bars.png" alt="Preview of the bar flag" />
 </div>
 
-## What it displays
+## Doctor
 
-- Host Information
-- Product Information
-- Kernel Information
-- Distribution
-- Operating System
-- Desktop Environment
-- Window Manager
-- Package Count
-  [[?]](https://github.com/Macchina-CLI/macchina/wiki/Package-Manager-Support)
-- Shell
-- Terminal
-- Processor Information
-- Processor Usage
-- Local IP Address
-- Display Resolution
-- Uptime
-- Memory Usage
-- Battery Information
-- Palette
-
-## Meet Doctor
-
-_Macchina_ comes with a very special flag, allowing you analyze which elements
+_macchina_ comes with a very special flag, allowing you analyze which elements
 failed to fetch, and why. It can differentiate between errors, and warnings, and
 its comprehensive output should help you understand where the issue is coming
 from.
@@ -155,17 +114,17 @@ macchina --doctor
 
 # Configuration <a name="config"></a>
 
-_Macchina_ can be configured through a dotfile,
+_macchina_ can be configured through a dotfile,
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
 is an example dotfile that you can use and build on top of to make it your own.
 
-- In order for _Macchina_ to read your dotfile, you need to place
+- In order for _macchina_ to read your dotfile, you need to place
   `macchina.toml` in `$XDG_CONFIG_HOME/macchina`
 
 You can also create custom themes in `JSON` format and use them instead of the
 built-in themes that we provide.
 
-- In order for _Macchina_ to find your custom themes, which are **JSON** files.
+- In order for _macchina_ to find your custom themes, which are **JSON** files.
   These files need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an
   example of such a theme:
 
@@ -197,16 +156,16 @@ built-in themes that we provide.
 
 # Dependencies <a name="deps"></a>
 
-These dependencies are not required, but they extend what _Macchina_ can do.
+These runtime dependencies are __not__ required, but they extend what _macchina_ can do.
 
 ### Linux:
 
-- `wmctrl`
-- **Gentoo**: `portage-utils`
+- wmctrl
+- portage-utils (Gentoo)
 
 ### NetBSD:
 
-- `wmctrl`
+- wmctrl
 
 ---
 
@@ -258,9 +217,9 @@ Where `<channel>` is probably `nixpkgs` or `nixos`:
 nix-env -iA <channel>.macchina
 ```
 
-_Macchina's_
+_macchina's_
 [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
-lists the other ways you can install the program. You might also prefer running
+lists some other ways you can install the program. You might also prefer running
 the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that
 corresponds with your operating system.
 
@@ -281,7 +240,7 @@ corresponds with your operating system.
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
-_Macchina_, like many other open-source projects, would not be where it is right
+_macchina_, like many other open-source projects, would not be where it is right
 now without the help of its contributors, thank you all so much!
 
 - Support for **NetBSD** would not have been possible without the help and
@@ -290,5 +249,5 @@ now without the help of its contributors, thank you all so much!
 - Support for **macOS** and **Windows** would not have been possible without the
   help, testing and major contributions of
   [123marvin123](https://github.com/123marvin123)
-- Support for **OpenWrt** and **Android** was made possible through the
+- Support for **OpenWrt** and **Android** was made possible through the many
   contributions of [uttarayan21](https://github.com/uttarayan21)

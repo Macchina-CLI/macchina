@@ -104,6 +104,7 @@ theme = "Beryllium"
 #   - DesktopEnvironment
 #   - WindowManager
 #   - Resolution
+#   - Backlight
 #   - Packages
 #   - LocalIP
 #   - Terminal
@@ -128,6 +129,7 @@ hide = []
 #   - DesktopEnvironment
 #   - WindowManager
 #   - Resolution
+#   - Backlight
 #   - Packages
 #   - LocalIP
 #   - Terminal
