@@ -1,8 +1,2 @@
 # Changelog
-## macchina
-- Update to latest `libmacchina`, `libc`, `serde_json` and `dirs` versions
-- Import libmacchina's backlight method (#102)
-
-## libmacchina
-- netbsd/terminal: Traverse /proc to which terminal the user is operating in, ignoring the shell.
-- netbsd/resolution: Remove this method for the time being
+- Update libmacchina dependency to v2.1.4, finally fixing the brightness readout.
