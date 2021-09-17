@@ -259,34 +259,6 @@ fn list_themes() {
     }
 }
 
-#[cfg(feature = "tts")]
-fn speak_readouts(readout_data: &Vec<Readout>) -> Result<(), ()> {
-    use google_speech::{Lang, Speech};
-
-    for readout in readout_data {
-        if let Ok(key) = Speech::new(readout.0.to_string(), Lang::en_us) {
-            if let Err(_speak) = key.play() {
-                return Ok(());
-            }
-        }
-
-        if let Ok(lines) = readout.1.to_owned() {
-            for line in lines {
-                let vec = line.0;
-                for val in vec {
-                    if let Ok(value) = Speech::new(val.content.to_string(), Lang::en_us) {
-                        if let Err(_speak) = value.play() {
-                            return Ok(());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return Ok(());
-}
-
 fn main() -> Result<(), io::Error> {
     let mut opt: Opt;
     let arg_opt = Opt::from_args();
@@ -321,11 +293,6 @@ fn main() -> Result<(), io::Error> {
     let should_display = should_display(&opt);
     let theme = create_theme(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
-
-    #[cfg(feature = "tts")]
-    if let Ok(_) = speak_readouts(&readout_data) {
-        return Ok(());
-    }
 
     if opt.version {
         if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
