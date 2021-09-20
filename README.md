@@ -195,6 +195,12 @@ brew install macchina
 pkg install macchina
 ```
 
+### Windows
+
+```
+scoop install macchina
+```
+
 ### Arch Linux
 
 ```bash
