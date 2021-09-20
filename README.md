@@ -37,9 +37,8 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 _macchina_ lets you view system information, like your kernel version, uptime,
 memory usage, processor load and much more.
 
-If you're interested in the library _macchina_ uses to
-fetch system information, have a look at
-[libmacchina](https://github.com/Macchina-CLI/libmacchina);
+If you're interested in the library _macchina_ uses to fetch system information,
+have a look at [libmacchina](https://github.com/Macchina-CLI/libmacchina);
 fetching-related issues should be filed on that repository.
 
 ---
@@ -53,10 +52,10 @@ _macchina_ is lightning fast, see for yourself:
 
 ## 🐧 Linux
 
-This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
+This benchmark was performed using an **Intel® Core™ i5-3350P CPU @ 3.10GHz**
 
 | Command    | Mean [ms] | Min [ms] | Max [ms] |
-|:---        | --------: | --------:| --------:|
+| :--------- | --------: | -------: | -------: |
 | `macchina` | 4.8 ± 0.4 |      4.5 |      8.1 |
 
 ## 👩🏽‍💻 macOS
@@ -67,7 +66,8 @@ This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
 
 ## 🚩 NetBSD
 
-This benchmark was performed inside a virtual machine using an __Intel® Core™ i5-8265U CPU @ 1.60GHz__
+This benchmark was performed inside a virtual machine using an **Intel® Core™
+i5-8265U CPU @ 1.60GHz**
 
 | Command    |  Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | ---------: | -------: | -------: |
@@ -156,7 +156,8 @@ built-in themes that we provide.
 
 # Dependencies <a name="deps"></a>
 
-These runtime dependencies are __not__ required, but they extend what _macchina_ can do.
+These runtime dependencies are **not** required, but they extend what _macchina_
+can do.
 
 ### Linux:
 
@@ -223,7 +224,8 @@ Where `<channel>` is probably `nixpkgs` or `nixos`:
 nix-env -iA <channel>.macchina
 ```
 
-The [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
+The
+[installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
 lists some other ways you can install the program. You might also prefer running
 the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that
 corresponds with your operating system.
