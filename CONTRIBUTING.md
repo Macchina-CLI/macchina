@@ -8,9 +8,9 @@ Thanks for taking interest in our project, we'd love to work with you.
 
 ## Okay, will my PR get merged?
 
-It depends, one of our highest priorities is to maintain great performance
+It depends, our highest priority is to maintain great performance
 throughout feature releases. If your PR includes a kind of feature which
-inherently hinders performance considerably, it will be rejected.
+inherently hinders performance considerably, it will unfortunately be rejected.
 
 ## Alright, are there any coding conventions?
 
