@@ -26,6 +26,7 @@ serde = { version = "1.0.130", features = ["derive"] }
 dirs = "4.0"
 toml = "0.5.8"
 serde_json = "1.0.68"
+byte-unit = "4.0.12"
 
 [build-dependencies]
 vergen = { version = "5.1.15", default-features = false, features = ["build","cargo","git","rustc"] }

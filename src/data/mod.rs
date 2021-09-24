@@ -30,6 +30,7 @@ arg_enum! {
         Uptime,
         Processor,
         ProcessorLoad,
+        DiskSpace,
         Memory,
         Battery,
 
@@ -307,6 +308,15 @@ pub fn get_all_readouts<'a>(
                 readout_values.push(Readout::new(ReadoutKey::ProcessorLoad, format_cpu_usage(u)))
             }
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::ProcessorLoad, e)),
+        }
+    }
+
+    if should_display.contains(&ReadoutKey::DiskSpace) {
+        use crate::format::disk_space;
+
+        match general_readout.disk_space() {
+            Ok(r) => readout_values.push(Readout::new(ReadoutKey::DiskSpace, disk_space(r.0, r.1))),
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Resolution, e)),
         }
     }
 

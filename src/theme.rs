@@ -72,6 +72,10 @@ impl ReadoutKey {
                 values.insert(&AbbreviationType::Classic, "CPU Load");
                 values.insert(&AbbreviationType::Long, "Processor Load");
             }
+            ReadoutKey::DiskSpace => {
+                values.insert(&AbbreviationType::Classic, "Disk");
+                values.insert(&AbbreviationType::Long, "Disk Space");
+            }
             ReadoutKey::LocalIP => {
                 values.insert(&AbbreviationType::Classic, "Local IP");
                 values.insert(&AbbreviationType::Long, "Local IP");

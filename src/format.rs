@@ -1,3 +1,4 @@
+use byte_unit::AdjustedByte;
 use bytesize::ByteSize;
 use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 
@@ -95,6 +96,13 @@ pub fn memory(total: u64, used: u64) -> String {
     let used = ByteSize::kb(used);
 
     format!("{}/{}", used, total)
+}
+
+/// This function should return a new `String` constructed from the values \
+/// returned by `traits::BatteryReadout::percentage()` and `traits::BatteryReadout::status()`
+pub fn disk_space(used: AdjustedByte, total: AdjustedByte) -> String {
+    // Holds either "Charging" or "Discharging" values
+    return format!("{} / {}", used.to_string(), total.to_string());
 }
 
 /// This function should return a new `String` constructed from the value \
