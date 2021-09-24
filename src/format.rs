@@ -92,17 +92,28 @@ pub fn battery(percentage: u8, state: BatteryState) -> String {
 /// This function should return a new `String` constructed from the values \
 /// returned by `traits::MemoryReadout::used()` and `traits::MemoryReadout::total()`
 pub fn memory(total: u64, used: u64) -> String {
-    let total = ByteSize::kb(total);
-    let used = ByteSize::kb(used);
+    let used_byte =
+    byte_unit::Byte::from_bytes(used as u128).get_appropriate_unit(true);
+    let total_byte =
+    byte_unit::Byte::from_bytes(total as u128).get_adjusted_unit(used_byte.get_unit());
 
-    format!("{}/{}", used, total)
+    let percentage = used as f64 / total as f64 * 100f64;
+
+    format!("{} / {} ({:.1}%)", used_byte, total_byte, percentage)
 }
 
 /// This function should return a new `String` constructed from the values \
-/// returned by `traits::BatteryReadout::percentage()` and `traits::BatteryReadout::status()`
-pub fn disk_space(used: AdjustedByte, total: AdjustedByte) -> String {
+/// returned by `traits::GeneralReadout::disk_space()`
+pub fn disk_space(used: u128, total: u128) -> String {
+    let used_byte =
+    byte_unit::Byte::from_bytes(used).get_appropriate_unit(true);
+    let total_byte =
+    byte_unit::Byte::from_bytes(total).get_adjusted_unit(used_byte.get_unit());
+
+    let percentage = used as f64 / total as f64 * 100f64;
+    
     // Holds either "Charging" or "Discharging" values
-    return format!("{} / {}", used.to_string(), total.to_string());
+    return format!("{} / {} ({:.1}%)", used_byte, total_byte, percentage);
 }
 
 /// This function should return a new `String` constructed from the value \
