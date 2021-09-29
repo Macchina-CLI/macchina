@@ -22,11 +22,11 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [Performance](#perf)
+- [Performance](#performance)
 - [Features](#features)
-- [Configuration](#config)
-- [Dependencies](#deps)
-- [Installation](#install)
+- [Configuration](#configuration)
+- [Runtime dependencies](#runtime-dependencies)
+- [Installation](#installation)
 - [Platform Support](#platform-support)
 - [Contributors](#contributors)
 
@@ -59,7 +59,7 @@ This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
 |:---        | --------: | --------:| --------:|
 | `macchina` | 4.8 ± 0.4 |      4.5 |      8.1 |
 
-## 👩🏽‍💻 macOS
+## 🍏 macOS
 
 | Command    | Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | --------: | -------: | -------: |
@@ -67,7 +67,8 @@ This benchmark was performed using an __Intel® Core™ i5-3350P CPU @ 3.10GHz__
 
 ## 🚩 NetBSD
 
-This benchmark was performed inside a virtual machine using an __Intel® Core™ i5-8265U CPU @ 1.60GHz__
+This benchmark was performed inside a virtual machine using an __Intel® Core™
+i5-8265U CPU @ 1.60GHz__
 
 | Command    |  Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | ---------: | -------: | -------: |
@@ -81,7 +82,7 @@ This benchmark was performed inside a virtual machine using an __Intel® Core™
 
 ---
 
-# Features <a name="features"></a>
+# Features
 
 ## Themes
 
@@ -94,165 +95,142 @@ Bars provide a way to visualize data, and each theme styles them differently.
 They can be enabled using the `--bar` flag.
 
 <div align="center">
-<img src="screenshots/bars.png" alt="Preview of the bar flag" />
+   <img src="screenshots/bars.png" alt="Preview of the bar flag" />
 </div>
 
 ## Doctor
 
-_macchina_ comes with a very special flag, allowing you analyze which elements
-failed to fetch, and why. It can differentiate between errors, and warnings, and
-its comprehensive output should help you understand where the issue is coming
-from.
+_libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
+a feature in place that allows you to analyze why they failed, this is done
+through the `--doctor` flag.
 
-```
-macchina --doctor
-```
-
-![Preview of the doctor flag](screenshots/doctor.png)
+<div align="center">
+   <img src="screenshots/doctor.png" alt="Preview of the doctor flag" />
+</div>
 
 ---
 
-# Configuration <a name="config"></a>
+# Configuration
 
-_macchina_ can be configured through a dotfile,
+See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
-is an example dotfile that you can use and build on top of to make it your own.
+for an example configuration file.
 
-- In order for _macchina_ to read your dotfile, you need to place
-  `macchina.toml` in `$XDG_CONFIG_HOME/macchina`
+- In order for _macchina_ to be able to read the configuration file, you need
+  to place `macchina.toml` in `$XDG_CONFIG_HOME/macchina/`
 
-You can also create custom themes in `JSON` format and use them instead of the
-built-in themes that we provide.
+You can also create custom themes in `JSON` format, themes allow for more
+customization and are separate from the main configuration file.  See
+[Carbon.json](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json)
+for an example theme.
 
-- In order for _macchina_ to find your custom themes, which are **JSON** files.
-  These files need to placed in `$XDG_DATA_HOME/macchina/themes`, here's an
-  example of such a theme:
+- In order for _macchina_ to be able to read your custom themes, you need to
+  place them in `$XDG_DATA_HOME/macchina/themes/`. You can have as many as you
+  want, just avoid using the names of built-in themes.
 
-```json
-{
-  "name": "Carbon",
-  "bar": {
-    "Custom": {
-      "glyph": "ߋ",
-      "symbol_open": "[",
-      "symbol_close": "]"
-    }
-  },
-  "color": {
-    "Rgb": [231, 198, 100]
-  },
-  "separator": "⇉",
-  "separator_color": {
-    "Rgb": [158, 208, 114]
-  },
-  "spacing": 2,
-  "padding": 0,
-  "block_title": "┤ Carbon ├",
-  "abbreviation": "Classic"
-}
-```
+To start using your theme: 
+1. Run `macchina --list-themes` to verify that macchina has listed your theme
+2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`
+3. You're good to go! _macchina_ will start using your theme.
 
 ---
 
-# Dependencies <a name="deps"></a>
+# Runtime dependencies
 
-These runtime dependencies are __not__ required, but they extend what _macchina_ can do.
+These dependencies are __not__ required, but they extend what _macchina_ can show.
 
 ### Linux:
 
-- wmctrl
-- portage-utils (Gentoo)
+- _wmctrl_
+- Gentoo: _portage-utils_
 
 ### NetBSD:
 
-- wmctrl
+- _wmctrl_
 
 ---
 
-# Installation <a name="install"></a>
+# Installation
 
-### 🦀 Cargo
-
+### Cargo
 ```
 cargo install macchina
 ```
 
-### 📦 Pkgsrc
-
+### Pkgsrc
 ```
 pkgin install macchina
 ```
 
-### 🍻 Homebrew
-
+### Homebrew
 ```
 brew install macchina
 ```
 
 ### Termux
-
 ```
 pkg install macchina
 ```
 
 ### Windows
-
 ```
 scoop install macchina
 ```
 
 ### Arch Linux
-
+- Use the AUR package that pulls and installs the latest release: 
 ```bash
-# Install it using the AUR package that downloads the latest release
 git clone https://aur.archlinux.org/macchina.git
 cd macchina
 makepkg -si
+```
 
-# Or you can use the AUR package that pulls straight from the main branch
-git clone https://aur.archlinux.org/macchina-git.git macchina
+- Or use the AUR package that pulls and builds from upstream:
+```bash
+git clone https://aur.archlinux.org/macchina-git.git
 cd macchina
 makepkg -si
 ```
 
 ### Nix
-
-Where `<channel>` is probably `nixpkgs` or `nixos`:
-
+- Where `<channel>` is `nixpkgs` or `nixos`:
 ```bash
 nix-env -iA <channel>.macchina
 ```
 
-The [installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
-lists some other ways you can install the program. You might also prefer running
-the [prebuilt binary](https://github.com/grtcdr/macchina/releases) that
-corresponds with your operating system.
+The [installation wiki
+page](https://github.com/grtcdr/macchina/wiki/Installation) lists some other
+ways you can install the program or the steps to compile from source. 
+
+You might prefer running the [prebuilt
+binary](https://github.com/grtcdr/macchina/releases) that corresponds with your
+operating system.
 
 ---
 
-# Platform Support <a name="platform-support"></a>
+# Platform Support
 
 | Platform  | Support |
 | :-------: | :-----: |
-| GNU/Linux |    ✓    |
-|  NetBSD   |    ✓    |
+|   Linux   |    ✓    |
+|   NetBSD  |    ✓    |
 |   macOS   |    ✓    |
 |  Windows  |   80%   |
 |  OpenWrt  |    ✓    |
 |  Android  |    ✓    |
 
-# 🌍 Contributors <a name="contributors"></a>
+# Contributors
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
-_macchina_, like many other open-source projects, would not be where it is right
-now without the help of its contributors, thank you all so much!
+_macchina_, like many other open-source projects, would not be where it is
+right now without the help of its contributors, thank you all so much!
 
 - Support for **NetBSD** would not have been possible without the help and
   testing of NetBSD/pkgsrc package maintainer
   [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for **macOS** and **Windows** would not have been possible without the
-  help, testing and major contributions of
+- Support for **macOS** and **Windows** would not have been possible without
+  the help, testing and major contributions of
   [123marvin123](https://github.com/123marvin123)
 - Support for **OpenWrt** and **Android** was made possible through the many
   contributions of [uttarayan21](https://github.com/uttarayan21)
