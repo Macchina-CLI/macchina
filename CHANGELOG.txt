@@ -1,2 +1,2 @@
 # Changelog
-- Update libmacchina dependency to v2.1.4, finally fixing the brightness readout.
+- macOS: Count Homebrew packages in `/opt/homebrew` (for Apple Silicon)
