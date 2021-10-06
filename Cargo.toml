@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "1.1.7"
+version = "1.1.8"
 authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>", "Uttarayan Mondal <email@uttarayan.me>"]
 edition = "2018"
 description = "A system information fetcher, with an emphasis on performance."
@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = "2.1.5"
+libmacchina = "2.1.8"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.16.0", default-features = false, features = ['crossterm'] }

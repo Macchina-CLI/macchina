@@ -1,2 +1,5 @@
 # Changelog
-- macOS: Count Homebrew packages in `/opt/homebrew` (for Apple Silicon)
+- libmacchina: bump to v2.1.8
+  - linux: don't subtract 1 from package count values to avoid future panics. 
+  - linux: count linuxbrew packages.
+  - linux: query every distribution-specific package managers.
