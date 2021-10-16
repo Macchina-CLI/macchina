@@ -1,3 +1,4 @@
+use crate::cli::PaletteType;
 use crate::data::{Readout, ReadoutKey};
 use crate::theme::Theme;
 use std::collections::HashMap;
@@ -13,7 +14,7 @@ pub struct ReadoutList<'a> {
     items: Vec<Readout<'a>>,
     theme: &'a Theme,
     block_inner_margin: Margin,
-    palette: bool,
+    palette: &'a Option<PaletteType>,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
@@ -30,7 +31,7 @@ impl<'a, 'b> ReadoutList<'a> {
                 horizontal: 0,
                 vertical: 0,
             },
-            palette: false,
+            palette: &None,
         }
     }
 
@@ -59,7 +60,7 @@ impl<'a, 'b> ReadoutList<'a> {
         self
     }
 
-    pub fn palette(mut self, palette: bool) -> ReadoutList<'a> {
+    pub fn palette(mut self, palette: &'a Option<PaletteType>) -> ReadoutList<'a> {
         self.palette = palette;
         self
     }
@@ -127,8 +128,8 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if self.palette {
-            self.print_palette(buf, &list_area, &mut height);
+        if let Some(palette) = self.palette {
+            self.print_palette(buf, &list_area, &mut height, palette);
         }
 
         Self::render_block(
@@ -144,37 +145,62 @@ impl<'a> Widget for ReadoutList<'a> {
 }
 
 impl<'a> ReadoutList<'a> {
-    fn print_palette(&self, buf: &mut Buffer, list_area: &Rect, height: &mut u16) {
-        let colors = [
-            // Bright Black
-            Color::Black,
+    fn print_palette(
+        &self,
+        buf: &mut Buffer,
+        list_area: &Rect,
+        height: &mut u16,
+        palette: &PaletteType,
+    ) {
+        let light_colors = [
+            Color::DarkGray,
             Color::LightRed,
             Color::LightGreen,
             Color::LightYellow,
             Color::LightBlue,
             Color::LightMagenta,
             Color::LightCyan,
+            Color::Gray,
+        ];
+        let dark_colors = [
+            Color::Black,
+            Color::Red,
+            Color::Green,
+            Color::Yellow,
+            Color::Blue,
+            Color::Magenta,
+            Color::Cyan,
             Color::White,
         ];
 
-        let span_vector: Vec<_> = colors
-            .iter()
-            .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
-            .collect();
+        let span_vector = |colors: &[Color]| -> Vec<_> {
+            colors
+                .iter()
+                .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
+                .collect()
+        };
 
-        let spans = Spans::from(span_vector);
+        let spans = match *palette {
+            PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
+            PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
+            PaletteType::Full => vec![
+                Spans::from(span_vector(&dark_colors)),
+                Spans::from(span_vector(&light_colors)),
+            ],
+        };
+
         let padding = self.theme.get_padding() as u16;
 
         let area = Rect::new(
             list_area.x + padding,
             list_area.y + *height + 1,
             list_area.width - padding,
-            1,
+            spans.len() as u16,
         );
 
         Paragraph::new(spans).render(area, buf);
 
-        *height += 2;
+        *height += area.height + 1;
     }
 
     fn keys_to_text(&self, key_color: &Color) -> HashMap<ReadoutKey, Text> {

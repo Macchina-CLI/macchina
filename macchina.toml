@@ -23,7 +23,11 @@ no_ascii = false
 small_ascii = false
 
 # Displays a palette of your active colorscheme
-palette = true
+# Accepted values (case-sensitive):
+#   - Light
+#   - Dark
+#   - Full
+palette = "Full"
 
 # Turns data into bars for specific readouts
 bar = true

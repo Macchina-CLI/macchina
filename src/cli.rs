@@ -37,14 +37,29 @@ impl MacchinaColor {
     }
 }
 
+arg_enum! {
+    #[derive(Debug,Serialize, Deserialize)]
+    pub enum PaletteType {
+        Light,
+        Dark,
+        Full
+    }
+}
+
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
 // #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")", libmacchina::version()))]
 // #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
-    #[structopt(short = "p", long = "palette", help = "Displays color palette")]
-    pub palette: bool,
+    #[structopt(
+        short = "p",
+        long = "palette",
+        possible_values = & PaletteType::variants(),
+        case_insensitive = true,
+        help = "Displays color palette",
+    )]
+    pub palette: Option<PaletteType>,
 
     #[structopt(
         short = "V",
@@ -267,7 +282,7 @@ pub struct Opt {
 impl Default for Opt {
     fn default() -> Self {
         Opt {
-            palette: false,
+            palette: None,
             version: false,
             padding: None,
             spacing: None,
