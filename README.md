@@ -126,19 +126,11 @@ and separators differently. No extra configuration required.
 Bars provide a way to visualize data, and each theme styles them differently.
 They can be enabled using the `--bar` flag.
 
-<div align="center">
-   <img src="screenshots/bars.png" alt="Preview of the bar flag" />
-</div>
-
 ## Doctor
 
 _libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
-a feature in place that allows you to analyze why they failed, this is done
+a feature in place that allows you to see why they failed, this is done
 through the `--doctor` flag.
-
-<div align="center">
-   <img src="screenshots/doctor.png" alt="Preview of the doctor flag" />
-</div>
 
 ---
 
