@@ -58,7 +58,7 @@ palette = "<Dark|Light|Full>"
 
 ### Thanks to
 
-- @FantasyTeddy for the new customization option; _macchina_ can now show your
+- [FantasyTeddy](https://github.com/FantasyTeddy) for the new customization option; _macchina_ can now show your
   dark, light or all the color variants that your colorscheme is set to
   display.
 
