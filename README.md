@@ -124,8 +124,8 @@ and use the one you like with `--theme <name>`.
 
 ## Bars
 
-Bars provide a way to visualize data, and each theme styles them differently.
-They can be enabled using the `--bar` flag.
+Bars provide a way to visualize data, through symbols rather than numbers, and
+they can be enabled using the `--bar` flag.
 
 ## Doctor
 
@@ -144,7 +144,7 @@ for an example configuration file.
 - In order for _macchina_ to be able to read the configuration file, you need
   to place `macchina.toml` in `$XDG_CONFIG_HOME/macchina/`
 
-You can also create custom themes in `JSON` format, themes allow for more
+You can also create custom themes in `JSON` format. Themes allow for more
 customization and are separate from the main configuration file.  See
 [Carbon.json](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json)
 for an example theme.
@@ -235,14 +235,14 @@ operating system.
 
 # Platform Support
 
-| Platform  | Support |
-| :-------: | :-----: |
-|   Linux   |    ✓    |
-|   NetBSD  |    ✓    |
-|   macOS   |    ✓    |
-|  Windows  |   80%   |
-|  OpenWrt  |    ✓    |
-|  Android  |    ✓    |
+| Platform  | Supported |
+| :-------: | :-------: |
+|   Linux   |     ✓     |
+|   NetBSD  |     ✓     |
+|   macOS   |     ✓     |
+|  Windows  |     ✓     |
+|  OpenWrt  |     ✓     |
+|  Android  |     ✓     |
 
 # Contributors
 
