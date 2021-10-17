@@ -98,8 +98,8 @@ impl Opt {
         if args.padding.is_some() {
             self.padding = args.padding;
         }
-        if args.palette {
-            self.palette = true;
+        if args.palette.is_some() {
+            self.palette = args.palette;
         }
         if args.random_color {
             self.random_color = true;

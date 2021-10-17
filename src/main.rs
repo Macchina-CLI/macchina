@@ -87,7 +87,7 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 }
 
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
-    let mut list = ReadoutList::new(data, &theme).palette(config.palette);
+    let mut list = ReadoutList::new(data, &theme).palette(&config.palette);
 
     if !config.no_box {
         list = list

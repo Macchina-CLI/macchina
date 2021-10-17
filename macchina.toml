@@ -23,7 +23,11 @@ no_ascii = false
 small_ascii = false
 
 # Displays a palette of your active colorscheme
-palette = true
+# Accepted values (case-sensitive):
+#   - Light
+#   - Dark
+#   - Full
+palette = "Full"
 
 # Turns data into bars for specific readouts
 bar = true
@@ -66,7 +70,7 @@ long_shell = false
 
 # Toggle between the current shell or the default one
 # This feature has not yet landed in a release, only uncomment if using upstream
-# current_shell = false 
+# current_shell = false
 
 # Specify the title of the box
 box_title = " Macchina "

@@ -21,6 +21,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 # Table of Contents
 
+- [Upgrading to v2.0](#upgrading)
 - [About](#about)
 - [Performance](#performance)
 - [Features](#features)
@@ -32,7 +33,38 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 ---
 
-# About <a name="about"></a>
+# Upgrading to v2.0
+
+The second major version of macchina includes a breaking change in _macchina's_
+configuration file that could result in an error if you don't update your
+configuration accordingly.
+
+### `<2.0`
+
+macchina.toml:
+
+```toml
+palette = "<True|False>"
+```
+
+### `>=2.0`
+
+macchina.toml:
+
+```toml
+# this is optional, leaving it out/commenting it hides the palette
+palette = "<Dark|Light|Full>"
+```
+
+### Thanks to
+
+- [FantasyTeddy](https://github.com/FantasyTeddy) for the new customization option; _macchina_ can now show your
+  dark, light or all the color variants that your colorscheme is set to
+  display.
+
+---
+
+# About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
 memory usage, processor load and much more.
@@ -44,7 +76,7 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# Performance <a name="perf"></a>
+# Performance
 
 _macchina_ is lightning fast, see for yourself:
 

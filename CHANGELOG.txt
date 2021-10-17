@@ -1,5 +1,9 @@
-# Changelog
-- libmacchina: bump to v2.1.8
-  - linux: don't subtract 1 from package count values to avoid future panics. 
-  - linux: count linuxbrew packages.
-  - linux: query every distribution-specific package managers.
+# Changelog 
+
+## Breaking change:
+
+- The `palette` option, previously taking a boolean value, now accepts the
+  following:
+   - `Dark`: Display darker color variants.
+   - `Light`: Display lighter color variants.
+   - `Full`: Display all color variants.
