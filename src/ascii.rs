@@ -171,6 +171,8 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
     )]
 }
 
+
+
 // The following penguin ASCII art was made by Joan Stark (jgs)
 #[cfg(target_os = "linux")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
@@ -245,6 +247,31 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 
     vec![Text::from(art)]
 }
+
+#[cfg(target_os = "freebsd")]
+pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
+        // The following ASCII art was made by Dylan Araps
+        // and taken from https://github.com/dylanaraps/pfetch
+    
+        let art: Vec<Spans> = vec![
+            Spans::from(vec![Span::styled("/\\,-'''''-,/\\", *RED)]),
+            Spans::from(vec![Span::styled("\\_)        (_/", *RED)]),
+            Spans::from(vec![Span::styled(" |           |", *RED)]),
+            Spans::from(vec![Span::styled(" |           |", *RED)]),
+            Spans::from(vec![Span::styled("  ;         ;", *RED)]),
+            Spans::from(vec![Span::styled("   '-_____-'", *RED)]),
+            Spans::from(vec![Span::styled("", *RED)]),
+        ];
+
+        return vec![Text::from(
+            art.iter()
+                .map(|f| Spans::from(f.to_owned()))
+                .collect::<Vec<Spans>>(),
+        )];
+
+    vec![Text::from(art)]
+}
+
 
 #[cfg(target_os = "netbsd")]
 pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
