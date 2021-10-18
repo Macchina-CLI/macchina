@@ -28,7 +28,6 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 - [Configuration](#configuration)
 - [Runtime dependencies](#runtime-dependencies)
 - [Installation](#installation)
-- [Platform Support](#platform-support)
 - [Contributors](#contributors)
 
 ---
@@ -244,17 +243,6 @@ You might prefer running the
 with your operating system.
 
 ---
-
-# Platform Support
-
-| Platform | Supported |
-| :------: | :-------: |
-|  Linux   |     ✓     |
-|  NetBSD  |     ✓     |
-|  macOS   |     ✓     |
-| Windows  |     ✓     |
-| OpenWrt  |     ✓     |
-| Android  |     ✓     |
 
 # Contributors
 
