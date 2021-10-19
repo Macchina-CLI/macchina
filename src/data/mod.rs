@@ -211,9 +211,11 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::LocalIP) {
-        match general_readout.local_ip() {
-            Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+        if let Some (interface) = &opt.interface {
+            match general_readout.local_ip(interface.to_string()) {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
+            }
         }
     }
 

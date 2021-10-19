@@ -277,6 +277,14 @@ pub struct Opt {
     )]
     #[serde(skip_serializing, skip_deserializing)]
     pub config: Option<std::path::PathBuf>,
+
+
+    #[structopt(
+        long = "interface",
+        short = "i",
+        help = "Specify the network interface",
+    )]
+    pub interface: Option<String>,
 }
 
 impl Default for Opt {
@@ -310,6 +318,7 @@ impl Default for Opt {
             short_uptime: false,
             long_shell: false,
             current_shell: false,
+            interface: None,
             theme: None,
             box_title: None,
             box_inner_margin_x: 1,

@@ -113,6 +113,9 @@ impl Opt {
         if args.long_shell {
             self.long_shell = true;
         }
+        if args.interface.is_some() {
+            self.interface = args.interface;
+        }
         if args.short_uptime {
             self.short_uptime = true;
         }
