@@ -1,102 +1,6 @@
-use crate::data::ReadoutKey;
 use clap::arg_enum;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tui::style::Color;
-
-/// Defines the different ways a key can be named, let's take the _OperatingSystem variant_ for example: \
-/// - `AbbreviationType::Classic` -> OS \
-/// - `AbbreviationType::Long` -> Operating System
-#[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
-pub enum AbbreviationType {
-    Classic,
-    Long,
-}
-
-/// This implements all the different ways a `Key` can be named using \
-/// the predefined variants found in the `AbbreviationType` enum.
-impl ReadoutKey {
-    fn get_common_name(&self) -> HashMap<&AbbreviationType, &'static str> {
-        let mut values = HashMap::new();
-
-        match self {
-            ReadoutKey::Host => {
-                values.insert(&AbbreviationType::Classic, "Host");
-                values.insert(&AbbreviationType::Long, "Host");
-            }
-            ReadoutKey::Machine => {
-                values.insert(&AbbreviationType::Classic, "Machine");
-                values.insert(&AbbreviationType::Long, "Machine");
-            }
-            ReadoutKey::Kernel => {
-                values.insert(&AbbreviationType::Classic, "Kernel");
-                values.insert(&AbbreviationType::Long, "Kernel");
-            }
-            ReadoutKey::Distribution => {
-                values.insert(&AbbreviationType::Classic, "Distro");
-                values.insert(&AbbreviationType::Long, "Distribution");
-            }
-            ReadoutKey::OperatingSystem => {
-                values.insert(&AbbreviationType::Classic, "OS");
-                values.insert(&AbbreviationType::Long, "Operating System");
-            }
-            ReadoutKey::DesktopEnvironment => {
-                values.insert(&AbbreviationType::Classic, "DE");
-                values.insert(&AbbreviationType::Long, "Desktop Environment");
-            }
-            ReadoutKey::WindowManager => {
-                values.insert(&AbbreviationType::Classic, "WM");
-                values.insert(&AbbreviationType::Long, "Window Manager");
-            }
-            ReadoutKey::Packages => {
-                values.insert(&AbbreviationType::Classic, "Packages");
-                values.insert(&AbbreviationType::Long, "Packages");
-            }
-            ReadoutKey::Shell => {
-                values.insert(&AbbreviationType::Classic, "Shell");
-                values.insert(&AbbreviationType::Long, "Shell");
-            }
-            ReadoutKey::Terminal => {
-                values.insert(&AbbreviationType::Classic, "Terminal");
-                values.insert(&AbbreviationType::Long, "Terminal");
-            }
-            ReadoutKey::Uptime => {
-                values.insert(&AbbreviationType::Classic, "Uptime");
-                values.insert(&AbbreviationType::Long, "Uptime");
-            }
-            ReadoutKey::Processor => {
-                values.insert(&AbbreviationType::Classic, "CPU");
-                values.insert(&AbbreviationType::Long, "Processor");
-            }
-            ReadoutKey::ProcessorLoad => {
-                values.insert(&AbbreviationType::Classic, "CPU Load");
-                values.insert(&AbbreviationType::Long, "Processor Load");
-            }
-            ReadoutKey::LocalIP => {
-                values.insert(&AbbreviationType::Classic, "Local IP");
-                values.insert(&AbbreviationType::Long, "Local IP");
-            }
-            ReadoutKey::Backlight => {
-                values.insert(&AbbreviationType::Classic, "Brightness");
-                values.insert(&AbbreviationType::Long, "Brightness");
-            }
-            ReadoutKey::Resolution => {
-                values.insert(&AbbreviationType::Classic, "Resolution");
-                values.insert(&AbbreviationType::Long, "Resolution");
-            }
-            ReadoutKey::Memory => {
-                values.insert(&AbbreviationType::Classic, "Memory");
-                values.insert(&AbbreviationType::Long, "Memory");
-            }
-            ReadoutKey::Battery => {
-                values.insert(&AbbreviationType::Classic, "Battery");
-                values.insert(&AbbreviationType::Long, "Battery");
-            }
-        }
-
-        values
-    }
-}
 
 /// This struct stores the BarStyle to display when --bar or bar config option is used.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -173,7 +77,7 @@ pub struct Theme {
     spacing: usize,
     padding: usize,
     block_title: String,
-    abbreviation: AbbreviationType,
+    pub keys: Keys,
 }
 
 impl Default for Theme {
@@ -186,7 +90,7 @@ impl Default for Theme {
             spacing: 2,
             padding: 0,
             block_title: String::from(" Hydrogen "),
-            abbreviation: AbbreviationType::Classic,
+            keys: Keys::default(),
         }
     }
 }
@@ -202,7 +106,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Hydrogen "),
-                abbreviation: AbbreviationType::Classic,
+                keys: Keys::default(),
             },
             Themes::Helium => Theme {
                 bar: BarStyle::new(BarStyles::Squared),
@@ -212,7 +116,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Helium "),
-                abbreviation: AbbreviationType::Classic,
+                keys: Keys::default(),
             },
             Themes::Lithium => Theme {
                 bar: BarStyle::new(BarStyles::Angled),
@@ -222,7 +126,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Lithium "),
-                abbreviation: AbbreviationType::Long,
+                keys: Keys::default(),
             },
             Themes::Beryllium => Theme {
                 bar: BarStyle::new(BarStyles::Rounded),
@@ -232,10 +136,9 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Beryllium "),
-                abbreviation: AbbreviationType::Classic,
+                keys: Keys::default(),
             },
             Themes::Boron => Theme {
-                // will implement random emoji later
                 bar: BarStyle::new(BarStyles::Rounded),
                 color: Color::Blue,
                 separator_color: Color::White,
@@ -243,7 +146,7 @@ impl Theme {
                 spacing: 2,
                 padding: 0,
                 block_title: String::from(" Boron "),
-                abbreviation: AbbreviationType::Long,
+                keys: Keys::default(),
             },
         }
     }
@@ -302,20 +205,52 @@ impl Theme {
     pub fn set_block_title(&mut self, s: &str) {
         self.block_title = s.into()
     }
+}
 
-    pub fn key(&self, readout_key: &ReadoutKey, abbreviation: &AbbreviationType) -> &'static str {
-        let abbreviated_names = readout_key.get_common_name();
-        let name_entry = abbreviated_names.get(&abbreviation);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Keys {
+    pub host: String,
+    pub kernel: String,
+    pub battery: String,
+    pub os: String,
+    pub de: String,
+    pub wm: String,
+    pub distro: String,
+    pub terminal: String,
+    pub shell: String,
+    pub packages: String,
+    pub uptime: String,
+    pub memory: String,
+    pub machine: String,
+    pub local_ip: String,
+    pub backlight: String,
+    pub resolution: String,
+    pub cpu_load: String,
+    pub cpu: String,
+}
 
-        if let Some(name) = name_entry {
-            name
-        } else {
-            abbreviated_names.values().next().unwrap()
+impl Default for Keys {
+    fn default() -> Self {
+        Self {
+            host: String::from("Host"),
+            kernel: String::from("Kernel"),
+            battery: String::from("Battery"),
+            os: String::from("OS"),
+            de: String::from("DE"),
+            wm: String::from("WM"),
+            distro: String::from("Distro"),
+            terminal: String::from("Terminal"),
+            shell: String::from("Shell"),
+            packages: String::from("Packages"),
+            uptime: String::from("Uptime"),
+            memory: String::from("Memory"),
+            machine: String::from("Machine"),
+            local_ip: String::from("Local IP"),
+            backlight: String::from("Brightness"),
+            resolution: String::from("Resolution"),
+            cpu_load: String::from("CPU Load"),
+            cpu: String::from("CPU"),
         }
-    }
-
-    pub fn default_abbreviation(&self) -> &AbbreviationType {
-        &self.abbreviation
     }
 }
 
@@ -329,7 +264,7 @@ impl From<CustomTheme> for Theme {
             spacing: custom.spacing,
             padding: custom.padding,
             block_title: custom.block_title,
-            abbreviation: custom.abbreviation,
+            keys: custom.keys,
         }
     }
 }
@@ -382,8 +317,9 @@ pub struct CustomTheme {
     spacing: usize,
     padding: usize,
     block_title: String,
-    abbreviation: AbbreviationType,
+    keys: Keys,
 }
+
 impl Default for CustomTheme {
     fn default() -> Self {
         Self {
@@ -394,7 +330,7 @@ impl Default for CustomTheme {
             spacing: 0,
             padding: 2,
             block_title: " Hydrogen ".to_string(),
-            abbreviation: AbbreviationType::Classic,
+            keys: Keys::default(),
         }
     }
 }
@@ -442,7 +378,7 @@ impl CustomTheme {
 
             color: Color::Rgb(10, 33, 51),
             separator_color: Color::Indexed(100),
-            abbreviation: AbbreviationType::Long,
+            keys: Keys::default(),
         };
         println!("{}", serde_json::to_string_pretty(&cust).unwrap());
     }
