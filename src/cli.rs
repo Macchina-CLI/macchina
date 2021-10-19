@@ -278,11 +278,10 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub config: Option<std::path::PathBuf>,
 
-
     #[structopt(
         long = "interface",
         short = "i",
-        help = "Specify the network interface",
+        help = "Specify the network interface"
     )]
     pub interface: Option<String>,
 }
