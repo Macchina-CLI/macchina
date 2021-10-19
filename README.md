@@ -32,7 +32,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 ---
 
-# Upgrading to v2.0
+# Upgrading to v2.0 <a name="#upgrading"></a>
 
 The second major version of macchina includes a breaking change in _macchina's_
 configuration file that could result in an error if you don't update your
