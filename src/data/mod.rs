@@ -143,9 +143,16 @@ pub fn get_all_readouts<'a>(
 
         let kernel_readout = KernelReadout::new();
 
-        match kernel_readout.pretty_kernel() {
-            Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+        if opt.long_kernel {
+            match kernel_readout.pretty_kernel() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
+        } else {
+            match kernel_readout.os_release() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
         }
     }
 

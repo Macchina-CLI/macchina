@@ -191,6 +191,9 @@ pub struct Opt {
     #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
     pub long_shell: bool,
 
+    #[structopt(short = "k", long = "long-kernel", help = "Lengthens kernel output")]
+    pub long_kernel: bool,
+
     #[structopt(
         short = "W",
         long = "current-shell",
@@ -316,6 +319,7 @@ impl Default for Opt {
             doctor: false,
             short_uptime: false,
             long_shell: false,
+            long_kernel: true,
             current_shell: false,
             interface: None,
             theme: None,
