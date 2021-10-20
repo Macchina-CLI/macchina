@@ -139,8 +139,11 @@ See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
 for an example configuration file.
 
-- In order for _macchina_ to be able to read the configuration file, you need to
-  place `macchina.toml` in `$XDG_CONFIG_HOME/macchina/`
+- In order for _macchina_ to be able to read the configuration file, you need
+  to place `macchina.toml` in:
+  - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
+  - `$HOME/Library/Application Support/macchina` on macOS.
+  - `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
 You can also create custom themes in `JSON` format. Themes allow for more
 customization and are separate from the main configuration file. See
@@ -148,13 +151,18 @@ customization and are separate from the main configuration file. See
 for an example theme.
 
 - In order for _macchina_ to be able to read your custom themes, you need to
-  place them in `$XDG_DATA_HOME/macchina/themes/`. You can have as many as you
-  want, just avoid using the names of built-in themes.
+  place them in:
+  - `$XDG_DATA_HOME/macchina/themes` on Linux and the BSDs.
+  - `$HOME/Library/Application/macchina/themes` on macOS. 
+  - `{FOLDERID_RoamingAppData}/macchin/themes` on Windows.
+
+You can have as many as you want, just avoid using the names of built-in
+themes.
 
 To start using your theme:
 
-1. Run `macchina --list-themes` to verify that macchina has listed your theme
-2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`
+1. Run `macchina --list-themes` to verify that macchina has listed your theme.
+2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`.
 3. You're good to go! _macchina_ will start using your theme.
 
 ---
