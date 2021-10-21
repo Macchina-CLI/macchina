@@ -1,9 +1,8 @@
 # Changelog 
 
-## Breaking change:
-
-- The `palette` option, previously taking a boolean value, now accepts the
-  following:
-   - `Dark`: Display darker color variants.
-   - `Light`: Display lighter color variants.
-   - `Full`: Display all color variants.
+- Provide an option to shorten kernel output using the `--long-kernel` flag or
+  `long_kernel` configuration option (#168)
+- Use `if-addrs` as our IP crate (#163)
+  - You now have to specify your network interface through the `--interface`
+    flag or `interface` configuration option.
+- Bump dependencies to their latest versions.

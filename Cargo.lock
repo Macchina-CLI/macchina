@@ -13,9 +13,9 @@ dependencies = [
 
 [[package]]
 name = "ansi-to-tui"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27ee8aff7256290439849cfde35078b996c3ce0a3cd5e0703f6c08384f0bc4a6"
+checksum = "4c3fb5747c9d1b444cb6c9f96c84d09a3f7ae9e1eb77f52ec45c8bf30a6e6bdf"
 dependencies = [
  "tui",
 ]
@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.0.1"
+version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8eed0d05fa354b12f8af456b48c4de2abb4c7f48bc5ed358be66b888117de30"
+checksum = "7fbc00a5ec224542ad01e5c109b099e321071eedcbb66a1141cc358942c73c02"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "2.0.0"
+version = "2.1.0"
 dependencies = [
  "ansi-to-tui",
  "atty",
@@ -931,9 +931,9 @@ checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
 
 [[package]]
 name = "structopt"
-version = "0.3.23"
+version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf9d950ef167e25e0bdb073cf1d68e9ad2795ac826f2f3f59647817cf23c0bfa"
+checksum = "40b9788f4202aa75c240ecc9c15c65185e6a39ccdeb0fd5d008b98825464c87c"
 dependencies = [
  "clap",
  "lazy_static",
@@ -942,9 +942,9 @@ dependencies = [
 
 [[package]]
 name = "structopt-derive"
-version = "0.4.16"
+version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "134d838a2c9943ac3125cf6df165eda53493451b719f3255b2a26b85f772d0ba"
+checksum = "dcb5ae327f9cc13b68763b5749770cb9e048a99bd9dfdfa58d0cf05d5f64afe0"
 dependencies = [
  "heck",
  "proc-macro-error",
@@ -1118,9 +1118,9 @@ checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 
 [[package]]
 name = "vergen"
-version = "5.1.15"
+version = "5.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "265455aab08c55a1ab13f07c8d5e25c7d46900f4484dd7cbd682e77171f93f3c"
+checksum = "7b62d4fc8fc9c81d139c8106b9f4e583e7c1eb36e320dc28d5c03aab86729495"
 dependencies = [
  "anyhow",
  "cfg-if",

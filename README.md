@@ -154,7 +154,7 @@ for an example theme.
   place them in:
   - `$XDG_DATA_HOME/macchina/themes` on Linux and the BSDs.
   - `$HOME/Library/Application/macchina/themes` on macOS. 
-  - `{FOLDERID_RoamingAppData}/macchin/themes` on Windows.
+  - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
 
 You can have as many as you want, just avoid using the names of built-in
 themes.
