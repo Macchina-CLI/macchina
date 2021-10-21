@@ -118,6 +118,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Span::styled(" ooo  oo  ooo  ", *GREEN),
         Span::styled(" oooooooooooo  ", *GREEN),
     ];
+
     vec![Text::from(
         art.iter()
             .map(|f| Spans::from(f.to_owned()))
@@ -253,19 +254,12 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
 
     let art: Vec<Spans> = vec![
         Spans::from(vec![Span::styled("/\\,-'''''-,/\\", *RED)]),
-        Spans::from(vec![Span::styled("\\_)        (_/", *RED)]),
+        Spans::from(vec![Span::styled("\\_)       (_//", *RED)]),
         Spans::from(vec![Span::styled(" |           |", *RED)]),
         Spans::from(vec![Span::styled(" |           |", *RED)]),
         Spans::from(vec![Span::styled("  ;         ;", *RED)]),
         Spans::from(vec![Span::styled("   '-_____-'", *RED)]),
-        Spans::from(vec![Span::styled("", *RED)]),
     ];
-
-    return vec![Text::from(
-        art.iter()
-            .map(|f| Spans::from(f.to_owned()))
-            .collect::<Vec<Spans>>(),
-    )];
 
     vec![Text::from(art)]
 }

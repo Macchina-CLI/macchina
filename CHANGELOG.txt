@@ -1,8 +1,11 @@
 # Changelog 
 
+## macchina v3.0, codename "Nickel"
+
+- Added initial FreeBSD support [libmacchina#77](https://github.com/Macchina-CLI/libmacchina/pull/77)
 - Provide an option to shorten kernel output using the `--long-kernel` flag or
   `long_kernel` configuration option (#168)
 - Use `if-addrs` as our IP crate (#163)
   - You now have to specify your network interface through the `--interface`
     flag or `interface` configuration option.
-- Bump dependencies to their latest versions.
+- Bump our dependencies to their latest versions.

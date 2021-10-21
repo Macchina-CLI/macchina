@@ -409,9 +409,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.102"
+version = "0.2.104"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2a5ac8f984bfcf3a823267e5fde638acc3325f6496633a5da6bb6eb2171e103"
+checksum = "7b2f96d100e1cf1929e7719b7edb3b90ab5298072638fccd77be9ce942ecdfce"
 
 [[package]]
 name = "libgit2-sys"
@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.0.2"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fbc00a5ec224542ad01e5c109b099e321071eedcbb66a1141cc358942c73c02"
+checksum = "a9315ef01770646ed3777d4edeae09811549e04903ed89e0771fba4cb11a75f0"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "2.1.0"
+version = "3.0.0"
 dependencies = [
  "ansi-to-tui",
  "atty",
