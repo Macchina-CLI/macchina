@@ -124,7 +124,7 @@ i5-8265U CPU @ 1.60GHz**
 
 _macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`.
+and use the one you like with `--theme <name>`, you can also [make your own](#configuration).
 
 ## Bars
 
