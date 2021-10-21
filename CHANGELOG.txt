@@ -2,6 +2,9 @@
 
 ## macchina v3.0, codename "Nickel"
 
+
+- You can now customize the text of every readout's key (#165).
+   - see the new [Carbon.json](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json)
 - Added initial FreeBSD support [libmacchina#77](https://github.com/Macchina-CLI/libmacchina/pull/77)
 - Provide an option to shorten kernel output using the `--long-kernel` flag or
   `long_kernel` configuration option (#168)
