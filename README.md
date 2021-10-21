@@ -47,9 +47,10 @@ fetching-related issues should be filed on that repository.
 
 ### LocalIP Readout
 
-You are now required to specify your network interface for the local IP readout to work properly.
+You are now required to specify your network interface for the local IP readout
+to work properly.
 
-- In your __macchina.toml__, add the following:
+- In your **macchina.toml**, add the following:
 
 ```toml
 # The interface name might differ on your machine, please check in with your network utility e.g. `ip address`
@@ -70,10 +71,10 @@ Why the sudden change?
 ### Kernel Readout
 
 You can now shorten the output of the kernel readout through the new
-`--long-kernel` flag or by adding the following to your __macchina.toml__:
+`--long-kernel` flag or by adding the following to your **macchina.toml**:
 
 ```toml
-# When set to false, only the version of your 
+# When set to false, only the version of your
 # operating system's kernel will be displayed.
 long_kernel = false
 ```
@@ -124,7 +125,8 @@ i5-8265U CPU @ 1.60GHz**
 
 _macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`.
+and use the one you like with `--theme <name>`, you can also
+[make your own](#configuration).
 
 ## Bars
 
@@ -145,8 +147,8 @@ See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
 for an example configuration file.
 
-- In order for _macchina_ to be able to read the configuration file, you need
-  to place `macchina.toml` in:
+- In order for _macchina_ to be able to read the configuration file, you need to
+  place `macchina.toml` in:
   - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
   - `$HOME/Library/Application Support/macchina` on macOS.
   - `{FOLDERID_RoamingAppData}/macchina` on Windows.
@@ -159,11 +161,10 @@ for an example theme.
 - In order for _macchina_ to be able to read your custom themes, you need to
   place them in:
   - `$XDG_DATA_HOME/macchina/themes` on Linux and the BSDs.
-  - `$HOME/Library/Application/macchina/themes` on macOS. 
+  - `$HOME/Library/Application/macchina/themes` on macOS.
   - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
 
-You can have as many as you want, just avoid using the names of built-in
-themes.
+You can have as many as you want, just avoid using the names of built-in themes.
 
 To start using your theme:
 

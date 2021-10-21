@@ -206,18 +206,99 @@ impl<'a> ReadoutList<'a> {
     fn keys_to_text(&self, key_color: &Color) -> HashMap<ReadoutKey, Text> {
         let color_style = Style::default().fg(*key_color);
 
-        self.items
-            .iter()
-            .map(|i| {
-                (
-                    i.0,
-                    Text::styled(
-                        self.theme.key(&i.0, self.theme.default_abbreviation()),
-                        color_style,
-                    ),
-                )
-            })
-            .collect()
+        let mut keys = HashMap::new();
+
+        keys.insert(
+            ReadoutKey::Host,
+            Text::styled(&self.theme.keys.host, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Machine,
+            Text::styled(&self.theme.keys.machine, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Kernel,
+            Text::styled(&self.theme.keys.kernel, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Distribution,
+            Text::styled(&self.theme.keys.distro, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::OperatingSystem,
+            Text::styled(&self.theme.keys.os, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::DesktopEnvironment,
+            Text::styled(&self.theme.keys.de, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::WindowManager,
+            Text::styled(&self.theme.keys.wm, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Packages,
+            Text::styled(&self.theme.keys.packages, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Shell,
+            Text::styled(&self.theme.keys.shell, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Terminal,
+            Text::styled(&self.theme.keys.terminal, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::LocalIP,
+            Text::styled(&self.theme.keys.local_ip, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Battery,
+            Text::styled(&self.theme.keys.battery, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Backlight,
+            Text::styled(&self.theme.keys.backlight, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Resolution,
+            Text::styled(&self.theme.keys.resolution, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Memory,
+            Text::styled(&self.theme.keys.memory, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Processor,
+            Text::styled(&self.theme.keys.cpu, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::ProcessorLoad,
+            Text::styled(&self.theme.keys.cpu_load, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Uptime,
+            Text::styled(&self.theme.keys.uptime, color_style),
+        );
+
+        keys
     }
 
     fn get_max_key_width(keys: &HashMap<ReadoutKey, Text>) -> usize {
