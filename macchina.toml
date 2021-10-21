@@ -1,3 +1,6 @@
+# Specifies the network interface to use for the LocalIP readout
+interface = "wlan0"
+
 # Disables color.
 no_color = false
 

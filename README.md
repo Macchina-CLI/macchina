@@ -21,45 +21,14 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 
 # Table of Contents
 
-- [Upgrading to v2.0](#upgrading)
 - [About](#about)
+- [What's new in v2.1](#upgrading)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
 - [Runtime dependencies](#runtime-dependencies)
 - [Installation](#installation)
 - [Contributors](#contributors)
-
----
-
-# Upgrading to v2.0
-
-The second major version of macchina includes a breaking change in _macchina's_
-configuration file that could result in an error if you don't update your
-configuration accordingly.
-
-### `<2.0`
-
-macchina.toml:
-
-```toml
-palette = "<True|False>"
-```
-
-### `>=2.0`
-
-macchina.toml:
-
-```toml
-# this is optional, leaving it out/commenting it hides the palette
-palette = "<Dark|Light|Full>"
-```
-
-### Thanks to
-
-- [FantasyTeddy](https://github.com/FantasyTeddy) for the new customization
-  option; _macchina_ can now show your dark, light or all the color variants
-  that your colorscheme is set to display.
 
 ---
 
@@ -71,6 +40,43 @@ memory usage, processor load and much more.
 If you're interested in the library _macchina_ uses to fetch system information,
 have a look at [libmacchina](https://github.com/Macchina-CLI/libmacchina);
 fetching-related issues should be filed on that repository.
+
+---
+
+# What's new in v2.1 <a name="upgrading"></a>
+
+### LocalIP Readout
+
+You are now required to specify your network interface for the local IP readout to work properly.
+
+- In your __macchina.toml__, add the following:
+
+```toml
+# The interface name might differ on your machine, please check in with your network utility e.g. `ip address`
+interface = "wlan0"
+```
+
+Why the sudden change?
+
+- We changed IP crates. The previous crate would ping Google DNS servers in
+  order to fetch your local IP. And nobody wants that.
+
+- We understand that a lot of you are developers and/or power users, and need
+  your fetcher to be quick, powerful and extensible. If it's a docker container
+  whose local IP you wanna grab, a virtual machine or anything that relies on a
+  network interface to communicate with the outside world, we've got you
+  covered.
+
+### Kernel Readout
+
+You can now shorten the output of the kernel readout through the new
+`--long-kernel` flag or by adding the following to your __macchina.toml__:
+
+```toml
+# When set to false, only the version of your 
+# operating system's kernel will be displayed.
+long_kernel = false
+```
 
 ---
 
@@ -139,8 +145,11 @@ See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
 for an example configuration file.
 
-- In order for _macchina_ to be able to read the configuration file, you need to
-  place `macchina.toml` in `$XDG_CONFIG_HOME/macchina/`
+- In order for _macchina_ to be able to read the configuration file, you need
+  to place `macchina.toml` in:
+  - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
+  - `$HOME/Library/Application Support/macchina` on macOS.
+  - `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
 You can also create custom themes in `JSON` format. Themes allow for more
 customization and are separate from the main configuration file. See
@@ -148,13 +157,18 @@ customization and are separate from the main configuration file. See
 for an example theme.
 
 - In order for _macchina_ to be able to read your custom themes, you need to
-  place them in `$XDG_DATA_HOME/macchina/themes/`. You can have as many as you
-  want, just avoid using the names of built-in themes.
+  place them in:
+  - `$XDG_DATA_HOME/macchina/themes` on Linux and the BSDs.
+  - `$HOME/Library/Application/macchina/themes` on macOS. 
+  - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
+
+You can have as many as you want, just avoid using the names of built-in
+themes.
 
 To start using your theme:
 
-1. Run `macchina --list-themes` to verify that macchina has listed your theme
-2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`
+1. Run `macchina --list-themes` to verify that macchina has listed your theme.
+2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`.
 3. You're good to go! _macchina_ will start using your theme.
 
 ---

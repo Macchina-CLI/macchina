@@ -143,9 +143,16 @@ pub fn get_all_readouts<'a>(
 
         let kernel_readout = KernelReadout::new();
 
-        match kernel_readout.pretty_kernel() {
-            Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+        if opt.long_kernel {
+            match kernel_readout.pretty_kernel() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
+        } else {
+            match kernel_readout.os_release() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
         }
     }
 
@@ -211,11 +218,9 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::LocalIP) {
-        if let Some(interface) = &opt.interface {
-            match general_readout.local_ip(interface.to_string()) {
-                Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
-                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
-            }
+        match general_readout.local_ip(opt.interface.to_owned()) {
+            Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
         }
     }
 
