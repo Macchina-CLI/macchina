@@ -3,7 +3,7 @@
 
 Fast, minimal and customizable system information frontend.
 
-Linux • macOS • Windows • NetBSD • OpenWrt • Android
+Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 <img src="screenshots/preview.png" alt="Preview" />
 
