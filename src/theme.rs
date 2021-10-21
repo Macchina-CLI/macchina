@@ -1,9 +1,10 @@
 use clap::arg_enum;
+use toml;
 use serde::{Deserialize, Serialize};
 use tui::style::Color;
 
 /// This struct stores the BarStyle to display when --bar or bar config option is used.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BarStyle {
     pub glyph: String,
     pub symbol_open: char,
@@ -11,7 +12,8 @@ pub struct BarStyle {
 }
 
 /// This stores the predefined BarStyle's
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "bar_kind", content = "bar")]
 pub enum BarStyles {
     Squared,
     Rounded,
@@ -70,6 +72,7 @@ arg_enum! {
 /// This is the struct which defines predefined as well as custom themes.
 #[derive(Debug, Clone)]
 pub struct Theme {
+    pub keys: Keys,
     bar: BarStyle,
     color: Color,
     separator_color: Color,
@@ -77,7 +80,6 @@ pub struct Theme {
     spacing: usize,
     padding: usize,
     block_title: String,
-    pub keys: Keys,
 }
 
 impl Default for Theme {
@@ -306,6 +308,7 @@ impl From<CustomTheme> for Theme {
 #[serde(default)]
 pub struct CustomTheme {
     bar: BarStyles,
+    keys: Keys,
 
     #[serde(with = "ColorDef")]
     color: Color,
@@ -317,7 +320,6 @@ pub struct CustomTheme {
     spacing: usize,
     padding: usize,
     block_title: String,
-    keys: Keys,
 }
 
 impl Default for CustomTheme {
@@ -336,12 +338,12 @@ impl Default for CustomTheme {
 }
 
 impl CustomTheme {
-    /// Get custom theme from ~/.local/share/macchina/themes/{name}.json
+    /// Get custom theme from ~/.local/share/macchina/themes/{name}.toml
     /// Check the repo for example themes
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
-        // check if the name exists in ~/.local/share/macchina/themes/{name}.json
-        // need to add other data paths later ( /usr/share/macchina/themes/{name}.json )
+        // check if the name exists in ~/.local/share/macchina/themes/{name}.toml
+        // need to add other data paths later (/usr/share/macchina/themes/{name}.toml)
         let mut theme_path = std::path::PathBuf::new();
         theme_path.push(dirs::data_local_dir().ok_or_else(|| {
             std::io::Error::new(
@@ -350,7 +352,7 @@ impl CustomTheme {
             )
         })?);
         theme_path.push(std::path::Path::new(&format!(
-            "macchina/themes/{}.json",
+            "macchina/themes/{}.toml",
             name
         )));
 
@@ -358,7 +360,7 @@ impl CustomTheme {
         let mut theme = std::fs::File::open(theme_path)?;
         theme.read_to_end(&mut buffer)?;
 
-        serde_json::from_slice(&buffer).map_err(|_| {
+        toml::de::from_slice(&buffer).map_err(|_| {
             std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme")
         })
     }
@@ -380,7 +382,7 @@ impl CustomTheme {
             separator_color: Color::Indexed(100),
             keys: Keys::default(),
         };
-        println!("{}", serde_json::to_string_pretty(&cust).unwrap());
+        println!("{}", toml::to_string_pretty(&cust).unwrap());
     }
 }
 

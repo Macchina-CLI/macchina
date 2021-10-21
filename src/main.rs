@@ -112,7 +112,7 @@ fn create_theme(opt: &Opt) -> Theme {
         if let Ok(ts) = theme::Themes::from_str(opt_theme) {
             if let Some(dir) = dirs::data_local_dir() {
                 if !opt.list_themes
-                    && Path::exists(&dir.join(format!("macchina/themes/{}.json", opt_theme)))
+                    && Path::exists(&dir.join(format!("macchina/themes/{}.toml", opt_theme)))
                 {
                     println!("\x1b[33mWarning:\x1b[0m Custom theme has the same name as built-in theme: {}", &opt_theme);
                 }
