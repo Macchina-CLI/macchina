@@ -255,7 +255,7 @@ pub fn get_all_readouts<'a>(
         match general_readout.uptime() {
             Ok(s) => readout_values.push(Readout::new(
                 ReadoutKey::Uptime,
-                format_uptime(s, opt.short_uptime),
+                format_uptime(s, opt.long_uptime),
             )),
             Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Uptime, e)),
         }

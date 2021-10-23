@@ -138,26 +138,6 @@ fn create_theme(opt: &Opt) -> Theme {
             .get_color()
     };
 
-    if let Some(padding) = opt.padding {
-        theme.set_padding(padding);
-    }
-
-    if let Some(spacing) = opt.spacing {
-        theme.set_spacing(spacing);
-    }
-
-    if let Some(color) = &opt.color {
-        theme.set_color(color.get_color());
-    }
-
-    if let Some(separator_color) = &opt.separator_color {
-        theme.set_separator_color(separator_color.get_color());
-    }
-
-    if let Some(box_title) = &opt.box_title {
-        theme.set_block_title(&box_title[..]);
-    }
-
     if opt.no_title {
         theme.set_block_title("");
     }
@@ -188,17 +168,14 @@ fn create_theme(opt: &Opt) -> Theme {
 }
 
 fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(show_only) = opt.show_only.to_owned() {
+    if let Some(show_only) = opt.show.to_owned() {
         return show_only;
     }
 
-    let mut keys: Vec<ReadoutKey> = ReadoutKey::variants()
+    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
         .iter()
         .map(|f| ReadoutKey::from_str(f).unwrap())
         .collect();
-    if let Some(hide) = opt.hide.to_owned() {
-        keys.retain(|f| !hide.contains(f));
-    }
 
     keys
 }
@@ -260,7 +237,7 @@ fn list_themes() {
 }
 
 fn main() -> Result<(), io::Error> {
-    let mut opt: Opt;
+    let opt: Opt;
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
@@ -277,14 +254,6 @@ fn main() -> Result<(), io::Error> {
     if let Ok(mut config_opt) = config_opt {
         config_opt.patch_args(Opt::from_args());
         opt = config_opt;
-        let conflicts = opt.check_conflicts();
-        if !conflicts.is_empty() {
-            println!("\x1b[33mWarning:\x1b[0m Conflicting keys in config file:");
-            for conflict in conflicts {
-                println!("• {}", conflict);
-            }
-            opt = arg_opt;
-        }
     } else {
         println!("\x1b[33mWarning:\x1b[0m {}", config_opt.unwrap_err());
         opt = arg_opt;

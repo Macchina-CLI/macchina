@@ -70,20 +70,6 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub version: bool,
 
-    #[structopt(
-        short = "P",
-        long = "padding",
-        help = "Specify the amount of left padding to use (when the box is hidden)"
-    )]
-    pub padding: Option<usize>,
-
-    #[structopt(
-        short = "s",
-        long = "spacing",
-        help = "Specify the amount of spacing between to use"
-    )]
-    pub spacing: Option<usize>,
-
     #[structopt(short = "n", long = "no-color", help = "Disables color")]
     pub no_color: bool,
 
@@ -119,31 +105,11 @@ pub struct Opt {
     pub no_box: bool,
 
     #[structopt(
-    short = "c",
-    long = "color",
-    possible_values = & MacchinaColor::variants(),
-    case_insensitive = true,
-    help = "Specify the key color",
-    conflicts_with = "no_color",
-    )]
-    pub color: Option<MacchinaColor>,
-
-    #[structopt(
         short = "b",
         long = "bar",
         help = "Displays bars instead of numerical values"
     )]
     pub bar: bool,
-
-    #[structopt(
-    short = "C",
-    long = "separator-color",
-    possible_values = & MacchinaColor::variants(),
-    case_insensitive = true,
-    help = "Specify the separator color",
-    conflicts_with = "no_color",
-    )]
-    pub separator_color: Option<MacchinaColor>,
 
     #[structopt(
         short = "r",
@@ -160,33 +126,21 @@ pub struct Opt {
     pub random_sep_color: bool,
 
     #[structopt(
-    short = "H",
-    long = "hide",
-    possible_values = & data::ReadoutKey::variants(),
-    case_insensitive = true,
-    help = "Hides the specified elements",
-    min_values = 1,
-    conflicts_with = "show_only"
-    )]
-    pub hide: Option<Vec<data::ReadoutKey>>,
-
-    #[structopt(
     short = "X",
     long = "show-only",
     possible_values = & data::ReadoutKey::variants(),
     case_insensitive = true,
-    help = "Displays only the specified elements",
+    help = "Displays only the specified readouts",
     min_values = 1,
-    conflicts_with = "hide"
     )]
-    pub show_only: Option<Vec<data::ReadoutKey>>,
+    pub show: Option<Vec<data::ReadoutKey>>,
 
     #[structopt(short = "d", long = "doctor", help = "Checks the system for failures")]
     #[serde(skip_serializing, skip_deserializing)]
     pub doctor: bool,
 
-    #[structopt(short = "U", long = "short-uptime", help = "Shortens uptime output")]
-    pub short_uptime: bool,
+    #[structopt(short = "U", long = "short-uptime", help = "Lengthens uptime output")]
+    pub long_uptime: bool,
 
     #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
     pub long_shell: bool,
@@ -212,18 +166,12 @@ pub struct Opt {
     pub theme: Option<String>,
 
     #[structopt(
-        long = "box-title",
-        help = "Overrides the title of the box",
-        conflicts_with = "no_box"
-    )]
-    pub box_title: Option<String>,
-
-    #[structopt(
         long = "custom-ascii",
         help = "Specify your own ASCII art from a text file (supports ANSI escape codes)",
         conflicts_with = "no_ascii"
     )]
     pub custom_ascii: Option<String>,
+
     #[structopt(
         short = "A",
         long = "custom-ascii-color",
@@ -294,8 +242,6 @@ impl Default for Opt {
         Opt {
             palette: None,
             version: false,
-            padding: None,
-            spacing: None,
 
             no_color: false,
             no_separator: false,
@@ -304,8 +250,6 @@ impl Default for Opt {
             no_ascii: false,
             no_box: false,
 
-            color: None,
-            separator_color: None,
             random_color: false,
             random_sep_color: false,
 
@@ -314,16 +258,14 @@ impl Default for Opt {
             small_ascii: false,
 
             bar: false,
-            hide: None,
-            show_only: None,
+            show: None,
             doctor: false,
-            short_uptime: false,
+            long_uptime: false,
             long_shell: false,
             long_kernel: true,
             current_shell: false,
             interface: None,
             theme: None,
-            box_title: None,
             box_inner_margin_x: 1,
             box_inner_margin_y: 0,
             export_config: false,

@@ -263,7 +263,7 @@ impl From<CustomTheme> for Theme {
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
-            block_title: custom.block_title,
+            block_title: custom.box_title,
             keys: custom.keys,
         }
     }
@@ -316,7 +316,7 @@ pub struct CustomTheme {
 
     spacing: usize,
     padding: usize,
-    block_title: String,
+    box_title: String,
     keys: Keys,
 }
 
@@ -329,7 +329,7 @@ impl Default for CustomTheme {
             separator_color: Color::White,
             spacing: 0,
             padding: 2,
-            block_title: " Hydrogen ".to_string(),
+            box_title: " Hydrogen ".to_string(),
             keys: Keys::default(),
         }
     }
@@ -374,7 +374,7 @@ impl CustomTheme {
             separator: "=====>".to_string(),
             spacing: 10,
             padding: 10,
-            block_title: "SomeTitle".to_string(),
+            box_title: "SomeTitle".to_string(),
 
             color: Color::Rgb(10, 33, 51),
             separator_color: Color::Indexed(100),
