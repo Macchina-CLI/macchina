@@ -28,6 +28,7 @@ jobs:
           - x86_64-apple-darwin
           - x86_64-pc-windows-msvc
           - x86_64-unknown-netbsd
+          - x86_64-unknown-freebsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
         include:
@@ -35,7 +36,7 @@ jobs:
             name: Linux
             target: x86_64-unknown-linux-gnu
             artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
-            release_name: macchina-linux
+            release_name: macchina-linux-x86_64
             cross: false
             strip: true
 
@@ -43,7 +44,7 @@ jobs:
             name: Macos
             target: x86_64-apple-darwin
             artifact_name: target/x86_64-apple-darwin/release/macchina
-            release_name: macchina-macos
+            release_name: macchina-macos-x86_64
             cross: false
             strip: true
 
@@ -51,15 +52,23 @@ jobs:
             name: Windows
             target: x86_64-pc-windows-msvc
             artifact_name: target/x86_64-pc-windows-msvc/release/macchina.exe
-            release_name: macchina-windows.exe
+            release_name: macchina-windows-x86_64.exe
             cross: false
             strip: true
 
           - os: ubuntu-latest
-            name: Netbsd
+            name: NetBSD
             target: x86_64-unknown-netbsd
             artifact_name: target/x86_64-unknown-netbsd/release/macchina
-            release_name: macchina-bsd
+            release_name: macchina-netbsd-x86_64
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: FreeBSD
+            target: x86_64-unknown-freebsd
+            artifact_name: target/x86_64-unknown-freebsd/release/macchina
+            release_name: macchina-freebsd-x86_64
             cross: true
             strip: true
 
@@ -67,7 +76,7 @@ jobs:
             name: Android
             target: aarch64-linux-android
             artifact_name: target/aarch64-linux-android/release/macchina
-            release_name: macchina-android
+            release_name: macchina-android-aarch64
             cross: true
             strip: true
 

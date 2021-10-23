@@ -14,6 +14,7 @@ jobs:
           - x86_64-apple-darwin
           - x86_64-pc-windows-msvc
           - x86_64-unknown-netbsd
+          - x86_64-unknown-freebsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
         include:
@@ -41,6 +42,13 @@ jobs:
           - os: ubuntu-latest
             name: NetBSD
             target: x86_64-unknown-netbsd
+            cross: true
+            strip: true
+            test: false
+
+          - os: ubuntu-latest
+            name: FreeBSD
+            target: x86_64-unknown-freebsd
             cross: true
             strip: true
             test: false
