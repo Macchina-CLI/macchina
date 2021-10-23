@@ -1,6 +1,6 @@
 use clap::arg_enum;
-use toml;
 use serde::{Deserialize, Serialize};
+use toml;
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -328,7 +328,7 @@ impl Theme {
 
     pub fn using_custom_ascii_color(&self) -> bool {
         if self.custom_ascii.color == Color::Reset {
-            return false; 
+            return false;
         }
 
         true
