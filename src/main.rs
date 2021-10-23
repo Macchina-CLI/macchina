@@ -113,7 +113,7 @@ fn create_theme(opt: &Opt) -> Theme {
                 if !opt.list_themes
                     && Path::exists(&dir.join(format!("macchina/themes/{}.toml", opt_theme)))
                 {
-                    println!("\x1b[33mWarning:\x1b[0m Custom theme has the same name as built-in theme: {}", &opt_theme);
+                    println!("\x1b[33mWarning:\x1b[0m custom theme has the same name as a built-in theme: {}", &opt_theme);
                 }
             }
             theme = Theme::new(ts);
@@ -121,7 +121,7 @@ fn create_theme(opt: &Opt) -> Theme {
             theme = Theme::from(custom_theme);
         } else {
             println!(
-                "\x1b[33mWarning:\x1b[0m Invalid theme {}, falling back to default",
+                "\x1b[33mWarning:\x1b[0m invalid theme {}, falling back to default",
                 opt_theme
             );
             theme = Theme::default();
@@ -175,9 +175,9 @@ fn list_themes() {
     let themes = Themes::variants();
     if let Some(dir) = dirs::data_local_dir() {
         for theme in themes.iter() {
-            if Path::exists(&dir.join(format!("macchina/themes/{}.json", theme))) {
+            if Path::exists(&dir.join(format!("macchina/themes/{}.toml", theme))) {
                 println!(
-                    "\x1b[33mWarning:\x1b[0m Custom theme has the same name as built-in theme: {}",
+                    "\x1b[33mWarning:\x1b[0m custom theme has the same name as a built-in theme: {}",
                     theme
                 );
             }
@@ -192,7 +192,7 @@ fn list_themes() {
         if !entries.is_empty() {
             let custom_themes = entries.iter().filter(|&x| {
                 if let Some(ext) = libmacchina::extra::path_extension(&x) {
-                    ext == "json"
+                    ext == "toml"
                 } else {
                     false
                 }
@@ -209,7 +209,7 @@ fn list_themes() {
 
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
-                    let name = theme.to_string_lossy().replace(".json", "");
+                    let name = theme.to_string_lossy().replace(".toml", "");
                     println!("• {}", name.bright_blue());
                 }
             });
