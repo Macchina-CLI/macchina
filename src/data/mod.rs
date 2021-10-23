@@ -326,7 +326,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if theme.using_bars () {
+                if theme.using_bars() {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {

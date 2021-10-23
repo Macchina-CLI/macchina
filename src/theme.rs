@@ -326,7 +326,7 @@ impl Theme {
 
     pub fn using_custom_ascii_color(&self) -> bool {
         if self.custom_ascii.color == Color::Reset {
-            return false; 
+            return false;
         }
 
         true
