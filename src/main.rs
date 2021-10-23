@@ -270,7 +270,6 @@ fn main() -> Result<(), io::Error> {
 
     if let Some(ref file_path) = opt.custom_ascii {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
-        // let file_path = PathBuf::from(file_path);
         let ascii_art;
         match theme.using_custom_ascii_color() {
             true => {
@@ -279,7 +278,7 @@ fn main() -> Result<(), io::Error> {
                     theme.get_custom_ascii_color(),
                 )?;
             }
-            _ => {
+            false => {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
             }
         };

@@ -47,8 +47,6 @@ arg_enum! {
 }
 
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
-// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")", libmacchina::version()))]
-// #[structopt(version = concat!(env!("CARGO_PKG_VERSION"), " (", env!("VERGEN_GIT_SHA_SHORT"), ")"))]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
@@ -62,7 +60,7 @@ pub struct Opt {
     pub palette: Option<PaletteType>,
 
     #[structopt(
-        short = "V",
+        short = "v",
         long = "version",
         help = "Prints version information",
         conflicts_with = "doctor"
@@ -70,12 +68,12 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub version: bool,
 
-    #[structopt(long = "no-ascii", help = "Removes the ascii art")]
+    #[structopt(long = "no-ascii", short = "n", help = "Removes the ascii art")]
     pub no_ascii: bool,
 
     #[structopt(
-    short = "X",
-    long = "show-only",
+    short = "o",
+    long = "show",
     possible_values = & data::ReadoutKey::variants(),
     case_insensitive = true,
     help = "Displays only the specified readouts",
@@ -93,28 +91,27 @@ pub struct Opt {
     #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
     pub long_shell: bool,
 
-    #[structopt(short = "k", long = "long-kernel", help = "Lengthens kernel output")]
+    #[structopt(short = "K", long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
     #[structopt(
-        short = "W",
+        short = "s",
         long = "current-shell",
         help = "Toggles between the current shell or the default one"
     )]
     pub current_shell: bool,
 
     #[structopt(
-    short = "t",
-    long = "theme",
-    // default_value = "Hydrogen",
-    // possible_values = & theme::Themes::variants(),
-    case_insensitive = true,
-    help = "Specify the theme"
+        short = "t",
+        long = "theme",
+        case_insensitive = true,
+        help = "Specify the theme"
     )]
     pub theme: Option<String>,
 
     #[structopt(
         long = "custom-ascii",
+        short = "C",
         help = "Specify your own ASCII art from a text file (supports ANSI escape codes)",
         conflicts_with = "no_ascii"
     )]
@@ -122,6 +119,7 @@ pub struct Opt {
 
     #[structopt(
         long = "small-ascii",
+        short = "a",
         help = "Prefer smaller ASCII variants",
         conflicts_with = "no_ascii"
     )]
@@ -129,6 +127,7 @@ pub struct Opt {
 
     #[structopt(
         long = "export-config",
+        short = "e",
         help = "Prints the config file to stdout",
         conflicts_with = "doctor"
     )]
@@ -137,6 +136,7 @@ pub struct Opt {
 
     #[structopt(
         long = "list-themes",
+        short = "l",
         help = "Lists all available themes: built-in and custom"
     )]
     #[serde(skip_serializing, skip_deserializing)]
@@ -144,6 +144,7 @@ pub struct Opt {
 
     #[structopt(
         long = "config",
+        short = "c",
         help = "Specify the config file",
         conflicts_with = "export_config"
     )]
@@ -153,7 +154,7 @@ pub struct Opt {
     #[structopt(
         long = "interface",
         short = "i",
-        help = "Specify the network interface"
+        help = "Specify the network interface for the LocalIP readout"
     )]
     pub interface: Option<String>,
 }
@@ -161,24 +162,21 @@ pub struct Opt {
 impl Default for Opt {
     fn default() -> Self {
         Opt {
-            palette: None,
             version: false,
-
             no_ascii: false,
-
-            custom_ascii: None,
             small_ascii: false,
-
-            show: None,
             doctor: false,
             long_uptime: false,
             long_shell: false,
             long_kernel: true,
             current_shell: false,
-            interface: None,
-            theme: None,
             export_config: false,
             list_themes: false,
+            custom_ascii: None,
+            palette: None,
+            show: None,
+            theme: None,
+            interface: None,
             config: None,
         }
     }
