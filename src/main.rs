@@ -31,7 +31,6 @@ use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::Color;
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use unicode_width::UnicodeWidthStr;
@@ -89,7 +88,7 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
     let mut list = ReadoutList::new(data, &theme).palette(&config.palette);
 
-    if !config.no_box {
+    if theme.is_box_visible() {
         list = list
             .block_inner_margin(Margin {
                 horizontal: theme.get_horizontal_margin(),
@@ -138,26 +137,12 @@ fn create_theme(opt: &Opt) -> Theme {
             .get_color()
     };
 
-    if opt.no_separator {
-        theme.set_separator("");
-    }
-
-    if opt.no_bar_delimiter {
-        let new_bar = theme.get_bar_style().hide_delimiters();
-        theme.set_bar_style(new_bar);
-    }
-
-    if opt.random_color {
+    if theme.is_key_color_randomized() {
         theme.set_color(make_random_color());
     }
 
-    if opt.random_sep_color {
+    if theme.is_separator_color_randomized() {
         theme.set_separator_color(make_random_color());
-    }
-
-    if opt.no_color {
-        theme.set_separator_color(Color::White);
-        theme.set_color(Color::White);
     }
 
     theme
@@ -287,15 +272,14 @@ fn main() -> Result<(), io::Error> {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         // let file_path = PathBuf::from(file_path);
         let ascii_art;
-        match opt.custom_ascii_color {
-            Some(ref color) => {
+        match theme.using_custom_ascii_color() {
+            true => {
                 ascii_art = ascii::get_ascii_from_file_override_color(
                     &file_path,
-                    color.get_color().to_owned(),
+                    theme.get_custom_ascii_color(),
                 )?;
             }
-
-            None => {
+            _ => {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
             }
         };

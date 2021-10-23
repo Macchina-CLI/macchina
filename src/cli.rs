@@ -70,60 +70,8 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub version: bool,
 
-    #[structopt(short = "n", long = "no-color", help = "Disables color")]
-    pub no_color: bool,
-
-    #[structopt(
-        short = "K",
-        long = "no-separator",
-        help = "Hides the separator",
-        conflicts_with = "separator_color"
-    )]
-    pub no_separator: bool,
-
-    #[structopt(
-        short = "D",
-        long = "no-bar-delimiter",
-        help = "Hides the bar's delimiters"
-    )]
-    pub no_bar_delimiter: bool,
-
-    #[structopt(
-        long = "no-title",
-        help = "Hides the box title",
-        conflicts_with = "box_title"
-    )]
-    pub no_title: bool,
-
     #[structopt(long = "no-ascii", help = "Removes the ascii art")]
     pub no_ascii: bool,
-
-    #[structopt(
-        long = "no-box",
-        help = "Removes the box surrounding system information"
-    )]
-    pub no_box: bool,
-
-    #[structopt(
-        short = "b",
-        long = "bar",
-        help = "Displays bars instead of numerical values"
-    )]
-    pub bar: bool,
-
-    #[structopt(
-        short = "r",
-        long = "random-color",
-        help = "Picks a random key color for you"
-    )]
-    pub random_color: bool,
-
-    #[structopt(
-        short = "R",
-        long = "random-sep-color",
-        help = "Picks a random separator color for you"
-    )]
-    pub random_sep_color: bool,
 
     #[structopt(
     short = "X",
@@ -173,38 +121,11 @@ pub struct Opt {
     pub custom_ascii: Option<String>,
 
     #[structopt(
-        short = "A",
-        long = "custom-ascii-color",
-        help = "Overrides all colors in the ASCII art with a specified one",
-        requires = "custom-ascii",
-        conflicts_with = "no_ascii"
-    )]
-    pub custom_ascii_color: Option<MacchinaColor>,
-
-    #[structopt(
         long = "small-ascii",
         help = "Prefer smaller ASCII variants",
         conflicts_with = "no_ascii"
     )]
     pub small_ascii: bool,
-
-    #[structopt(
-        help = "Specify the horizontal inner margin value of the box",
-        long = "box-inner-margin-x",
-        short = "L",
-        conflicts_with = "no_box",
-        default_value = "1"
-    )]
-    pub box_inner_margin_x: u16,
-
-    #[structopt(
-        help = "Specify the vertical inner margin value of the box",
-        long = "box-inner-margin-y",
-        short = "J",
-        conflicts_with = "no_box",
-        default_value = "0"
-    )]
-    pub box_inner_margin_y: u16,
 
     #[structopt(
         long = "export-config",
@@ -243,21 +164,11 @@ impl Default for Opt {
             palette: None,
             version: false,
 
-            no_color: false,
-            no_separator: false,
-            no_bar_delimiter: false,
-            no_title: false,
             no_ascii: false,
-            no_box: false,
-
-            random_color: false,
-            random_sep_color: false,
 
             custom_ascii: None,
-            custom_ascii_color: None,
             small_ascii: false,
 
-            bar: false,
             show: None,
             doctor: false,
             long_uptime: false,
@@ -266,8 +177,6 @@ impl Default for Opt {
             current_shell: false,
             interface: None,
             theme: None,
-            box_inner_margin_x: 1,
-            box_inner_margin_y: 0,
             export_config: false,
             list_themes: false,
             config: None,

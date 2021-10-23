@@ -50,15 +50,6 @@ impl Opt {
     }
 
     pub fn patch_args(&mut self, args: Self) {
-        if args.bar {
-            self.bar = true;
-        }
-        if args.custom_ascii.is_some() {
-            self.custom_ascii = args.custom_ascii;
-        }
-        if args.custom_ascii_color.is_some() {
-            self.custom_ascii_color = args.custom_ascii_color;
-        }
         if args.version {
             self.version = true;
         }
@@ -71,29 +62,8 @@ impl Opt {
         if args.no_ascii {
             self.no_ascii = true;
         }
-        if args.no_bar_delimiter {
-            self.no_bar_delimiter = true;
-        }
-        if args.no_box {
-            self.no_box = true;
-        }
-        if args.no_color {
-            self.no_color = true;
-        }
-        if args.no_separator {
-            self.no_separator = true;
-        }
-        if args.no_title {
-            self.no_title = true;
-        }
         if args.palette.is_some() {
             self.palette = args.palette;
-        }
-        if args.random_color {
-            self.random_color = true;
-        }
-        if args.random_sep_color {
-            self.random_sep_color = true;
         }
         if args.long_shell {
             self.long_shell = true;
