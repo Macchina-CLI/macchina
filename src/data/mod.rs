@@ -32,7 +32,6 @@ arg_enum! {
         ProcessorLoad,
         Memory,
         Battery,
-
     }
 }
 

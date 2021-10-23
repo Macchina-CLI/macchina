@@ -2,6 +2,40 @@ use clap::arg_enum;
 use serde::{Deserialize, Serialize};
 use tui::style::Color;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InnerMargin {
+    x: u16,
+    y: u16,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Block {
+    title: String,
+    inner_margin: InnerMargin,
+}
+
+impl InnerMargin {
+    fn new(a: u16, b: u16) -> Self {
+        InnerMargin { x: a, y: b }
+    }
+}
+
+impl Block {
+    fn default() -> Self {
+        Block {
+            title: String::new(),
+            inner_margin: InnerMargin::new(1, 0),
+        }
+    }
+
+    fn new(title: &str) -> Self {
+        Block {
+            title: title.to_string(),
+            inner_margin: InnerMargin::new(1, 0),
+        }
+    }
+}
+
 /// This struct stores the BarStyle to display when --bar or bar config option is used.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BarStyle {
@@ -39,7 +73,7 @@ impl BarStyle {
                 symbol_close: '>',
             },
             BarStyles::Hidden => BarStyle {
-                glyph: "".to_owned(),
+                glyph: "\0".to_owned(),
                 symbol_open: '\0',
                 symbol_close: '\0',
             },
@@ -76,7 +110,7 @@ pub struct Theme {
     separator: String,
     spacing: usize,
     padding: usize,
-    block_title: String,
+    r#box: Block,
     pub keys: Keys,
 }
 
@@ -89,7 +123,7 @@ impl Default for Theme {
             separator: "-".to_owned(),
             spacing: 2,
             padding: 0,
-            block_title: String::from(" Hydrogen "),
+            r#box: Block::default(),
             keys: Keys::default(),
         }
     }
@@ -105,7 +139,7 @@ impl Theme {
                 separator: "-".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Hydrogen "),
+                r#box: Block::new(" Hydrogen "),
                 keys: Keys::default(),
             },
             Themes::Helium => Theme {
@@ -115,7 +149,7 @@ impl Theme {
                 separator: "=>".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Helium "),
+                r#box: Block::new(" Helium "),
                 keys: Keys::default(),
             },
             Themes::Lithium => Theme {
@@ -125,7 +159,7 @@ impl Theme {
                 separator: "~".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Lithium "),
+                r#box: Block::new(" Lithium "),
                 keys: Keys::default(),
             },
             Themes::Beryllium => Theme {
@@ -135,7 +169,7 @@ impl Theme {
                 separator: "->".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Beryllium "),
+                r#box: Block::new(" Beryllium "),
                 keys: Keys::default(),
             },
             Themes::Boron => Theme {
@@ -145,7 +179,7 @@ impl Theme {
                 separator: "•".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Boron "),
+                r#box: Block::new(" Boron "),
                 keys: Keys::default(),
             },
         }
@@ -186,6 +220,18 @@ impl Theme {
         self.padding
     }
 
+    pub fn get_box_title(&self) -> String {
+        self.r#box.title.to_owned()
+    }
+
+    pub fn get_horizontal_margin(&self) -> u16 {
+        self.r#box.inner_margin.x
+    }
+
+    pub fn get_vertical_margin(&self) -> u16 {
+        self.r#box.inner_margin.y
+    }
+
     pub fn set_padding(&mut self, size: usize) {
         self.padding = size
     }
@@ -196,14 +242,6 @@ impl Theme {
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
-    }
-
-    pub fn get_block_title(&self) -> &str {
-        &self.block_title
-    }
-
-    pub fn set_block_title(&mut self, s: &str) {
-        self.block_title = s.into()
     }
 }
 
@@ -263,7 +301,7 @@ impl From<CustomTheme> for Theme {
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
-            block_title: custom.box_title,
+            r#box: custom.r#box,
             keys: custom.keys,
         }
     }
@@ -298,7 +336,13 @@ impl From<CustomTheme> for Theme {
 ///   },
 ///   "spacing": 2,
 ///   "padding": 0,
-///   "block_title": "┤ Carbon ├",
+///   "box": {
+///     "title": "┤ Carbon ├",
+///     "inner_margin": {
+///         "x": 1,
+///         "y": 0,
+///     }
+///   }
 ///   "abbreviation" : "Classic"
 /// }
 /// ```
@@ -306,6 +350,7 @@ impl From<CustomTheme> for Theme {
 #[serde(default)]
 pub struct CustomTheme {
     bar: BarStyles,
+    r#box: Block,
 
     #[serde(with = "ColorDef")]
     color: Color,
@@ -316,7 +361,6 @@ pub struct CustomTheme {
 
     spacing: usize,
     padding: usize,
-    box_title: String,
     keys: Keys,
 }
 
@@ -329,7 +373,7 @@ impl Default for CustomTheme {
             separator_color: Color::White,
             spacing: 0,
             padding: 2,
-            box_title: " Hydrogen ".to_string(),
+            r#box: Block::new(""),
             keys: Keys::default(),
         }
     }
@@ -374,7 +418,7 @@ impl CustomTheme {
             separator: "=====>".to_string(),
             spacing: 10,
             padding: 10,
-            box_title: "SomeTitle".to_string(),
+            r#box: Block::new("SomeTitle"),
 
             color: Color::Rgb(10, 33, 51),
             separator_color: Color::Indexed(100),

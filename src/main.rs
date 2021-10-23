@@ -92,13 +92,13 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
     if !config.no_box {
         list = list
             .block_inner_margin(Margin {
-                horizontal: config.box_inner_margin_x,
-                vertical: config.box_inner_margin_y,
+                horizontal: theme.get_horizontal_margin(),
+                vertical: theme.get_vertical_margin(),
             })
             .block(
                 Block::default()
                     .border_type(BorderType::Rounded)
-                    .title(theme.get_block_title())
+                    .title(theme.get_box_title())
                     .borders(Borders::ALL),
             );
     }
@@ -137,10 +137,6 @@ fn create_theme(opt: &Opt) -> Theme {
             .unwrap()
             .get_color()
     };
-
-    if opt.no_title {
-        theme.set_block_title("");
-    }
 
     if opt.no_separator {
         theme.set_separator("");
