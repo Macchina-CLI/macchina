@@ -1,6 +1,6 @@
 use clap::arg_enum;
-use toml;
 use serde::{Deserialize, Serialize};
+use toml;
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -102,15 +102,24 @@ pub struct BarStyle {
     pub symbol_close: char,
 }
 
-/// This stores the predefined BarStyle's
+/// This stores predefined `BarStyle` variations.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "bar_type", content = "bar")]
 pub enum BarStyles {
     Squared,
     Rounded,
     Angled,
     Hidden,
-    Custom(BarStyle),
+}
+
+impl Default for BarStyle {
+    fn default() -> Self {
+        BarStyle {
+            glyph: String::new(),
+            symbol_open: '(',
+            symbol_close: ')',
+            visible: true,
+        }
+    }
 }
 
 impl BarStyle {
@@ -140,13 +149,12 @@ impl BarStyle {
                 symbol_close: '\0',
                 visible: true,
             },
-            BarStyles::Custom(barstyle) => barstyle,
         }
     }
 
     pub fn hide_delimiters(&self) -> BarStyle {
         BarStyle {
-            glyph: self.glyph.clone(),
+            glyph: self.glyph.to_owned(),
             symbol_open: '\0',
             symbol_close: '\0',
             visible: true,
@@ -328,7 +336,7 @@ impl Theme {
 
     pub fn using_custom_ascii_color(&self) -> bool {
         if self.custom_ascii.color == Color::Reset {
-            return false; 
+            return false;
         }
 
         true
@@ -401,7 +409,7 @@ impl Default for Keys {
 impl From<CustomTheme> for Theme {
     fn from(custom: CustomTheme) -> Self {
         Self {
-            bar: BarStyle::new(custom.bar),
+            bar: custom.bar,
             color: custom.color,
             separator: custom.separator,
             separator_color: custom.separator_color,
@@ -427,7 +435,7 @@ pub struct CustomTheme {
     separator_color: Color,
 
     custom_ascii: ASCII,
-    bar: BarStyles,
+    bar: BarStyle,
     r#box: Block,
     separator: String,
     randomize: Randomize,
@@ -439,7 +447,7 @@ pub struct CustomTheme {
 impl Default for CustomTheme {
     fn default() -> Self {
         Self {
-            bar: BarStyles::Squared,
+            bar: BarStyle::default(),
             color: Color::Red,
             separator: "->".to_string(),
             separator_color: Color::White,
@@ -483,12 +491,7 @@ impl CustomTheme {
     // private function to print a custom theme for testing
     fn __print_theme_test() {
         let cust = CustomTheme {
-            bar: BarStyles::Custom(BarStyle {
-                glyph: "x".to_string(),
-                symbol_open: '[',
-                symbol_close: ']',
-                visible: true,
-            }),
+            bar: BarStyle::new(BarStyles::Squared),
             separator: "=====>".to_string(),
             spacing: 2,
             padding: 0,
