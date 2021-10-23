@@ -1,19 +1,110 @@
 use clap::arg_enum;
-use serde::{Deserialize, Serialize};
 use toml;
+use serde::{Deserialize, Serialize};
 use tui::style::Color;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Randomize {
+    key_color: bool,
+    separator_color: bool,
+}
+
+impl Default for Randomize {
+    fn default() -> Self {
+        Randomize {
+            key_color: false,
+            separator_color: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ASCII {
+    #[serde(with = "ColorDef")]
+    color: Color,
+}
+
+impl Default for ASCII {
+    fn default() -> Self {
+        ASCII {
+            color: Color::Reset,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(remote = "Color")]
+enum ColorDef {
+    Reset,
+    Black,
+    Red,
+    Green,
+    Yellow,
+    Blue,
+    Magenta,
+    Cyan,
+    Gray,
+    DarkGray,
+    LightRed,
+    LightGreen,
+    LightYellow,
+    LightBlue,
+    LightMagenta,
+    LightCyan,
+    White,
+    Rgb(u8, u8, u8),
+    Indexed(u8),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct InnerMargin {
+    x: u16,
+    y: u16,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Block {
+    title: String,
+    visible: bool,
+    inner_margin: InnerMargin,
+}
+
+impl InnerMargin {
+    fn new(a: u16, b: u16) -> Self {
+        InnerMargin { x: a, y: b }
+    }
+}
+
+impl Block {
+    fn default() -> Self {
+        Block {
+            title: String::new(),
+            visible: false,
+            inner_margin: InnerMargin::new(1, 0),
+        }
+    }
+
+    fn new(ti: &str, vi: bool) -> Self {
+        Block {
+            title: ti.to_string(),
+            visible: vi,
+            inner_margin: InnerMargin::new(1, 0),
+        }
+    }
+}
+
 /// This struct stores the BarStyle to display when --bar or bar config option is used.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BarStyle {
     pub glyph: String,
+    pub visible: bool,
     pub symbol_open: char,
     pub symbol_close: char,
 }
 
 /// This stores the predefined BarStyle's
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(tag = "bar_kind", content = "bar")]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "bar_type", content = "bar")]
 pub enum BarStyles {
     Squared,
     Rounded,
@@ -29,21 +120,25 @@ impl BarStyle {
                 glyph: "■".to_owned(),
                 symbol_open: '[',
                 symbol_close: ']',
+                visible: true,
             },
             BarStyles::Rounded => BarStyle {
                 glyph: "●".to_owned(),
                 symbol_open: '(',
                 symbol_close: ')',
+                visible: true,
             },
             BarStyles::Angled => BarStyle {
                 glyph: "×".to_owned(),
                 symbol_open: '<',
                 symbol_close: '>',
+                visible: true,
             },
             BarStyles::Hidden => BarStyle {
-                glyph: "".to_owned(),
+                glyph: "\0".to_owned(),
                 symbol_open: '\0',
                 symbol_close: '\0',
+                visible: true,
             },
             BarStyles::Custom(barstyle) => barstyle,
         }
@@ -54,6 +149,7 @@ impl BarStyle {
             glyph: self.glyph.clone(),
             symbol_open: '\0',
             symbol_close: '\0',
+            visible: true,
         }
     }
 }
@@ -72,14 +168,16 @@ arg_enum! {
 /// This is the struct which defines predefined as well as custom themes.
 #[derive(Debug, Clone)]
 pub struct Theme {
-    pub keys: Keys,
     bar: BarStyle,
     color: Color,
     separator_color: Color,
     separator: String,
     spacing: usize,
     padding: usize,
-    block_title: String,
+    randomize: Randomize,
+    custom_ascii: ASCII,
+    r#box: Block,
+    pub keys: Keys,
 }
 
 impl Default for Theme {
@@ -91,7 +189,9 @@ impl Default for Theme {
             separator: "-".to_owned(),
             spacing: 2,
             padding: 0,
-            block_title: String::from(" Hydrogen "),
+            r#box: Block::default(),
+            custom_ascii: ASCII::default(),
+            randomize: Randomize::default(),
             keys: Keys::default(),
         }
     }
@@ -107,7 +207,9 @@ impl Theme {
                 separator: "-".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Hydrogen "),
+                r#box: Block::new(" Hydrogen ", true),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
                 keys: Keys::default(),
             },
             Themes::Helium => Theme {
@@ -117,7 +219,9 @@ impl Theme {
                 separator: "=>".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Helium "),
+                r#box: Block::new(" Helium ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
                 keys: Keys::default(),
             },
             Themes::Lithium => Theme {
@@ -127,7 +231,9 @@ impl Theme {
                 separator: "~".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Lithium "),
+                r#box: Block::new(" Lithium ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
                 keys: Keys::default(),
             },
             Themes::Beryllium => Theme {
@@ -137,7 +243,9 @@ impl Theme {
                 separator: "->".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Beryllium "),
+                r#box: Block::new(" Beryllium ", true),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
                 keys: Keys::default(),
             },
             Themes::Boron => Theme {
@@ -147,7 +255,9 @@ impl Theme {
                 separator: "•".to_owned(),
                 spacing: 2,
                 padding: 0,
-                block_title: String::from(" Boron "),
+                r#box: Block::new(" Boron ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
                 keys: Keys::default(),
             },
         }
@@ -188,6 +298,46 @@ impl Theme {
         self.padding
     }
 
+    pub fn get_box_title(&self) -> String {
+        self.r#box.title.to_owned()
+    }
+
+    pub fn is_box_visible(&self) -> bool {
+        self.r#box.visible
+    }
+
+    pub fn is_key_color_randomized(&self) -> bool {
+        self.randomize.key_color
+    }
+
+    pub fn is_separator_color_randomized(&self) -> bool {
+        self.randomize.separator_color
+    }
+
+    pub fn get_horizontal_margin(&self) -> u16 {
+        self.r#box.inner_margin.x
+    }
+
+    pub fn get_vertical_margin(&self) -> u16 {
+        self.r#box.inner_margin.y
+    }
+
+    pub fn get_custom_ascii_color(&self) -> Color {
+        self.custom_ascii.color
+    }
+
+    pub fn using_custom_ascii_color(&self) -> bool {
+        if self.custom_ascii.color == Color::Reset {
+            return false; 
+        }
+
+        true
+    }
+
+    pub fn using_bars(&self) -> bool {
+        self.bar.visible
+    }
+
     pub fn set_padding(&mut self, size: usize) {
         self.padding = size
     }
@@ -198,14 +348,6 @@ impl Theme {
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
-    }
-
-    pub fn get_block_title(&self) -> &str {
-        &self.block_title
-    }
-
-    pub fn set_block_title(&mut self, s: &str) {
-        self.block_title = s.into()
     }
 }
 
@@ -265,61 +407,33 @@ impl From<CustomTheme> for Theme {
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
-            block_title: custom.block_title,
+            r#box: custom.r#box,
+            custom_ascii: custom.custom_ascii,
+            randomize: custom.randomize,
             keys: custom.keys,
         }
     }
 }
 
-/// This is the struct which stores the CustomThemes which is serialized from a json file.
-/// ## Example theme carbon
-/// ```json
-/// {
-///   "name": "Carbon",
-///   "bar": {
-///     "Custom": {
-///       "glyph": "ߋ",
-///       "symbol_open": "[",
-///       "symbol_close": "]"
-///     }
-///   },
-///   "color": {
-///     "Rgb": [
-///       231,
-///       198,
-///       100
-///     ]
-///   },
-///   "separator": "⇉",
-///   "separator_color": {
-///     "Rgb": [
-///       158,
-///       208,
-///       114
-///     ]
-///   },
-///   "spacing": 2,
-///   "padding": 0,
-///   "block_title": "┤ Carbon ├",
-///   "abbreviation" : "Classic"
-/// }
-/// ```
+/// This is the struct which stores the CustomThemes which is serialized from a JSON file.  See
+/// [https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json](this) for an example
+/// theme.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct CustomTheme {
-    bar: BarStyles,
-    keys: Keys,
-
     #[serde(with = "ColorDef")]
     color: Color,
-
-    separator: String,
     #[serde(with = "ColorDef")]
     separator_color: Color,
 
+    custom_ascii: ASCII,
+    bar: BarStyles,
+    r#box: Block,
+    separator: String,
+    randomize: Randomize,
     spacing: usize,
     padding: usize,
-    block_title: String,
+    keys: Keys,
 }
 
 impl Default for CustomTheme {
@@ -331,19 +445,20 @@ impl Default for CustomTheme {
             separator_color: Color::White,
             spacing: 0,
             padding: 2,
-            block_title: " Hydrogen ".to_string(),
+            r#box: Block::new("", false),
+            custom_ascii: ASCII::default(),
+            randomize: Randomize::default(),
             keys: Keys::default(),
         }
     }
 }
 
 impl CustomTheme {
-    /// Get custom theme from ~/.local/share/macchina/themes/{name}.toml
-    /// Check the repo for example themes
+    /// Reads custom themes from $XDG_DATA_HOME/macchina/themes/{name}.toml
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
         // check if the name exists in ~/.local/share/macchina/themes/{name}.toml
-        // need to add other data paths later (/usr/share/macchina/themes/{name}.toml)
+        // need to add other data paths later ( /usr/share/macchina/themes/{name}.toml)
         let mut theme_path = std::path::PathBuf::new();
         theme_path.push(dirs::data_local_dir().ok_or_else(|| {
             std::io::Error::new(
@@ -360,7 +475,7 @@ impl CustomTheme {
         let mut theme = std::fs::File::open(theme_path)?;
         theme.read_to_end(&mut buffer)?;
 
-        toml::de::from_slice(&buffer).map_err(|_| {
+        toml::from_slice(&buffer).map_err(|_| {
             std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme")
         })
     }
@@ -372,40 +487,19 @@ impl CustomTheme {
                 glyph: "x".to_string(),
                 symbol_open: '[',
                 symbol_close: ']',
+                visible: true,
             }),
             separator: "=====>".to_string(),
-            spacing: 10,
-            padding: 10,
-            block_title: "SomeTitle".to_string(),
+            spacing: 2,
+            padding: 0,
+            r#box: Block::new("SomeTitle", true),
+            randomize: Randomize::default(),
 
             color: Color::Rgb(10, 33, 51),
+            custom_ascii: ASCII::default(),
             separator_color: Color::Indexed(100),
             keys: Keys::default(),
         };
         println!("{}", toml::to_string_pretty(&cust).unwrap());
     }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(remote = "Color")]
-enum ColorDef {
-    Reset,
-    Black,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    Gray,
-    DarkGray,
-    LightRed,
-    LightGreen,
-    LightYellow,
-    LightBlue,
-    LightMagenta,
-    LightCyan,
-    White,
-    Rgb(u8, u8, u8),
-    Indexed(u8),
 }

@@ -3,7 +3,7 @@
 
 Fast, minimal and customizable system information frontend.
 
-Linux • macOS • Windows • NetBSD • OpenWrt • Android
+Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 <img src="screenshots/preview.png" alt="Preview" />
 
@@ -22,7 +22,7 @@ Linux • macOS • Windows • NetBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [What's new in v2.1](#upgrading)
+- [What's new in v3.0](#upgrading)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -43,7 +43,8 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# What's new in v2.1 <a name="upgrading"></a>
+# What's new in v3.0 <a name="upgrading"></a>
+
 
 ### LocalIP Readout
 
@@ -77,6 +78,35 @@ You can now shorten the output of the kernel readout through the new
 # When set to false, only the version of your
 # operating system's kernel will be displayed.
 long_kernel = false
+```
+
+### Themes
+
+You can now customize the text of every readout's key — _Whaaaat!_
+
+Jump in your theme file and add the following:
+
+```json
+"keys": {
+   "host": "HOST",
+   "kernel": "KERN",
+   "battery": "BAT",
+   "os": "OS",
+   "de": "DE",
+   "wm": "WM",
+   "distro": "DIST",
+   "terminal": "TERM",
+   "shell": "SHELL",
+   "packages": "PKGS",
+   "uptime": "UP",
+   "memory": "MEM",
+   "machine": "MACH",
+   "local_ip": "IP",
+   "backlight": "BRI",
+   "resolution": "RES",
+   "cpu_load": "CPU LOAD",
+   "cpu": "CPU"
+},
 ```
 
 ---

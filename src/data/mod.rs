@@ -32,7 +32,6 @@ arg_enum! {
         ProcessorLoad,
         Memory,
         Battery,
-
     }
 }
 
@@ -255,7 +254,7 @@ pub fn get_all_readouts<'a>(
         match general_readout.uptime() {
             Ok(s) => readout_values.push(Readout::new(
                 ReadoutKey::Uptime,
-                format_uptime(s, opt.short_uptime),
+                format_uptime(s, opt.long_uptime),
             )),
             Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Uptime, e)),
         }
@@ -284,7 +283,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match (general_readout.backlight(), opt.bar) {
+        match (general_readout.backlight(), theme.using_bars()) {
             (Ok(b), false) => {
                 readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
             }
@@ -297,7 +296,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorLoad) {
-        match (general_readout.cpu_usage(), opt.bar) {
+        match (general_readout.cpu_usage(), theme.using_bars()) {
             (Ok(u), true) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
@@ -327,7 +326,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if opt.bar {
+                if theme.using_bars () {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
@@ -352,7 +351,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if opt.bar {
+                if theme.using_bars() {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {

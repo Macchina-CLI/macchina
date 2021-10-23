@@ -50,21 +50,6 @@ impl Opt {
     }
 
     pub fn patch_args(&mut self, args: Self) {
-        if args.bar {
-            self.bar = true;
-        }
-        if args.box_title.is_some() {
-            self.box_title = args.box_title;
-        }
-        if args.color.is_some() {
-            self.color = args.color;
-        }
-        if args.custom_ascii.is_some() {
-            self.custom_ascii = args.custom_ascii;
-        }
-        if args.custom_ascii_color.is_some() {
-            self.custom_ascii_color = args.custom_ascii_color;
-        }
         if args.version {
             self.version = true;
         }
@@ -74,59 +59,23 @@ impl Opt {
         if args.export_config {
             self.export_config = true;
         }
-        if args.hide.is_some() {
-            self.hide = args.hide;
-        }
         if args.no_ascii {
             self.no_ascii = true;
-        }
-        if args.no_bar_delimiter {
-            self.no_bar_delimiter = true;
-        }
-        if args.no_box {
-            self.no_box = true;
-        }
-        if args.no_color {
-            self.no_color = true;
-        }
-        if args.no_separator {
-            self.no_separator = true;
-        }
-        if args.no_title {
-            self.no_title = true;
-        }
-        if args.padding.is_some() {
-            self.padding = args.padding;
         }
         if args.palette.is_some() {
             self.palette = args.palette;
         }
-        if args.random_color {
-            self.random_color = true;
-        }
-        if args.random_sep_color {
-            self.random_sep_color = true;
-        }
-        if args.separator_color.is_some() {
-            self.separator_color = args.separator_color;
-        }
         if args.long_shell {
             self.long_shell = true;
-        }
-        if args.long_shell {
-            self.long_kernel = true;
         }
         if args.interface.is_some() {
             self.interface = args.interface;
         }
-        if args.short_uptime {
-            self.short_uptime = true;
+        if args.long_uptime {
+            self.long_uptime = true;
         }
-        if args.show_only.is_some() {
-            self.show_only = args.show_only;
-        }
-        if args.spacing.is_some() {
-            self.spacing = args.spacing;
+        if args.show.is_some() {
+            self.show = args.show;
         }
         if args.theme.is_some() {
             self.theme = args.theme;
@@ -134,16 +83,5 @@ impl Opt {
         if args.list_themes {
             self.list_themes = true;
         }
-    }
-
-    // Checks for conflicts between the different flags.
-    pub fn check_conflicts(&self) -> Vec<&str> {
-        let mut conflicts = vec![];
-
-        if self.hide.is_some() && self.show_only.is_some() {
-            conflicts.push("hide and show_only");
-        }
-
-        conflicts
     }
 }

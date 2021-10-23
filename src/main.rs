@@ -31,7 +31,6 @@ use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
-use tui::style::Color;
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
 use unicode_width::UnicodeWidthStr;
@@ -89,16 +88,16 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
     let mut list = ReadoutList::new(data, &theme).palette(&config.palette);
 
-    if !config.no_box {
+    if theme.is_box_visible() {
         list = list
             .block_inner_margin(Margin {
-                horizontal: config.box_inner_margin_x,
-                vertical: config.box_inner_margin_y,
+                horizontal: theme.get_horizontal_margin(),
+                vertical: theme.get_vertical_margin(),
             })
             .block(
                 Block::default()
                     .border_type(BorderType::Rounded)
-                    .title(theme.get_block_title())
+                    .title(theme.get_box_title())
                     .borders(Borders::ALL),
             );
     }
@@ -138,67 +137,26 @@ fn create_theme(opt: &Opt) -> Theme {
             .get_color()
     };
 
-    if let Some(padding) = opt.padding {
-        theme.set_padding(padding);
-    }
-
-    if let Some(spacing) = opt.spacing {
-        theme.set_spacing(spacing);
-    }
-
-    if let Some(color) = &opt.color {
-        theme.set_color(color.get_color());
-    }
-
-    if let Some(separator_color) = &opt.separator_color {
-        theme.set_separator_color(separator_color.get_color());
-    }
-
-    if let Some(box_title) = &opt.box_title {
-        theme.set_block_title(&box_title[..]);
-    }
-
-    if opt.no_title {
-        theme.set_block_title("");
-    }
-
-    if opt.no_separator {
-        theme.set_separator("");
-    }
-
-    if opt.no_bar_delimiter {
-        let new_bar = theme.get_bar_style().hide_delimiters();
-        theme.set_bar_style(new_bar);
-    }
-
-    if opt.random_color {
+    if theme.is_key_color_randomized() {
         theme.set_color(make_random_color());
     }
 
-    if opt.random_sep_color {
+    if theme.is_separator_color_randomized() {
         theme.set_separator_color(make_random_color());
-    }
-
-    if opt.no_color {
-        theme.set_separator_color(Color::White);
-        theme.set_color(Color::White);
     }
 
     theme
 }
 
 fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(show_only) = opt.show_only.to_owned() {
+    if let Some(show_only) = opt.show.to_owned() {
         return show_only;
     }
 
-    let mut keys: Vec<ReadoutKey> = ReadoutKey::variants()
+    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
         .iter()
         .map(|f| ReadoutKey::from_str(f).unwrap())
         .collect();
-    if let Some(hide) = opt.hide.to_owned() {
-        keys.retain(|f| !hide.contains(f));
-    }
 
     keys
 }
@@ -260,7 +218,7 @@ fn list_themes() {
 }
 
 fn main() -> Result<(), io::Error> {
-    let mut opt: Opt;
+    let opt: Opt;
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
@@ -277,14 +235,6 @@ fn main() -> Result<(), io::Error> {
     if let Ok(mut config_opt) = config_opt {
         config_opt.patch_args(Opt::from_args());
         opt = config_opt;
-        let conflicts = opt.check_conflicts();
-        if !conflicts.is_empty() {
-            println!("\x1b[33mWarning:\x1b[0m Conflicting keys in config file:");
-            for conflict in conflicts {
-                println!("• {}", conflict);
-            }
-            opt = arg_opt;
-        }
     } else {
         println!("\x1b[33mWarning:\x1b[0m {}", config_opt.unwrap_err());
         opt = arg_opt;
@@ -322,15 +272,14 @@ fn main() -> Result<(), io::Error> {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         // let file_path = PathBuf::from(file_path);
         let ascii_art;
-        match opt.custom_ascii_color {
-            Some(ref color) => {
+        match theme.using_custom_ascii_color() {
+            true => {
                 ascii_art = ascii::get_ascii_from_file_override_color(
                     &file_path,
-                    color.get_color().to_owned(),
+                    theme.get_custom_ascii_color(),
                 )?;
             }
-
-            None => {
+            _ => {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
             }
         };
