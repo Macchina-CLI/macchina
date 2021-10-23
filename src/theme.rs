@@ -1,6 +1,6 @@
 use clap::arg_enum;
-use toml;
 use serde::{Deserialize, Serialize};
+use toml;
 use tui::style::Color;
 
 /// This struct stores the BarStyle to display when --bar or bar config option is used.
