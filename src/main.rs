@@ -138,7 +138,7 @@ fn create_theme(opt: &Opt) -> Theme {
     };
 
     if theme.is_key_color_randomized() {
-        theme.set_color(make_random_color());
+        theme.set_key_color(make_random_color());
     }
 
     if theme.is_separator_color_randomized() {
@@ -273,7 +273,7 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-    if let Some(ref file_path) = opt.custom_ascii {
+    if let Some(ref file_path) = theme.get_custom_ascii_path() {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         let ascii_art;
         match theme.using_custom_ascii_color() {
@@ -289,21 +289,21 @@ fn main() -> Result<(), io::Error> {
         };
 
         // If the file is empty just default to disabled
-        if ascii_art.width() != 0 && ascii_art.height() < 50 && !opt.small_ascii && !opt.no_ascii {
+        if ascii_art.width() != 0 && ascii_art.height() < 50 && !theme.is_ascii_hidden() {
             // because tmp_buffer height is 50
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
         } else {
             ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
         }
-    } else if readout_data.len() <= 6 || opt.small_ascii {
+    } else if readout_data.len() <= 6 || theme.prefers_small_ascii() {
         // prefer smaller ascii if condition is satisfied
-        ascii_area = match (opt.no_ascii, select_ascii(true)) {
+        ascii_area = match (theme.is_ascii_hidden(), select_ascii(true)) {
             (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
             _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
         };
     } else {
         // prefer bigger ascii
-        ascii_area = match (opt.no_ascii, select_ascii(false)) {
+        ascii_area = match (theme.is_ascii_hidden(), select_ascii(false)) {
             (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
             _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
         };

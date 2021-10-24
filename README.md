@@ -22,7 +22,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [What's new in v4.0](#upgrading)
+- [What's new in v5.0](#upgrading)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -44,49 +44,28 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# ✨ What's new in `v4.0` <a name="upgrading"></a>
+# ✨ What's new in `v5.0` <a name="upgrading"></a>
 
-## Complying with the XDG base directory specification
+## Deprecation of two command-line flags
 
-The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
-`$XDG_CONFIG_HOME/macchina/themes`.
-
-**Why?**
-
-`$XDG_DATA_HOME` is not meant for anything configuration/customization related.
-
-## Command-line flags
-
-We have deprecated many, if not most command-line flags after having ported them
-to theme files.
+`--no-ascii` and `--custom-ascii` have been deprecated and have moved to our theme mechanism.
 
 **Why?**
 
-- In previous versions, themes clashed with the main configuration file, and
-  their purpose might have seemed to many as unknown.
-- There are just way too many flags for a system information fetcher, running
-  `--help` ends up confusing you rather than actually helping you out.
-- We wanted to simplify and distinguish between the configuration file and
-  themes, eliminating redundance.
+- They do not define the behavior of macchina, rather the look of it. So we
+  moved them to their new home.
 
-**Where can I see the updated list?**
+**Where can I see an updated list of the current command-line flags?**
 
 In our wiki, [follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
 
-
 ## Themes
 
-Themes have transitioned from JSON to TOML.
+As previously mentioned, themes have gotten two new additions. Also, the
+`color` option has been renamed to `key_color` to avoid ambiguity. Have a look
+at at the provided [example
+theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml).
 
-**Why?**
-
-- Because no one can read that JSON stuff.
-- Because we want there to be continuity between the configuration and theme
-  files, even though they serve completely different purposes.
-
-**Where can I view the new format?**
-
-Take a look at the provided [example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml) file.
 
 ---
 

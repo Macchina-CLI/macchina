@@ -1,15 +1,6 @@
 # Specifies the network interface to use for the LocalIP readout
 interface = "wlan0"
 
-# Prefer small ASCII variant.
-small_ascii = false
-
-# Disables ASCII art
-no_ascii = false
-
-# Specify your own ASCII art from a text file (supports ANSI escape codes)
-# custom_ascii = "/path/to/text/file"
-
 # Displays a palette of your active colorscheme
 # Accepted values (case-sensitive):
 #   - Light

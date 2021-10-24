@@ -86,16 +86,8 @@ impl Opt {
             self.long_shell = true;
         }
 
-        if args.no_ascii {
-            self.no_ascii = true;
-        }
-
         if args.ascii_artists {
             self.ascii_artists = true;
-        }
-
-        if args.custom_ascii.is_some() {
-            self.custom_ascii = args.custom_ascii;
         }
 
         if args.config.is_some() {

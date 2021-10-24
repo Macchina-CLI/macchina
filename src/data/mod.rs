@@ -74,10 +74,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         } else {
             span_vector[0].content = Cow::from(format!("{} ", glyphs));
         }
-        span_vector[0].style = Style::default().fg(theme.get_color());
+        span_vector[0].style = Style::default().fg(theme.get_key_color());
 
         span_vector[1].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-        if theme.get_color() == Color::White {
+        if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
         return Spans::from(span_vector);
@@ -98,10 +98,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     } else {
         span_vector[1].content = Cow::from(format!("{} ", glyphs));
     }
-    span_vector[1].style = Style::default().fg(theme.get_color());
+    span_vector[1].style = Style::default().fg(theme.get_key_color());
 
     span_vector[2].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-    if theme.get_color() == Color::White {
+    if theme.get_key_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
     Spans::from(span_vector)

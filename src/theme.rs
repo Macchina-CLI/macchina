@@ -1,5 +1,6 @@
 use clap::arg_enum;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 use toml;
 use tui::style::Color;
 
@@ -22,12 +23,15 @@ impl Default for Randomize {
 struct ASCII {
     #[serde(with = "ColorDef")]
     color: Color,
+
+    path: Option<PathBuf>,
 }
 
 impl Default for ASCII {
     fn default() -> Self {
         ASCII {
             color: Color::Reset,
+            path: None,
         }
     }
 }
@@ -162,203 +166,6 @@ impl BarStyle {
     }
 }
 
-arg_enum! {
-    #[derive(Debug)]
-    pub enum Themes {
-    Hydrogen,
-    Helium,
-    Lithium,
-    Beryllium,
-    Boron,
-    }
-}
-
-/// This is the struct which defines predefined as well as custom themes.
-#[derive(Debug, Clone)]
-pub struct Theme {
-    bar: BarStyle,
-    color: Color,
-    separator_color: Color,
-    separator: String,
-    spacing: usize,
-    padding: usize,
-    randomize: Randomize,
-    custom_ascii: ASCII,
-    r#box: Block,
-    pub keys: Keys,
-}
-
-impl Default for Theme {
-    fn default() -> Theme {
-        Theme {
-            bar: BarStyle::new(BarStyles::Rounded),
-            color: Color::Red,
-            separator_color: Color::White,
-            separator: "-".to_owned(),
-            spacing: 2,
-            padding: 0,
-            r#box: Block::default(),
-            custom_ascii: ASCII::default(),
-            randomize: Randomize::default(),
-            keys: Keys::default(),
-        }
-    }
-}
-
-impl Theme {
-    pub fn new(theme: Themes) -> Self {
-        match theme {
-            Themes::Hydrogen => Theme {
-                bar: BarStyle::new(BarStyles::Rounded),
-                color: Color::Red,
-                separator_color: Color::White,
-                separator: "-".to_owned(),
-                spacing: 2,
-                padding: 0,
-                r#box: Block::new(" Hydrogen ", true),
-                custom_ascii: ASCII::default(),
-                randomize: Randomize::default(),
-                keys: Keys::default(),
-            },
-            Themes::Helium => Theme {
-                bar: BarStyle::new(BarStyles::Squared),
-                color: Color::Green,
-                separator_color: Color::White,
-                separator: "=>".to_owned(),
-                spacing: 2,
-                padding: 0,
-                r#box: Block::new(" Helium ", false),
-                custom_ascii: ASCII::default(),
-                randomize: Randomize::default(),
-                keys: Keys::default(),
-            },
-            Themes::Lithium => Theme {
-                bar: BarStyle::new(BarStyles::Angled),
-                color: Color::Magenta,
-                separator_color: Color::White,
-                separator: "~".to_owned(),
-                spacing: 2,
-                padding: 0,
-                r#box: Block::new(" Lithium ", false),
-                custom_ascii: ASCII::default(),
-                randomize: Randomize::default(),
-                keys: Keys::default(),
-            },
-            Themes::Beryllium => Theme {
-                bar: BarStyle::new(BarStyles::Rounded),
-                color: Color::Yellow,
-                separator_color: Color::White,
-                separator: "->".to_owned(),
-                spacing: 2,
-                padding: 0,
-                r#box: Block::new(" Beryllium ", true),
-                custom_ascii: ASCII::default(),
-                randomize: Randomize::default(),
-                keys: Keys::default(),
-            },
-            Themes::Boron => Theme {
-                bar: BarStyle::new(BarStyles::Rounded),
-                color: Color::Blue,
-                separator_color: Color::White,
-                separator: "•".to_owned(),
-                spacing: 2,
-                padding: 0,
-                r#box: Block::new(" Boron ", false),
-                custom_ascii: ASCII::default(),
-                randomize: Randomize::default(),
-                keys: Keys::default(),
-            },
-        }
-    }
-    pub fn get_bar_style(&self) -> &BarStyle {
-        &self.bar
-    }
-
-    pub fn set_bar_style(&mut self, new_bar: BarStyle) {
-        self.bar = new_bar
-    }
-
-    pub fn get_separator(&self) -> &str {
-        &self.separator
-    }
-
-    pub fn set_separator(&mut self, separator: impl ToString) {
-        self.separator = separator.to_string()
-    }
-
-    pub fn get_separator_color(&self) -> Color {
-        self.separator_color
-    }
-
-    pub fn set_separator_color(&mut self, color: Color) {
-        self.separator_color = color
-    }
-
-    pub fn get_color(&self) -> Color {
-        self.color
-    }
-
-    pub fn set_color(&mut self, color: Color) {
-        self.color = color
-    }
-
-    pub fn get_padding(&self) -> usize {
-        self.padding
-    }
-
-    pub fn get_box_title(&self) -> String {
-        self.r#box.title.to_owned()
-    }
-
-    pub fn is_box_visible(&self) -> bool {
-        self.r#box.visible
-    }
-
-    pub fn is_key_color_randomized(&self) -> bool {
-        self.randomize.key_color
-    }
-
-    pub fn is_separator_color_randomized(&self) -> bool {
-        self.randomize.separator_color
-    }
-
-    pub fn get_horizontal_margin(&self) -> u16 {
-        self.r#box.inner_margin.x
-    }
-
-    pub fn get_vertical_margin(&self) -> u16 {
-        self.r#box.inner_margin.y
-    }
-
-    pub fn get_custom_ascii_color(&self) -> Color {
-        self.custom_ascii.color
-    }
-
-    pub fn using_custom_ascii_color(&self) -> bool {
-        if self.custom_ascii.color == Color::Reset {
-            return false;
-        }
-
-        true
-    }
-
-    pub fn using_bars(&self) -> bool {
-        self.bar.visible
-    }
-
-    pub fn set_padding(&mut self, size: usize) {
-        self.padding = size
-    }
-
-    pub fn get_spacing(&self) -> usize {
-        self.spacing
-    }
-
-    pub fn set_spacing(&mut self, spacing: usize) {
-        self.spacing = spacing;
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Keys {
     pub host: String,
@@ -406,15 +213,240 @@ impl Default for Keys {
     }
 }
 
+arg_enum! {
+    #[derive(Debug)]
+    pub enum Themes {
+    Hydrogen,
+    Helium,
+    Lithium,
+    Beryllium,
+    Boron,
+    }
+}
+
+/// This is the struct which defines predefined as well as custom themes.
+#[derive(Debug, Clone)]
+pub struct Theme {
+    bar: BarStyle,
+    key_color: Color,
+    separator_color: Color,
+    separator: String,
+    spacing: usize,
+    padding: usize,
+    hide_ascii: bool,
+    prefer_small_ascii: bool,
+    randomize: Randomize,
+    custom_ascii: ASCII,
+    r#box: Block,
+    pub keys: Keys,
+}
+
+impl Default for Theme {
+    fn default() -> Theme {
+        Theme {
+            bar: BarStyle::new(BarStyles::Rounded),
+            key_color: Color::Red,
+            separator_color: Color::White,
+            separator: "-".to_owned(),
+            spacing: 2,
+            padding: 0,
+            hide_ascii: true,
+            prefer_small_ascii: false,
+            r#box: Block::default(),
+            custom_ascii: ASCII::default(),
+            randomize: Randomize::default(),
+            keys: Keys::default(),
+        }
+    }
+}
+
+impl Theme {
+    pub fn new(theme: Themes) -> Self {
+        match theme {
+            Themes::Hydrogen => Theme {
+                bar: BarStyle::new(BarStyles::Rounded),
+                key_color: Color::Red,
+                separator_color: Color::White,
+                separator: "-".to_owned(),
+                spacing: 2,
+                padding: 0,
+                hide_ascii: true,
+                prefer_small_ascii: false,
+                r#box: Block::new(" Hydrogen ", true),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
+                keys: Keys::default(),
+            },
+            Themes::Helium => Theme {
+                bar: BarStyle::new(BarStyles::Squared),
+                key_color: Color::Green,
+                separator_color: Color::White,
+                separator: "=>".to_owned(),
+                spacing: 2,
+                padding: 0,
+                hide_ascii: true,
+                prefer_small_ascii: false,
+                r#box: Block::new(" Helium ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
+                keys: Keys::default(),
+            },
+            Themes::Lithium => Theme {
+                bar: BarStyle::new(BarStyles::Angled),
+                key_color: Color::Magenta,
+                separator_color: Color::White,
+                separator: "~".to_owned(),
+                spacing: 2,
+                padding: 0,
+                hide_ascii: true,
+                prefer_small_ascii: false,
+                r#box: Block::new(" Lithium ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
+                keys: Keys::default(),
+            },
+            Themes::Beryllium => Theme {
+                bar: BarStyle::new(BarStyles::Rounded),
+                key_color: Color::Yellow,
+                separator_color: Color::White,
+                separator: "->".to_owned(),
+                spacing: 2,
+                padding: 0,
+                hide_ascii: true,
+                prefer_small_ascii: false,
+                r#box: Block::new(" Beryllium ", true),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
+                keys: Keys::default(),
+            },
+            Themes::Boron => Theme {
+                bar: BarStyle::new(BarStyles::Rounded),
+                key_color: Color::Blue,
+                separator_color: Color::White,
+                separator: "•".to_owned(),
+                spacing: 2,
+                padding: 0,
+                hide_ascii: true,
+                prefer_small_ascii: false,
+                r#box: Block::new(" Boron ", false),
+                custom_ascii: ASCII::default(),
+                randomize: Randomize::default(),
+                keys: Keys::default(),
+            },
+        }
+    }
+    pub fn get_bar_style(&self) -> &BarStyle {
+        &self.bar
+    }
+
+    pub fn set_bar_style(&mut self, new_bar: BarStyle) {
+        self.bar = new_bar
+    }
+
+    pub fn get_separator(&self) -> &str {
+        &self.separator
+    }
+
+    pub fn set_separator(&mut self, separator: impl ToString) {
+        self.separator = separator.to_string()
+    }
+
+    pub fn get_separator_color(&self) -> Color {
+        self.separator_color
+    }
+
+    pub fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color
+    }
+
+    pub fn get_key_color(&self) -> Color {
+        self.key_color
+    }
+
+    pub fn set_key_color(&mut self, color: Color) {
+        self.key_color = color
+    }
+
+    pub fn get_padding(&self) -> usize {
+        self.padding
+    }
+
+    pub fn get_box_title(&self) -> String {
+        self.r#box.title.to_owned()
+    }
+
+    pub fn is_box_visible(&self) -> bool {
+        self.r#box.visible
+    }
+
+    pub fn is_key_color_randomized(&self) -> bool {
+        self.randomize.key_color
+    }
+
+    pub fn is_separator_color_randomized(&self) -> bool {
+        self.randomize.separator_color
+    }
+
+    pub fn get_horizontal_margin(&self) -> u16 {
+        self.r#box.inner_margin.x
+    }
+
+    pub fn get_vertical_margin(&self) -> u16 {
+        self.r#box.inner_margin.y
+    }
+
+    pub fn prefers_small_ascii(&self) -> bool {
+        self.prefer_small_ascii
+    }
+
+    pub fn is_ascii_hidden(&self) -> bool {
+        self.hide_ascii
+    }
+
+    pub fn get_custom_ascii_color(&self) -> Color {
+        self.custom_ascii.color
+    }
+
+    pub fn using_custom_ascii_color(&self) -> bool {
+        if self.custom_ascii.color == Color::Reset {
+            return false;
+        }
+
+        true
+    }
+
+    pub fn get_custom_ascii_path(&self) -> Option<&PathBuf> {
+        self.custom_ascii.path.as_ref()
+    }
+
+    pub fn using_bars(&self) -> bool {
+        self.bar.visible
+    }
+
+    pub fn set_padding(&mut self, size: usize) {
+        self.padding = size
+    }
+
+    pub fn get_spacing(&self) -> usize {
+        self.spacing
+    }
+
+    pub fn set_spacing(&mut self, spacing: usize) {
+        self.spacing = spacing;
+    }
+}
+
 impl From<CustomTheme> for Theme {
     fn from(custom: CustomTheme) -> Self {
         Self {
             bar: custom.bar,
-            color: custom.color,
+            key_color: custom.key_color,
             separator: custom.separator,
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
+            hide_ascii: custom.hide_ascii,
+            prefer_small_ascii: custom.prefer_small_ascii,
             r#box: custom.r#box,
             custom_ascii: custom.custom_ascii,
             randomize: custom.randomize,
@@ -430,7 +462,7 @@ impl From<CustomTheme> for Theme {
 #[serde(default)]
 pub struct CustomTheme {
     #[serde(with = "ColorDef")]
-    color: Color,
+    key_color: Color,
     #[serde(with = "ColorDef")]
     separator_color: Color,
 
@@ -441,6 +473,8 @@ pub struct CustomTheme {
     randomize: Randomize,
     spacing: usize,
     padding: usize,
+    hide_ascii: bool,
+    prefer_small_ascii: bool,
     keys: Keys,
 }
 
@@ -448,11 +482,13 @@ impl Default for CustomTheme {
     fn default() -> Self {
         Self {
             bar: BarStyle::default(),
-            color: Color::Red,
+            key_color: Color::Red,
             separator: "->".to_string(),
             separator_color: Color::White,
             spacing: 0,
             padding: 2,
+            hide_ascii: true,
+            prefer_small_ascii: false,
             r#box: Block::new("", false),
             custom_ascii: ASCII::default(),
             randomize: Randomize::default(),
@@ -497,8 +533,9 @@ impl CustomTheme {
             padding: 0,
             r#box: Block::new("SomeTitle", true),
             randomize: Randomize::default(),
-
-            color: Color::Rgb(10, 33, 51),
+            hide_ascii: false,
+            prefer_small_ascii: false,
+            key_color: Color::Rgb(10, 33, 51),
             custom_ascii: ASCII::default(),
             separator_color: Color::Indexed(100),
             keys: Keys::default(),

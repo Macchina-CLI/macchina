@@ -68,9 +68,6 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub version: bool,
 
-    #[structopt(long = "no-ascii", short = "n", help = "Removes the ascii art")]
-    pub no_ascii: bool,
-
     #[structopt(
     short = "o",
     long = "show",
@@ -108,22 +105,6 @@ pub struct Opt {
         help = "Specify the theme"
     )]
     pub theme: Option<String>,
-
-    #[structopt(
-        long = "custom-ascii",
-        short = "C",
-        help = "Specify your own ASCII art from a text file (supports ANSI escape codes)",
-        conflicts_with = "no_ascii"
-    )]
-    pub custom_ascii: Option<String>,
-
-    #[structopt(
-        long = "small-ascii",
-        short = "a",
-        help = "Prefer smaller ASCII variants",
-        conflicts_with = "no_ascii"
-    )]
-    pub small_ascii: bool,
 
     #[structopt(
         long = "export-config",
@@ -177,10 +158,7 @@ impl Default for Opt {
             long_uptime: false,
             long_kernel: true,
             list_themes: false,
-            no_ascii: false,
-            small_ascii: false,
             ascii_artists: false,
-            custom_ascii: None,
             config: None,
             theme: None,
             show: None,
