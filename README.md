@@ -288,3 +288,15 @@ now without the help of its contributors, thank you all so much!
   [123marvin123](https://github.com/123marvin123)
 - Support for **OpenWrt** and **Android** was made possible through the many
   contributions of [uttarayan21](https://github.com/uttarayan21)
+
+# ASCII Art
+
+The ASCII art displayed in macchina is **not** our own. 
+
+If you (the artist) are not okay with us using your ASCII art, please [contact me](https://github.com/Macchina-CLI/macchina).
+
+- FreeBSD ASCII art (small variant) was taken from Dylan Araps' [pfetch](https://github.com/dylanaraps/pfetch)
+- macOS ASCII art (big variant) was taken from Dylan Araps' [Neofetch](https://github.com/dylanaraps/neofetch)
+- macOS ASCII art (small variant) was made by Joan Stark (jgs)
+- Linux ASCII art (big variant) was made by Joan Stark (jgs)
+- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII art collection (unknown artist)
