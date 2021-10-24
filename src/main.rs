@@ -284,7 +284,7 @@ fn main() -> Result<(), io::Error> {
         };
 
         // If the file is empty just default to disabled
-        if ascii_art.width() != 0 && ascii_art.height() < 50 && !opt.small_ascii {
+        if ascii_art.width() != 0 && ascii_art.height() < 50 && !opt.small_ascii && !opt.no_ascii {
             // because tmp_buffer height is 50
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
         } else {
