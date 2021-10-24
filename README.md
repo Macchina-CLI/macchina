@@ -46,7 +46,7 @@ fetching-related issues should be filed on that repository.
 
 # ✨ What's new in `v4.0` <a name="upgrading"></a>
 
-### Complying with the XDG base directory specification
+## Complying with the XDG base directory specification
 
 The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
 `$XDG_CONFIG_HOME/macchina/themes`.
@@ -55,7 +55,7 @@ The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
 
 `$XDG_DATA_HOME` is not meant for anything configuration/customization related.
 
-### Command-line flags
+## Command-line flags
 
 We have deprecated many, if not most command-line flags after having ported them
 to theme files.
@@ -74,11 +74,11 @@ to theme files.
 In our wiki, [follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
 
 
-### Themes
+## Themes
 
 Themes have transitioned from JSON to TOML.
 
-Why?
+**Why?**
 
 - Because no one can read that JSON stuff.
 - Because we want there to be continuity between the configuration and theme
