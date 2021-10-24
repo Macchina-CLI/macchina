@@ -9,7 +9,7 @@ interface = "wlan0"
 palette = "Dark"
 
 # Lengthen uptime output
-long_uptime = true 
+long_uptime = true
 
 # Lengthen shell output
 long_shell = false
