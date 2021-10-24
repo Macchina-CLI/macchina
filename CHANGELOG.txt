@@ -1,14 +1,7 @@
 # Changelog 
 
-## macchina v3.0, codename "Nickel"
+## macchina v4.0, codename "Copper"
 
-
-- You can now customize the text of every readout's key (#165).
-   - see the new [Carbon.json](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json)
-- Added initial FreeBSD support [libmacchina#77](https://github.com/Macchina-CLI/libmacchina/pull/77)
-- Provide an option to shorten kernel output using the `--long-kernel` flag or
-  `long_kernel` configuration option (#168)
-- Use `if-addrs` as our IP crate (#163)
-  - You now have to specify your network interface through the `--interface`
-    flag or `interface` configuration option.
-- Bump our dependencies to their latest versions.
+- macchina now looks for themes in `$XDG_CONFIG_HOME/macchina/themes`, the previous data path is deprecated. (#172)
+- Many command-line flags have been deprecated in favor of being moved to/present in theme files. (#172)
+- Themes are now written in TOML rather than JSON. (#172)

@@ -70,7 +70,7 @@ Why?
 
 Where can I see the updated list?
 
-In our wiki, follow this link.
+In our wiki, [follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
 
 
 ### Themes
@@ -82,6 +82,10 @@ Why?
 - Because no one can read that JSON stuff.
 - Because we want there to be continuity between the configuration and theme
   files, even though they serve completely different purposes.
+
+Where can I view the new format?
+
+Take a look at the provided [example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml) file.
 
 ---
 
