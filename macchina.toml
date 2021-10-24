@@ -64,4 +64,4 @@ theme = "Carbon"
 #   - Memory
 #   - Battery
 # Example:
-#   show_only = ["Battery", "Memory", ...]
+#   show = ["Battery", "Memory", ...]
