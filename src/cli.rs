@@ -152,6 +152,13 @@ pub struct Opt {
     pub config: Option<std::path::PathBuf>,
 
     #[structopt(
+        long = "ascii-artists",
+        help = "Lists the original artists of the ASCII art used by macchina"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub ascii_artists: bool,
+
+    #[structopt(
         long = "interface",
         short = "i",
         help = "Specify the network interface for the LocalIP readout"
@@ -172,6 +179,7 @@ impl Default for Opt {
             list_themes: false,
             no_ascii: false,
             small_ascii: false,
+            ascii_artists: false,
             custom_ascii: None,
             config: None,
             theme: None,

@@ -90,6 +90,10 @@ impl Opt {
             self.no_ascii = true;
         }
 
+        if args.ascii_artists {
+            self.ascii_artists = true;
+        }
+
         if args.custom_ascii.is_some() {
             self.custom_ascii = args.custom_ascii;
         }

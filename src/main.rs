@@ -263,6 +263,11 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
+    if opt.ascii_artists {
+        ascii::list_ascii_artists();
+        return Ok(());
+    }
+
     let mut backend = create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
 
