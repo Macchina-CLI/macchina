@@ -423,8 +423,8 @@ impl From<CustomTheme> for Theme {
     }
 }
 
-/// This is the struct which stores the CustomThemes which is serialized from a JSON file.  See
-/// [https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json](this) for an example
+/// This structure defines the skeleton of custom themes which are deserialized from TOML files.
+/// See [https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml](this) for an example
 /// theme.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -462,16 +462,16 @@ impl Default for CustomTheme {
 }
 
 impl CustomTheme {
-    /// Reads custom themes from $XDG_DATA_HOME/macchina/themes/{name}.toml
+    /// Reads custom themes from $XDG_CONFIG_HOME/macchina/themes/{name}.toml
     pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
         use std::io::Read;
-        // check if the name exists in ~/.local/share/macchina/themes/{name}.toml
-        // need to add other data paths later ( /usr/share/macchina/themes/{name}.toml)
+        // check if theme exists in ~/.config/macchina/themes/{name}.toml
+        // TODO: look at more data paths?
         let mut theme_path = std::path::PathBuf::new();
-        theme_path.push(dirs::data_local_dir().ok_or_else(|| {
+        theme_path.push(dirs::config_dir().ok_or_else(|| {
             std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                "data_local_dir (e.g. ~/.local/share) not found",
+                "$XDG_CONFIG_HOME was not found; fallback $HOME/.config also failed.",
             )
         })?);
         theme_path.push(std::path::Path::new(&format!(
@@ -484,7 +484,7 @@ impl CustomTheme {
         theme.read_to_end(&mut buffer)?;
 
         toml::from_slice(&buffer).map_err(|_| {
-            std::io::Error::new(std::io::ErrorKind::InvalidData, "Unable to parse theme")
+            std::io::Error::new(std::io::ErrorKind::InvalidData, "Could not parse theme.")
         })
     }
 
