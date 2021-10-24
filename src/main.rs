@@ -291,11 +291,13 @@ fn main() -> Result<(), io::Error> {
             ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
         }
     } else if readout_data.len() <= 6 || opt.small_ascii {
+        // prefer smaller ascii if condition is satisfied
         ascii_area = match (opt.no_ascii, select_ascii(true)) {
             (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
             _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
         };
     } else {
+        // prefer bigger ascii
         ascii_area = match (opt.no_ascii, select_ascii(false)) {
             (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
             _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),

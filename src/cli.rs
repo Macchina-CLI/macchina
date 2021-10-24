@@ -163,21 +163,21 @@ impl Default for Opt {
     fn default() -> Self {
         Opt {
             version: false,
+            doctor: false,
+            export_config: false,
+            current_shell: false,
+            long_shell: false,
+            long_uptime: false,
+            long_kernel: true,
+            list_themes: false,
             no_ascii: false,
             small_ascii: false,
-            doctor: false,
-            long_uptime: false,
-            long_shell: false,
-            long_kernel: true,
-            current_shell: false,
-            export_config: false,
-            list_themes: false,
             custom_ascii: None,
-            palette: None,
-            show: None,
-            theme: None,
-            interface: None,
             config: None,
+            theme: None,
+            show: None,
+            palette: None,
+            interface: None,
         }
     }
 }
