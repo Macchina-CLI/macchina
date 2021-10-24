@@ -50,7 +50,7 @@ fetching-related issues should be filed on that repository.
 The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
 `$XDG_CONFIG_HOME/macchina/themes`.
 
-Why?
+**Why?**
 
 `$XDG_DATA_HOME` is not meant for anything configuration/customization related.
 
@@ -59,7 +59,7 @@ Why?
 We have deprecated many, if not most command-line flags after having ported them
 to theme files.
 
-Why?
+**Why?**
 
 - In previous versions, themes clashed with the main configuration file, and
   their purpose might have seemed to many as unknown.
@@ -68,7 +68,7 @@ Why?
 - We wanted to simplify and distinguish between the configuration file and
   themes, eliminating redundance.
 
-Where can I see the updated list?
+**Where can I see the updated list?**
 
 In our wiki, [follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
 
@@ -83,7 +83,7 @@ Why?
 - Because we want there to be continuity between the configuration and theme
   files, even though they serve completely different purposes.
 
-Where can I view the new format?
+**Where can I view the new format?**
 
 Take a look at the provided [example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml) file.
 
