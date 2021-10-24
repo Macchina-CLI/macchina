@@ -27,13 +27,13 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Features](#features)
 - [Configuration](#configuration)
 - [Customization](#customization)
-- [Runtime dependencies](#runtime-dependencies)
+- [Runtime dependencies](#dependencies)
 - [Installation](#installation)
 - [Contributors](#contributors)
 
 ---
 
-# About
+# 💬 About <a name="about"></a>
 
 _macchina_ lets you view system information, like your kernel version, uptime,
 memory usage, processor load and much more.
@@ -90,7 +90,7 @@ Take a look at the provided [example theme](https://github.com/Macchina-CLI/macc
 
 ---
 
-# Performance
+# ⚡️ Performance <a name="performance"></a>
 
 _macchina_ is lightning fast, see for yourself:
 
@@ -128,7 +128,7 @@ i5-8265U CPU @ 1.60GHz**
 
 ---
 
-# Features
+# 🚀 Features <a name="features"></a>
 
 ## Themes
 
@@ -153,7 +153,7 @@ the `--doctor` flag.
 
 ---
 
-# Configuration
+# 🔧 Configuration <a name="configuration"></a>
 
 The configuration file define the behavior of macchina, it does not allow for
 much customization. See
@@ -166,7 +166,7 @@ place `macchina.toml` in:
 - `$HOME/Library/Application Support/macchina` on macOS.
 - `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
-# Customization
+# 🎨 Customization <a name="customization"></a>
 
 Themes define the look, layout and styling of _macchina_.  See
 [Carbon.toml](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml)
@@ -188,7 +188,7 @@ To start using your theme:
 
 ---
 
-# Runtime dependencies
+# 📦️ Runtime dependencies <a name="dependencies"></a>
 
 These dependencies are **not** required, but they extend what _macchina_ can
 show.
@@ -204,7 +204,7 @@ show.
 
 ---
 
-# Installation
+# 🏗️ Installation <a name="installation"></a>
 
 ### Cargo
 
