@@ -291,7 +291,7 @@ now without the help of its contributors, thank you all so much!
 
 # ASCII Art
 
-The ASCII art displayed in macchina is **not** our own. 
+Some of the ASCII art displayed in macchina is **not** our own. 
 
 If you (the artist) are not okay with us using your ASCII art, please [contact me](https://github.com/Macchina-CLI/macchina).
 
