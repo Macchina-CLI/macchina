@@ -157,7 +157,7 @@ the `--doctor` flag.
 The configuration file define the behavior of macchina, it does not allow for
 much customization. See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
-for an example configuration file, 
+for an example configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
 place `macchina.toml` in:
