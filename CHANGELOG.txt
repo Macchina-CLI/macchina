@@ -1,7 +1,11 @@
 # Changelog 
 
-## macchina v4.0, codename "Copper"
+## macchina v4.0.1
 
-- macchina now looks for themes in `$XDG_CONFIG_HOME/macchina/themes`, the previous data path is deprecated. (#172)
-- Many command-line flags have been deprecated in favor of being moved to/present in theme files. (#172)
-- Themes are now written in TOML rather than JSON. (#172)
+### Bugfix
+
+- Fix `--long-shell` doing the opposite of its intended behavior.
+
+### Other 
+
+- We've added a new command-line flag, `--ascii-artists` to credit the ASCII artists whose ASCII art we use throughout macchina.
