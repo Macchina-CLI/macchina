@@ -129,7 +129,7 @@ i5-8265U CPU @ 1.60GHz**
 
 _macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`. Did you know that you [make
+and use the one you like with `--theme <name>`. Did you know that you can [make
 your own](#customization)?
 
 Themes live outside the configuration file, so you can create a bunch of them,
