@@ -26,6 +26,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
+- [Customization](#customization)
 - [Runtime dependencies](#runtime-dependencies)
 - [Installation](#installation)
 - [Contributors](#contributors)
@@ -43,7 +44,7 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# What's new in v4.0 <a name="upgrading"></a>
+# ✨ What's new in `v4.0` <a name="upgrading"></a>
 
 ### Complying with the XDG base directory specification
 
