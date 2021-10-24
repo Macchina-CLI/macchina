@@ -1,0 +1,44 @@
+spacing = 2
+padding = 0
+separator = "->"
+
+[bar]
+glyph = "ߋ"
+symbol_open = '['
+symbol_close = ']'
+visible = true
+
+[box]
+title = " 🎉 v4.0 "
+visible = true
+
+[box.inner_margin]
+x = 2
+y = 1
+
+[custom_ascii]
+color = "Green"
+
+[randomize]
+key_color = true
+separator_color = false
+
+[keys]
+host = "Host"
+kernel = "Kernel"
+battery = "Battery"
+os = "OS"
+de = "DE"
+wm = "WM"
+distro = "Distro"
+terminal = "Terminal"
+shell = "Shell"
+packages = "Packages"
+uptime = "Uptime"
+memory = "Memory"
+machine = "Machine"
+local_ip = "IP"
+backlight = "Brightness"
+resolution = "Resolution"
+cpu_load = "CPU Load"
+cpu = "CPU"

@@ -22,7 +22,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [What's new in v3.0](#upgrading)
+- [What's new in v4.0](#upgrading)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -43,71 +43,45 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# What's new in v3.0 <a name="upgrading"></a>
+# What's new in v4.0 <a name="upgrading"></a>
 
+### Complying with the XDG base directory specification
 
-### LocalIP Readout
+The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
+`$XDG_CONFIG_HOME/macchina/themes`.
 
-You are now required to specify your network interface for the local IP readout
-to work properly.
+Why?
 
-- In your **macchina.toml**, add the following:
+`$XDG_DATA_HOME` is not meant for anything configuration/customization related.
 
-```toml
-# The interface name might differ on your machine, please check in with your network utility e.g. `ip address`
-interface = "wlan0"
-```
+### Command-line flags
 
-Why the sudden change?
+We have deprecated many, if not most command-line flags after having ported them
+to theme files.
 
-- We changed IP crates. The previous crate would ping Google DNS servers in
-  order to fetch your local IP. And nobody wants that.
+Why?
 
-- We understand that a lot of you are developers and/or power users, and need
-  your fetcher to be quick, powerful and extensible. If it's a docker container
-  whose local IP you wanna grab, a virtual machine or anything that relies on a
-  network interface to communicate with the outside world, we've got you
-  covered.
+- In previous versions, themes clashed with the main configuration file, and
+  their purpose might have seemed to many as unknown.
+- There are just way too many flags for a system information fetcher, running
+  `--help` ends up confusing you rather than actually helping you out.
+- We wanted to simplify and distinguish between the configuration file and
+  themes, eliminating redundance.
 
-### Kernel Readout
+Where can I see the updated list?
 
-You can now shorten the output of the kernel readout through the new
-`--long-kernel` flag or by adding the following to your **macchina.toml**:
+In our wiki, follow this link.
 
-```toml
-# When set to false, only the version of your
-# operating system's kernel will be displayed.
-long_kernel = false
-```
 
 ### Themes
 
-You can now customize the text of every readout's key — _Whaaaat!_
+Themes have transitioned from JSON to TOML.
 
-Jump in your theme file and add the following:
+Why?
 
-```json
-"keys": {
-   "host": "HOST",
-   "kernel": "KERN",
-   "battery": "BAT",
-   "os": "OS",
-   "de": "DE",
-   "wm": "WM",
-   "distro": "DIST",
-   "terminal": "TERM",
-   "shell": "SHELL",
-   "packages": "PKGS",
-   "uptime": "UP",
-   "memory": "MEM",
-   "machine": "MACH",
-   "local_ip": "IP",
-   "backlight": "BRI",
-   "resolution": "RES",
-   "cpu_load": "CPU LOAD",
-   "cpu": "CPU"
-},
-```
+- Because no one can read that JSON stuff.
+- Because we want there to be continuity between the configuration and theme
+  files, even though they serve completely different purposes.
 
 ---
 
@@ -155,8 +129,11 @@ i5-8265U CPU @ 1.60GHz**
 
 _macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`, you can also
-[make your own](#configuration).
+and use the one you like with `--theme <name>`. Did you know that you [make
+your own](#customization)?
+
+Themes live outside the configuration file, so you can create a bunch of them,
+and switch between them at any time.
 
 ## Bars
 
@@ -173,33 +150,35 @@ the `--doctor` flag.
 
 # Configuration
 
-See
+The configuration file define the behavior of macchina, it does not allow for
+much customization. See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
-for an example configuration file.
+for an example configuration file, 
 
-- In order for _macchina_ to be able to read the configuration file, you need to
-  place `macchina.toml` in:
-  - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
-  - `$HOME/Library/Application Support/macchina` on macOS.
-  - `{FOLDERID_RoamingAppData}/macchina` on Windows.
+In order for _macchina_ to be able to read the configuration file, you need to
+place `macchina.toml` in:
+- `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
+- `$HOME/Library/Application Support/macchina` on macOS.
+- `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
-You can also create custom themes in `JSON` format. Themes allow for more
-customization and are separate from the main configuration file. See
-[Carbon.json](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.json)
+# Customization
+
+Themes define the look, layout and styling of _macchina_.  See
+[Carbon.toml](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml)
 for an example theme.
 
-- In order for _macchina_ to be able to read your custom themes, you need to
-  place them in:
-  - `$XDG_DATA_HOME/macchina/themes` on Linux and the BSDs.
-  - `$HOME/Library/Application/macchina/themes` on macOS.
-  - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
+In order for _macchina_ to be able to find your themes, you need to
+place them in:
+- `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
+- `$HOME/Library/Application Support/macchina/themes` on macOS.
+- `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
 
-You can have as many as you want, just avoid using the names of built-in themes.
+> Note: Avoid using the names of built-in themes.
 
 To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
-2. Inside `macchina.toml`, add `theme = <name_of_theme_without_json_extension>`.
+2. Add that same name you see in your terminal to the `theme` option in `macchina.toml`
 3. You're good to go! _macchina_ will start using your theme.
 
 ---
