@@ -1,9 +1,9 @@
+use colored::Colorize;
 use io::Read;
 use std::fs::File;
 use std::io::{self, BufReader};
 use std::path::Path;
 use tui::style::{Color, Style};
-use colored::Colorize;
 use tui::text::{Span, Spans, Text};
 
 lazy_static! {
@@ -15,7 +15,6 @@ lazy_static! {
     static ref WHITE: Style = Style::default().fg(Color::White);
     static ref BLACK: Style = Style::default().fg(Color::Black);
 }
-
 
 pub fn list_ascii_artists() {
     println!(
