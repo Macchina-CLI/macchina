@@ -293,7 +293,7 @@ now without the help of its contributors, thank you all so much!
 
 Some of the ASCII art displayed in macchina is **not** our own. 
 
-If you (the artist) are not okay with us using your ASCII art, please [contact me](https://github.com/Macchina-CLI/macchina).
+If you (the artist) are not okay with us using your ASCII art, please [contact me](mailto:ba.tahaaziz@gmail.com).
 
 - FreeBSD ASCII art (small variant) was taken from Dylan Araps' [pfetch](https://github.com/dylanaraps/pfetch)
 - macOS ASCII art (big variant) was taken from Dylan Araps' [Neofetch](https://github.com/dylanaraps/neofetch)
