@@ -1,4 +1,4 @@
-# Changelog 
+# Changelog
 
 ## macchina v5.0.0, codename "sorry for breaking your config, again."
 
