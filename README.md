@@ -194,7 +194,7 @@ To start using your theme:
 
 The following are required dependencies if you're building from source or installing through `cargo`:
 
-- `git`
+- _git_
 
 ## Runtime dependencies
 
