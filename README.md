@@ -27,7 +27,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Features](#features)
 - [Configuration](#configuration)
 - [Customization](#customization)
-- [Runtime dependencies](#dependencies)
+- [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Contributors](#contributors)
 
@@ -188,18 +188,23 @@ To start using your theme:
 
 ---
 
-# 📦️ Runtime dependencies <a name="dependencies"></a>
+# 📦️ Dependencies <a name="dependencies"></a>
 
-These dependencies are **not** required, but they extend what _macchina_ can
-show.
+## Build dependencies
 
-### Linux:
+The following are required dependencies if you're building from source or installing through `cargo`:
 
+- `git`
+
+## Runtime dependencies
+
+The following are _optional_ dependencies, they only extend what macchina can fetch:
+
+**Linux**:
 - _wmctrl_
-- Gentoo: _portage-utils_
+   - **Gentoo**: _portage-utils_
 
-### NetBSD:
-
+**NetBSD**:
 - _wmctrl_
 
 ---
