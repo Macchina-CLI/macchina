@@ -30,6 +30,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Dependencies](#dependencies)
 - [Installation](#installation)
 - [Contributors](#contributors)
+- [ASCII Art](#ascii-art)
 
 ---
 
@@ -194,7 +195,7 @@ To start using your theme:
 
 The following are required dependencies if you're building from source or installing through `cargo`:
 
-- _git_
+- _libgit2_
 
 ## Runtime dependencies
 
