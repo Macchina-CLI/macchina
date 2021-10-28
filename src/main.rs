@@ -111,9 +111,10 @@ fn create_theme(opt: &Opt) -> Theme {
             theme = Theme::from(custom_theme);
         } else {
             println!(
-                "\x1b[33mWarning:\x1b[0m invalid theme {}, falling back to default",
+                "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
                 opt_theme
             );
+            println!("\x1b[35mSuggestion\x1b[m: Perhaps the theme doesn't exist?");
         }
     }
 
