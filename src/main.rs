@@ -8,9 +8,7 @@ mod theme;
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
 use std::io;
-use std::path::Path;
 use structopt::StructOpt;
-use theme::Themes;
 
 #[macro_use]
 extern crate lazy_static;
@@ -106,29 +104,19 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 }
 
 fn create_theme(opt: &Opt) -> Theme {
-    let mut theme;
+    let mut theme = Theme::default();
+
     if let Some(opt_theme) = &opt.theme {
-        if let Ok(ts) = theme::Themes::from_str(opt_theme) {
-            if let Some(dir) = dirs::data_local_dir() {
-                if !opt.list_themes
-                    && Path::exists(&dir.join(format!("macchina/themes/{}.toml", opt_theme)))
-                {
-                    println!("\x1b[33mWarning:\x1b[0m custom theme has the same name as a built-in theme: {}", &opt_theme);
-                }
-            }
-            theme = Theme::new(ts);
-        } else if let Ok(custom_theme) = theme::CustomTheme::get_theme(opt_theme) {
+        if let Ok(custom_theme) = Theme::get_theme(opt_theme) {
             theme = Theme::from(custom_theme);
         } else {
             println!(
                 "\x1b[33mWarning:\x1b[0m invalid theme {}, falling back to default",
                 opt_theme
             );
-            theme = Theme::default();
         }
-    } else {
-        theme = Theme::default();
     }
+
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
@@ -172,22 +160,7 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    let themes = Themes::variants();
-    if let Some(dir) = dirs::data_local_dir() {
-        for theme in themes.iter() {
-            if Path::exists(&dir.join(format!("macchina/themes/{}.toml", theme))) {
-                println!(
-                    "\x1b[33mWarning:\x1b[0m custom theme has the same name as a built-in theme: {}",
-                    theme
-                );
-            }
-        }
-    }
-    themes
-        .iter()
-        .for_each(|x| println!("• {} (Built-in)", x.bright_green()));
-
-    if let Some(dir) = dirs::data_local_dir() {
+    if let Some(dir) = dirs::config_dir() {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         if !entries.is_empty() {
             let custom_themes = entries.iter().filter(|&x| {
@@ -207,10 +180,12 @@ fn list_themes() {
                 )
             }
 
+            println!("Available themes:");
+
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
                     let name = theme.to_string_lossy().replace(".toml", "");
-                    println!("• {}", name.bright_blue());
+                    println!("- {}", name.bright_green());
                 }
             });
         }
@@ -253,6 +228,7 @@ fn main() -> Result<(), io::Error> {
         println!("libmacchina {}", libmacchina::version());
         return Ok(());
     }
+
     if opt.doctor {
         doctor::print_doctor(&readout_data);
         return Ok(());
