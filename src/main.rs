@@ -161,34 +161,37 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    if let Some(dir) = dirs::config_dir() {
-        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-        if !entries.is_empty() {
-            let custom_themes = entries.iter().filter(|&x| {
-                if let Some(ext) = libmacchina::extra::path_extension(&x) {
-                    ext == "toml"
-                } else {
-                    false
-                }
-            });
+    let dirs = [dirs::config_dir(), extra::localbase_dir()];
+    for i in dirs {
+        if let Some(dir) = i {
+            let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+            if !entries.is_empty() {
+                let custom_themes = entries.iter().filter(|&x| {
+                    if let Some(ext) = libmacchina::extra::path_extension(&x) {
+                        ext == "toml"
+                    } else {
+                        false
+                    }
+                });
 
-            if custom_themes.clone().count() == 0 {
-                println!(
-                    "\nNo custom themes were found in {}",
-                    dir.join("macchina/themes")
-                        .to_string_lossy()
-                        .bright_yellow()
-                )
+                if custom_themes.clone().count() == 0 {
+                    println!(
+                        "\nNo custom themes were found in {}",
+                        dir.join("macchina/themes")
+                            .to_string_lossy()
+                            .bright_yellow()
+                    )
+                }
+
+                println!("Available themes:");
+
+                custom_themes.for_each(|x| {
+                    if let Some(theme) = x.file_name() {
+                        let name = theme.to_string_lossy().replace(".toml", "");
+                        println!("- {}", name.bright_green());
+                    }
+                });
             }
-
-            println!("Available themes:");
-
-            custom_themes.for_each(|x| {
-                if let Some(theme) = x.file_name() {
-                    let name = theme.to_string_lossy().replace(".toml", "");
-                    println!("- {}", name.bright_green());
-                }
-            });
         }
     }
 }
