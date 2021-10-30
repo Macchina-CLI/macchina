@@ -193,7 +193,11 @@ fn list_themes() {
                 custom_themes.for_each(|x| {
                     if let Some(theme) = x.file_name() {
                         let name = theme.to_string_lossy().replace(".toml", "");
-                        println!("- {}", name.bright_green());
+                        println!(
+                            "- {} ({}/macchina/themes)",
+                            name.bright_green(),
+                            &dir.to_string_lossy()
+                        );
                     }
                 });
             }
@@ -224,10 +228,6 @@ fn main() -> Result<(), io::Error> {
         opt = arg_opt;
     }
 
-    let should_display = should_display(&opt);
-    let theme = create_theme(&opt);
-    let readout_data = data::get_all_readouts(&opt, &theme, should_display);
-
     if opt.version {
         if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
             println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
@@ -238,11 +238,6 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
-    if opt.doctor {
-        doctor::print_doctor(&readout_data);
-        return Ok(());
-    }
-
     if opt.list_themes {
         list_themes();
         return Ok(());
@@ -250,6 +245,15 @@ fn main() -> Result<(), io::Error> {
 
     if opt.ascii_artists {
         ascii::list_ascii_artists();
+        return Ok(());
+    }
+
+    let should_display = should_display(&opt);
+    let theme = create_theme(&opt);
+    let readout_data = data::get_all_readouts(&opt, &theme, should_display);
+
+    if opt.doctor {
+        doctor::print_doctor(&readout_data);
         return Ok(());
     }
 
