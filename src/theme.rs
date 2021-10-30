@@ -324,10 +324,10 @@ impl Theme {
     }
 
     /// Searches for and returns a theme from `~/.config/macchina/themes`
-    pub fn get_theme(name: &str) -> Result<Self, std::io::Error> {
+    pub fn get_theme(name: &str, dir: Option<PathBuf>) -> Result<Self, std::io::Error> {
         use std::io::Read;
         let mut theme_path = std::path::PathBuf::new();
-        theme_path.push(dirs::config_dir().ok_or_else(|| {
+        theme_path.push(dir.ok_or_else(|| {
             std::io::Error::new(
                 std::io::ErrorKind::NotFound,
                 "$XDG_CONFIG_HOME was not found; fallback $HOME/.config also failed.",

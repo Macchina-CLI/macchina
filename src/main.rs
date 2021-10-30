@@ -105,11 +105,18 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
+    let dirs = [dirs::config_dir(), extra::localbase_dir()];
+    let mut found = false;
 
     if let Some(opt_theme) = &opt.theme {
-        if let Ok(custom_theme) = Theme::get_theme(opt_theme) {
-            theme = Theme::from(custom_theme);
-        } else {
+        for dir in dirs {
+            if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
+                found = true;
+                theme = Theme::from(custom_theme);
+            }
+        }
+
+        if !found {
             println!(
                 "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
                 opt_theme
@@ -182,8 +189,6 @@ fn list_themes() {
                             .bright_yellow()
                     )
                 }
-
-                println!("Available themes:");
 
                 custom_themes.for_each(|x| {
                     if let Some(theme) = x.file_name() {
