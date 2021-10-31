@@ -86,7 +86,7 @@ impl<'a> Widget for ReadoutList<'a> {
         }
 
         let mut height = 0;
-        let keys = self.keys_to_text(&self.theme.get_color());
+        let keys = self.keys_to_text(&self.theme.get_key_color());
         let max_key_width = Self::get_max_key_width(&keys);
         let themed_separator = Self::get_themed_separator(
             &self.theme.get_separator(),

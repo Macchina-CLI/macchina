@@ -74,10 +74,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         } else {
             span_vector[0].content = Cow::from(format!("{} ", glyphs));
         }
-        span_vector[0].style = Style::default().fg(theme.get_color());
+        span_vector[0].style = Style::default().fg(theme.get_key_color());
 
         span_vector[1].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-        if theme.get_color() == Color::White {
+        if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
         return Spans::from(span_vector);
@@ -98,10 +98,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     } else {
         span_vector[1].content = Cow::from(format!("{} ", glyphs));
     }
-    span_vector[1].style = Style::default().fg(theme.get_color());
+    span_vector[1].style = Style::default().fg(theme.get_key_color());
 
     span_vector[2].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-    if theme.get_color() == Color::White {
+    if theme.get_key_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
     Spans::from(span_vector)
@@ -283,7 +283,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match (general_readout.backlight(), theme.using_bars()) {
+        match (general_readout.backlight(), theme.is_using_bars()) {
             (Ok(b), false) => {
                 readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
             }
@@ -296,7 +296,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorLoad) {
-        match (general_readout.cpu_usage(), theme.using_bars()) {
+        match (general_readout.cpu_usage(), theme.is_using_bars()) {
             (Ok(u), true) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
@@ -326,7 +326,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if theme.using_bars() {
+                if theme.is_using_bars() {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
@@ -351,7 +351,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if theme.using_bars() {
+                if theme.is_using_bars() {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {

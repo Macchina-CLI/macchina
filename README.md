@@ -22,7 +22,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [What's new in v4.0](#upgrading)
+- [What's new in v5.0](#upgrading)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -45,49 +45,29 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# ✨ What's new in `v4.0` <a name="upgrading"></a>
+# ✨ What's new in `v5.0` <a name="upgrading"></a>
 
-## Complying with the XDG base directory specification
+## Deprecation of two command-line flags
 
-The themes location has moved from `$XDG_DATA_HOME/macchina/themes` to
-`$XDG_CONFIG_HOME/macchina/themes`.
-
-**Why?**
-
-`$XDG_DATA_HOME` is not meant for anything configuration/customization related.
-
-## Command-line flags
-
-We have deprecated many, if not most command-line flags after having ported them
-to theme files.
+`--no-ascii` and `--custom-ascii` have been deprecated and have moved to our
+theme mechanism.
 
 **Why?**
 
-- In previous versions, themes clashed with the main configuration file, and
-  their purpose might have seemed to many as unknown.
-- There are just way too many flags for a system information fetcher, running
-  `--help` ends up confusing you rather than actually helping you out.
-- We wanted to simplify and distinguish between the configuration file and
-  themes, eliminating redundance.
+- They do not define the behavior of macchina, rather the look of it. So we
+  moved them to their new home.
 
-**Where can I see the updated list?**
+**Where can I see an updated list of the current command-line flags?**
 
-In our wiki, [follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
-
+In our wiki,
+[follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
 
 ## Themes
 
-Themes have transitioned from JSON to TOML.
-
-**Why?**
-
-- Because no one can read that JSON stuff.
-- Because we want there to be continuity between the configuration and theme
-  files, even though they serve completely different purposes.
-
-**Where can I view the new format?**
-
-Take a look at the provided [example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml) file.
+As previously mentioned, themes have gotten two new additions. Also, the `color`
+option has been renamed to `key_color` to avoid ambiguity. Have a look at at the
+provided
+[example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml).
 
 ---
 
@@ -135,8 +115,8 @@ i5-8265U CPU @ 1.60GHz**
 
 _macchina_ comes equipped with built-in themes that style their readouts, bars
 and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`. Did you know that you can [make
-your own](#customization)?
+and use the one you like with `--theme <name>`. Did you know that you can
+[make your own](#customization)?
 
 Themes live outside the configuration file, so you can create a bunch of them,
 and switch between them at any time.
@@ -163,18 +143,20 @@ for an example configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
 place `macchina.toml` in:
+
 - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina` on macOS.
 - `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
 # 🎨 Customization <a name="customization"></a>
 
-Themes define the look, layout and styling of _macchina_.  See
+Themes define the look, layout and styling of _macchina_. See
 [Carbon.toml](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml)
 for an example theme.
 
-In order for _macchina_ to be able to find your themes, you need to
-place them in:
+In order for _macchina_ to be able to find your themes, you need to place them
+in:
+
 - `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina/themes` on macOS.
 - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
@@ -184,7 +166,8 @@ place them in:
 To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
-2. Add that same name you see in your terminal to the `theme` option in `macchina.toml`
+2. Add that same name you see in your terminal to the `theme` option in
+   `macchina.toml`
 3. You're good to go! _macchina_ will start using your theme.
 
 ---
@@ -297,12 +280,16 @@ now without the help of its contributors, thank you all so much!
 
 # ASCII Art
 
-Some of the ASCII art displayed in macchina is **not** our own. 
+Some of the ASCII art displayed in macchina is **not** our own.
 
-If you (the artist) are not okay with us using your ASCII art, please [contact me](mailto:ba.tahaaziz@gmail.com).
+If you (the artist) are not okay with us using your ASCII art, please
+[contact me](mailto:ba.tahaaziz@gmail.com).
 
-- FreeBSD ASCII art (small variant) was taken from Dylan Araps' [pfetch](https://github.com/dylanaraps/pfetch)
-- macOS ASCII art (big variant) was taken from Dylan Araps' [Neofetch](https://github.com/dylanaraps/neofetch)
+- FreeBSD ASCII art (small variant) was taken from Dylan Araps'
+  [pfetch](https://github.com/dylanaraps/pfetch)
+- macOS ASCII art (big variant) was taken from Dylan Araps'
+  [Neofetch](https://github.com/dylanaraps/neofetch)
 - macOS ASCII art (small variant) was made by Joan Stark (jgs)
 - Linux ASCII art (big variant) was made by Joan Stark (jgs)
-- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII art collection (unknown artist)
+- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII art
+  collection (unknown artist)

@@ -1,15 +1,6 @@
 # Specifies the network interface to use for the LocalIP readout
 interface = "wlan0"
 
-# Prefer small ASCII variant.
-small_ascii = false
-
-# Disables ASCII art
-no_ascii = false
-
-# Specify your own ASCII art from a text file (supports ANSI escape codes)
-# custom_ascii = "/path/to/text/file"
-
 # Displays a palette of your active colorscheme
 # Accepted values (case-sensitive):
 #   - Light
@@ -18,7 +9,7 @@ no_ascii = false
 palette = "Dark"
 
 # Lengthen uptime output
-long_uptime = true 
+long_uptime = true
 
 # Lengthen shell output
 long_shell = false
@@ -29,18 +20,12 @@ long_kernel = false
 # Toggle between displaying the current shell or your user's default one.
 current_shell = true
 
-# Specify the theme to use
-# Accepted values (case-insensitive):
-#   - Hydrogen
-#   - Helium
-#   - Lithium
-#   - Beryllium
-#   - Boron
+# Themes need to be placed in "$XDG_CONFIG_DIR/macchina/themes" beforehand.
+# e.g.:
+#  if theme path is /home/foo/.config/macchina/themes/Sodium.toml
+#  theme should be uncommented and set to "Sodium"
 #
-# Custom themes are also supported, they
-# need to be placed in $XDG_CONFIG_DIR for
-# macchina to find and parse them.
-theme = "Carbon"
+# theme = ""
 
 # Displays only the specified readouts.
 # Conflicts with: hide
