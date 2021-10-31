@@ -105,7 +105,7 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    let dirs = [dirs::config_dir(), extra::localbase_dir()];
+    let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
     let mut found = false;
 
     if let Some(opt_theme) = &opt.theme {
@@ -168,7 +168,7 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    let dirs = [dirs::config_dir(), extra::localbase_dir()];
+    let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
     for i in dirs {
         if let Some(dir) = i {
             let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
