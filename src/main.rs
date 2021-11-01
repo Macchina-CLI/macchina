@@ -7,7 +7,7 @@ mod theme;
 
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
-use std::io;
+use std::{io, array};
 use structopt::StructOpt;
 
 #[macro_use]
@@ -109,7 +109,7 @@ fn create_theme(opt: &Opt) -> Theme {
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
 
     if let Some(opt_theme) = &opt.theme {
-        for dir in dirs {
+        for dir in array::IntoIter::new(dirs) {
             if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
                 found = true;
                 theme = Theme::from(custom_theme);
@@ -173,7 +173,7 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 
 fn list_themes() {
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-    for i in dirs {
+    for i in array::IntoIter::new(dirs) {
         if let Some(dir) = i {
             let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
             if !entries.is_empty() {
