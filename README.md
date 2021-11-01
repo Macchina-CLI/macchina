@@ -122,7 +122,8 @@ _macchina_ has a theming system which you can use to customize pretty much any
 visual aspect of the program. Themes live __outside__ the configuration file,
 so you can create a bunch of them and switch between them at any time. 
 
-Learn how to [make your own](#customization).
+Learn how to [make your own](#customization); [themes are documented](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation) in case
+something isn't clear.
 
 ## Doctor
 
