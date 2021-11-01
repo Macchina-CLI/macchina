@@ -1,6 +1,7 @@
 # Changelog
 
-## macchina v5.0.0, codename "sorry for breaking your config, again."
+## macchina v5.0.0, codename "Zinc"
 
-- `--no-ascii` and `--custom-ascii` have been ported to the theme mechanism.
-- themes: the `color` option has been renamed to `key_color` to avoid ambiguity.
+- Deprecated multiple command-line options: `--no-ascii`, `--custom-ascii`, `--palette`, `--hide-delimiters`. (#181)
+- Deprecated built-in themes. (#181)
+- NetBSD: count packages without the use of pkg_info. (by upgrading to the latest libmacchina version)

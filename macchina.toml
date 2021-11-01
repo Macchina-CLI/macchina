@@ -1,13 +1,6 @@
 # Specifies the network interface to use for the LocalIP readout
 interface = "wlan0"
 
-# Displays a palette of your active colorscheme
-# Accepted values (case-sensitive):
-#   - Light
-#   - Dark
-#   - Full
-palette = "Dark"
-
 # Lengthen uptime output
 long_uptime = true
 
