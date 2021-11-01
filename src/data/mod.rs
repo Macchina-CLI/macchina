@@ -171,13 +171,19 @@ pub fn get_all_readouts<'a>(
 
     let window_manager = general_readout.window_manager();
     let desktop_environment = general_readout.desktop_environment();
+    let session = general_readout.session();
 
     // Check if the user is using only a Window Manager.
     match (window_manager, desktop_environment) {
         (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
             if should_display.contains(&ReadoutKey::WindowManager) {
-                readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                if let Ok(s) = session {
+                    readout_values.push(Readout::new(ReadoutKey::WindowManager, format!("{} ({})", w, s)));
+                } else {
+                    readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                }
             }
+
             readout_values.push(Readout::new_err(
                 ReadoutKey::DesktopEnvironment,
                 ReadoutError::Warning(String::from(
@@ -194,9 +200,16 @@ pub fn get_all_readouts<'a>(
                     }
                 }
             }
+
             if should_display.contains(&ReadoutKey::WindowManager) {
                 match general_readout.window_manager() {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::WindowManager, s)),
+                    Ok(w) => {
+                        if let Ok(s) = session {
+                            readout_values.push(Readout::new(ReadoutKey::WindowManager, format!("{} ({})", w, s)));
+                        } else {
+                            readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                        }
+                    }
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::WindowManager, e)),
                 }
             }
