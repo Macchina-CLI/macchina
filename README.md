@@ -73,7 +73,7 @@ In our wiki,
 As previously mentioned, themes have gotten two new additions. Also, the
 `color` option has been renamed to `key_color` to avoid ambiguity. Have a look
 at at the provided [example
-theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Hydrogen.toml).
+theme](https://github.com/Macchina-CLI/macchina/blob/main/themes/Hydrogen.toml).
 
 ---
 
@@ -150,7 +150,7 @@ place `macchina.toml` in:
 # Customization
 
 Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](https://github.com/Macchina-CLI/macchina/blob/main/theme/Hydrogen.toml)
+[Hydrogen.toml](https://github.com/Macchina-CLI/macchina/blob/main/themes/Hydrogen.toml)
 for an example theme.
 
 In order for _macchina_ to be able to find your themes, you need to place them
