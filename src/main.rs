@@ -104,9 +104,9 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 }
 
 fn create_theme(opt: &Opt) -> Theme {
+    let mut found = false;
     let mut theme = Theme::default();
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-    let mut found = false;
 
     if let Some(opt_theme) = &opt.theme {
         for dir in dirs {
@@ -141,12 +141,16 @@ fn create_theme(opt: &Opt) -> Theme {
         theme.set_separator_color(make_random_color());
     }
 
+    if theme.are_bar_delimiters_hidden() {
+        theme.hide_bar_delimiters();
+    }
+
     theme
 }
 
 fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(show_only) = opt.show.to_owned() {
-        return show_only;
+    if let Some(shown) = opt.show.to_owned() {
+        return shown;
     }
 
     let keys: Vec<ReadoutKey> = ReadoutKey::variants()
@@ -220,6 +224,7 @@ fn main() -> Result<(), io::Error> {
     } else {
         config_opt = Opt::from_config();
     }
+
     if let Ok(mut config_opt) = config_opt {
         config_opt.patch_args(Opt::from_args());
         opt = config_opt;
@@ -248,8 +253,8 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
-    let should_display = should_display(&opt);
     let theme = create_theme(&opt);
+    let should_display = should_display(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
     if opt.doctor {

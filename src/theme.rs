@@ -106,17 +106,6 @@ impl Default for Bar {
     }
 }
 
-impl Bar {
-    pub fn hide_delimiters(&self) -> Self {
-        Bar {
-            glyph: self.glyph.to_owned(),
-            symbol_open: '\0',
-            symbol_close: '\0',
-            visible: true,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Keys {
     pub host: String,
@@ -179,6 +168,7 @@ pub struct Theme {
     padding: usize,
     hide_ascii: bool,
     prefer_small_ascii: bool,
+    hide_bar_delimiters: bool,
     pub keys: Keys,
     #[serde(with = "ColorDef")]
     key_color: Color,
@@ -193,6 +183,7 @@ impl Default for Theme {
             separator_color: Color::Yellow,
             separator: String::from("-"),
             hide_ascii: false,
+            hide_bar_delimiters: false,
             prefer_small_ascii: false,
             spacing: 2,
             padding: 2,
@@ -214,6 +205,7 @@ impl Theme {
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
+            hide_bar_delimiters: custom.hide_bar_delimiters,
             hide_ascii: custom.hide_ascii,
             prefer_small_ascii: custom.prefer_small_ascii,
             r#box: custom.r#box,
@@ -307,6 +299,10 @@ impl Theme {
         self.bar.visible
     }
 
+    pub fn are_bar_delimiters_hidden(&self) -> bool {
+        self.hide_bar_delimiters
+    }
+
     pub fn get_padding(&self) -> usize {
         self.padding
     }
@@ -321,6 +317,11 @@ impl Theme {
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
+    }
+
+    pub fn hide_bar_delimiters(&mut self) {
+        self.bar.symbol_open = '\0';
+        self.bar.symbol_close = '\0';
     }
 
     /// Searches for and returns a theme from `~/.config/macchina/themes`
@@ -361,6 +362,7 @@ impl Theme {
             },
             randomize: Randomize::default(),
             hide_ascii: false,
+            hide_bar_delimiters: false,
             prefer_small_ascii: false,
             key_color: Color::Rgb(10, 33, 51),
             custom_ascii: ASCII::default(),
