@@ -1,5 +1,5 @@
-use crate::cli::PaletteType;
 use crate::data::{Readout, ReadoutKey};
+use crate::theme::Palette;
 use crate::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
@@ -14,7 +14,6 @@ pub struct ReadoutList<'a> {
     items: Vec<Readout<'a>>,
     theme: &'a Theme,
     block_inner_margin: Margin,
-    palette: &'a Option<PaletteType>,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
@@ -31,7 +30,6 @@ impl<'a, 'b> ReadoutList<'a> {
                 horizontal: 0,
                 vertical: 0,
             },
-            palette: &None,
         }
     }
 
@@ -57,11 +55,6 @@ impl<'a, 'b> ReadoutList<'a> {
 
     pub fn block_inner_margin(mut self, margin: Margin) -> ReadoutList<'a> {
         self.block_inner_margin = margin;
-        self
-    }
-
-    pub fn palette(mut self, palette: &'a Option<PaletteType>) -> ReadoutList<'a> {
-        self.palette = palette;
         self
     }
 }
@@ -128,7 +121,7 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if let Some(palette) = self.palette {
+        if let Some(palette) = self.theme.get_palette_type() {
             self.print_palette(buf, &list_area, &mut height, palette);
         }
 
@@ -150,7 +143,7 @@ impl<'a> ReadoutList<'a> {
         buf: &mut Buffer,
         list_area: &Rect,
         height: &mut u16,
-        palette: &PaletteType,
+        palette: &Palette,
     ) {
         let light_colors = [
             Color::DarkGray,
@@ -162,6 +155,7 @@ impl<'a> ReadoutList<'a> {
             Color::LightCyan,
             Color::Gray,
         ];
+
         let dark_colors = [
             Color::Black,
             Color::Red,
@@ -180,10 +174,10 @@ impl<'a> ReadoutList<'a> {
                 .collect()
         };
 
-        let spans = match *palette {
-            PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
-            PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
-            PaletteType::Full => vec![
+        let spans = match palette {
+            Palette::Light => vec![Spans::from(span_vector(&light_colors))],
+            Palette::Dark => vec![Spans::from(span_vector(&dark_colors))],
+            Palette::Full => vec![
                 Spans::from(span_vector(&dark_colors)),
                 Spans::from(span_vector(&light_colors)),
             ],

@@ -102,10 +102,6 @@ impl Opt {
             self.show = args.show;
         }
 
-        if args.palette.is_some() {
-            self.palette = args.palette;
-        }
-
         if args.interface.is_some() {
             self.interface = args.interface;
         }

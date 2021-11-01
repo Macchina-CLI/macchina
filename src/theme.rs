@@ -35,6 +35,16 @@ impl Default for ASCII {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Palette {
+    // Light color variants
+    Light,
+    // Dark color variants
+    Dark,
+    // Entire palette (16-colors)
+    Full,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(remote = "Color")]
 enum ColorDef {
     Reset,
@@ -80,7 +90,7 @@ pub struct Block {
 impl Default for Block {
     fn default() -> Self {
         Block {
-            title: String::from("Hydrogen"),
+            title: String::new(),
             visible: false,
             inner_margin: InnerMargin::default(),
         }
@@ -98,7 +108,7 @@ pub struct Bar {
 impl Default for Bar {
     fn default() -> Self {
         Bar {
-            glyph: String::from("o"),
+            glyph: String::new(),
             symbol_open: '(',
             symbol_close: ')',
             visible: true,
@@ -166,6 +176,7 @@ pub struct Theme {
     randomize: Randomize,
     spacing: usize,
     padding: usize,
+    palette: Option<Palette>,
     hide_ascii: bool,
     prefer_small_ascii: bool,
     hide_bar_delimiters: bool,
@@ -185,6 +196,7 @@ impl Default for Theme {
             hide_ascii: false,
             hide_bar_delimiters: false,
             prefer_small_ascii: false,
+            palette: None,
             spacing: 2,
             padding: 2,
             randomize: Randomize::default(),
@@ -205,6 +217,7 @@ impl Theme {
             separator_color: custom.separator_color,
             spacing: custom.spacing,
             padding: custom.padding,
+            palette: custom.palette,
             hide_bar_delimiters: custom.hide_bar_delimiters,
             hide_ascii: custom.hide_ascii,
             prefer_small_ascii: custom.prefer_small_ascii,
@@ -281,6 +294,10 @@ impl Theme {
 
     pub fn get_custom_ascii_color(&self) -> Color {
         self.custom_ascii.color
+    }
+
+    pub fn get_palette_type(&self) -> Option<&Palette> {
+        self.palette.as_ref()
     }
 
     pub fn using_custom_ascii_color(&self) -> bool {
@@ -364,6 +381,7 @@ impl Theme {
             hide_ascii: false,
             hide_bar_delimiters: false,
             prefer_small_ascii: false,
+            palette: Some(Palette::Full),
             key_color: Color::Rgb(10, 33, 51),
             custom_ascii: ASCII::default(),
             separator_color: Color::Indexed(100),

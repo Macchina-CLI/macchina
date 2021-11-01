@@ -22,7 +22,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [What's new in v5.0](#upgrading)
+- [What's new in v5.0](#changelog)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -34,7 +34,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 ---
 
-# 💬 About <a name="about"></a>
+# About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
 memory usage, processor load and much more.
@@ -45,12 +45,18 @@ fetching-related issues should be filed on that repository.
 
 ---
 
-# ✨ What's new in `v5.0` <a name="upgrading"></a>
+# ✨ What's new in `v5.0` <a name="changelog"></a>
 
 ## Deprecation of two command-line flags
 
-`--no-ascii` and `--custom-ascii` have been deprecated and have moved to our
-theme mechanism.
+The following flags have been deprecated and can only be specified in your
+theme:
+- `--no-ascii`
+- `--custom-ascii`
+- `--palette`
+- `--hide-delimiters`
+
+> Note that the values they accept hasn't changed.
 
 **Why?**
 
@@ -64,21 +70,20 @@ In our wiki,
 
 ## Themes
 
-As previously mentioned, themes have gotten two new additions. Also, the `color`
-option has been renamed to `key_color` to avoid ambiguity. Have a look at at the
-provided
-[example theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml).
+As previously mentioned, themes have gotten two new additions. Also, the
+`color` option has been renamed to `key_color` to avoid ambiguity. Have a look
+at at the provided [example
+theme](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml).
 
 ---
 
-# ⚡️ Performance <a name="performance"></a>
+# Performance <a name="performance"></a>
 
 _macchina_ is lightning fast, see for yourself:
 
-- Execution time is measured using
-  [hyperfine](https://github.com/sharkdp/hyperfine)
+> Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
-## 🐧 Linux
+## Linux
 
 This benchmark was performed using an **Intel® Core™ i5-3350P CPU @ 3.10GHz**
 
@@ -86,13 +91,13 @@ This benchmark was performed using an **Intel® Core™ i5-3350P CPU @ 3.10GHz**
 | :--------- | --------: | -------: | -------: |
 | `macchina` | 4.8 ± 0.4 |      4.5 |      8.1 |
 
-## 🍏 macOS
+## macOS
 
 | Command    | Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | --------: | -------: | -------: |
 | `macchina` | 5.0 ± 0.2 |      4.7 |      5.9 |
 
-## 🚩 NetBSD
+## NetBSD
 
 This benchmark was performed inside a virtual machine using an **Intel® Core™
 i5-8265U CPU @ 1.60GHz**
@@ -101,7 +106,7 @@ i5-8265U CPU @ 1.60GHz**
 | :--------- | ---------: | -------: | -------: |
 | `macchina` | 17.7 ± 1.6 |     16.8 |     27.2 |
 
-## 💻 Windows
+## Windows
 
 | Command    | Mean [ms] | Min [ms] | Max [ms] |
 | :--------- | --------: | -------: | -------: |
@@ -109,32 +114,25 @@ i5-8265U CPU @ 1.60GHz**
 
 ---
 
-# 🚀 Features <a name="features"></a>
+# Features
 
 ## Themes
 
-_macchina_ comes equipped with built-in themes that style their readouts, bars
-and separators differently. You can see the list with the `--list-themes` flag
-and use the one you like with `--theme <name>`. Did you know that you can
-[make your own](#customization)?
+_macchina_ has a theming system which you can use to customize pretty much any
+visual aspect of the program. Themes live __outside__ the configuration file,
+so you can create a bunch of them and switch between them at any time. 
 
-Themes live outside the configuration file, so you can create a bunch of them,
-and switch between them at any time.
-
-## Bars
-
-Bars provide a way to visualize data, through symbols rather than numbers, and
-they can be enabled using the `--bar` flag.
+Learn how to [make your own](#customization).
 
 ## Doctor
 
-_libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has a
-feature in place that allows you to see why they failed, this is done through
-the `--doctor` flag.
+_libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
+a feature in place that describes why they failed. You don't have to guess
+what went wrong, `--doctor` has your back!
 
 ---
 
-# 🔧 Configuration <a name="configuration"></a>
+# Configuration
 
 The configuration file define the behavior of macchina, it does not allow for
 much customization. See
@@ -148,7 +146,7 @@ place `macchina.toml` in:
 - `$HOME/Library/Application Support/macchina` on macOS.
 - `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
-# 🎨 Customization <a name="customization"></a>
+# Customization
 
 Themes define the look, layout and styling of _macchina_. See
 [Carbon.toml](https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml)
@@ -161,8 +159,6 @@ in:
 - `$HOME/Library/Application Support/macchina/themes` on macOS.
 - `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
 
-> Note: Avoid using the names of built-in themes.
-
 To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
@@ -172,7 +168,7 @@ To start using your theme:
 
 ---
 
-# 📦️ Dependencies <a name="dependencies"></a>
+# Dependencies
 
 ## Build dependencies
 
@@ -193,7 +189,7 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 
 ---
 
-# 🏗️ Installation <a name="installation"></a>
+# Installation
 
 ### Cargo
 

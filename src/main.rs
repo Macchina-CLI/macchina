@@ -83,8 +83,8 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     ascii_rect
 }
 
-fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect, config: &Opt) {
-    let mut list = ReadoutList::new(data, &theme).palette(&config.palette);
+fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect) {
+    let mut list = ReadoutList::new(data, &theme);
 
     if theme.is_box_visible() {
         list = list
@@ -315,7 +315,6 @@ fn main() -> Result<(), io::Error> {
             tmp_buffer_area.width - ascii_area.width - 4,
             ascii_area.height,
         ),
-        &opt,
     );
 
     write_buffer_to_console(&mut backend, &mut tmp_buffer)?;

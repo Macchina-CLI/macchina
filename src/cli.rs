@@ -51,15 +51,6 @@ arg_enum! {
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
     #[structopt(
-        short = "p",
-        long = "palette",
-        possible_values = & PaletteType::variants(),
-        case_insensitive = true,
-        help = "Displays color palette",
-    )]
-    pub palette: Option<PaletteType>,
-
-    #[structopt(
         short = "v",
         long = "version",
         help = "Prints version information",
@@ -162,7 +153,6 @@ impl Default for Opt {
             config: None,
             theme: None,
             show: None,
-            palette: None,
             interface: None,
         }
     }
