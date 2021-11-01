@@ -7,7 +7,7 @@ mod theme;
 
 use cli::{MacchinaColor, Opt};
 use colored::Colorize;
-use std::{io, array};
+use std::{array, io};
 use structopt::StructOpt;
 
 #[macro_use]

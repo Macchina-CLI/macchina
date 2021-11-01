@@ -178,7 +178,10 @@ pub fn get_all_readouts<'a>(
         (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
             if should_display.contains(&ReadoutKey::WindowManager) {
                 if let Ok(s) = session {
-                    readout_values.push(Readout::new(ReadoutKey::WindowManager, format!("{} ({})", w, s)));
+                    readout_values.push(Readout::new(
+                        ReadoutKey::WindowManager,
+                        format!("{} ({})", w, s),
+                    ));
                 } else {
                     readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
                 }
@@ -205,7 +208,10 @@ pub fn get_all_readouts<'a>(
                 match general_readout.window_manager() {
                     Ok(w) => {
                         if let Ok(s) = session {
-                            readout_values.push(Readout::new(ReadoutKey::WindowManager, format!("{} ({})", w, s)));
+                            readout_values.push(Readout::new(
+                                ReadoutKey::WindowManager,
+                                format!("{} ({})", w, s),
+                            ));
                         } else {
                             readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
                         }
