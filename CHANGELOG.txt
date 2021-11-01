@@ -1,7 +1,5 @@
 # Changelog
 
-## macchina v5.0.0, codename "Zinc"
+## macchina v5.0.1
 
-- Deprecated multiple command-line options: `--no-ascii`, `--custom-ascii`, `--palette`, `--hide-delimiters`. (#181)
-- Deprecated built-in themes. (#181)
-- NetBSD: count packages without the use of pkg_info. (by upgrading to the latest libmacchina version)
+- The default theme's bars should not visible.
