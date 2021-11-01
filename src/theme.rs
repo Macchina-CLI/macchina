@@ -1,7 +1,86 @@
-use serde::{Deserialize, Serialize};
+use clap::arg_enum;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::path::PathBuf;
 use toml;
 use tui::style::Color;
+
+arg_enum! {
+#[derive(Debug, Clone)]
+    pub enum MacchinaColor {
+        Black,
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        Gray,
+        LightRed,
+        LightGreen,
+        LightYellow,
+        LightBlue,
+        LightMagenta,
+        LightCyan,
+        White,
+    }
+}
+
+impl MacchinaColor {
+    fn to_tui_colors(&self) -> Color {
+        match &self {
+            Self::Black => Color::Black,
+            Self::Red => Color::Red,
+            Self::Green => Color::Green,
+            Self::Yellow => Color::Yellow,
+            Self::Blue => Color::Blue,
+            Self::Magenta => Color::Magenta,
+            Self::Cyan => Color::Cyan,
+            Self::Gray => Color::Gray,
+            Self::LightRed => Color::LightRed,
+            Self::LightGreen => Color::LightGreen,
+            Self::LightYellow => Color::LightYellow,
+            Self::LightBlue => Color::LightBlue,
+            Self::LightMagenta => Color::LightMagenta,
+            Self::LightCyan => Color::LightCyan,
+            _ => Color::White,
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for MacchinaColor {
+    fn deserialize<D>(deserializer: D) -> Result<MacchinaColor, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        match &s.as_str().to_lowercase()[..] {
+            "black" => Ok(Self::Black),
+            "red" => Ok(Self::Red),
+            "green" => Ok(Self::Green),
+            "yellow" => Ok(Self::Yellow),
+            "blue" => Ok(Self::Blue),
+            "magenta" => Ok(Self::Magenta),
+            "cyan" => Ok(Self::Cyan),
+            "gray" => Ok(Self::Gray),
+            "lightred" => Ok(Self::LightRed),
+            "lightgreen" => Ok(Self::LightGreen),
+            "lightyellow" => Ok(Self::LightYellow),
+            "lightblue" => Ok(Self::LightBlue),
+            "lightmagenta" => Ok(Self::LightMagenta),
+            "lightcyan" => Ok(Self::LightCyan),
+            _ => Ok(Self::White),
+        }
+    }
+}
+
+impl Serialize for MacchinaColor {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_some(&self)
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Randomize {
@@ -21,14 +100,13 @@ impl Default for Randomize {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ASCII {
     path: Option<PathBuf>,
-    #[serde(with = "ColorDef")]
-    color: Color,
+    color: Option<MacchinaColor>,
 }
 
 impl Default for ASCII {
     fn default() -> Self {
         ASCII {
-            color: Color::Reset,
+            color: None,
             path: None,
         }
     }
@@ -36,36 +114,9 @@ impl Default for ASCII {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Palette {
-    // Light color variants
     Light,
-    // Dark color variants
     Dark,
-    // Entire palette (16-colors)
     Full,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(remote = "Color")]
-enum ColorDef {
-    Reset,
-    Black,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    Gray,
-    DarkGray,
-    LightRed,
-    LightGreen,
-    LightYellow,
-    LightBlue,
-    LightMagenta,
-    LightCyan,
-    White,
-    Rgb(u8, u8, u8),
-    Indexed(u8),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -181,17 +232,15 @@ pub struct Theme {
     prefer_small_ascii: bool,
     hide_bar_delimiters: bool,
     pub keys: Keys,
-    #[serde(with = "ColorDef")]
-    key_color: Color,
-    #[serde(with = "ColorDef")]
-    separator_color: Color,
+    key_color: MacchinaColor,
+    separator_color: MacchinaColor,
 }
 
 impl Default for Theme {
     fn default() -> Self {
         Theme {
-            key_color: Color::Blue,
-            separator_color: Color::Yellow,
+            key_color: MacchinaColor::Blue,
+            separator_color: MacchinaColor::Yellow,
             separator: String::from("-"),
             hide_ascii: false,
             hide_bar_delimiters: false,
@@ -245,18 +294,18 @@ impl Theme {
     }
 
     pub fn get_separator_color(&self) -> Color {
-        self.separator_color
+        self.separator_color.to_tui_colors()
     }
 
-    pub fn set_separator_color(&mut self, color: Color) {
+    pub fn set_separator_color(&mut self, color: MacchinaColor) {
         self.separator_color = color
     }
 
     pub fn get_key_color(&self) -> Color {
-        self.key_color
+        self.key_color.to_tui_colors()
     }
 
-    pub fn set_key_color(&mut self, color: Color) {
+    pub fn set_key_color(&mut self, color: MacchinaColor) {
         self.key_color = color
     }
 
@@ -292,8 +341,12 @@ impl Theme {
         self.hide_ascii
     }
 
-    pub fn get_custom_ascii_color(&self) -> Color {
-        self.custom_ascii.color
+    pub fn get_custom_ascii_color(&self) -> Option<Color> {
+        if let Some(col) = &self.custom_ascii.color {
+            return Some(col.to_tui_colors());
+        }
+
+        None
     }
 
     pub fn get_palette_type(&self) -> Option<&Palette> {
@@ -301,11 +354,11 @@ impl Theme {
     }
 
     pub fn using_custom_ascii_color(&self) -> bool {
-        if self.custom_ascii.color == Color::Reset {
-            return false;
+        if self.custom_ascii.color.is_some() {
+            return true;
         }
 
-        true
+        false
     }
 
     pub fn get_custom_ascii_path(&self) -> Option<&PathBuf> {
@@ -382,9 +435,9 @@ impl Theme {
             hide_bar_delimiters: false,
             prefer_small_ascii: false,
             palette: Some(Palette::Full),
-            key_color: Color::Rgb(10, 33, 51),
+            key_color: MacchinaColor::Blue,
             custom_ascii: ASCII::default(),
-            separator_color: Color::Indexed(100),
+            separator_color: MacchinaColor::Red,
             keys: Keys::default(),
         };
 

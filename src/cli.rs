@@ -1,50 +1,10 @@
 use crate::data;
-use clap::{arg_enum, App};
+use clap::App;
 use serde::{Deserialize, Serialize};
 use std::default::Default;
 use structopt::StructOpt;
-use tui::style::Color;
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
-
-arg_enum! {
-    #[derive(Debug,Serialize, Deserialize)]
-    pub enum MacchinaColor {
-        Red,
-        Green,
-        Blue,
-        Yellow,
-        Cyan,
-        Magenta,
-        Black,
-        White
-    }
-}
-
-impl MacchinaColor {
-    /// Convert the argument passed to a color flag to its respective color.
-    pub fn get_color(&self) -> Color {
-        match self {
-            MacchinaColor::Red => Color::Red,
-            MacchinaColor::Green => Color::Green,
-            MacchinaColor::Blue => Color::Blue,
-            MacchinaColor::Yellow => Color::Yellow,
-            MacchinaColor::Cyan => Color::Cyan,
-            MacchinaColor::Magenta => Color::Magenta,
-            MacchinaColor::Black => Color::Black,
-            MacchinaColor::White => Color::White,
-        }
-    }
-}
-
-arg_enum! {
-    #[derive(Debug,Serialize, Deserialize)]
-    pub enum PaletteType {
-        Light,
-        Dark,
-        Full
-    }
-}
 
 #[derive(StructOpt, Debug, Serialize, Deserialize)]
 #[structopt(author = AUTHORS, about = ABOUT)]

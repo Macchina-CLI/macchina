@@ -5,7 +5,7 @@ mod extra;
 mod format;
 mod theme;
 
-use cli::{MacchinaColor, Opt};
+use cli::Opt;
 use colored::Colorize;
 use std::io;
 use structopt::StructOpt;
@@ -125,12 +125,11 @@ fn create_theme(opt: &Opt) -> Theme {
         }
     }
 
-    let color_variants = MacchinaColor::variants();
+    let color_variants = theme::MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
-        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
+        theme::MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
             .unwrap()
-            .get_color()
     };
 
     if theme.is_key_color_randomized() {
@@ -269,13 +268,12 @@ fn main() -> Result<(), io::Error> {
 
     if let Some(ref file_path) = theme.get_custom_ascii_path() {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
-        let ascii_art;
+        let mut ascii_art = Text::default();
         match theme.using_custom_ascii_color() {
             true => {
-                ascii_art = ascii::get_ascii_from_file_override_color(
-                    &file_path,
-                    theme.get_custom_ascii_color(),
-                )?;
+                if let Some(color) = theme.get_custom_ascii_color() {
+                    ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+                }
             }
             false => {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
