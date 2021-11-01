@@ -47,7 +47,7 @@ fetching-related issues should be filed on that repository.
 
 # ✨ What's new in `v5.0` <a name="changelog"></a>
 
-## Deprecation of two command-line flags
+## Command-line flags 
 
 The following flags have been deprecated and can only be specified in your
 theme:
