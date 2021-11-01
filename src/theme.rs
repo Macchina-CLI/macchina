@@ -111,7 +111,7 @@ impl Default for Bar {
             glyph: String::new(),
             symbol_open: '(',
             symbol_close: ')',
-            visible: true,
+            visible: false,
         }
     }
 }

@@ -6,6 +6,7 @@ prefer_small_ascii = false
 separator = ">"
 key_color = "Cyan"
 separator_color = "White"
+palette = "Light"
 
 [bar]
 glyph = "ߋ"
