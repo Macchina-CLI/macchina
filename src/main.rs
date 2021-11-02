@@ -1,4 +1,5 @@
 mod bars;
+mod color;
 mod cli;
 mod config;
 mod extra;
@@ -31,6 +32,7 @@ use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
+use crate::color::MacchinaColor;
 use unicode_width::UnicodeWidthStr;
 
 fn create_backend() -> CrosstermBackend<Stdout> {
@@ -125,10 +127,10 @@ fn create_theme(opt: &Opt) -> Theme {
         }
     }
 
-    let color_variants = theme::MacchinaColor::variants();
+    let color_variants = MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
-        theme::MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
+        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
             .unwrap()
     };
 
