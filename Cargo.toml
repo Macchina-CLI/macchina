@@ -1,6 +1,6 @@
 [package]
 name = "macchina"
-version = "5.0.2"
+version = "5.0.3"
 authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>", "Uttarayan Mondal <email@uttarayan.me>"]
 edition = "2018"
 description = "A system information fetcher, with an (unhealthy) emphasis on performance."
@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = "3.4.2"
+libmacchina = "3.4.3"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.16.0", default-features = false, features = ["crossterm"] }
@@ -19,7 +19,7 @@ atty= "0.2.14"
 colored = "2.0.0"
 structopt = "0.3.25"
 rand = "0.8.4"
-unicode-width = "0.1.8"
+unicode-width = "0.1.9"
 lazy_static = "1.4.0"
 ansi-to-tui = "0.4.1"
 serde = { version = "1.0.130", features = ["derive"] }
