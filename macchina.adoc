@@ -1,0 +1,75 @@
+= macchina(1)
+Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
+v5.0.2
+:doctype: manpage
+:manmanual: MACCHINA
+:mansource: MACCHINA
+:man-linkstyle: pass:[blue R < >]
+
+== Name
+
+macchina - A system information fetcher, with an (unhealthy) emphasis on performance.
+
+== Synopsis
+
+*macchina* [_FLAGS_]... _OPTIONS_...
+
+== Flags
+
+*--ascii-artists*::
+   Lists the original artists of the ASCII art used by macchina.
+
+*-s, --current-shell*::
+   Toggles between the current shell or the default one.
+
+*-d, --doctor*::
+   Checks the system for failures.
+
+*-e, --export-config*::
+   Prints the config file to stdout.
+
+*-h, --help*::
+   Prints help information
+
+*-l, --list-themes*::
+   Lists all available themes: built-in and custom
+
+*-K, --long-kernel*::
+   Lengthens kernel output
+
+*-S, --long-shell*::
+   Lengthens shell output
+
+*-U, --short-uptime*::
+   Lengthens uptime output
+
+*-v, --version*::
+   Prints version information
+
+== Resources
+
+*Repository:* https://github.com/Macchina-CLI/macchina
+
+== Copyright
+
+MIT License
+
+Copyright (c) 2021 Aziz Ben Ali
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
