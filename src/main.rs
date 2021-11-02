@@ -1,10 +1,9 @@
 mod bars;
-mod color;
 mod cli;
 mod config;
 mod extra;
 mod format;
-mod theme;
+pub mod theme;
 
 use cli::Opt;
 use colored::Colorize;
@@ -20,7 +19,8 @@ mod doctor;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
-use crate::theme::Theme;
+use crate::theme::color::MacchinaColor;
+use crate::theme::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use data::Readout;
@@ -32,7 +32,6 @@ use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
 use tui::text::Text;
 use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
-use crate::color::MacchinaColor;
 use unicode_width::UnicodeWidthStr;
 
 fn create_backend() -> CrosstermBackend<Stdout> {
@@ -88,16 +87,16 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect) {
     let mut list = ReadoutList::new(data, &theme);
 
-    if theme.is_box_visible() {
+    if theme.r#box.is_visible() {
         list = list
             .block_inner_margin(Margin {
-                horizontal: theme.get_horizontal_margin(),
-                vertical: theme.get_vertical_margin(),
+                horizontal: theme.r#box.get_horizontal_margin(),
+                vertical: theme.r#box.get_vertical_margin(),
             })
             .block(
                 Block::default()
                     .border_type(BorderType::Rounded)
-                    .title(theme.get_box_title())
+                    .title(theme.r#box.get_title())
                     .borders(Borders::ALL),
             );
     }
@@ -130,20 +129,19 @@ fn create_theme(opt: &Opt) -> Theme {
     let color_variants = MacchinaColor::variants();
     let make_random_color = || {
         let mut random = rand::thread_rng();
-        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())])
-            .unwrap()
+        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())]).unwrap()
     };
 
-    if theme.is_key_color_randomized() {
+    if theme.randomize.is_key_color_randomized() {
         theme.set_key_color(make_random_color());
     }
 
-    if theme.is_separator_color_randomized() {
+    if theme.randomize.is_separator_color_randomized() {
         theme.set_separator_color(make_random_color());
     }
 
     if theme.are_bar_delimiters_hidden() {
-        theme.hide_bar_delimiters();
+        theme.bar.hide_delimiters();
     }
 
     theme
@@ -268,19 +266,15 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-    if let Some(ref file_path) = theme.get_custom_ascii_path() {
+    if let Some(ref file_path) = theme.custom_ascii.get_path() {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
-        let mut ascii_art = Text::default();
-        match theme.using_custom_ascii_color() {
-            true => {
-                if let Some(color) = theme.get_custom_ascii_color() {
-                    ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
-                }
-            }
-            false => {
-                ascii_art = ascii::get_ascii_from_file(&file_path)?;
-            }
-        };
+        let ascii_art;
+
+        if let Some(color) = theme.custom_ascii.get_color() {
+            ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+        } else {
+            ascii_art = ascii::get_ascii_from_file(&file_path)?;
+        }
 
         // If the file is empty just default to disabled
         if ascii_art.width() != 0 && ascii_art.height() < 50 && !theme.is_ascii_hidden() {

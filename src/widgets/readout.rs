@@ -1,6 +1,6 @@
 use crate::data::{Readout, ReadoutKey};
-use crate::theme::Palette;
-use crate::theme::Theme;
+use crate::theme::components::Palette;
+use crate::theme::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
 use tui::layout::{Margin, Rect};

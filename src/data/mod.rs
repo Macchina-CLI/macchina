@@ -1,5 +1,5 @@
 use crate::cli::Opt;
-use crate::theme::Theme;
+use crate::theme::theme::Theme;
 use clap::arg_enum;
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
@@ -63,10 +63,10 @@ fn colored_glyphs(glyph: &str, blocks: usize) -> String {
 }
 
 fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
-    if theme.get_bar_style().symbol_open == '\0' {
+    if theme.bar.are_delimiters_hidden() {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
-        let glyph = theme.get_bar_style().glyph.clone();
+        let glyph = theme.bar.get_glyph().clone();
         let glyphs = colored_glyphs(&glyph, blocks);
 
         if blocks == 10 {
@@ -84,13 +84,13 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     }
 
     let mut span_vector = vec![
-        Span::raw(format!("{} ", theme.get_bar_style().symbol_open)),
+        Span::raw(format!("{} ", theme.bar.get_symbol_open())),
         Span::raw(""),
         Span::raw(""),
-        Span::raw(format!(" {}", theme.get_bar_style().symbol_close)),
+        Span::raw(format!(" {}", theme.bar.get_symbol_close())),
     ];
 
-    let glyph = theme.get_bar_style().glyph.clone();
+    let glyph = theme.bar.get_glyph().clone();
     let glyphs = colored_glyphs(&glyph, blocks);
 
     if blocks == 10 {
@@ -302,7 +302,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match (general_readout.backlight(), theme.is_using_bars()) {
+        match (general_readout.backlight(), theme.bar.is_visible()) {
             (Ok(b), false) => {
                 readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
             }
@@ -315,7 +315,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorLoad) {
-        match (general_readout.cpu_usage(), theme.is_using_bars()) {
+        match (general_readout.cpu_usage(), theme.bar.is_visible()) {
             (Ok(u), true) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
@@ -345,7 +345,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if theme.is_using_bars() {
+                if theme.bar.is_visible() {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
@@ -370,7 +370,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if theme.is_using_bars() {
+                if theme.bar.is_visible() {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {
