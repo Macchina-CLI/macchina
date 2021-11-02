@@ -21,7 +21,6 @@ pub struct Theme {
     palette: Option<Palette>,
     hide_ascii: bool,
     prefer_small_ascii: bool,
-    hide_bar_delimiters: bool,
     pub keys: Keys,
     key_color: MacchinaColor,
     separator_color: MacchinaColor,
@@ -34,7 +33,6 @@ impl Default for Theme {
             separator_color: MacchinaColor::Yellow,
             separator: String::from("-"),
             hide_ascii: false,
-            hide_bar_delimiters: false,
             prefer_small_ascii: false,
             palette: None,
             spacing: 2,
@@ -58,7 +56,6 @@ impl Theme {
             spacing: custom.spacing,
             padding: custom.padding,
             palette: custom.palette,
-            hide_bar_delimiters: custom.hide_bar_delimiters,
             hide_ascii: custom.hide_ascii,
             prefer_small_ascii: custom.prefer_small_ascii,
             r#box: custom.r#box,
@@ -110,10 +107,6 @@ impl Theme {
 
     pub fn get_palette_type(&self) -> Option<&Palette> {
         self.palette.as_ref()
-    }
-
-    pub fn are_bar_delimiters_hidden(&self) -> bool {
-        self.hide_bar_delimiters
     }
 
     pub fn get_padding(&self) -> usize {

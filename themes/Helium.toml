@@ -10,10 +10,12 @@ separator_color = "Yellow"
 glyph = "o"
 symbol_open = "("
 symbol_close = ")"
+hide_delimiters = false
 visible = false
 
 [box]
 title = " Helium "
+border = "rounded"
 visible = false
 
 [box.inner_margin]

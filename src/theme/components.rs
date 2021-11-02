@@ -1,7 +1,9 @@
+use crate::theme::borders::Border;
 use crate::theme::color::MacchinaColor;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tui::style::Color;
+use tui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Randomize {
@@ -78,24 +80,39 @@ impl Default for InnerMargin {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block {
-    title: String,
+    title: Option<String>,
     visible: bool,
     inner_margin: InnerMargin,
+    border: Border,
 }
 
 impl Default for Block {
     fn default() -> Self {
         Block {
-            title: String::new(),
+            title: None,
             visible: false,
             inner_margin: InnerMargin::default(),
+            border: Border::Plain,
         }
     }
 }
 
 impl Block {
-    pub fn get_title(&self) -> String {
-        self.title.to_owned()
+    pub fn get_title(&self) -> Option<String> {
+        if let Some (t) = &self.title {
+            return Some(t.to_owned());
+        }
+
+        None
+    }
+
+    pub fn get_border_type(&self) -> BorderType {
+        match self.border {
+            Border::Plain => BorderType::Plain,
+            Border::Rounded => BorderType::Rounded,
+            Border::Double => BorderType::Double,
+            Border::Thick => BorderType::Thick,
+        }
     }
 
     pub fn is_visible(&self) -> bool {
@@ -116,6 +133,7 @@ pub struct Bar {
     glyph: String,
     symbol_open: char,
     symbol_close: char,
+    hide_delimiters: bool,
     visible: bool,
 }
 
@@ -125,6 +143,7 @@ impl Default for Bar {
             glyph: String::new(),
             symbol_open: '(',
             symbol_close: ')',
+            hide_delimiters: false,
             visible: false,
         }
     }
@@ -153,7 +172,7 @@ impl Bar {
     }
 
     pub fn are_delimiters_hidden(&self) -> bool {
-        return self.symbol_open == '\0' && self.symbol_close == '\0';
+        self.hide_delimiters
     }
 }
 

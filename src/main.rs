@@ -31,7 +31,7 @@ use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
 use tui::text::Text;
-use tui::widgets::{Block, BorderType, Borders, Paragraph, Widget};
+use tui::widgets::{Block, Borders, Paragraph, Widget};
 use unicode_width::UnicodeWidthStr;
 
 fn create_backend() -> CrosstermBackend<Stdout> {
@@ -95,8 +95,8 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
             })
             .block(
                 Block::default()
-                    .border_type(BorderType::Rounded)
-                    .title(theme.r#box.get_title())
+                    .border_type(theme.r#box.get_border_type())
+                    .title(theme.r#box.get_title().unwrap_or(String::new()))
                     .borders(Borders::ALL),
             );
     }
@@ -140,7 +140,7 @@ fn create_theme(opt: &Opt) -> Theme {
         theme.set_separator_color(make_random_color());
     }
 
-    if theme.are_bar_delimiters_hidden() {
+    if theme.bar.are_delimiters_hidden() {
         theme.bar.hide_delimiters();
     }
 
