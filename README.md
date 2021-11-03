@@ -135,7 +135,7 @@ what went wrong, `--doctor` has your back!
 
 # Configuration
 
-The configuration file define the behavior of macchina, it does not allow for
+The configuration file defines the behavior of macchina, it does not allow for
 much customization. See
 [macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
 for an example configuration file.
