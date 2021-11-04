@@ -17,12 +17,9 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 </div>
 
----
-
 # Table of Contents
 
 - [About](#about)
-- [What's new in v5.0](#changelog)
 - [Performance](#performance)
 - [Features](#features)
 - [Configuration](#configuration)
@@ -31,8 +28,6 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Installation](#installation)
 - [Contributors](#contributors)
 - [ASCII Art](#ascii-art)
-
----
 
 # About
 
@@ -43,43 +38,9 @@ If you're interested in the library _macchina_ uses to fetch system information,
 have a look at [libmacchina](https://github.com/Macchina-CLI/libmacchina);
 fetching-related issues should be filed on that repository.
 
----
-
-# ✨ What's new in `v5.0` <a name="changelog"></a>
-
-## Command-line flags 
-
-The following flags have been deprecated and can only be specified in your
-theme:
-- `--no-ascii`
-- `--custom-ascii`
-- `--palette`
-- `--hide-delimiters`
-
-> Note that the values they accept hasn't changed.
-
-**Why?**
-
-- They do not define the behavior of macchina, rather the look of it. So we
-  moved them to their new home.
-
-**Where can I see an updated list of the current command-line flags?**
-
-In our wiki,
-[follow this link](https://github.com/Macchina-CLI/macchina/wiki/Usage).
-
-## Themes
-
-As previously mentioned, themes have gotten two new additions. Also, the
-`color` option has been renamed to `key_color` to avoid ambiguity. Have a look
-at at the provided [example
-theme](https://github.com/Macchina-CLI/macchina/blob/main/themes/Hydrogen.toml).
-
----
-
 # Performance <a name="performance"></a>
 
-_macchina_ is lightning fast, see for yourself:
+_macchina_ is __lightning fast__, see for yourself:
 
 > Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
@@ -112,8 +73,6 @@ i5-8265U CPU @ 1.60GHz**
 | :--------- | --------: | -------: | -------: |
 | `macchina` | 9.0 ± 0.4 |      8.2 |     11.7 |
 
----
-
 # Features
 
 ## Themes
@@ -122,16 +81,15 @@ _macchina_ has a theming system which you can use to customize pretty much any
 visual aspect of the program. Themes live __outside__ the configuration file,
 so you can create a bunch of them and switch between them at any time. 
 
-Learn how to [make your own](#customization); [themes are documented](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation) in case
-something isn't clear.
+Learn how to [make your own](#customization) — there is
+[documentation](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation)
+in case something is not quite so clear.
 
 ## Doctor
 
 _libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
 a feature in place that describes why they failed. You don't have to guess
 what went wrong, `--doctor` has your back!
-
----
 
 # Configuration
 
@@ -167,17 +125,15 @@ To start using your theme:
    `macchina.toml`
 3. You're good to go! _macchina_ will start using your theme.
 
----
-
 # Dependencies
 
-## Build dependencies
+### Build dependencies
 
 The following are required dependencies if you're building from source or installing through `cargo`:
 
 - _libgit2_
 
-## Runtime dependencies
+### Runtime dependencies
 
 The following are _optional_ dependencies, they only extend what macchina can fetch:
 
@@ -187,8 +143,6 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 
 **NetBSD**:
 - _wmctrl_
-
----
 
 # Installation
 
@@ -257,20 +211,18 @@ You might prefer running the
 [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds
 with your operating system.
 
----
-
 # Contributors
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
-_macchina_, like many other open-source projects, would not be where it is right
-now without the help of its contributors, thank you all so much!
+_macchina_, like many other open-source projects, would not be where it is
+right now without the help of its contributors, thank you all so much!
 
 - Support for **NetBSD** would not have been possible without the help and
   testing of NetBSD/pkgsrc package maintainer
   [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for **macOS** and **Windows** would not have been possible without the
-  help, testing and major contributions of
+- Support for **macOS** and **Windows** would not have been possible without
+  the help, testing and major contributions of
   [123marvin123](https://github.com/123marvin123)
 - Support for **OpenWrt** and **Android** was made possible through the many
   contributions of [uttarayan21](https://github.com/uttarayan21)
@@ -288,5 +240,5 @@ If you (the artist) are not okay with us using your ASCII art, please
   [Neofetch](https://github.com/dylanaraps/neofetch)
 - macOS ASCII art (small variant) was made by Joan Stark (jgs)
 - Linux ASCII art (big variant) was made by Joan Stark (jgs)
-- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII art
-  collection (unknown artist)
+- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII
+  art collection (unknown artist)
