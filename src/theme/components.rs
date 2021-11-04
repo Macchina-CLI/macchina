@@ -1,5 +1,4 @@
 use crate::theme::borders::Border;
-use crate::theme::color::MacchinaColor;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tui::style::Color;
@@ -33,7 +32,10 @@ impl Randomize {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ASCII {
     path: Option<PathBuf>,
-    color: Option<MacchinaColor>,
+
+    #[serde(default)]
+    #[serde(with = "color_parser_tui::optional")]
+    color: Option<Color>,
 }
 
 impl Default for ASCII {
@@ -48,7 +50,7 @@ impl Default for ASCII {
 impl ASCII {
     pub fn get_color(&self) -> Option<Color> {
         if let Some(col) = &self.color {
-            return Some(col.to_tui_colors());
+            return Some(*col);
         }
 
         None
