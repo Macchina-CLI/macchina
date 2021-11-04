@@ -130,8 +130,8 @@ dependencies = [
 
 [[package]]
 name = "color-parser-tui"
-version = "0.1.0"
-source = "git+https://git.uttarayan.me/uttarayan/color-parser-tui#399e956afe067e756312c43c2cb8f9695cc174f0"
+version = "0.1.1"
+source = "git+https://git.uttarayan.me/uttarayan/color-parser-tui#d2ffca2c1d795abad2b8566113522396192520a7"
 dependencies = [
  "serde",
  "tui",
@@ -509,6 +509,7 @@ dependencies = [
  "serde",
  "serde_json",
  "structopt",
+ "strum",
  "toml",
  "tui",
  "unicode-width",
@@ -962,6 +963,12 @@ dependencies = [
  "quote",
  "syn",
 ]
+
+[[package]]
+name = "strum"
+version = "0.22.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7ac893c7d471c8a21f31cfe213ec4f6d9afeed25537c772e08ef3f005f8729e"
 
 [[package]]
 name = "syn"

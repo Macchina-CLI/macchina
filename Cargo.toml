@@ -27,6 +27,7 @@ dirs = "4.0"
 toml = "0.5.8"
 serde_json = "1.0.68"
 color-parser-tui = { git = "https://git.uttarayan.me/uttarayan/color-parser-tui" }
+strum = "0.22.0"
 
 [build-dependencies]
 vergen = { version = "5.1.16", default-features = false, features = ["build", "cargo", "git", "rustc"] }

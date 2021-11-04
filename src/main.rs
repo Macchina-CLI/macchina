@@ -19,12 +19,11 @@ mod doctor;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
-use crate::theme::color::MacchinaColor;
+use crate::theme::color::make_random_color;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use data::Readout;
-use rand::Rng;
 use std::io::Stdout;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
@@ -126,18 +125,12 @@ fn create_theme(opt: &Opt) -> Theme {
         }
     }
 
-    let color_variants = MacchinaColor::variants();
-    let make_random_color = || {
-        let mut random = rand::thread_rng();
-        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())]).unwrap()
-    };
-
     if theme.randomize.is_key_color_randomized() {
-        theme.set_key_color(make_random_color().to_tui_colors());
+        theme.set_key_color(make_random_color());
     }
 
     if theme.randomize.is_separator_color_randomized() {
-        theme.set_separator_color(make_random_color().to_tui_colors());
+        theme.set_separator_color(make_random_color());
     }
 
     if theme.are_bar_delimiters_hidden() {
