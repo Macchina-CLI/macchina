@@ -20,6 +20,8 @@ arg_enum! {
         LightMagenta,
         LightCyan,
         White,
+        // Indexed(u8),
+        // Rgb(u8,u8,u8),
     }
 }
 

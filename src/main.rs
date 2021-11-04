@@ -133,11 +133,11 @@ fn create_theme(opt: &Opt) -> Theme {
     };
 
     if theme.randomize.is_key_color_randomized() {
-        theme.set_key_color(make_random_color());
+        theme.set_key_color(make_random_color().to_tui_colors());
     }
 
     if theme.randomize.is_separator_color_randomized() {
-        theme.set_separator_color(make_random_color());
+        theme.set_separator_color(make_random_color().to_tui_colors());
     }
 
     if theme.are_bar_delimiters_hidden() {

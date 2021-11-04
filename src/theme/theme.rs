@@ -1,4 +1,3 @@
-use crate::theme::color::*;
 use crate::theme::components::*;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -23,15 +22,17 @@ pub struct Theme {
     prefer_small_ascii: bool,
     hide_bar_delimiters: bool,
     pub keys: Keys,
-    key_color: MacchinaColor,
-    separator_color: MacchinaColor,
+    #[serde(with = "color_parser_tui")]
+    key_color: Color,
+    #[serde(with = "color_parser_tui")]
+    separator_color: Color,
 }
 
 impl Default for Theme {
     fn default() -> Self {
         Theme {
-            key_color: MacchinaColor::Blue,
-            separator_color: MacchinaColor::Yellow,
+            key_color: Color::Blue,
+            separator_color: Color::Yellow,
             separator: String::from("-"),
             hide_ascii: false,
             hide_bar_delimiters: false,
@@ -85,18 +86,18 @@ impl Theme {
     }
 
     pub fn get_separator_color(&self) -> Color {
-        self.separator_color.to_tui_colors()
+        self.separator_color
     }
 
-    pub fn set_separator_color(&mut self, color: MacchinaColor) {
+    pub fn set_separator_color(&mut self, color: Color) {
         self.separator_color = color
     }
 
     pub fn get_key_color(&self) -> Color {
-        self.key_color.to_tui_colors()
+        self.key_color
     }
 
-    pub fn set_key_color(&mut self, color: MacchinaColor) {
+    pub fn set_key_color(&mut self, color: Color) {
         self.key_color = color
     }
 
