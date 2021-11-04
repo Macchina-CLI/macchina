@@ -1,3 +1,4 @@
+mod base;
 pub mod color;
 pub mod components;
-pub mod theme;
+pub use base::*;

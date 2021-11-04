@@ -153,7 +153,7 @@ impl Bar {
     }
 
     pub fn are_delimiters_hidden(&self) -> bool {
-        return self.symbol_open == '\0' && self.symbol_close == '\0';
+        self.symbol_open == '\0' && self.symbol_close == '\0'
     }
 }
 
