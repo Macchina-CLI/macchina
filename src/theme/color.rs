@@ -1,5 +1,5 @@
-use tui::style::Color;
 use rand::seq::SliceRandom;
+use tui::style::Color;
 
 pub fn make_random_color() -> Color {
     use Color::*;
