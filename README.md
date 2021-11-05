@@ -158,6 +158,12 @@ cargo install macchina
 pkgin install macchina
 ```
 
+### openSUSE Tumbleweed
+
+```
+zypper in macchina
+```
+
 ### Homebrew
 
 ```
