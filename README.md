@@ -40,7 +40,7 @@ fetching-related issues should be filed on that repository.
 
 # Performance <a name="performance"></a>
 
-_macchina_ is __lightning fast__, see for yourself:
+_macchina_ is **lightning fast**, see for yourself:
 
 > Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
 
@@ -78,8 +78,8 @@ i5-8265U CPU @ 1.60GHz**
 ## Themes
 
 _macchina_ has a theming system which you can use to customize pretty much any
-visual aspect of the program. Themes live __outside__ the configuration file,
-so you can create a bunch of them and switch between them at any time. 
+visual aspect of the program. Themes live **outside** the configuration file,
+so you can create a bunch of them and switch between them at any time.
 
 Learn how to [make your own](#customization) — there is
 [documentation](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation)
@@ -138,10 +138,12 @@ The following are required dependencies if you're building from source or instal
 The following are _optional_ dependencies, they only extend what macchina can fetch:
 
 **Linux**:
+
 - _wmctrl_
-   - **Gentoo**: _portage-utils_
+  - **Gentoo**: _portage-utils_
 
 **NetBSD**:
+
 - _wmctrl_
 
 # Installation
