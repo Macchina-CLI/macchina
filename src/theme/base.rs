@@ -21,9 +21,9 @@ pub struct Theme {
     hide_ascii: bool,
     prefer_small_ascii: bool,
     pub keys: Keys,
-    #[serde(with = "color_parser_tui")]
+    #[serde(with = "color_to_tui")]
     key_color: Color,
-    #[serde(with = "color_parser_tui")]
+    #[serde(with = "color_to_tui")]
     separator_color: Color,
 }
 

@@ -129,9 +129,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "color-parser-tui"
-version = "0.1.1"
-source = "git+https://git.uttarayan.me/uttarayan/color-parser-tui#d2ffca2c1d795abad2b8566113522396192520a7"
+name = "color-to-tui"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eeac2a21bf8f5b76ff69cfb793d6496c639d359d50dd72348f89568a8490a25"
 dependencies = [
  "serde",
  "tui",
@@ -500,7 +501,7 @@ dependencies = [
  "atty",
  "bytesize",
  "clap",
- "color-parser-tui",
+ "color-to-tui",
  "colored",
  "dirs",
  "lazy_static",

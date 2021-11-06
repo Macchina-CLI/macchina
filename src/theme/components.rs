@@ -34,7 +34,7 @@ pub struct ASCII {
     path: Option<PathBuf>,
 
     #[serde(default)]
-    #[serde(with = "color_parser_tui::optional")]
+    #[serde(with = "color_to_tui::optional")]
     color: Option<Color>,
 }
 
