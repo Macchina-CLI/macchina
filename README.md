@@ -1,5 +1,5 @@
 <div align="center">
-<h1>Macchina</h1>
+<h1>macchina</h1>
 
 Fast, minimal and customizable system information frontend.
 
