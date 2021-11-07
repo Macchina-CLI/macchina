@@ -1,5 +1,5 @@
 use crate::cli::Opt;
-use crate::theme::Theme;
+use crate::theme::theme::Theme;
 use clap::arg_enum;
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
@@ -33,7 +33,6 @@ arg_enum! {
         DiskSpace,
         Memory,
         Battery,
-
     }
 }
 
@@ -65,10 +64,10 @@ fn colored_glyphs(glyph: &str, blocks: usize) -> String {
 }
 
 fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
-    if theme.get_bar_style().symbol_open == '\0' {
+    if theme.bar.are_delimiters_hidden() {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
-        let glyph = theme.get_bar_style().glyph.clone();
+        let glyph = theme.bar.get_glyph().clone();
         let glyphs = colored_glyphs(&glyph, blocks);
 
         if blocks == 10 {
@@ -76,23 +75,23 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         } else {
             span_vector[0].content = Cow::from(format!("{} ", glyphs));
         }
-        span_vector[0].style = Style::default().fg(theme.get_color());
+        span_vector[0].style = Style::default().fg(theme.get_key_color());
 
         span_vector[1].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-        if theme.get_color() == Color::White {
+        if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
         return Spans::from(span_vector);
     }
 
     let mut span_vector = vec![
-        Span::raw(format!("{} ", theme.get_bar_style().symbol_open)),
+        Span::raw(format!("{} ", theme.bar.get_symbol_open())),
         Span::raw(""),
         Span::raw(""),
-        Span::raw(format!(" {}", theme.get_bar_style().symbol_close)),
+        Span::raw(format!(" {}", theme.bar.get_symbol_close())),
     ];
 
-    let glyph = theme.get_bar_style().glyph.clone();
+    let glyph = theme.bar.get_glyph().clone();
     let glyphs = colored_glyphs(&glyph, blocks);
 
     if blocks == 10 {
@@ -100,10 +99,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     } else {
         span_vector[1].content = Cow::from(format!("{} ", glyphs));
     }
-    span_vector[1].style = Style::default().fg(theme.get_color());
+    span_vector[1].style = Style::default().fg(theme.get_key_color());
 
     span_vector[2].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
-    if theme.get_color() == Color::White {
+    if theme.get_key_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
     Spans::from(span_vector)
@@ -144,9 +143,16 @@ pub fn get_all_readouts<'a>(
 
         let kernel_readout = KernelReadout::new();
 
-        match kernel_readout.pretty_kernel() {
-            Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
-            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+        if opt.long_kernel {
+            match kernel_readout.pretty_kernel() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
+        } else {
+            match kernel_readout.os_release() {
+                Ok(s) => readout_values.push(Readout::new(ReadoutKey::Kernel, s)),
+                Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Kernel, e)),
+            }
         }
     }
 
@@ -166,13 +172,22 @@ pub fn get_all_readouts<'a>(
 
     let window_manager = general_readout.window_manager();
     let desktop_environment = general_readout.desktop_environment();
+    let session = general_readout.session();
 
     // Check if the user is using only a Window Manager.
     match (window_manager, desktop_environment) {
         (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
             if should_display.contains(&ReadoutKey::WindowManager) {
-                readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                if let Ok(s) = session {
+                    readout_values.push(Readout::new(
+                        ReadoutKey::WindowManager,
+                        format!("{} ({})", w, s),
+                    ));
+                } else {
+                    readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                }
             }
+
             readout_values.push(Readout::new_err(
                 ReadoutKey::DesktopEnvironment,
                 ReadoutError::Warning(String::from(
@@ -189,9 +204,19 @@ pub fn get_all_readouts<'a>(
                     }
                 }
             }
+
             if should_display.contains(&ReadoutKey::WindowManager) {
                 match general_readout.window_manager() {
-                    Ok(s) => readout_values.push(Readout::new(ReadoutKey::WindowManager, s)),
+                    Ok(w) => {
+                        if let Ok(s) = session {
+                            readout_values.push(Readout::new(
+                                ReadoutKey::WindowManager,
+                                format!("{} ({})", w, s),
+                            ));
+                        } else {
+                            readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                        }
+                    }
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::WindowManager, e)),
                 }
             }
@@ -212,7 +237,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::LocalIP) {
-        match general_readout.local_ip() {
+        match general_readout.local_ip(opt.interface.to_owned()) {
             Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
             Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
         }
@@ -249,7 +274,7 @@ pub fn get_all_readouts<'a>(
         match general_readout.uptime() {
             Ok(s) => readout_values.push(Readout::new(
                 ReadoutKey::Uptime,
-                format_uptime(s, opt.short_uptime),
+                format_uptime(s, opt.long_uptime),
             )),
             Err(e) => readout_values.push(Readout::new_err(ReadoutKey::Uptime, e)),
         }
@@ -278,7 +303,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match (general_readout.backlight(), opt.bar) {
+        match (general_readout.backlight(), theme.bar.is_visible()) {
             (Ok(b), false) => {
                 readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
             }
@@ -291,7 +316,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorLoad) {
-        match (general_readout.cpu_usage(), opt.bar) {
+        match (general_readout.cpu_usage(), theme.bar.is_visible()) {
             (Ok(u), true) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
@@ -330,7 +355,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if opt.bar {
+                if theme.bar.is_visible() {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
@@ -355,7 +380,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if opt.bar {
+                if theme.bar.is_visible() {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {

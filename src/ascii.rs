@@ -1,3 +1,4 @@
+use colored::Colorize;
 use io::Read;
 use std::fs::File;
 use std::io::{self, BufReader};
@@ -13,6 +14,38 @@ lazy_static! {
     static ref MAGENTA: Style = Style::default().fg(Color::Magenta);
     static ref WHITE: Style = Style::default().fg(Color::White);
     static ref BLACK: Style = Style::default().fg(Color::Black);
+}
+
+pub fn list_ascii_artists() {
+    println!(
+        "- FreeBSD ASCII art (small variant) was taken from {}' {}",
+        "Dylan Araps".blue(),
+        "pfetch".green()
+    );
+
+    println!(
+        "- macOS ASCII art (big variant) was taken from {}' {}",
+        "Dylan Araps".blue(),
+        "Neofetch".green()
+    );
+
+    println!(
+        "- macOS ASCII art (small variant) was made by {} ({})",
+        "Joan Stark".blue(),
+        "jgs".yellow()
+    );
+
+    println!(
+        "- Linux ASCII art (big variant) was made by {} ({})",
+        "Joan Stark".blue(),
+        "jgs".yellow()
+    );
+
+    println!(
+        "- Linux ASCII art (small variant) was taken from {} ({})",
+        "Christopher Johnson's ASCII art collection".blue(),
+        "unknown artist".yellow()
+    );
 }
 
 pub fn get_ascii_from_file_override_color(
@@ -118,6 +151,7 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Span::styled(" ooo  oo  ooo  ", *GREEN),
         Span::styled(" oooooooooooo  ", *GREEN),
     ];
+
     vec![Text::from(
         art.iter()
             .map(|f| Spans::from(f.to_owned()))
@@ -241,6 +275,23 @@ pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
         Spans::from(vec![Span::styled(" (|     | )", *WHITE)]),
         Spans::from(vec![Span::styled("/'\\_   _/`\\", *WHITE)]),
         Spans::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
+    ];
+
+    vec![Text::from(art)]
+}
+
+#[cfg(target_os = "freebsd")]
+pub(crate) fn get_ascii_art(small: bool) -> Vec<Text<'static>> {
+    // The following ASCII art was made by Dylan Araps
+    // and taken from https://github.com/dylanaraps/pfetch
+
+    let art: Vec<Spans> = vec![
+        Spans::from(vec![Span::styled("/\\,-'''''-,/\\", *RED)]),
+        Spans::from(vec![Span::styled("\\_)       (_//", *RED)]),
+        Spans::from(vec![Span::styled(" |           |", *RED)]),
+        Spans::from(vec![Span::styled(" |           |", *RED)]),
+        Spans::from(vec![Span::styled("  ;         ;", *RED)]),
+        Spans::from(vec![Span::styled("   '-_____-'", *RED)]),
     ];
 
     vec![Text::from(art)]

@@ -1,2 +1,6 @@
 # Changelog
-- Update libmacchina dependency to v2.1.4, finally fixing the brightness readout.
+
+## macchina v5.0.3
+
+- general: moved miscellaneous theme structures to separate modules.
+- netbsd: subtract "one" from pkgsrc's package count.

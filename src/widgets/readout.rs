@@ -1,5 +1,6 @@
 use crate::data::{Readout, ReadoutKey};
-use crate::theme::Theme;
+use crate::theme::components::Palette;
+use crate::theme::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
 use tui::layout::{Margin, Rect};
@@ -13,7 +14,6 @@ pub struct ReadoutList<'a> {
     items: Vec<Readout<'a>>,
     theme: &'a Theme,
     block_inner_margin: Margin,
-    palette: bool,
 }
 
 impl<'a, 'b> ReadoutList<'a> {
@@ -30,7 +30,6 @@ impl<'a, 'b> ReadoutList<'a> {
                 horizontal: 0,
                 vertical: 0,
             },
-            palette: false,
         }
     }
 
@@ -58,11 +57,6 @@ impl<'a, 'b> ReadoutList<'a> {
         self.block_inner_margin = margin;
         self
     }
-
-    pub fn palette(mut self, palette: bool) -> ReadoutList<'a> {
-        self.palette = palette;
-        self
-    }
 }
 
 impl<'a> Widget for ReadoutList<'a> {
@@ -85,7 +79,7 @@ impl<'a> Widget for ReadoutList<'a> {
         }
 
         let mut height = 0;
-        let keys = self.keys_to_text(&self.theme.get_color());
+        let keys = self.keys_to_text(&self.theme.get_key_color());
         let max_key_width = Self::get_max_key_width(&keys);
         let themed_separator = Self::get_themed_separator(
             &self.theme.get_separator(),
@@ -127,8 +121,8 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if self.palette {
-            self.print_palette(buf, &list_area, &mut height);
+        if let Some(palette) = self.theme.get_palette_type() {
+            self.print_palette(buf, &list_area, &mut height, palette);
         }
 
         Self::render_block(
@@ -144,54 +138,161 @@ impl<'a> Widget for ReadoutList<'a> {
 }
 
 impl<'a> ReadoutList<'a> {
-    fn print_palette(&self, buf: &mut Buffer, list_area: &Rect, height: &mut u16) {
-        let colors = [
-            // Bright Black
-            Color::Black,
+    fn print_palette(
+        &self,
+        buf: &mut Buffer,
+        list_area: &Rect,
+        height: &mut u16,
+        palette: &Palette,
+    ) {
+        let light_colors = [
+            Color::DarkGray,
             Color::LightRed,
             Color::LightGreen,
             Color::LightYellow,
             Color::LightBlue,
             Color::LightMagenta,
             Color::LightCyan,
+            Color::Gray,
+        ];
+
+        let dark_colors = [
+            Color::Black,
+            Color::Red,
+            Color::Green,
+            Color::Yellow,
+            Color::Blue,
+            Color::Magenta,
+            Color::Cyan,
             Color::White,
         ];
 
-        let span_vector: Vec<_> = colors
-            .iter()
-            .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
-            .collect();
+        let span_vector = |colors: &[Color]| -> Vec<_> {
+            colors
+                .iter()
+                .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
+                .collect()
+        };
 
-        let spans = Spans::from(span_vector);
+        let spans = match palette {
+            Palette::Light => vec![Spans::from(span_vector(&light_colors))],
+            Palette::Dark => vec![Spans::from(span_vector(&dark_colors))],
+            Palette::Full => vec![
+                Spans::from(span_vector(&dark_colors)),
+                Spans::from(span_vector(&light_colors)),
+            ],
+        };
+
         let padding = self.theme.get_padding() as u16;
 
         let area = Rect::new(
             list_area.x + padding,
             list_area.y + *height + 1,
             list_area.width - padding,
-            1,
+            spans.len() as u16,
         );
 
         Paragraph::new(spans).render(area, buf);
 
-        *height += 2;
+        *height += area.height + 1;
     }
 
     fn keys_to_text(&self, key_color: &Color) -> HashMap<ReadoutKey, Text> {
         let color_style = Style::default().fg(*key_color);
 
-        self.items
-            .iter()
-            .map(|i| {
-                (
-                    i.0,
-                    Text::styled(
-                        self.theme.key(&i.0, self.theme.default_abbreviation()),
-                        color_style,
-                    ),
-                )
-            })
-            .collect()
+        let mut keys = HashMap::new();
+
+        keys.insert(
+            ReadoutKey::Host,
+            Text::styled(&self.theme.keys.host, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Machine,
+            Text::styled(&self.theme.keys.machine, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Kernel,
+            Text::styled(&self.theme.keys.kernel, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Distribution,
+            Text::styled(&self.theme.keys.distro, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::OperatingSystem,
+            Text::styled(&self.theme.keys.os, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::DesktopEnvironment,
+            Text::styled(&self.theme.keys.de, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::WindowManager,
+            Text::styled(&self.theme.keys.wm, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Packages,
+            Text::styled(&self.theme.keys.packages, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Shell,
+            Text::styled(&self.theme.keys.shell, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Terminal,
+            Text::styled(&self.theme.keys.terminal, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::LocalIP,
+            Text::styled(&self.theme.keys.local_ip, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Battery,
+            Text::styled(&self.theme.keys.battery, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Backlight,
+            Text::styled(&self.theme.keys.backlight, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Resolution,
+            Text::styled(&self.theme.keys.resolution, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Memory,
+            Text::styled(&self.theme.keys.memory, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Processor,
+            Text::styled(&self.theme.keys.cpu, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::ProcessorLoad,
+            Text::styled(&self.theme.keys.cpu_load, color_style),
+        );
+
+        keys.insert(
+            ReadoutKey::Uptime,
+            Text::styled(&self.theme.keys.uptime, color_style),
+        );
+
+        keys
     }
 
     fn get_max_key_width(keys: &HashMap<ReadoutKey, Text>) -> usize {

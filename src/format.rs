@@ -1,10 +1,8 @@
-use byte_unit::AdjustedByte;
-use bytesize::ByteSize;
 use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 
 /// This function should return a new `String` constructed from the value \
 /// returned by `traits::GeneralReadout::uptime()`
-pub fn uptime(uptime: usize, shorthand: bool) -> String {
+pub fn uptime(uptime: usize, long: bool) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = uptime as f32;
     // Uptime is formatted to "x days, y hours, z minutes" if the system
@@ -17,8 +15,8 @@ pub fn uptime(uptime: usize, shorthand: bool) -> String {
         let up_days = (uptime / 60.0 / 60.0 / 24.0).floor();
         let up_hours = (uptime / 60.0 / 60.0 % 24.0).floor();
         let up_minutes = (uptime / 60.0 % 60.0).floor();
-        match shorthand {
-            true => {
+        match long {
+            false => {
                 if up_days != 0.0 {
                     formatted_uptime.push_str(&up_days.to_string());
                     formatted_uptime.push_str("d ");
@@ -32,7 +30,7 @@ pub fn uptime(uptime: usize, shorthand: bool) -> String {
                     formatted_uptime.push('m');
                 }
             }
-            false => {
+            true => {
                 if up_days != 0.0 {
                     formatted_uptime.push_str(&up_days.to_string());
                     if (up_days - 1.0).abs() < 0.001 {
