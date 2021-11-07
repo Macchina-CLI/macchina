@@ -22,7 +22,9 @@ impl Opt {
                 Err(anyhow!("Failed to open configuration file."))
             }
         } else {
-            Err(anyhow!("Failed to locate the file, perhaps it doesn't exist."))
+            Err(anyhow!(
+                "Failed to locate the file, perhaps it doesn't exist."
+            ))
         }
     }
 
