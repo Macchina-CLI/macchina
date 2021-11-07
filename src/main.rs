@@ -95,7 +95,7 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
             .block(
                 Block::default()
                     .border_type(theme.r#box.get_border_type())
-                    .title(theme.r#box.get_title().unwrap_or(String::new()))
+                    .title(theme.r#box.get_title().unwrap_or_default())
                     .borders(Borders::ALL),
             );
     }
