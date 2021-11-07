@@ -1,6 +1,6 @@
 use crate::data::{Readout, ReadoutKey};
 use crate::theme::components::Palette;
-use crate::theme::theme::Theme;
+use crate::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
 use tui::layout::{Margin, Rect};
@@ -82,7 +82,7 @@ impl<'a> Widget for ReadoutList<'a> {
         let keys = self.keys_to_text(&self.theme.get_key_color());
         let max_key_width = Self::get_max_key_width(&keys);
         let themed_separator = Self::get_themed_separator(
-            &self.theme.get_separator(),
+            self.theme.get_separator(),
             &self.theme.get_separator_color(),
         );
 

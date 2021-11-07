@@ -19,12 +19,11 @@ mod doctor;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
-use crate::theme::color::MacchinaColor;
-use crate::theme::theme::Theme;
+use crate::theme::color::make_random_color;
+use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use data::Readout;
-use rand::Rng;
 use std::io::Stdout;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
@@ -96,7 +95,7 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
             .block(
                 Block::default()
                     .border_type(theme.r#box.get_border_type())
-                    .title(theme.r#box.get_title().unwrap_or(String::new()))
+                    .title(theme.r#box.get_title().unwrap_or_default())
                     .borders(Borders::ALL),
             );
     }
@@ -113,7 +112,7 @@ fn create_theme(opt: &Opt) -> Theme {
         for dir in array::IntoIter::new(dirs) {
             if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
                 found = true;
-                theme = Theme::from(custom_theme);
+                theme = custom_theme;
             }
         }
 
@@ -125,12 +124,6 @@ fn create_theme(opt: &Opt) -> Theme {
             println!("\x1b[35mSuggestion\x1b[m: Perhaps the theme doesn't exist?");
         }
     }
-
-    let color_variants = MacchinaColor::variants();
-    let make_random_color = || {
-        let mut random = rand::thread_rng();
-        MacchinaColor::from_str(color_variants[random.gen_range(0..color_variants.len())]).unwrap()
-    };
 
     if theme.randomize.is_key_color_randomized() {
         theme.set_key_color(make_random_color());
@@ -172,38 +165,38 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 
 fn list_themes() {
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-    for i in array::IntoIter::new(dirs) {
-        if let Some(dir) = i {
-            let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-            if !entries.is_empty() {
-                let custom_themes = entries.iter().filter(|&x| {
-                    if let Some(ext) = libmacchina::extra::path_extension(&x) {
-                        ext == "toml"
-                    } else {
-                        false
-                    }
-                });
-
-                if custom_themes.clone().count() == 0 {
-                    println!(
-                        "\nNo custom themes were found in {}",
-                        dir.join("macchina/themes")
-                            .to_string_lossy()
-                            .bright_yellow()
-                    )
+    // for i in array::IntoIter::new(dirs) {
+    //     if let Some(dir) = i {
+    for dir in array::IntoIter::new(dirs).flatten() {
+        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+        if !entries.is_empty() {
+            let custom_themes = entries.iter().filter(|&x| {
+                if let Some(ext) = libmacchina::extra::path_extension(x) {
+                    ext == "toml"
+                } else {
+                    false
                 }
+            });
 
-                custom_themes.for_each(|x| {
-                    if let Some(theme) = x.file_name() {
-                        let name = theme.to_string_lossy().replace(".toml", "");
-                        println!(
-                            "- {} ({}/macchina/themes)",
-                            name.bright_green(),
-                            &dir.to_string_lossy()
-                        );
-                    }
-                });
+            if custom_themes.clone().count() == 0 {
+                println!(
+                    "\nNo custom themes were found in {}",
+                    dir.join("macchina/themes")
+                        .to_string_lossy()
+                        .bright_yellow()
+                )
             }
+
+            custom_themes.for_each(|x| {
+                if let Some(theme) = x.file_name() {
+                    let name = theme.to_string_lossy().replace(".toml", "");
+                    println!(
+                        "- {} ({}/macchina/themes)",
+                        name.bright_green(),
+                        &dir.to_string_lossy()
+                    );
+                }
+            });
         }
     }
 }
