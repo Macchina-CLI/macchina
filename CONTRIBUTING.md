@@ -14,7 +14,7 @@ hinders performance considerably, it will unfortunately be rejected.
 
 Other than that, all contributions are welcome.
 
-## Alright, are there any coding conventions?
+## Alright, are there any specific code styles I should be following?
 
 I personally don't really think about that — We have a bot that will
 automatically format everything the best it can when you submit a PR; the end
