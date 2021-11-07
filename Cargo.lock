@@ -498,6 +498,7 @@ name = "macchina"
 version = "6.0.0"
 dependencies = [
  "ansi-to-tui",
+ "anyhow",
  "atty",
  "bytesize",
  "clap",

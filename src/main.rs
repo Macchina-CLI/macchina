@@ -22,6 +22,7 @@ use crate::data::ReadoutKey;
 use crate::theme::color::make_random_color;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
+use anyhow::Result;
 use atty::Stream;
 use data::Readout;
 use std::io::Stdout;
@@ -104,24 +105,23 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 }
 
 fn create_theme(opt: &Opt) -> Theme {
-    let mut found = false;
     let mut theme = Theme::default();
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
 
     if let Some(opt_theme) = &opt.theme {
-        for dir in array::IntoIter::new(dirs) {
-            if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
-                found = true;
-                theme = custom_theme;
+        for dir in array::IntoIter::new(dirs).flatten() {
+            match Theme::get_theme(opt_theme, dir) {
+                Ok(custom_theme) => {
+                    theme = custom_theme;
+                }
+                Err(e) => {
+                    println!("\x1b[31mError\x1b[0m: {:?}", e);
+                    println!(
+                        "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
+                        opt_theme
+                    );
+                }
             }
-        }
-
-        if !found {
-            println!(
-                "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
-                opt_theme
-            );
-            println!("\x1b[35mSuggestion\x1b[m: Perhaps the theme doesn't exist?");
         }
     }
 
@@ -201,7 +201,7 @@ fn list_themes() {
     }
 }
 
-fn main() -> Result<(), io::Error> {
+fn main() -> Result<()> {
     let opt: Opt;
     let arg_opt = Opt::from_args();
 
@@ -315,7 +315,7 @@ fn main() -> Result<(), io::Error> {
 fn write_buffer_to_console(
     backend: &mut CrosstermBackend<Stdout>,
     tmp_buffer: &mut Buffer,
-) -> Result<(), io::Error> {
+) -> Result<()> {
     let term_size = backend.size().unwrap_or_default();
 
     let (_, last_y) =

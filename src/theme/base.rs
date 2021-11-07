@@ -1,4 +1,5 @@
 use crate::theme::components::*;
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use toml;
@@ -127,15 +128,16 @@ impl Theme {
     }
 
     /// Searches for and returns a theme from a given directory.
-    pub fn get_theme(name: &str, dir: Option<PathBuf>) -> Result<Self, std::io::Error> {
+    pub fn get_theme(name: &str, dir: PathBuf) -> Result<Self> {
         use std::io::Read;
         let mut theme_path = std::path::PathBuf::new();
-        theme_path.push(dir.ok_or_else(|| {
-            std::io::Error::new(
-                std::io::ErrorKind::NotFound,
-                "$XDG_CONFIG_HOME was not found; fallback $HOME/.config also failed.",
-            )
-        })?);
+        // theme_path.push(dir.ok_or_else(|| {
+        //     std::io::Error::new(
+        //         std::io::ErrorKind::NotFound,
+        //         "$XDG_CONFIG_HOME was not found; fallback $HOME/.config also failed.",
+        //     )
+        // })?);
+        theme_path.push(dir);
 
         theme_path.push(std::path::Path::new(&format!(
             "macchina/themes/{}.toml",
@@ -143,11 +145,10 @@ impl Theme {
         )));
 
         let mut buffer: Vec<u8> = Vec::new();
-        let mut theme = std::fs::File::open(theme_path)?;
+        let mut theme = std::fs::File::open(&theme_path)
+            .with_context(|| format!("Failed to open the theme file {:?}", &theme_path))?;
         theme.read_to_end(&mut buffer)?;
 
-        toml::from_slice(&buffer).map_err(|_| {
-            std::io::Error::new(std::io::ErrorKind::InvalidData, "Could not parse theme.")
-        })
+        toml::from_slice(&buffer).context("Failed to parse the theme")
     }
 }
