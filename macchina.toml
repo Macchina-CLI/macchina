@@ -7,7 +7,7 @@ long_uptime = true
 # Lengthen shell output
 long_shell = false
 
-# Lengthen shell output
+# Lengthen kernel output
 long_kernel = false
 
 # Toggle between displaying the current shell or your user's default one.
@@ -21,7 +21,6 @@ current_shell = true
 # theme = ""
 
 # Displays only the specified readouts.
-# Conflicts with: hide
 # Accepted values (case-sensitive):
 #   - Host
 #   - Machine
@@ -31,7 +30,7 @@ current_shell = true
 #   - DesktopEnvironment
 #   - WindowManager
 #   - Resolution
-#   - Backlight [Linux/NetBSD only]
+#   - Backlight
 #   - Packages
 #   - LocalIP
 #   - Terminal

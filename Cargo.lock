@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.4.2"
+version = "3.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a9db3d72a399277fe86c202d244ae3bc719ab0fe5c0f63c24a8d20eb7b7b4fb"
+checksum = "ada721c3b9c24812ddb8bfbbdb43aff6022cb0f4f35bab2db18f42474b4b3934"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -485,7 +485,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "5.0.2"
+version = "5.0.3"
 dependencies = [
  "ansi-to-tui",
  "atty",
@@ -1076,9 +1076,9 @@ checksum = "8895849a949e7845e06bd6dc1aa51731a103c42707010a5b591c0038fb73385b"
 
 [[package]]
 name = "unicode-width"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9337591893a19b88d8d87f2cec1e73fad5cdfd10e5a6f349f498ad6ea2ffb1e3"
+checksum = "3ed742d4ea2bd1176e236172c8429aaf54486e7ac098db29ffe6529e0ce50973"
 
 [[package]]
 name = "unicode-xid"

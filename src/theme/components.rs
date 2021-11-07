@@ -1,3 +1,4 @@
+use crate::theme::color::MacchinaColor;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tui::style::Color;
@@ -17,54 +18,50 @@ impl Default for Randomize {
     }
 }
 
+impl Randomize {
+    pub fn is_key_color_randomized(&self) -> bool {
+        self.key_color
+    }
+
+    pub fn is_separator_color_randomized(&self) -> bool {
+        self.separator_color
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ASCII {
     path: Option<PathBuf>,
-    #[serde(with = "ColorDef")]
-    color: Color,
+    color: Option<MacchinaColor>,
 }
 
 impl Default for ASCII {
     fn default() -> Self {
         ASCII {
-            color: Color::Reset,
+            color: None,
             path: None,
         }
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Palette {
-    // Light color variants
-    Light,
-    // Dark color variants
-    Dark,
-    // Entire palette (16-colors)
-    Full,
+impl ASCII {
+    pub fn get_color(&self) -> Option<Color> {
+        if let Some(col) = &self.color {
+            return Some(col.to_tui_colors());
+        }
+
+        None
+    }
+
+    pub fn get_path(&self) -> Option<&PathBuf> {
+        self.path.as_ref()
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(remote = "Color")]
-pub enum ColorDef {
-    Reset,
-    Black,
-    Red,
-    Green,
-    Yellow,
-    Blue,
-    Magenta,
-    Cyan,
-    Gray,
-    DarkGray,
-    LightRed,
-    LightGreen,
-    LightYellow,
-    LightBlue,
-    LightMagenta,
-    LightCyan,
-    White,
-    Rgb(u8, u8, u8),
-    Indexed(u8),
+pub enum Palette {
+    Light,
+    Dark,
+    Full,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -96,12 +93,30 @@ impl Default for Block {
     }
 }
 
+impl Block {
+    pub fn get_title(&self) -> String {
+        self.title.to_owned()
+    }
+
+    pub fn is_visible(&self) -> bool {
+        self.visible
+    }
+
+    pub fn get_horizontal_margin(&self) -> u16 {
+        self.inner_margin.x
+    }
+
+    pub fn get_vertical_margin(&self) -> u16 {
+        self.inner_margin.y
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Bar {
-    pub glyph: String,
-    pub symbol_open: char,
-    pub symbol_close: char,
-    pub visible: bool,
+    glyph: String,
+    symbol_open: char,
+    symbol_close: char,
+    visible: bool,
 }
 
 impl Default for Bar {
@@ -112,6 +127,33 @@ impl Default for Bar {
             symbol_close: ')',
             visible: false,
         }
+    }
+}
+
+impl Bar {
+    pub fn is_visible(&self) -> bool {
+        self.visible
+    }
+
+    pub fn get_glyph(&self) -> &str {
+        &self.glyph
+    }
+
+    pub fn get_symbol_open(&self) -> char {
+        self.symbol_open
+    }
+
+    pub fn get_symbol_close(&self) -> char {
+        self.symbol_close
+    }
+
+    pub fn hide_delimiters(&mut self) {
+        self.symbol_open = '\0';
+        self.symbol_close = '\0';
+    }
+
+    pub fn are_delimiters_hidden(&self) -> bool {
+        return self.symbol_open == '\0' && self.symbol_close == '\0';
     }
 }
 

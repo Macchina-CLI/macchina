@@ -1,11 +1,6 @@
 # Changelog
 
-## macchina v5.0.2
+## macchina v5.0.3
 
-- libmacchina/netbsd: fixed failing brightness readout.
-- libmacchina/netbsd: (somehow) fixed failing package count readout.
-- themes: the `custom_ascii.color` field is now optional, omitting it uses the
-  colors provided in the text file.
-- themes: color values (e.g. "Red", "Green", "Blue") are now case-insensitive. 
-- general: introduce a new readout, "Session" that is appended to your Window
-  Manager readout output. If the latter fails, so does the former.
+- general: moved miscellaneous theme structures to separate modules.
+- netbsd: subtract "one" from pkgsrc's package count.
