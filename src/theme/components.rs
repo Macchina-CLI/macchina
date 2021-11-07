@@ -99,7 +99,7 @@ impl Default for Block {
 
 impl Block {
     pub fn get_title(&self) -> Option<String> {
-        if let Some (t) = &self.title {
+        if let Some(t) = &self.title {
             return Some(t.to_owned());
         }
 
