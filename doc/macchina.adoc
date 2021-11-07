@@ -12,43 +12,84 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 
 == Synopsis
 
-*macchina* [_FLAGS_]... _OPTIONS_...
+*macchina* [_FLAGS_]...
 
 == Flags
 
 *--ascii-artists*::
    Lists the original artists of the ASCII art used by macchina.
 
-*-s, --current-shell*::
-   Toggles between the current shell or the default one.
-
 *-d, --doctor*::
    Checks the system for failures.
 
-*-e, --export-config*::
-   Prints the config file to stdout.
 
-*-h, --help*::
-   Prints help information
+*-e, --export-config*::
+   Prints a template configuration file to stdout.
+
+*-c, --config*=_FILE_::
+   Specify a custom path to a configuration file. 
+   This is helpful in cases where macchina fails to parse the configuration
+   file from the default path, i.e. *$XDG_CONFIG_HOME/macchina/macchina.toml*.
+
+*-t, --theme*=_THEME_::
+   Specify which theme to use. 
+   You should probably verify whether macchina was able to find your
+   theme with *--list-themes*.
 
 *-l, --list-themes*::
-   Lists all available themes: built-in and custom
+   Lists all available themes. 
+   Themes are *TOML* files which must be placed in 
+   *$XDG_CONFIG_HOME/macchina/themes*.
+   Whatever this flag returns to the console, can be used 
+   with the *--theme* flag.
+
+*-i, --interface*=_IF_NAME_::
+   Specify the network interface for the LocalIP readout,
+   e.g. "wlan0", "eth0".
+
+*-s, --current-shell*::
+   Toggles between the current shell or the default one.
 
 *-K, --long-kernel*::
-   Lengthens kernel output
+   Lengthens kernel output.
 
 *-S, --long-shell*::
-   Lengthens shell output
+   Lengthens shell output.
 
-*-U, --short-uptime*::
-   Lengthens uptime output
+*-U, --long-uptime*::
+   Lengthens uptime output.
+
+*-h, --help*::
+   Prints help information.
 
 *-v, --version*::
-   Prints version information
+   Prints version information.
 
-== Resources
+*-o, --show*::
+   Displays only the specified readouts. 
+   Possible values are (case-sensitive):
+   - Host
+   - Machine
+   - Kernel
+   - Distribution
+   - OperatingSystem
+   - DesktopEnvironment
+   - WindowManager
+   - Packages
+   - Shell
+   - Terminal
+   - LocalIP
+   - Backlight
+   - Resolution
+   - Uptime
+   - Processor
+   - ProcessorLoad
+   - Memory
+   - Battery
 
-*Repository:* https://github.com/Macchina-CLI/macchina
+== More information
+
+For more information, please visit the macchina repository: https://github.com/Macchina-CLI/macchina
 
 == Copyright
 

@@ -1,0 +1,336 @@
+'\" t
+.\"     Title: macchina
+.\"    Author: Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
+.\" Generator: Asciidoctor 2.0.16
+.\"      Date: 2021-11-07
+.\"    Manual: MACCHINA
+.\"    Source: MACCHINA
+.\"  Language: English
+.\"
+.TH "MACCHINA" "1" "2021-11-07" "MACCHINA" "MACCHINA"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+macchina \- A system information fetcher, with an (unhealthy) emphasis on performance.
+.SH "SYNOPSIS"
+.sp
+\fBmacchina\fP [\fIFLAGS\fP]...
+.SH "FLAGS"
+.sp
+\fB\-\-ascii\-artists\fP
+.RS 4
+Lists the original artists of the ASCII art used by \fBmacchina\fP.
+.RE
+.sp
+\fB\-d, \-\-doctor\fP
+.RS 4
+Checks the system for failures.
+.RE
+.sp
+\fB\-s, \-\-current\-shell\fP
+.RS 4
+Toggles between the current shell or the default one.
+.RE
+.sp
+\fB\-e, \-\-export\-config\fP
+.RS 4
+Prints a template configuration file to stdout.
+.RE
+.sp
+\fB\-c, \-\-config\fP=\fIFILE\fP
+.RS 4
+Specify a custom path to a configuration file.
+This is helpful in cases where \fBmacchina\fP fails to parse the configuration
+file from the default path, i.e. \fB$XDG_CONFIG_HOME/macchina/macchina.toml\fP.
+.RE
+.sp
+\fB\-t, \-\-theme\fP=\fITHEME\fP
+.RS 4
+Specify which theme to use.
+You should probably verify whether \fBmacchina\fP was able to find your
+theme with \fB\-\-list\-themes\fP.
+.RE
+.sp
+\fB\-l, \-\-list\-themes\fP
+.RS 4
+Lists all available themes.
+Themes are \fBTOML\fP files which must be placed in
+\fB$XDG_CONFIG_HOME/macchina/themes\fP.
+Whatever this flag returns to the console, can be used with the \fB\-\-theme\fP flag.
+.RE
+.sp
+\fB\-K, \-\-long\-kernel\fP
+.RS 4
+Lengthens kernel output.
+.RE
+.sp
+\fB\-S, \-\-long\-shell\fP
+.RS 4
+Lengthens shell output.
+.RE
+.sp
+\fB\-U, \-\-long\-uptime\fP
+.RS 4
+Lengthens uptime output.
+.RE
+.sp
+\fB\-h, \-\-help\fP
+.RS 4
+Prints help information.
+.RE
+.sp
+\fB\-v, \-\-version\fP
+.RS 4
+Prints version information.
+.RE
+.sp
+\fB\-o, \-\-show\fP
+.RS 4
+Displays only the specified readouts.
+Possible values are (case\-sensitive):
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Host
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Machine
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Kernel
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Distribution
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+OperatingSystem
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+DesktopEnvironment
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+WindowManager
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Packages
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Shell
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Terminal
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+LocalIP
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Backlight
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Resolution
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Uptime
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Processor
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+ProcessorLoad
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Memory
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Battery
+.RE
+.RE
+.SH "MORE INFORMATION"
+.sp
+For more information, please visit the \fBmacchina\fP \fBrepository\fP: \c
+.URL "https://github.com/Macchina\-CLI/macchina" "" ""
+.SH "COPYRIGHT"
+.sp
+MIT License
+.sp
+Copyright (c) 2021 Aziz Ben Ali
+.sp
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+.sp
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+.sp
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+.SH "AUTHOR"
+.sp
+Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
