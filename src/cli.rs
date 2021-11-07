@@ -33,7 +33,7 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub doctor: bool,
 
-    #[structopt(short = "U", long = "short-uptime", help = "Lengthens uptime output")]
+    #[structopt(short = "U", long = "long-uptime", help = "Lengthens uptime output")]
     pub long_uptime: bool,
 
     #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
