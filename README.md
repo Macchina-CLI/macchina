@@ -224,7 +224,12 @@ with your operating system.
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
 _macchina_, like many other open-source projects, would not be where it is
-right now without the help of its contributors, thank you all so much!
+right now without the help of its contributors — Thank you all so much!
+
+Looking to help? [Read this first.](CONTRIBUTING.md)
+
+The following are some awesome people that have helped make _macchina_ a really
+cool fetcher:
 
 - Support for **NetBSD** would not have been possible without the help and
   testing of NetBSD/pkgsrc package maintainer
