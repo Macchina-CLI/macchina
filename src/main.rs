@@ -162,7 +162,8 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    for dir in array::IntoIter::new(extra::config_data_paths()).flatten() {
+    let data_paths = array::IntoIter::new(extra::config_data_paths()).flatten();
+    for dir in data_paths {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         if !entries.is_empty() {
             let custom_themes = entries.iter().filter(|&x| {
@@ -182,13 +183,18 @@ fn list_themes() {
                 )
             }
 
+            if let Some(d) = dir.to_str() {
+                let whole_path = d.to_owned() + "/macchina/themes:";
+                println!("{}", whole_path.bright_blue());
+            }
+
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
                     let name = theme.to_string_lossy().replace(".toml", "");
                     println!(
-                        "- {} ({}/macchina/themes)",
+                        "{} {}",
+                        "-".bright_blue(),
                         name.bright_green(),
-                        &dir.to_string_lossy()
                     );
                 }
             });
