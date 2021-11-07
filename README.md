@@ -5,7 +5,7 @@ Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
-<img src="screenshots/preview.png" alt="Preview" />
+<img src="assets/preview.png" alt="Preview" />
 
 <a href="https://crates.io/crates/macchina">
     <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
