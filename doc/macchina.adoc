@@ -27,20 +27,20 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
    Prints a template configuration file to stdout.
 
 *-c, --config*=_FILE_::
-   Specify a custom path to a configuration file. 
+   Specify a custom path to a configuration file.
    This is helpful in cases where macchina fails to parse the configuration
    file from the default path, i.e. *$XDG_CONFIG_HOME/macchina/macchina.toml*.
 
 *-t, --theme*=_THEME_::
-   Specify which theme to use. 
+   Specify which theme to use.
    You should probably verify whether macchina was able to find your
    theme with *--list-themes*.
 
 *-l, --list-themes*::
-   Lists all available themes. 
-   Themes are *TOML* files which must be placed in 
+   Lists all available themes.
+   Themes are *TOML* files which must be placed in
    *$XDG_CONFIG_HOME/macchina/themes*.
-   Whatever this flag returns to the console, can be used 
+   Whatever this flag returns to the console, can be used
    with the *--theme* flag.
 
 *-i, --interface*=_IF_NAME_::
@@ -66,7 +66,7 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
    Prints version information.
 
 *-o, --show*::
-   Displays only the specified readouts. 
+   Displays only the specified readouts.
    Possible values are (case-sensitive):
    - Host
    - Machine
