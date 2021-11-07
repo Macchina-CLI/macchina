@@ -191,11 +191,7 @@ fn list_themes() {
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
                     let name = theme.to_string_lossy().replace(".toml", "");
-                    println!(
-                        "{} {}",
-                        "-".bright_blue(),
-                        name.bright_green(),
-                    );
+                    println!("{} {}", "-".bright_blue(), name.bright_green(),);
                 }
             });
         }
