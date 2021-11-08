@@ -1,8 +1,9 @@
 use std::path::{Path, PathBuf};
 
-pub fn config_data_paths() -> [Option<PathBuf>; 3] {
+pub fn config_data_paths() -> [Option<PathBuf>; 4] {
     [
         dirs::config_dir(),
+        libmacchina::dirs::macos_config_dir(),
         libmacchina::dirs::localbase_dir(),
         libmacchina::dirs::usr_share_dir(),
     ]
