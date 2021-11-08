@@ -37,9 +37,7 @@ impl Opt {
                 return Opt::from_config_file(&path);
             } else if cfg!(target_os = "macos") {
                 if let Some(config_dir) = libmacchina::dirs::macos_config_dir() {
-                    let path = config_dir.join(PKG_NAME)
-                        .join(format!("{}.toml", PKG_NAME));
-
+                    let path = config_dir.join(PKG_NAME).join(format!("{}.toml", PKG_NAME));
 
                     if Path::exists(&path) {
                         return Opt::from_config_file(&path);
