@@ -26,6 +26,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Customization](#customization)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
+- [Packaging Status](#packaging-status)
 - [Contributors](#contributors)
 - [ASCII Art](#ascii-art)
 
@@ -218,6 +219,10 @@ source.
 You might prefer running the
 [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds
 with your operating system.
+
+# Packaging Status
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
 
 # Contributors
 
