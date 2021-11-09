@@ -438,7 +438,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "3.8.1"
-source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#ea932551d209fb2991257e853b6ad1bd3a2f93bc"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#1091a79055abe070e3d6f4a146a7e8a672b013ee"
 dependencies = [
  "byte-unit",
  "cfg-if",

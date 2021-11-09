@@ -95,7 +95,7 @@ what went wrong, `--doctor` has your back!
 
 The configuration file defines the behavior of macchina, it does not allow for
 much customization. See
-[macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
+[macchina.toml](macchina.toml)
 for an example configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
@@ -108,7 +108,7 @@ place `macchina.toml` in:
 # Customization
 
 Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](https://github.com/Macchina-CLI/macchina/blob/main/themes/Hydrogen.toml)
+[Hydrogen.toml](themes/Hydrogen.toml)
 for an example theme.
 
 In order for _macchina_ to be able to find your themes, you need to place them
