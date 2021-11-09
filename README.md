@@ -20,7 +20,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # Table of Contents
 
 - [About](#about)
-- [Performance](#performance)
+- [Benchmarks](#benchmarks)
 - [Features](#features)
 - [Configuration](#configuration)
 - [Customization](#customization)
@@ -32,17 +32,19 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
-memory usage, processor load and much more.
+memory usage, processor load and much more. _macchina_ is **basic** by default
+and **extensible** by design.
 
-If you're interested in the library _macchina_ uses to fetch system information,
-have a look at [libmacchina](https://github.com/Macchina-CLI/libmacchina);
-fetching-related issues should be filed on that repository.
+If you're interested in the library _macchina_ uses to fetch system
+information, have a look at
+[libmacchina](https://github.com/Macchina-CLI/libmacchina); fetching-related
+issues should be filed on that repository.
 
-# Performance <a name="performance"></a>
-
-_macchina_ is **lightning fast**, see for yourself:
+# Benchmarks <a name="benchmarks"></a>
 
 > Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
+
+_macchina_ is **lightning fast**, see for yourself:
 
 ## Linux
 
@@ -81,42 +83,57 @@ _macchina_ has a theming system which you can use to customize pretty much any
 visual aspect of the program. Themes live **outside** the configuration file,
 so you can create a bunch of them and switch between them at any time.
 
-Learn how to [make your own](#customization) — there is
+Why are they separate?
+
+- **Modularity** — themes are an engine of their own, and their sole purpose is
+  customizing the look of the program, so it makes sense to separate them from
+  the configuration file.
+- **Portability** — sure, the configuration file is shareable, but what if you
+  wanted to share the look of _your macchina_ and not its behavior? What if you
+  wanted to switch between dozens of themes that you very carefully designed? The
+  way we handle customization answers this need.
+
+Learn how to [make your own](#customization), and maybe have a look at the
 [documentation](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation)
-in case something is not quite so clear.
+while you're at it.
 
 ## Doctor
 
-_libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
-a feature in place that describes why they failed. You don't have to guess
-what went wrong, `--doctor` has your back!
+[libmacchina](https://github.com/Macchina-CLI/libmacchina) can sometimes fail
+to fetch certain readouts, and _macchina_ has a feature in place that describes
+why they failed. You don't have to guess what went wrong, `--doctor` has your
+back!
 
 # Configuration
 
 The configuration file defines the behavior of macchina, it does not allow for
-much customization. See
-[macchina.toml](macchina.toml)
-for an example configuration file.
+much customization. See [macchina.toml](macchina.toml) for an example
+configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
 place `macchina.toml` in:
 
-- `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
-- `$HOME/Library/Application Support/macchina` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina` on Windows.
+- Linux and BSDs:
+   - `$XDG_CONFIG_HOME/macchina`
+- macOS:
+   - `$HOME/.config/macchina` **or** `$HOME/Library/Application Support/macchina`
+- Windows:
+   - `{FOLDERID_RoamingAppData}/macchina`
 
 # Customization
 
 Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](themes/Hydrogen.toml)
-for an example theme.
+[Hydrogen.toml](themes/Hydrogen.toml) for an example theme.
 
 In order for _macchina_ to be able to find your themes, you need to place them
 in:
 
-- `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
-- `$HOME/Library/Application Support/macchina/themes` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
+- Linux and BSDs:
+   - `$XDG_CONFIG_HOME/macchina/themes`
+- macOS:
+   - `$HOME/.config/macchina/themes` **or** `$HOME/Library/Application Support/macchina/themes`
+- Windows:
+   - `{FOLDERID_RoamingAppData}/macchina`
 
 To start using your theme:
 
@@ -183,24 +200,6 @@ pkg install macchina
 scoop install macchina
 ```
 
-### Arch Linux
-
-- Use the AUR package that pulls and installs the latest release:
-
-```bash
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
-
-- Or use the AUR package that pulls and builds from upstream:
-
-```bash
-git clone https://aur.archlinux.org/macchina-git.git
-cd macchina
-makepkg -si
-```
-
 ### Nix
 
 - Where `<channel>` is `nixpkgs` or `nixos`:
@@ -209,14 +208,31 @@ makepkg -si
 nix-env -iA <channel>.macchina
 ```
 
-The
-[installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
-lists some other ways you can install the program or the steps to compile from
-source.
+### Arch Linux
 
-You might prefer running the
-[prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds
-with your operating system.
+- _Option 1:_ Use the AUR package that pulls and installs the latest release:
+
+```bash
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+- _Option 2:_ Use the AUR package that pulls and installs from upstream:
+
+```bash
+git clone https://aur.archlinux.org/macchina-git.git
+cd macchina
+makepkg -si
+```
+
+The [installation wiki
+page](https://github.com/grtcdr/macchina/wiki/Installation) lists some other
+ways you can install the program or the steps to compile from source.
+
+You might prefer running the [prebuilt
+binary](https://github.com/grtcdr/macchina/releases) that corresponds with your
+operating system.
 
 # Contributors
 
@@ -243,8 +259,8 @@ cool fetcher:
 
 Some of the ASCII art displayed in macchina is **not** our own.
 
-If you (the artist) are not okay with us using your ASCII art, please
-[contact me](mailto:ba.tahaaziz@gmail.com).
+If you (the artist) are not okay with us using your ASCII art, please [contact
+me](mailto:ba.tahaaziz@gmail.com).
 
 - FreeBSD ASCII art (small variant) was taken from Dylan Araps'
   [pfetch](https://github.com/dylanaraps/pfetch)
