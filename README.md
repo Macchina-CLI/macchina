@@ -134,14 +134,16 @@ To start using your theme:
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
 
 2. If all goes well, you should see one or more themes listed, e.g.:
+
 ```
 <path_where_themes_were_fount>:
 - Helium
 - Hydrogen
 ```
 
-3. In [macchina.toml](macchina.toml), set `theme` to one of the listed themes, 
-e.g.:
+3. In [macchina.toml](macchina.toml), set `theme` to one of the listed themes,
+   e.g.:
+
 ```bash
 theme = "Helium" # case-sensitive
 ```
