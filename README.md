@@ -219,6 +219,10 @@ You might prefer running the
 [prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds
 with your operating system.
 
+# Packaging Status
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
+
 # Contributors
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
