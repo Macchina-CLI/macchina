@@ -133,7 +133,7 @@ in:
 - macOS:
    - `$HOME/.config/macchina/themes` **or** `$HOME/Library/Application Support/macchina/themes`
 - Windows:
-   - `{FOLDERID_RoamingAppData}/macchina`
+   - `{FOLDERID_RoamingAppData}/macchina/themes`
 
 To start using your theme:
 
