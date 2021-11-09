@@ -111,14 +111,11 @@ much customization. See [macchina.toml](macchina.toml) for an example
 configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
-place `macchina.toml` in:
+place `macchina.toml` inside:
 
-- Linux and BSDs:
-   - `$XDG_CONFIG_HOME/macchina`
-- macOS:
-   - `$HOME/.config/macchina` **or** `$HOME/Library/Application Support/macchina`
-- Windows:
-   - `{FOLDERID_RoamingAppData}/macchina`
+- `$XDG_CONFIG_HOME/macchina` on Linux and BSDs.
+- `$HOME/.config/macchina` or `$HOME/Library/Application Support/macchina` on macOS.
+- `{FOLDERID_RoamingAppData}/macchina` on Windows.
 
 # Customization
 
@@ -128,19 +125,28 @@ Themes define the look, layout and styling of _macchina_. See
 In order for _macchina_ to be able to find your themes, you need to place them
 in:
 
-- Linux and BSDs:
-   - `$XDG_CONFIG_HOME/macchina/themes`
-- macOS:
-   - `$HOME/.config/macchina/themes` **or** `$HOME/Library/Application Support/macchina/themes`
-- Windows:
-   - `{FOLDERID_RoamingAppData}/macchina/themes`
+- `$XDG_CONFIG_HOME/macchina/themes` on Linux and BSDs.
+- `$HOME/.config/macchina/themes` or `$HOME/Library/Application Support/macchina/themes` on macOS.
+- `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
 
 To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
-2. Add that same name you see in your terminal to the `theme` option in
-   `macchina.toml`
-3. You're good to go! _macchina_ will start using your theme.
+
+2. If all goes well, you should see one or more themes listed, e.g.:
+```
+<path_where_themes_were_fount>:
+- Helium
+- Hydrogen
+```
+
+3. In [macchina.toml](macchina.toml), set `theme` to one of the listed themes, 
+e.g.:
+```bash
+theme = "Helium" # case-sensitive
+```
+
+4. You're good to go! _macchina_ will start using your theme.
 
 # Dependencies
 
