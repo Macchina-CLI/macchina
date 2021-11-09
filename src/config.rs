@@ -83,6 +83,10 @@ impl Opt {
             self.long_shell = true;
         }
 
+        if args.physical_cores {
+            self.physical_cores = true;
+        }
+
         if args.ascii_artists {
             self.ascii_artists = true;
         }

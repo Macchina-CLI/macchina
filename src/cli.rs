@@ -42,10 +42,13 @@ pub struct Opt {
     #[structopt(short = "K", long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
+    #[structopt(short = "C", long = "logical-cores", help = "Toggles between logical and physical cores")]
+    pub physical_cores: bool,
+
     #[structopt(
         short = "s",
         long = "current-shell",
-        help = "Toggles between the current shell or the default one"
+        help = "Toggles between the current shell and the default one"
     )]
     pub current_shell: bool,
 
@@ -110,6 +113,7 @@ impl Default for Opt {
             long_kernel: true,
             list_themes: false,
             ascii_artists: false,
+            physical_cores: false,
             config: None,
             theme: None,
             show: None,

@@ -359,9 +359,9 @@ dependencies = [
 
 [[package]]
 name = "if-addrs"
-version = "0.6.6"
+version = "0.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c9a83ec4af652890ac713ffd8dc859e650420a5ef47f7b9be29b6664ab50fbc8"
+checksum = "2273e421f7c4f0fc99e1934fe4776f59d8df2972f4199d703fc0da9f2a9f73de"
 dependencies = [
  "if-addrs-sys",
  "libc",
@@ -419,9 +419,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.106"
+version = "0.2.107"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a60553f9a9e039a333b4e9b20573b9e9b9c0bb3a11e201ccc48ef4283456d673"
+checksum = "fbe5e23404da5b4f555ef85ebed98fb4083e55a00c317800bc2a50ede9f3d219"
 
 [[package]]
 name = "libgit2-sys"
@@ -437,9 +437,8 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fd4643e9ed88128b1665f04f40ceadb93f0d1c407cec0471e8ef8f10d5da031"
+version = "3.8.1"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#ea932551d209fb2991257e853b6ad1bd3a2f93bc"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -885,9 +884,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.68"
+version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f690853975602e1bfe1ccbf50504d67174e3bcf340f23b5ea9992e0587a52d8"
+checksum = "e466864e431129c7e0d3476b92f20458e5879919a0596c6472738d9fa2d342f8"
 dependencies = [
  "itoa",
  "ryu",

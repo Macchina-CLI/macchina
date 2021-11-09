@@ -283,9 +283,17 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Processor) {
+        let cores = {
+                if opt.physical_cores == true {
+                    general_readout.cpu_physical_cores()
+                } else {
+                    general_readout.cpu_cores()
+                }
+        };
+
         match (
             general_readout.cpu_model_name(),
-            general_readout.cpu_cores(),
+            cores,
         ) {
             (Ok(m), Ok(c)) => {
                 readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
