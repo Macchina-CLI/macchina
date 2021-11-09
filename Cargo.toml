@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = "3.7.0"
+libmacchina = "3.8.0"
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.16.0", default-features = false, features = ["crossterm"] }

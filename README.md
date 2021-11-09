@@ -140,7 +140,6 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 **Linux**:
 
 - _wmctrl_
-  - **Gentoo**: _portage-utils_
 
 **NetBSD**:
 
