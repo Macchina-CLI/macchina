@@ -42,7 +42,11 @@ pub struct Opt {
     #[structopt(short = "K", long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
-    #[structopt(short = "C", long = "logical-cores", help = "Toggles between logical and physical cores")]
+    #[structopt(
+        short = "C",
+        long = "logical-cores",
+        help = "Toggles between logical and physical cores"
+    )]
     pub physical_cores: bool,
 
     #[structopt(
