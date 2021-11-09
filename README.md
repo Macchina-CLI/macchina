@@ -26,7 +26,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 - [Customization](#customization)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
-- [Packaging Status](#packagin-status)
+- [Packaging Status](#packaging-status)
 - [Contributors](#contributors)
 - [ASCII Art](#ascii-art)
 
