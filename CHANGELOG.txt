@@ -1,7 +1,6 @@
 # Changelog
 
-## macchina v5.0.4
+## macchina v5.0.5
 
-- Fixed a compilation error upon cargo installation.
-- Windows' dependencies have been bumped. (libmacchina#93)
-- Windows' Local IP readout is a lot more user-friendly now. (libmacchina#94)
+- NetBSD: Don't check the output of `session()`, addressing #217.
+- Wayland: Sway and Qtile users don't need `wmctrl` to see their window manager information.

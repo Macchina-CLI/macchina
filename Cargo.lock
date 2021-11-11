@@ -349,9 +349,9 @@ dependencies = [
 
 [[package]]
 name = "if-addrs"
-version = "0.6.6"
+version = "0.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c9a83ec4af652890ac713ffd8dc859e650420a5ef47f7b9be29b6664ab50fbc8"
+checksum = "2273e421f7c4f0fc99e1934fe4776f59d8df2972f4199d703fc0da9f2a9f73de"
 dependencies = [
  "if-addrs-sys",
  "libc",
@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.8.1"
+version = "3.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e0321d6f19276ddf27d6c9f5fee0e7f8bc4f4dbd0a9bdadc3d8dd99f3d4c46c"
+checksum = "0dfe8a95c66832770ca50c174f63faf36e3af3d1673c50e4ad40847bd2dcda64"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -451,7 +451,7 @@ dependencies = [
  "sysctl",
  "vergen",
  "walkdir",
- "windows 0.25.0",
+ "windows 0.26.0",
  "winreg",
 ]
 
@@ -500,7 +500,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "5.0.4"
+version = "5.0.5"
 dependencies = [
  "ansi-to-tui",
  "atty",
@@ -1143,9 +1143,9 @@ checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 
 [[package]]
 name = "vergen"
-version = "5.1.16"
+version = "5.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b62d4fc8fc9c81d139c8106b9f4e583e7c1eb36e320dc28d5c03aab86729495"
+checksum = "6cf88d94e969e7956d924ba70741316796177fa0c79a2c9f4ab04998d96e966e"
 dependencies = [
  "anyhow",
  "cfg-if",
@@ -1225,9 +1225,9 @@ dependencies = [
 
 [[package]]
 name = "windows"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e46c474738425c090573ecf5472d54ee5f78132e6195d0bbfcc2aabc0ed29f37"
+checksum = "347cdcaae1addebdff584aea1f9fbc0426dedbe1315f1dcf30c7a9876401cd25"
 dependencies = [
  "windows_aarch64_msvc",
  "windows_i686_gnu",
@@ -1238,9 +1238,9 @@ dependencies = [
 
 [[package]]
 name = "windows_aarch64_msvc"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3022d174000fcaeb6f95933fb04171ea0e21b9289ac57fe4400bfa148e41df79"
+checksum = "f7758986b022add546ae53ccad31f4852ce6bd2e2c2d3cc2b1d7d06dea0b90da"
 
 [[package]]
 name = "windows_gen"
@@ -1250,15 +1250,15 @@ checksum = "cf583322dc423ee021035b358e535015f7fd163058a31e2d37b99a939141121d"
 
 [[package]]
 name = "windows_i686_gnu"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03b1584eebf06654708eab4301152032c13c1e47f4a754ffc93c733f10993e85"
+checksum = "29261214caab8e589f61031ba1ccd5c3c25e61db2118a3aec4459f58ff798726"
 
 [[package]]
 name = "windows_i686_msvc"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f49df16591e9ad429997ec57d462b0cc45168f639d03489e8c2e933ea9c389d7"
+checksum = "43984fb3b944743142112ae926e7adeccb60f35bb81d43114f4d0fe2871f60ba"
 
 [[package]]
 name = "windows_macros"
@@ -1272,15 +1272,15 @@ dependencies = [
 
 [[package]]
 name = "windows_x86_64_gnu"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cb06177184100374f97d5e7261ee0b6adefa8ee32e38f87518ca22b519bb80e"
+checksum = "2a80fc90e1ad19769e596a3f58d0776319059e21cac9069a5a2a791362ce7190"
 
 [[package]]
 name = "windows_x86_64_msvc"
-version = "0.25.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3c27bcbb33ddbed3569e36c14775c99f72b97c72ce49f81d128637fb48a061f"
+checksum = "dc24ddac19a0cf02ad2b32d8897f202fc1a13ef285e2d4774e6610783cc8398f"
 
 [[package]]
 name = "winreg"
