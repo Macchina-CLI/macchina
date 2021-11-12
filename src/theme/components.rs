@@ -5,6 +5,31 @@ use tui::style::Color;
 use tui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Palette {
+    r#type: Option<PaletteType>,
+    glyph: Option<String>,
+}
+
+impl Default for Palette {
+    fn default() -> Self {
+        Palette {
+            r#type: None,
+            glyph: None,
+        }
+    }
+}
+
+impl Palette {
+    pub fn get_type(&self) -> Option<&PaletteType> {
+        self.r#type.as_ref()
+    }
+
+    pub fn get_glyph(&self) -> Option<&String> {
+        self.glyph.as_ref()
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Randomize {
     key_color: bool,
     separator_color: bool,
@@ -62,7 +87,7 @@ impl ASCII {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Palette {
+pub enum PaletteType {
     Light,
     Dark,
     Full,

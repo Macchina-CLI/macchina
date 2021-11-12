@@ -1,5 +1,6 @@
 use crate::data::{Readout, ReadoutKey};
 use crate::theme::components::Palette;
+use crate::theme::components::PaletteType;
 use crate::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
@@ -121,8 +122,8 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if let Some(palette) = self.theme.get_palette_type() {
-            self.print_palette(buf, &list_area, &mut height, palette);
+        if let Some(_) = self.theme.get_palette().get_type() {
+            self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
         }
 
         Self::render_block(
@@ -168,19 +169,30 @@ impl<'a> ReadoutList<'a> {
         ];
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
+            if let Some(glyph) = self.theme.get_palette().get_glyph() {
+            colors
+                .iter()
+                .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
+                .collect()
+            } else {
             colors
                 .iter()
                 .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
                 .collect()
+            }
         };
 
-        let spans = match palette {
-            Palette::Light => vec![Spans::from(span_vector(&light_colors))],
-            Palette::Dark => vec![Spans::from(span_vector(&dark_colors))],
-            Palette::Full => vec![
-                Spans::from(span_vector(&dark_colors)),
-                Spans::from(span_vector(&light_colors)),
-            ],
+        let mut spans = vec![Spans::default()];
+    
+        if let Some(t) = palette.get_type() {
+            spans = match t {
+                PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
+                PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
+                PaletteType::Full => vec![
+                    Spans::from(span_vector(&dark_colors)),
+                    Spans::from(span_vector(&light_colors)),
+                ],
+            };
         };
 
         let padding = self.theme.get_padding() as u16;

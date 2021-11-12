@@ -17,7 +17,7 @@ pub struct Theme {
     pub randomize: Randomize,
     spacing: usize,
     padding: usize,
-    palette: Option<Palette>,
+    palette: Palette,
     hide_ascii: bool,
     prefer_small_ascii: bool,
     pub keys: Keys,
@@ -35,7 +35,7 @@ impl Default for Theme {
             separator: String::from("-"),
             hide_ascii: false,
             prefer_small_ascii: false,
-            palette: None,
+            palette: Palette::default(),
             spacing: 2,
             padding: 2,
             randomize: Randomize::default(),
@@ -68,6 +68,10 @@ impl Theme {
 
     pub fn get_bar_style(&self) -> &Bar {
         &self.bar
+    }
+
+    pub fn get_palette(&self) -> &Palette {
+        &self.palette
     }
 
     pub fn set_bar_style(&mut self, new_bar: Bar) {
@@ -104,10 +108,6 @@ impl Theme {
 
     pub fn is_ascii_hidden(&self) -> bool {
         self.hide_ascii
-    }
-
-    pub fn get_palette_type(&self) -> Option<&Palette> {
-        self.palette.as_ref()
     }
 
     pub fn get_padding(&self) -> usize {
