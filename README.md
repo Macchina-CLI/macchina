@@ -5,15 +5,19 @@ Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
+<a href="https://crates.io/crates/macchina">
+    <img src="https://img.shields.io/crates/v/macchina?label=version" alt="Version" />
+</a>
+
+<a href="https://crates.io/crates/macchina">
+    <img src="https://img.shields.io/crates/d/macchina?label=downloads" alt="Downloads" />
+</a>
+
+<a href="https://github.com/Macchina-CLI/macchina/actions">
+   <img src="https://img.shields.io/github/checks-status/Macchina-CLI/macchina/main" alt="CLI">
+</a>
+
 <img src="assets/preview.png" alt="Preview" />
-
-<a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
-</a>
-
-<a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
-</a>
 
 </div>
 
@@ -38,7 +42,7 @@ and **extensible** by design.
 
 If you're interested in the library _macchina_ uses to fetch system
 information, have a look at
-[libmacchina](https://github.com/Macchina-CLI/libmacchina); fetching-related
+[libmacchina]; fetching-related
 issues should be filed on that repository.
 
 # Benchmarks <a name="benchmarks"></a>
@@ -100,7 +104,7 @@ while you're at it.
 
 ## Doctor
 
-[libmacchina](https://github.com/Macchina-CLI/libmacchina) can sometimes fail
+[libmacchina] can sometimes fail
 to fetch certain readouts, and _macchina_ has a feature in place that describes
 why they failed. You don't have to guess what went wrong, `--doctor` has your
 back!
@@ -283,3 +287,5 @@ me](mailto:ba.tahaaziz@gmail.com).
 - Linux ASCII art (big variant) was made by Joan Stark (jgs)
 - Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII
   art collection (unknown artist)
+
+[libmacchina]: https://github.com/Macchina-CLI/libmacchina

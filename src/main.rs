@@ -185,7 +185,7 @@ fn list_themes() {
 
             if let Some(d) = dir.to_str() {
                 let whole_path = d.to_owned() + "/macchina/themes:";
-                println!("{}", whole_path.bright_blue());
+                println!("{}", whole_path.bold());
             }
 
             custom_themes.for_each(|x| {
