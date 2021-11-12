@@ -122,7 +122,7 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if let Some(_) = self.theme.get_palette().get_type() {
+        if self.theme.get_palette().get_type().is_some() {
             self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
         }
 

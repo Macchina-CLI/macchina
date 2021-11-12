@@ -284,7 +284,7 @@ pub fn get_all_readouts<'a>(
 
     if should_display.contains(&ReadoutKey::Processor) {
         let cores = {
-            if opt.physical_cores == true {
+            if opt.physical_cores {
                 general_readout.cpu_physical_cores()
             } else {
                 general_readout.cpu_cores()
