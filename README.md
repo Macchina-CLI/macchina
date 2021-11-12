@@ -6,15 +6,15 @@ Fast, minimal and customizable system information frontend.
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 <a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/v/macchina?label=version" alt="Version" />
-</a>
-
-<a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/d/macchina?label=downloads" alt="Downloads" />
+    <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
 </a>
 
 <a href="https://github.com/Macchina-CLI/macchina/actions">
-   <img src="https://img.shields.io/github/checks-status/Macchina-CLI/macchina/main" alt="CLI">
+   <img src="https://github.com/Macchina-CLI/macchina/actions/workflows/macchina.yml/badge.svg" alt="CI">
+</a>
+
+<a href="https://crates.io/crates/macchina">
+    <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
 </a>
 
 <img src="assets/preview.png" alt="Preview" />
