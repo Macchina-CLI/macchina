@@ -106,7 +106,7 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 fn create_theme(opt: &Opt) -> Theme {
     let mut found = false;
     let mut theme = Theme::default();
-  
+
     if let Some(opt_theme) = &opt.theme {
         for dir in array::IntoIter::new(extra::config_data_paths()) {
             if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
