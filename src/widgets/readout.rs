@@ -170,20 +170,20 @@ impl<'a> ReadoutList<'a> {
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
             if let Some(glyph) = self.theme.get_palette().get_glyph() {
-            colors
-                .iter()
-                .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
-                .collect()
+                colors
+                    .iter()
+                    .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
+                    .collect()
             } else {
-            colors
-                .iter()
-                .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
-                .collect()
+                colors
+                    .iter()
+                    .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
+                    .collect()
             }
         };
 
         let mut spans = vec![Spans::default()];
-    
+
         if let Some(t) = palette.get_type() {
             spans = match t {
                 PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
