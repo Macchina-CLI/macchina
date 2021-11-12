@@ -86,16 +86,16 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect) {
     let mut list = ReadoutList::new(data, &theme);
 
-    if theme.r#box.is_visible() {
+    if theme.get_block().is_visible() {
         list = list
             .block_inner_margin(Margin {
-                horizontal: theme.r#box.get_horizontal_margin(),
-                vertical: theme.r#box.get_vertical_margin(),
+                horizontal: theme.get_block().get_horizontal_margin(),
+                vertical: theme.get_block().get_vertical_margin(),
             })
             .block(
                 Block::default()
-                    .border_type(theme.r#box.get_border_type())
-                    .title(theme.r#box.get_title().unwrap_or_default())
+                    .border_type(theme.get_block().get_border_type())
+                    .title(theme.get_block().get_title().unwrap_or_default())
                     .borders(Borders::ALL),
             );
     }
@@ -123,16 +123,16 @@ fn create_theme(opt: &Opt) -> Theme {
         }
     }
 
-    if theme.randomize.is_key_color_randomized() {
+    if theme.get_randomization().is_key_color_randomized() {
         theme.set_key_color(make_random_color());
     }
 
-    if theme.randomize.is_separator_color_randomized() {
+    if theme.get_randomization().is_separator_color_randomized() {
         theme.set_separator_color(make_random_color());
     }
 
-    if theme.bar.are_delimiters_hidden() {
-        theme.bar.hide_delimiters();
+    if theme.get_bar().are_delimiters_hidden() {
+        theme.get_bar().to_owned().hide_delimiters();
     }
 
     theme
@@ -256,11 +256,11 @@ fn main() -> Result<(), io::Error> {
 
     let ascii_area;
 
-    if let Some(ref file_path) = theme.custom_ascii.get_path() {
+    if let Some(ref file_path) = theme.get_custom_ascii().get_path() {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         let ascii_art;
 
-        if let Some(color) = theme.custom_ascii.get_color() {
+        if let Some(color) = theme.get_custom_ascii().get_color() {
             ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
         } else {
             ascii_art = ascii::get_ascii_from_file(&file_path)?;

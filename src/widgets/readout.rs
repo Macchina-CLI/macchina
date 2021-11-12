@@ -216,92 +216,92 @@ impl<'a> ReadoutList<'a> {
 
         keys.insert(
             ReadoutKey::Host,
-            Text::styled(&self.theme.keys.host, color_style),
+            Text::styled(self.theme.get_keys().get_host(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Machine,
-            Text::styled(&self.theme.keys.machine, color_style),
+            Text::styled(self.theme.get_keys().get_machine(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Kernel,
-            Text::styled(&self.theme.keys.kernel, color_style),
+            Text::styled(self.theme.get_keys().get_kernel(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Distribution,
-            Text::styled(&self.theme.keys.distro, color_style),
+            Text::styled(self.theme.get_keys().get_distro(), color_style),
         );
 
         keys.insert(
             ReadoutKey::OperatingSystem,
-            Text::styled(&self.theme.keys.os, color_style),
+            Text::styled(self.theme.get_keys().get_os(), color_style),
         );
 
         keys.insert(
             ReadoutKey::DesktopEnvironment,
-            Text::styled(&self.theme.keys.de, color_style),
+            Text::styled(self.theme.get_keys().get_de(), color_style),
         );
 
         keys.insert(
             ReadoutKey::WindowManager,
-            Text::styled(&self.theme.keys.wm, color_style),
+            Text::styled(self.theme.get_keys().get_wm(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Packages,
-            Text::styled(&self.theme.keys.packages, color_style),
+            Text::styled(self.theme.get_keys().get_packages(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Shell,
-            Text::styled(&self.theme.keys.shell, color_style),
+            Text::styled(self.theme.get_keys().get_shell(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Terminal,
-            Text::styled(&self.theme.keys.terminal, color_style),
+            Text::styled(self.theme.get_keys().get_terminal(), color_style),
         );
 
         keys.insert(
             ReadoutKey::LocalIP,
-            Text::styled(&self.theme.keys.local_ip, color_style),
+            Text::styled(self.theme.get_keys().get_local_ip(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Battery,
-            Text::styled(&self.theme.keys.battery, color_style),
+            Text::styled(self.theme.get_keys().get_battery(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Backlight,
-            Text::styled(&self.theme.keys.backlight, color_style),
+            Text::styled(self.theme.get_keys().get_backlight(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Resolution,
-            Text::styled(&self.theme.keys.resolution, color_style),
+            Text::styled(self.theme.get_keys().get_resolution(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Memory,
-            Text::styled(&self.theme.keys.memory, color_style),
+            Text::styled(self.theme.get_keys().get_memory(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Processor,
-            Text::styled(&self.theme.keys.cpu, color_style),
+            Text::styled(self.theme.get_keys().get_cpu(), color_style),
         );
 
         keys.insert(
             ReadoutKey::ProcessorLoad,
-            Text::styled(&self.theme.keys.cpu_load, color_style),
+            Text::styled(self.theme.get_keys().get_cpu_load(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Uptime,
-            Text::styled(&self.theme.keys.uptime, color_style),
+            Text::styled(self.theme.get_keys().get_uptime(), color_style),
         );
 
         keys
