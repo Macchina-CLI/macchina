@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = {git = "https://github.com/Macchina-CLI/libmacchina", branch = "main"}
+libmacchina = { git = "https://github.com/Macchina-CLI/libmacchina", branch = "main" }
 bytesize = "1.0.1"
 clap = "2.33.3"
 tui = { version = "0.16.0", default-features = false, features = ["crossterm"] }
@@ -30,7 +30,7 @@ color-to-tui = "0.1.2"
 strum = "0.22.0"
 
 [build-dependencies]
-vergen = { version = "5.1.16", default-features = false, features = ["build", "cargo", "git", "rustc"] }
+vergen = { version = "5.1.17", default-features = false, features = ["build", "cargo", "git", "rustc"] }
 
 [profile.release]
 opt-level = 3
