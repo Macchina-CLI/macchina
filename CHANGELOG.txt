@@ -2,5 +2,4 @@
 
 ## macchina v5.0.5
 
-- NetBSD: Don't check the output of `session()`, addressing #217.
-- Wayland: Sway and Qtile users don't need `wmctrl` to see their window manager information.
+- Unix: Fixed failing "Host" and "Shell" readouts.

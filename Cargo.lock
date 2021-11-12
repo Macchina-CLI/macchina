@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.8.3"
+version = "3.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0dfe8a95c66832770ca50c174f63faf36e3af3d1673c50e4ad40847bd2dcda64"
+checksum = "41cb386652812b65af622ce00aaf6008fdffdab336a53e042ccb1dafdb47f81c"
 dependencies = [
  "byte-unit",
  "cfg-if",
