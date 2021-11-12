@@ -141,9 +141,9 @@ To start using your theme:
 2. If all goes well, you should see one or more themes listed, e.g.:
 
 ```
-<path_where_themes_were_fount>:
-- Helium
 - Hydrogen
+- Helium
+- Lithium
 ```
 
 3. In [macchina.toml](macchina.toml), set `theme` to one of the listed themes,
