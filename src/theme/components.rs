@@ -14,7 +14,7 @@ impl Default for Palette {
     fn default() -> Self {
         Palette {
             r#type: None,
-            glyph: None,
+            glyph: Some(String::from("   ")),
         }
     }
 }
