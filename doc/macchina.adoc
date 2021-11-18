@@ -22,7 +22,6 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 *-d, --doctor*::
    Checks the system for failures.
 
-
 *-e, --export-config*::
    Prints a template configuration file to stdout.
 
@@ -48,7 +47,8 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
    e.g. "wlan0", "eth0".
 
 *-s, --current-shell*::
-   Toggles between the current shell or the default one.
+   Toggles between the current shell, i.e. the parent of the terminal emulator,
+   or the default one.
 
 *-K, --long-kernel*::
    Lengthens kernel output.

@@ -63,13 +63,10 @@ fn colored_glyphs(glyph: &str, blocks: usize) -> String {
 }
 
 fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
-    if theme.bar.are_delimiters_hidden() {
+    if theme.get_bar().are_delimiters_hidden() {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
-        // This clone is useless since we can't really clone a &str
-        // this just clones the reference to the str
-        // let glyph = theme.bar.get_glyph().clone();
-        let glyph = theme.bar.get_glyph();
+        let glyph = theme.get_bar().get_glyph();
         let glyphs = colored_glyphs(glyph, blocks);
 
         if blocks == 10 {
@@ -77,9 +74,10 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         } else {
             span_vector[0].content = Cow::from(format!("{} ", glyphs));
         }
-        span_vector[0].style = Style::default().fg(theme.get_key_color());
 
+        span_vector[0].style = Style::default().fg(theme.get_key_color());
         span_vector[1].content = Cow::from(colored_glyphs(glyph, 10 - blocks));
+
         if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
@@ -87,13 +85,13 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     }
 
     let mut span_vector = vec![
-        Span::raw(format!("{} ", theme.bar.get_symbol_open())),
+        Span::raw(format!("{} ", theme.get_bar().get_symbol_open())),
         Span::raw(""),
         Span::raw(""),
-        Span::raw(format!(" {}", theme.bar.get_symbol_close())),
+        Span::raw(format!(" {}", theme.get_bar().get_symbol_close())),
     ];
 
-    let glyph = theme.bar.get_glyph();
+    let glyph = theme.get_bar().get_glyph();
     let glyphs = colored_glyphs(glyph, blocks);
 
     if blocks == 10 {
@@ -283,10 +281,15 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Processor) {
-        match (
-            general_readout.cpu_model_name(),
-            general_readout.cpu_cores(),
-        ) {
+        let cores = {
+            if opt.physical_cores {
+                general_readout.cpu_physical_cores()
+            } else {
+                general_readout.cpu_cores()
+            }
+        };
+
+        match (general_readout.cpu_model_name(), cores) {
             (Ok(m), Ok(c)) => {
                 readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
             }
@@ -305,7 +308,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::Backlight) {
-        match (general_readout.backlight(), theme.bar.is_visible()) {
+        match (general_readout.backlight(), theme.get_bar().is_visible()) {
             (Ok(b), false) => {
                 readout_values.push(Readout::new(ReadoutKey::Backlight, format!("{}%", b)))
             }
@@ -318,7 +321,7 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::ProcessorLoad) {
-        match (general_readout.cpu_usage(), theme.bar.is_visible()) {
+        match (general_readout.cpu_usage(), theme.get_bar().is_visible()) {
             (Ok(u), true) => {
                 if u > 100 {
                     readout_values.push(Readout::new(
@@ -348,7 +351,7 @@ pub fn get_all_readouts<'a>(
 
         match (total, used) {
             (Ok(total), Ok(used)) => {
-                if theme.bar.is_visible() {
+                if theme.get_bar().is_visible() {
                     let bar = create_bar(theme, crate::bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
@@ -373,7 +376,7 @@ pub fn get_all_readouts<'a>(
 
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
-                if theme.bar.is_visible() {
+                if theme.get_bar().is_visible() {
                     let bar = create_bar(theme, crate::bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {

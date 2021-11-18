@@ -87,16 +87,16 @@ fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
 fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect) {
     let mut list = ReadoutList::new(data, &theme);
 
-    if theme.r#box.is_visible() {
+    if theme.get_block().is_visible() {
         list = list
             .block_inner_margin(Margin {
-                horizontal: theme.r#box.get_horizontal_margin(),
-                vertical: theme.r#box.get_vertical_margin(),
+                horizontal: theme.get_block().get_horizontal_margin(),
+                vertical: theme.get_block().get_vertical_margin(),
             })
             .block(
                 Block::default()
-                    .border_type(theme.r#box.get_border_type())
-                    .title(theme.r#box.get_title().unwrap_or_default())
+                    .border_type(theme.get_block().get_border_type())
+                    .title(theme.get_block().get_title().unwrap_or_default())
                     .borders(Borders::ALL),
             );
     }
@@ -180,14 +180,15 @@ fn list_themes() {
                 )
             }
 
+            if let Some(d) = dir.to_str() {
+                let whole_path = d.to_owned() + "/macchina/themes:";
+                println!("{}", whole_path.bold());
+            }
+
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
                     let name = theme.to_string_lossy().replace(".toml", "");
-                    println!(
-                        "- {} ({}/macchina/themes)",
-                        name.bright_green(),
-                        &dir.to_string_lossy()
-                    );
+                    println!("{} {}", "-".bright_blue(), name.bright_green(),);
                 }
             });
         }
@@ -252,11 +253,11 @@ fn main() -> Result<()> {
 
     let ascii_area;
 
-    if let Some(ref file_path) = theme.custom_ascii.get_path() {
+    if let Some(ref file_path) = theme.get_custom_ascii().get_path() {
         let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
         let ascii_art;
 
-        if let Some(color) = theme.custom_ascii.get_color() {
+        if let Some(color) = theme.get_custom_ascii().get_color() {
             ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
         } else {
             ascii_art = ascii::get_ascii_from_file(&file_path)?;

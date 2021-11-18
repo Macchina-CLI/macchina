@@ -11,17 +11,17 @@ use tui::style::Color;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Theme {
-    pub custom_ascii: ASCII,
-    pub bar: Bar,
-    pub r#box: Block,
+    custom_ascii: ASCII,
+    bar: Bar,
+    r#box: Block,
     separator: String,
-    pub randomize: Randomize,
+    randomize: Randomize,
     spacing: usize,
     padding: usize,
-    palette: Option<Palette>,
+    palette: Palette,
     hide_ascii: bool,
     prefer_small_ascii: bool,
-    pub keys: Keys,
+    keys: Keys,
     #[serde(with = "color_to_tui")]
     key_color: Color,
     #[serde(with = "color_to_tui")]
@@ -36,7 +36,7 @@ impl Default for Theme {
             separator: String::from("-"),
             hide_ascii: false,
             prefer_small_ascii: false,
-            palette: None,
+            palette: Palette::default(),
             spacing: 2,
             padding: 2,
             randomize: Randomize::default(),
@@ -67,12 +67,28 @@ impl Theme {
         }
     }
 
-    pub fn get_bar_style(&self) -> &Bar {
+    pub fn get_bar(&self) -> &Bar {
         &self.bar
     }
 
-    pub fn set_bar_style(&mut self, new_bar: Bar) {
-        self.bar = new_bar
+    pub fn get_keys(&self) -> &Keys {
+        &self.keys
+    }
+
+    pub fn get_randomization(&self) -> &Randomize {
+        &self.randomize
+    }
+
+    pub fn get_custom_ascii(&self) -> &ASCII {
+        &self.custom_ascii
+    }
+
+    pub fn get_palette(&self) -> &Palette {
+        &self.palette
+    }
+
+    pub fn get_block(&self) -> &Block {
+        &self.r#box
     }
 
     pub fn get_separator(&self) -> &str {
@@ -105,10 +121,6 @@ impl Theme {
 
     pub fn is_ascii_hidden(&self) -> bool {
         self.hide_ascii
-    }
-
-    pub fn get_palette_type(&self) -> Option<&Palette> {
-        self.palette.as_ref()
     }
 
     pub fn get_padding(&self) -> usize {

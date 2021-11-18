@@ -5,6 +5,31 @@ use tui::style::Color;
 use tui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Palette {
+    r#type: Option<PaletteType>,
+    glyph: Option<String>,
+}
+
+impl Default for Palette {
+    fn default() -> Self {
+        Palette {
+            r#type: None,
+            glyph: Some(String::from("   ")),
+        }
+    }
+}
+
+impl Palette {
+    pub fn get_type(&self) -> Option<&PaletteType> {
+        self.r#type.as_ref()
+    }
+
+    pub fn get_glyph(&self) -> Option<&String> {
+        self.glyph.as_ref()
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Randomize {
     key_color: bool,
     separator_color: bool,
@@ -62,7 +87,7 @@ impl ASCII {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Palette {
+pub enum PaletteType {
     Light,
     Dark,
     Full,
@@ -222,5 +247,79 @@ impl Default for Keys {
             cpu_load: String::from("CPU Load"),
             cpu: String::from("CPU"),
         }
+    }
+}
+
+impl Keys {
+    pub fn get_host(&self) -> &String {
+        &self.host
+    }
+
+    pub fn get_kernel(&self) -> &String {
+        &self.kernel
+    }
+
+    pub fn get_battery(&self) -> &String {
+        &self.battery
+    }
+
+    pub fn get_os(&self) -> &String {
+        &self.os
+    }
+
+    pub fn get_de(&self) -> &String {
+        &self.de
+    }
+
+    pub fn get_wm(&self) -> &String {
+        &self.wm
+    }
+
+    pub fn get_distro(&self) -> &String {
+        &self.distro
+    }
+
+    pub fn get_terminal(&self) -> &String {
+        &self.terminal
+    }
+
+    pub fn get_shell(&self) -> &String {
+        &self.shell
+    }
+
+    pub fn get_packages(&self) -> &String {
+        &self.packages
+    }
+
+    pub fn get_uptime(&self) -> &String {
+        &self.uptime
+    }
+
+    pub fn get_memory(&self) -> &String {
+        &self.memory
+    }
+
+    pub fn get_machine(&self) -> &String {
+        &self.machine
+    }
+
+    pub fn get_local_ip(&self) -> &String {
+        &self.local_ip
+    }
+
+    pub fn get_backlight(&self) -> &String {
+        &self.backlight
+    }
+
+    pub fn get_resolution(&self) -> &String {
+        &self.resolution
+    }
+
+    pub fn get_cpu_load(&self) -> &String {
+        &self.cpu_load
+    }
+
+    pub fn get_cpu(&self) -> &String {
+        &self.cpu
     }
 }

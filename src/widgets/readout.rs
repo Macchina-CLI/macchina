@@ -1,5 +1,6 @@
 use crate::data::{Readout, ReadoutKey};
 use crate::theme::components::Palette;
+use crate::theme::components::PaletteType;
 use crate::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
@@ -121,8 +122,8 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if let Some(palette) = self.theme.get_palette_type() {
-            self.print_palette(buf, &list_area, &mut height, palette);
+        if self.theme.get_palette().get_type().is_some() {
+            self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
         }
 
         Self::render_block(
@@ -168,19 +169,30 @@ impl<'a> ReadoutList<'a> {
         ];
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
-            colors
-                .iter()
-                .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
-                .collect()
+            if let Some(glyph) = self.theme.get_palette().get_glyph() {
+                colors
+                    .iter()
+                    .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
+                    .collect()
+            } else {
+                colors
+                    .iter()
+                    .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
+                    .collect()
+            }
         };
 
-        let spans = match palette {
-            Palette::Light => vec![Spans::from(span_vector(&light_colors))],
-            Palette::Dark => vec![Spans::from(span_vector(&dark_colors))],
-            Palette::Full => vec![
-                Spans::from(span_vector(&dark_colors)),
-                Spans::from(span_vector(&light_colors)),
-            ],
+        let mut spans = vec![Spans::default()];
+
+        if let Some(t) = palette.get_type() {
+            spans = match t {
+                PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
+                PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
+                PaletteType::Full => vec![
+                    Spans::from(span_vector(&dark_colors)),
+                    Spans::from(span_vector(&light_colors)),
+                ],
+            };
         };
 
         let padding = self.theme.get_padding() as u16;
@@ -204,92 +216,92 @@ impl<'a> ReadoutList<'a> {
 
         keys.insert(
             ReadoutKey::Host,
-            Text::styled(&self.theme.keys.host, color_style),
+            Text::styled(self.theme.get_keys().get_host(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Machine,
-            Text::styled(&self.theme.keys.machine, color_style),
+            Text::styled(self.theme.get_keys().get_machine(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Kernel,
-            Text::styled(&self.theme.keys.kernel, color_style),
+            Text::styled(self.theme.get_keys().get_kernel(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Distribution,
-            Text::styled(&self.theme.keys.distro, color_style),
+            Text::styled(self.theme.get_keys().get_distro(), color_style),
         );
 
         keys.insert(
             ReadoutKey::OperatingSystem,
-            Text::styled(&self.theme.keys.os, color_style),
+            Text::styled(self.theme.get_keys().get_os(), color_style),
         );
 
         keys.insert(
             ReadoutKey::DesktopEnvironment,
-            Text::styled(&self.theme.keys.de, color_style),
+            Text::styled(self.theme.get_keys().get_de(), color_style),
         );
 
         keys.insert(
             ReadoutKey::WindowManager,
-            Text::styled(&self.theme.keys.wm, color_style),
+            Text::styled(self.theme.get_keys().get_wm(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Packages,
-            Text::styled(&self.theme.keys.packages, color_style),
+            Text::styled(self.theme.get_keys().get_packages(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Shell,
-            Text::styled(&self.theme.keys.shell, color_style),
+            Text::styled(self.theme.get_keys().get_shell(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Terminal,
-            Text::styled(&self.theme.keys.terminal, color_style),
+            Text::styled(self.theme.get_keys().get_terminal(), color_style),
         );
 
         keys.insert(
             ReadoutKey::LocalIP,
-            Text::styled(&self.theme.keys.local_ip, color_style),
+            Text::styled(self.theme.get_keys().get_local_ip(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Battery,
-            Text::styled(&self.theme.keys.battery, color_style),
+            Text::styled(self.theme.get_keys().get_battery(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Backlight,
-            Text::styled(&self.theme.keys.backlight, color_style),
+            Text::styled(self.theme.get_keys().get_backlight(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Resolution,
-            Text::styled(&self.theme.keys.resolution, color_style),
+            Text::styled(self.theme.get_keys().get_resolution(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Memory,
-            Text::styled(&self.theme.keys.memory, color_style),
+            Text::styled(self.theme.get_keys().get_memory(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Processor,
-            Text::styled(&self.theme.keys.cpu, color_style),
+            Text::styled(self.theme.get_keys().get_cpu(), color_style),
         );
 
         keys.insert(
             ReadoutKey::ProcessorLoad,
-            Text::styled(&self.theme.keys.cpu_load, color_style),
+            Text::styled(self.theme.get_keys().get_cpu_load(), color_style),
         );
 
         keys.insert(
             ReadoutKey::Uptime,
-            Text::styled(&self.theme.keys.uptime, color_style),
+            Text::styled(self.theme.get_keys().get_uptime(), color_style),
         );
 
         keys

@@ -1,6 +1,5 @@
 # Changelog
 
-## macchina v5.0.3
+## macchina v5.0.5
 
-- general: moved miscellaneous theme structures to separate modules.
-- netbsd: subtract "one" from pkgsrc's package count.
+- Unix: Fixed failing "Host" and "Shell" readouts.
