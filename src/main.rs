@@ -106,9 +106,8 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-
     if let Some(opt_theme) = &opt.theme {
+        let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
         for dir in array::IntoIter::new(dirs).flatten() {
             match Theme::get_theme(opt_theme, dir) {
                 Ok(custom_theme) => {
@@ -116,25 +115,21 @@ fn create_theme(opt: &Opt) -> Theme {
                 }
                 Err(e) => {
                     println!("\x1b[31mError\x1b[0m: {:?}", e);
-                    println!(
-                        "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
-                        opt_theme
-                    );
                 }
             }
         }
-    }
 
-    if theme.randomize.is_key_color_randomized() {
-        theme.set_key_color(make_random_color());
-    }
+        if theme.randomize.is_key_color_randomized() {
+            theme.set_key_color(make_random_color());
+        }
 
-    if theme.randomize.is_separator_color_randomized() {
-        theme.set_separator_color(make_random_color());
-    }
+        if theme.randomize.is_separator_color_randomized() {
+            theme.set_separator_color(make_random_color());
+        }
 
-    if theme.bar.are_delimiters_hidden() {
-        theme.bar.hide_delimiters();
+        if theme.bar.are_delimiters_hidden() {
+            theme.bar.hide_delimiters();
+        }
     }
 
     theme
@@ -165,8 +160,6 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 
 fn list_themes() {
     let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-    // for i in array::IntoIter::new(dirs) {
-    //     if let Some(dir) = i {
     for dir in array::IntoIter::new(dirs).flatten() {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         if !entries.is_empty() {
@@ -202,7 +195,6 @@ fn list_themes() {
 }
 
 fn main() -> Result<()> {
-    let opt: Opt;
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
@@ -210,28 +202,29 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let config_opt;
-    if arg_opt.config.is_some() {
-        config_opt = Opt::from_config_file(&arg_opt.config.clone().unwrap());
-    } else {
-        config_opt = Opt::from_config();
-    }
+    let config_opt = match arg_opt.config {
+        Some(_) => Opt::from_config_file(&arg_opt.config.clone().unwrap()),
+        None => Opt::from_config(),
+    };
 
-    if let Ok(mut config_opt) = config_opt {
-        config_opt.patch_args(Opt::from_args());
-        opt = config_opt;
-    } else {
-        println!("\x1b[33mWarning:\x1b[0m {}", config_opt.unwrap_err());
-        opt = arg_opt;
-    }
+    let opt = match config_opt {
+        Ok(mut config) => {
+            config.patch_args(Opt::from_args());
+            config
+        }
+        Err(e) => {
+            println!("\x1b[31mError\x1b[0m: {}", e);
+            arg_opt
+        }
+    };
 
     if opt.version {
         if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
-            println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+            println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
         } else {
-            println!("macchina    {}", env!("CARGO_PKG_VERSION"));
+            println!("macchina     {}", env!("CARGO_PKG_VERSION"));
         }
-        println!("libmacchina {}", libmacchina::version());
+        println!("libmacchina  {}", libmacchina::version());
         return Ok(());
     }
 

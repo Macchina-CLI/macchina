@@ -131,14 +131,7 @@ impl Theme {
     pub fn get_theme(name: &str, dir: PathBuf) -> Result<Self> {
         use std::io::Read;
         let mut theme_path = std::path::PathBuf::new();
-        // theme_path.push(dir.ok_or_else(|| {
-        //     std::io::Error::new(
-        //         std::io::ErrorKind::NotFound,
-        //         "$XDG_CONFIG_HOME was not found; fallback $HOME/.config also failed.",
-        //     )
-        // })?);
         theme_path.push(dir);
-
         theme_path.push(std::path::Path::new(&format!(
             "macchina/themes/{}.toml",
             name
