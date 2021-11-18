@@ -107,8 +107,7 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(opt_theme) = &opt.theme {
-        let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-        for dir in array::IntoIter::new(dirs).flatten() {
+        for dir in array::IntoIter::new(extra::config_data_paths()).flatten() {
             match Theme::get_theme(opt_theme, dir) {
                 Ok(custom_theme) => {
                     theme = custom_theme;
@@ -119,16 +118,16 @@ fn create_theme(opt: &Opt) -> Theme {
             }
         }
 
-        if theme.randomize.is_key_color_randomized() {
+        if theme.get_randomization().is_key_color_randomized() {
             theme.set_key_color(make_random_color());
         }
 
-        if theme.randomize.is_separator_color_randomized() {
+        if theme.get_randomization().is_separator_color_randomized() {
             theme.set_separator_color(make_random_color());
         }
 
-        if theme.bar.are_delimiters_hidden() {
-            theme.bar.hide_delimiters();
+        if theme.get_bar().are_delimiters_hidden() {
+            theme.get_bar().to_owned().hide_delimiters();
         }
     }
 
@@ -159,8 +158,7 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    let dirs = [dirs::config_dir(), libmacchina::extra::localbase_dir()];
-    for dir in array::IntoIter::new(dirs).flatten() {
+    for dir in array::IntoIter::new(extra::config_data_paths()).flatten() {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         if !entries.is_empty() {
             let custom_themes = entries.iter().filter(|&x| {
