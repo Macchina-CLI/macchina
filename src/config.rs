@@ -1,6 +1,5 @@
 use crate::cli::Opt;
-use anyhow::{anyhow, Result};
-use std::io::Read;
+use crate::Result;
 use std::path::Path;
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
@@ -37,24 +36,15 @@ fn get_config() -> Result<Opt> {
 impl Opt {
     pub fn from_config_file<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
         let path = Path::new(path);
-        if Path::exists(path) {
-            if let Ok(mut file) = std::fs::File::open(path) {
-                let mut buffer: Vec<u8> = Vec::new();
-                if file.read_to_end(&mut buffer).is_ok() {
-                    toml::from_slice(&buffer)
-                        .or(Err(anyhow!("Failed to parse the configuration file.")))
-                } else {
-                    Err(anyhow!("Failed to read the configuration file."))
-                }
-            } else {
-                Err(anyhow!("Failed to open the configuration file."))
-            }
+        Ok(if Path::exists(path) {
+            let config_buffer = std::fs::read(path)?;
+            Ok(toml::from_slice(&config_buffer)?)
         } else {
-            Err(anyhow!(format!(
-                "\"{}\": No such file.",
-                path.to_string_lossy()
-            )))
-        }
+            Err(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "Config file was not found",
+            ))
+        }?)
     }
 
     /// Reads config file specified by MACCHINA_CONF environment variable (or from a hardcoded

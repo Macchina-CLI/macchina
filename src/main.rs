@@ -1,6 +1,8 @@
+#![warn(clippy::all)]
 mod bars;
 mod cli;
 mod config;
+mod error;
 mod extra;
 mod format;
 pub mod theme;
@@ -22,9 +24,9 @@ use crate::data::ReadoutKey;
 use crate::theme::color::make_random_color;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
-use anyhow::Result;
 use atty::Stream;
 use data::Readout;
+use error::Result;
 use std::io::Stdout;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};

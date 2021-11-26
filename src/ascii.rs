@@ -1,4 +1,4 @@
-use anyhow::Result;
+use crate::Result;
 use colored::Colorize;
 use io::Read;
 use std::fs::File;
