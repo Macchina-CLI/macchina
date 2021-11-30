@@ -53,14 +53,14 @@ pub struct Opt {
         short = "t",
         long = "theme",
         case_insensitive = true,
-        help = "Specify the theme"
+        help = "Specify the name of the theme"
     )]
     pub theme: Option<String>,
 
     #[structopt(
         long = "export-config",
         short = "e",
-        help = "Prints the config file to stdout",
+        help = "Prints a template configuration file to stdout",
         conflicts_with = "doctor"
     )]
     #[serde(skip_serializing, skip_deserializing)]
@@ -77,7 +77,7 @@ pub struct Opt {
     #[structopt(
         long = "config",
         short = "c",
-        help = "Specify the config file",
+        help = "Specify a custom path for the configuration file",
         conflicts_with = "export_config"
     )]
     #[serde(skip_serializing, skip_deserializing)]

@@ -104,7 +104,7 @@ place `macchina.toml` in:
 
 - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina` on Windows.
+- `%AppData%/macchina` on Windows.
 
 # Customization
 
@@ -117,7 +117,7 @@ in:
 
 - `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina/themes` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
+- `%AppData%/macchina/themes` on Windows.
 
 To start using your theme:
 
