@@ -126,15 +126,18 @@ fn create_theme(opt: &Opt) -> Theme {
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     if let Some(opt_theme) = &opt.theme {
         for dir in locations {
-            if let Ok (custom_theme) = Theme::get_theme(opt_theme, dir) {
-                    found = true;
-                    theme = custom_theme;
-                    set_theme_properties(&mut theme);
+            if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
+                found = true;
+                theme = custom_theme;
+                set_theme_properties(&mut theme);
             }
         }
 
         if !found {
-            println!("\x1b[31mError\x1b[0m: Could not find \"{}\" in any of the default directories.", opt_theme);
+            println!(
+                "\x1b[31mError\x1b[0m: Could not find \"{}\" in any of the default directories.",
+                opt_theme
+            );
         }
     }
 
