@@ -214,7 +214,17 @@ fn main() -> Result<()> {
             config
         }
         Err(e) => {
-            println!("\x1b[31mError\x1b[0m: {}", e);
+            match e {
+                error::Error::ParsingError(e) => match e.line_col() {
+                    Some((l, c)) => {
+                        println!("\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}", l, c, e)
+                    }
+                    None => println!("\x1b[31mError\x1b[0m: {:?}", e),
+                },
+                error::Error::IOError(e) => {
+                    println!("\x1b[31mError\x1b[0m: {:?}", e);
+                }
+            }
             arg_opt
         }
     };
