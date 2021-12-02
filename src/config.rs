@@ -9,16 +9,16 @@ impl Opt {
     pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt, &'static str> {
         let path = Path::new(path);
         if !path.exists() {
-            return Err("Failed to locate the configuration file, perhaps it doesn't exist.");
+            return Err("Failed to locate the configuration file.");
         }
 
         if let Ok(mut file) = std::fs::File::open(path) {
             let mut buffer: Vec<u8> = Vec::new();
             if file.read_to_end(&mut buffer).is_ok() {
                 return toml::from_slice(&buffer).or(Err("Failed to parse configuration file."));
-            } else {
-                return Err("Failed to read configuration file.");
             }
+
+            return Err("Failed to read configuration file.");
         }
 
         Err("Failed to open configuration file.")

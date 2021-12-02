@@ -169,21 +169,20 @@ pub fn get_all_readouts<'a>(
         }
     }
 
-    let window_manager = general_readout.window_manager();
     let desktop_environment = general_readout.desktop_environment();
+    let window_manager = general_readout.window_manager();
     let session = general_readout.session();
 
-    // Check if the user is using only a Window Manager.
-    match (window_manager, desktop_environment) {
-        (Ok(w), Ok(d)) if w.to_uppercase() == d.to_uppercase() => {
+    match (&window_manager, &desktop_environment) {
+        // check if the user is using a window manager only.
+        (Ok(w), Ok(d)) if w.eq_ignore_ascii_case(d) => {
             if should_display.contains(&ReadoutKey::WindowManager) {
-                if let Ok(s) = session {
-                    readout_values.push(Readout::new(
+                match session {
+                    Ok(s) => readout_values.push(Readout::new(
                         ReadoutKey::WindowManager,
                         format!("{} ({})", w, s),
-                    ));
-                } else {
-                    readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
+                    )),
+                    _ => readout_values.push(Readout::new(ReadoutKey::WindowManager, w.to_owned())),
                 }
             }
 
@@ -196,7 +195,7 @@ pub fn get_all_readouts<'a>(
         }
         _ => {
             if should_display.contains(&ReadoutKey::DesktopEnvironment) {
-                match general_readout.desktop_environment() {
+                match desktop_environment {
                     Ok(s) => readout_values.push(Readout::new(ReadoutKey::DesktopEnvironment, s)),
                     Err(e) => {
                         readout_values.push(Readout::new_err(ReadoutKey::DesktopEnvironment, e))
@@ -205,17 +204,14 @@ pub fn get_all_readouts<'a>(
             }
 
             if should_display.contains(&ReadoutKey::WindowManager) {
-                match general_readout.window_manager() {
-                    Ok(w) => {
-                        if let Ok(s) = session {
-                            readout_values.push(Readout::new(
-                                ReadoutKey::WindowManager,
-                                format!("{} ({})", w, s),
-                            ));
-                        } else {
-                            readout_values.push(Readout::new(ReadoutKey::WindowManager, w));
-                        }
-                    }
+                match window_manager {
+                    Ok(w) => match session {
+                        Ok(s) => readout_values.push(Readout::new(
+                            ReadoutKey::WindowManager,
+                            format!("{} ({})", w, s),
+                        )),
+                        _ => readout_values.push(Readout::new(ReadoutKey::WindowManager, w)),
+                    },
                     Err(e) => readout_values.push(Readout::new_err(ReadoutKey::WindowManager, e)),
                 }
             }
