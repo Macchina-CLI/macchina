@@ -122,18 +122,19 @@ fn set_theme_properties(theme: &mut Theme) {
 
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
+    let mut found = false;
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     if let Some(opt_theme) = &opt.theme {
         for dir in locations {
-            match Theme::get_theme(opt_theme, dir) {
-                Ok(custom_theme) => {
+            if let Ok (custom_theme) = Theme::get_theme(opt_theme, dir) {
+                    found = true;
                     theme = custom_theme;
                     set_theme_properties(&mut theme);
-                }
-                Err(e) => {
-                    println!("\x1b[31mError\x1b[0m: {:?}", e);
-                }
             }
+        }
+
+        if !found {
+            println!("\x1b[31mError\x1b[0m: Could not find \"{}\" in any of the default directories.", opt_theme);
         }
     }
 
@@ -282,7 +283,7 @@ fn main() -> Result<()> {
             ascii_art = ascii::get_ascii_from_file(&file_path)?;
         }
 
-        // If the file is empty just default to disabled
+        // if the file is empty just default to disabled
         if ascii_art.width() != 0 && ascii_art.height() < 50 && !theme.is_ascii_hidden() {
             // because tmp_buffer height is 50
             ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
@@ -343,7 +344,7 @@ fn write_buffer_to_console(
         cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
     }
 
-    // We need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
+    // we need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
     // cursor_y is smaller than (last_y - 1).
     let starting_pos = cursor_y.saturating_sub(last_y).saturating_sub(1);
     let mut skip_n = 0;
