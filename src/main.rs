@@ -219,9 +219,9 @@ fn main() -> Result<(), io::Error> {
 
     let config_opt;
     if arg_opt.config.is_some() {
-        config_opt = Opt::from_config_file(&arg_opt.config.clone().unwrap());
+        config_opt = Opt::read_config(&arg_opt.config.clone().unwrap());
     } else {
-        config_opt = Opt::from_config();
+        config_opt = Opt::get_config();
     }
 
     if let Ok(mut config_opt) = config_opt {
