@@ -123,7 +123,7 @@ place `macchina.toml` inside:
 - `%AppData%/macchina` on Windows.
 
 In the case that _macchina_ fails to find your configuration file, you may
-specify a __custom path__ for the configuration file through the `--config` flag or the
+specify a **custom path** for the configuration file through the `--config` flag or the
 `MACCHINA_CONF` environment variable.
 
 # Customization
