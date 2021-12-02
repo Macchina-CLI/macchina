@@ -8,20 +8,20 @@ pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 impl Opt {
     pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt, &'static str> {
         let path = Path::new(path);
-        if Path::exists(path) {
-            if let Ok(mut file) = std::fs::File::open(path) {
-                let mut buffer: Vec<u8> = Vec::new();
-                if file.read_to_end(&mut buffer).is_ok() {
-                    toml::from_slice(&buffer).or(Err("Failed to parse configuration file."))
-                } else {
-                    Err("Failed to read configuration file.")
-                }
-            } else {
-                Err("Failed to open configuration file.")
-            }
-        } else {
-            Err("Failed to locate the file, perhaps it doesn't exist.")
+        if !path.exists() {
+            return Err("Failed to locate the configuration file, perhaps it doesn't exist.");
         }
+
+        if let Ok(mut file) = std::fs::File::open(path) {
+            let mut buffer: Vec<u8> = Vec::new();
+            if file.read_to_end(&mut buffer).is_ok() {
+                return toml::from_slice(&buffer).or(Err("Failed to parse configuration file."));
+            } else {
+                return Err("Failed to read configuration file.");
+            }
+        }
+
+        Err("Failed to open configuration file.")
     }
 
     pub fn get_config() -> Result<Opt, &'static str> {

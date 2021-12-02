@@ -66,8 +66,8 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     if theme.bar.are_delimiters_hidden() {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
-        let glyph = theme.bar.get_glyph().clone();
-        let glyphs = colored_glyphs(&glyph, blocks);
+        let glyph = theme.bar.get_glyph();
+        let glyphs = colored_glyphs(glyph, blocks);
 
         if blocks == 10 {
             span_vector[0].content = Cow::from(glyphs);
@@ -76,7 +76,7 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         }
         span_vector[0].style = Style::default().fg(theme.get_key_color());
 
-        span_vector[1].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
+        span_vector[1].content = Cow::from(colored_glyphs(glyph, 10 - blocks));
         if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(&glyph, " "));
         }
@@ -90,8 +90,8 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         Span::raw(format!(" {}", theme.bar.get_symbol_close())),
     ];
 
-    let glyph = theme.bar.get_glyph().clone();
-    let glyphs = colored_glyphs(&glyph, blocks);
+    let glyph = theme.bar.get_glyph();
+    let glyphs = colored_glyphs(glyph, blocks);
 
     if blocks == 10 {
         span_vector[1].content = Cow::from(glyphs);
@@ -100,7 +100,7 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     }
     span_vector[1].style = Style::default().fg(theme.get_key_color());
 
-    span_vector[2].content = Cow::from(colored_glyphs(&glyph, 10 - blocks));
+    span_vector[2].content = Cow::from(colored_glyphs(glyph, 10 - blocks));
     if theme.get_key_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }

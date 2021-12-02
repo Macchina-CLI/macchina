@@ -113,7 +113,7 @@ fn create_theme(opt: &Opt) -> Theme {
         for dir in array::IntoIter::new(dirs) {
             if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
                 found = true;
-                theme = Theme::from(custom_theme);
+                theme = custom_theme;
             }
         }
 
@@ -172,38 +172,36 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 
 fn list_themes() {
     let dirs = [dirs::config_dir(), libmacchina::dirs::localbase_dir()];
-    for i in array::IntoIter::new(dirs) {
-        if let Some(dir) = i {
-            let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-            if !entries.is_empty() {
-                let custom_themes = entries.iter().filter(|&x| {
-                    if let Some(ext) = libmacchina::extra::path_extension(&x) {
-                        ext == "toml"
-                    } else {
-                        false
-                    }
-                });
-
-                if custom_themes.clone().count() == 0 {
-                    println!(
-                        "\nNo custom themes were found in {}",
-                        dir.join("macchina/themes")
-                            .to_string_lossy()
-                            .bright_yellow()
-                    )
+    for dir in array::IntoIter::new(dirs).flatten() {
+        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+        if !entries.is_empty() {
+            let custom_themes = entries.iter().filter(|&x| {
+                if let Some(ext) = libmacchina::extra::path_extension(x) {
+                    ext == "toml"
+                } else {
+                    false
                 }
+            });
 
-                custom_themes.for_each(|x| {
-                    if let Some(theme) = x.file_name() {
-                        let name = theme.to_string_lossy().replace(".toml", "");
-                        println!(
-                            "- {} ({}/macchina/themes)",
-                            name.bright_green(),
-                            &dir.to_string_lossy()
-                        );
-                    }
-                });
+            if custom_themes.clone().count() == 0 {
+                println!(
+                    "\nNo custom themes were found in {}",
+                    dir.join("macchina/themes")
+                        .to_string_lossy()
+                        .bright_yellow()
+                )
             }
+
+            custom_themes.for_each(|x| {
+                if let Some(theme) = x.file_name() {
+                    let name = theme.to_string_lossy().replace(".toml", "");
+                    println!(
+                        "- {} ({}/macchina/themes)",
+                        name.bright_green(),
+                        &dir.to_string_lossy()
+                    );
+                }
+            });
         }
     }
 }
