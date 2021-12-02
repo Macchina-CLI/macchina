@@ -44,7 +44,7 @@ pub struct Opt {
 
     #[structopt(
         short = "C",
-        long = "logical-cores",
+        long = "physical-cores",
         help = "Toggles between logical and physical cores"
     )]
     pub physical_cores: bool,

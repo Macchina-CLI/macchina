@@ -31,15 +31,15 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
    file from the default path, i.e. *$XDG_CONFIG_HOME/macchina/macchina.toml*.
 
 *-t, --theme*=_THEME_::
-   Specify which theme to use.
-   You should probably verify whether macchina was able to find your
+   Specify the name of the theme to use.
+   You should verify whether macchina was able to find your
    theme with *--list-themes*.
 
 *-l, --list-themes*::
    Lists all available themes.
    Themes are *TOML* files which must be placed in
    *$XDG_CONFIG_HOME/macchina/themes*.
-   Whatever this flag returns to the console, can be used
+   Whatever this flag returns to the console can be used
    with the *--theme* flag.
 
 *-i, --interface*=_IF_NAME_::
@@ -49,6 +49,10 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 *-s, --current-shell*::
    Toggles between the current shell, i.e. the parent of the terminal emulator,
    or the default one.
+
+*-C, --logical-cores*::
+   Toggles between logical and physical cores
+   for the Processor readout.
 
 *-K, --long-kernel*::
    Lengthens kernel output.

@@ -141,7 +141,6 @@ impl Theme {
 
     /// Searches for and returns a theme from a given directory.
     pub fn get_theme(name: &str, dir: PathBuf) -> Result<Self> {
-        // This should progbably be renamed to ~/.config/macchina/config.toml
         let theme_path =
             std::path::PathBuf::from(dir).join(&format!("macchina/themes/{}.toml", name));
 
