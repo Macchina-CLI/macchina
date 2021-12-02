@@ -118,9 +118,13 @@ configuration file.
 In order for _macchina_ to be able to read the configuration file, you need to
 place `macchina.toml` inside:
 
-- `$XDG_CONFIG_HOME/macchina` on Linux and BSDs.
-- `$HOME/.config/macchina` or `$HOME/Library/Application Support/macchina` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina` on Windows.
+- `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
+- `$HOME/Library/Application Support/macchina` on macOS.
+- `%AppData%/macchina` on Windows.
+
+In the case that _macchina_ fails to find your configuration file, you may
+specify a __custom path__ for the configuration file through the `--config` flag or the
+`MACCHINA_CONF` environment variable.
 
 # Customization
 
@@ -130,9 +134,9 @@ Themes define the look, layout and styling of _macchina_. See
 In order for _macchina_ to be able to find your themes, you need to place them
 in:
 
-- `$XDG_CONFIG_HOME/macchina/themes` on Linux and BSDs.
-- `$HOME/.config/macchina/themes` or `$HOME/Library/Application Support/macchina/themes` on macOS.
-- `{FOLDERID_RoamingAppData}/macchina/themes` on Windows.
+- `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
+- `$HOME/Library/Application Support/macchina/themes` on macOS.
+- `%AppData%/macchina/themes` on Windows.
 
 To start using your theme:
 
