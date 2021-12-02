@@ -142,7 +142,7 @@ impl Theme {
     /// Searches for and returns a theme from a given directory.
     pub fn get_theme(name: &str, dir: PathBuf) -> Result<Self> {
         let theme_path =
-            std::path::PathBuf::from(dir).join(&format!("macchina/themes/{}.toml", name));
+            dir.join(&format!("macchina/themes/{}.toml", name));
 
         let buffer = std::fs::read(theme_path)?;
 
