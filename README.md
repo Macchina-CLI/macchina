@@ -165,7 +165,7 @@ theme = "Helium" # case-sensitive
 
 The following are required dependencies if you're building from source or installing through `cargo`:
 
-- _libgit2_
+- [libgit2](https://pkgs.org/download/libgit2)
 
 ### Runtime dependencies
 
@@ -173,11 +173,11 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 
 **Linux**:
 
-- _wmctrl_
+- [wmctrl](https://pkgs.org/download/wmctrl)
 
 **NetBSD**:
 
-- _wmctrl_
+- [wmctrl](https://pkgs.org/download/wmctrl)
 
 # Installation
 
