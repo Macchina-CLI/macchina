@@ -1,63 +1,55 @@
 use crate::cli::Opt;
-use crate::Result;
-use std::path::Path;
+use dirs::config_dir;
+use std::io::Read;
+use std::path::{Path, PathBuf};
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
-#[cfg(target_os = "macos")]
-fn get_config() -> Result<Opt> {
-    use std::path::PathBuf;
-
-    if let Ok(home) = std::env::var("HOME") {
-        let path = PathBuf::from(home)
-            .join(".config")
-            .join(PKG_NAME)
-            .join(format!("{}.toml", PKG_NAME));
-
-        if Path::exists(&path) {
-            return Opt::from_config_file(&path);
-        }
-    }
-
-    Ok(Opt::default())
-}
-
-#[cfg(not(target_os = "macos"))]
-fn get_config() -> Result<Opt> {
-    if let Some(conf_dir) = dirs::config_dir() {
-        let path = conf_dir.join(PKG_NAME).join(format!("{}.toml", PKG_NAME));
-
-        return Opt::from_config_file(&path);
-    }
-
-    Ok(Opt::default())
-}
-
 impl Opt {
-    pub fn from_config_file<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
+    pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt, &'static str> {
         let path = Path::new(path);
-        Ok(if Path::exists(path) {
-            let config_buffer = std::fs::read(path)?;
-            Ok(toml::from_slice(&config_buffer)?)
-        } else {
-            Err(std::io::Error::new(
-                std::io::ErrorKind::NotFound,
-                "Config file was not found",
-            ))
-        }?)
-    }
-
-    /// Reads config file specified by MACCHINA_CONF environment variable (or from a hardcoded
-    /// directory if MACCHINA_CONF is not set)
-    pub fn from_config() -> Result<Opt> {
-        if let Some(path) = std::env::var_os("MACCHINA_CONF") {
-            Opt::from_config_file(&path)
-        } else {
-            get_config()
+        if !path.exists() {
+            return Err("Failed to locate the configuration file.");
         }
+
+        if let Ok(mut file) = std::fs::File::open(path) {
+            let mut buffer: Vec<u8> = Vec::new();
+            if file.read_to_end(&mut buffer).is_ok() {
+                return toml::from_slice(&buffer).or(Err("Failed to parse configuration file."));
+            }
+
+            return Err("Failed to read configuration file.");
+        }
+
+        Err("Failed to open configuration file.")
     }
 
-    /// Patches `opt` with the flags provided in the command-line.
+    pub fn get_config() -> Result<Opt, &'static str> {
+        if let Some(path) = std::env::var_os("MACCHINA_CONF") {
+            return Opt::read_config(&path);
+        } else if let Some(mut path) = config_dir() {
+            match cfg!(target_os = "macos") {
+                true => {
+                    if let Ok(home) = std::env::var("HOME") {
+                        path = PathBuf::from(home)
+                            .join(".config")
+                            .join(PKG_NAME)
+                            .join(format!("{}.toml", PKG_NAME));
+                    }
+                }
+                _ => {
+                    path.push(PKG_NAME);
+                    path.push(format!("{}.toml", PKG_NAME));
+                }
+            }
+
+            return Opt::read_config(&path);
+        }
+
+        Ok(Opt::default())
+    }
+
+    /// Patches `opt` struct with the values provided in the command-line
     pub fn patch_args(&mut self, args: Self) {
         if args.version {
             self.version = true;

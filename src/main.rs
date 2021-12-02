@@ -160,7 +160,8 @@ fn select_ascii(small: bool) -> Option<Text<'static>> {
 }
 
 fn list_themes() {
-    for dir in array::IntoIter::new(extra::config_data_paths()).flatten() {
+    let dirs = [dirs::config_dir(), libmacchina::dirs::localbase_dir()];
+    for dir in array::IntoIter::new(dirs).flatten() {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         if !entries.is_empty() {
             let custom_themes = entries.iter().filter(|&x| {
@@ -180,15 +181,14 @@ fn list_themes() {
                 )
             }
 
-            if let Some(d) = dir.to_str() {
-                let whole_path = d.to_owned() + "/macchina/themes:";
-                println!("{}", whole_path.bold());
-            }
-
             custom_themes.for_each(|x| {
                 if let Some(theme) = x.file_name() {
                     let name = theme.to_string_lossy().replace(".toml", "");
-                    println!("{} {}", "-".bright_blue(), name.bright_green(),);
+                    println!(
+                        "- {} ({}/macchina/themes)",
+                        name.bright_green(),
+                        &dir.to_string_lossy()
+                    );
                 }
             });
         }
@@ -217,7 +217,10 @@ fn main() -> Result<()> {
             match e {
                 error::Error::ParsingError(e) => match e.line_col() {
                     Some((l, c)) => {
-                        println!("\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}", l, c, e)
+                        println!(
+                            "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
+                            l, c, e
+                        )
                     }
                     None => println!("\x1b[31mError\x1b[0m: {:?}", e),
                 },
