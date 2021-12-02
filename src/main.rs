@@ -1,6 +1,8 @@
+#![warn(clippy::all)]
 mod bars;
 mod cli;
 mod config;
+mod error;
 mod extra;
 mod format;
 pub mod theme;
@@ -24,6 +26,7 @@ use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use data::Readout;
+use error::Result;
 use std::io::Stdout;
 use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
@@ -104,35 +107,30 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
 }
 
 fn create_theme(opt: &Opt) -> Theme {
-    let mut found = false;
     let mut theme = Theme::default();
-
     if let Some(opt_theme) = &opt.theme {
-        for dir in array::IntoIter::new(extra::config_data_paths()) {
-            if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
-                found = true;
-                theme = custom_theme;
+        for dir in array::IntoIter::new(extra::config_data_paths()).flatten() {
+            match Theme::get_theme(opt_theme, dir) {
+                Ok(custom_theme) => {
+                    theme = custom_theme;
+                }
+                Err(e) => {
+                    println!("\x1b[31mError\x1b[0m: {:?}", e);
+                }
             }
         }
 
-        if !found {
-            println!(
-                "\x1b[33mWarning\x1b[0m: Invalid theme \"{}\", falling back to default.",
-                opt_theme
-            );
+        if theme.get_randomization().is_key_color_randomized() {
+            theme.set_key_color(make_random_color());
         }
-    }
 
-    if theme.get_randomization().is_key_color_randomized() {
-        theme.set_key_color(make_random_color());
-    }
+        if theme.get_randomization().is_separator_color_randomized() {
+            theme.set_separator_color(make_random_color());
+        }
 
-    if theme.get_randomization().is_separator_color_randomized() {
-        theme.set_separator_color(make_random_color());
-    }
-
-    if theme.get_bar().are_delimiters_hidden() {
-        theme.get_bar().to_owned().hide_delimiters();
+        if theme.get_bar().are_delimiters_hidden() {
+            theme.get_bar().to_owned().hide_delimiters();
+        }
     }
 
     theme
@@ -197,8 +195,7 @@ fn list_themes() {
     }
 }
 
-fn main() -> Result<(), io::Error> {
-    let opt: Opt;
+fn main() -> Result<()> {
     let arg_opt = Opt::from_args();
 
     if arg_opt.export_config {
@@ -206,28 +203,42 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
-    let config_opt;
-    if arg_opt.config.is_some() {
-        config_opt = Opt::read_config(&arg_opt.config.clone().unwrap());
-    } else {
-        config_opt = Opt::get_config();
-    }
+    let config_opt = match arg_opt.config {
+        Some(_) => Opt::read_config(&arg_opt.config.clone().unwrap()),
+        None => Opt::get_config(),
+    };
 
-    if let Ok(mut config_opt) = config_opt {
-        config_opt.patch_args(Opt::from_args());
-        opt = config_opt;
-    } else {
-        println!("\x1b[33mWarning:\x1b[0m {}", config_opt.unwrap_err());
-        opt = arg_opt;
-    }
+    let opt = match config_opt {
+        Ok(mut config) => {
+            config.patch_args(Opt::from_args());
+            config
+        }
+        Err(e) => {
+            match e {
+                error::Error::ParsingError(e) => match e.line_col() {
+                    Some((l, c)) => {
+                        println!(
+                            "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
+                            l, c, e
+                        )
+                    }
+                    None => println!("\x1b[31mError\x1b[0m: {:?}", e),
+                },
+                error::Error::IOError(e) => {
+                    println!("\x1b[31mError\x1b[0m: {:?}", e);
+                }
+            }
+            arg_opt
+        }
+    };
 
     if opt.version {
         if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
-            println!("macchina    {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+            println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
         } else {
-            println!("macchina    {}", env!("CARGO_PKG_VERSION"));
+            println!("macchina     {}", env!("CARGO_PKG_VERSION"));
         }
-        println!("libmacchina {}", libmacchina::version());
+        println!("libmacchina  {}", libmacchina::version());
         return Ok(());
     }
 
@@ -311,7 +322,7 @@ fn main() -> Result<(), io::Error> {
 fn write_buffer_to_console(
     backend: &mut CrosstermBackend<Stdout>,
     tmp_buffer: &mut Buffer,
-) -> Result<(), io::Error> {
+) -> Result<()> {
     let term_size = backend.size().unwrap_or_default();
 
     let (_, last_y) =

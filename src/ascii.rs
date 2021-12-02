@@ -1,3 +1,4 @@
+use crate::Result;
 use colored::Colorize;
 use io::Read;
 use std::fs::File;
@@ -48,10 +49,7 @@ pub fn list_ascii_artists() {
     );
 }
 
-pub fn get_ascii_from_file_override_color(
-    file_path: &Path,
-    color: Color,
-) -> Result<Text<'static>, io::Error> {
+pub fn get_ascii_from_file_override_color(file_path: &Path, color: Color) -> Result<Text<'static>> {
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
     let mut buffer: Vec<u8> = Vec::new();
@@ -61,7 +59,7 @@ pub fn get_ascii_from_file_override_color(
             .unwrap_or_default(),
     )
 }
-pub fn get_ascii_from_file(file_path: &Path) -> Result<Text<'static>, io::Error> {
+pub fn get_ascii_from_file(file_path: &Path) -> Result<Text<'static>> {
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
     let mut buffer: Vec<u8> = Vec::new();
