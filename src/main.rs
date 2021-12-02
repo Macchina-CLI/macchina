@@ -204,8 +204,8 @@ fn main() -> Result<()> {
     }
 
     let config_opt = match arg_opt.config {
-        Some(_) => Opt::from_config_file(&arg_opt.config.clone().unwrap()),
-        None => Opt::from_config(),
+        Some(_) => Opt::read_config(&arg_opt.config.clone().unwrap()),
+        None => Opt::get_config(),
     };
 
     let opt = match config_opt {

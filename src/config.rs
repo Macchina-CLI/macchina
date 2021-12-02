@@ -1,30 +1,25 @@
 use crate::cli::Opt;
+use crate::error::Result;
 use dirs::config_dir;
-use std::io::Read;
 use std::path::{Path, PathBuf};
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 impl Opt {
-    pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt, &'static str> {
+    pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
         let path = Path::new(path);
-        if !path.exists() {
-            return Err("Failed to locate the configuration file.");
-        }
-
-        if let Ok(mut file) = std::fs::File::open(path) {
-            let mut buffer: Vec<u8> = Vec::new();
-            if file.read_to_end(&mut buffer).is_ok() {
-                return toml::from_slice(&buffer).or(Err("Failed to parse configuration file."));
-            }
-
-            return Err("Failed to read configuration file.");
-        }
-
-        Err("Failed to open configuration file.")
+        Ok(if Path::exists(path) {
+            let config_buffer = std::fs::read(path)?;
+            Ok(toml::from_slice(&config_buffer)?)
+        } else {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "Config file was not found",
+            ))
+        }?)
     }
 
-    pub fn get_config() -> Result<Opt, &'static str> {
+    pub fn get_config() -> Result<Opt> {
         if let Some(path) = std::env::var_os("MACCHINA_CONF") {
             return Opt::read_config(&path);
         } else if let Some(mut path) = config_dir() {
@@ -42,7 +37,6 @@ impl Opt {
                     path.push(format!("{}.toml", PKG_NAME));
                 }
             }
-
             return Opt::read_config(&path);
         }
 
