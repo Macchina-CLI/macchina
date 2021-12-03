@@ -447,8 +447,8 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "3.8.6"
-source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#f4627636d87cbbd830b257f39895a0618807caee"
+version = "3.9.0"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#8fa54fada30eec8486929c283bc9d5959cd427df"
 dependencies = [
  "byte-unit",
  "cfg-if",
@@ -1342,9 +1342,9 @@ checksum = "dc24ddac19a0cf02ad2b32d8897f202fc1a13ef285e2d4774e6610783cc8398f"
 
 [[package]]
 name = "winreg"
-version = "0.8.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d107f8c6e916235c4c01cabb3e8acf7bea8ef6a63ca2e7fa0527c049badfc48c"
+checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
 ]
