@@ -6,5 +6,5 @@ niceties we've added that they might find useful.
 | Directory                      | Description                                                                                                                  |
 | -----------------------------: | :--------------------------------------------------------------------------------------------------------------------------- |
 | [scripts](scripts)             | A collection of scripts that supercharge _macchina_.                                                                         |
-| [ascii](ascii)                 | A collection of ASCII art files that you display alongside your system statistics.                                           |
-| [themes](themes)               | A collection of themes that you should steal!                                                                                |
+| [ascii](ascii)                 | A collection of ASCII art files that you can display alongside your system statistics.                                       |
+| [themes](themes)               | A collection of themes that you should definitely steal!                                                                     |
