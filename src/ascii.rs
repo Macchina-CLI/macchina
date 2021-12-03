@@ -172,8 +172,6 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
 #[cfg(target_os = "windows")]
 pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
-    if !small {}
-
     match size {
         AsciiSize::Big => {
             let art: Vec<Span> = vec![
