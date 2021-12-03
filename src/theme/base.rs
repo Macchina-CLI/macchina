@@ -1,4 +1,3 @@
-use crate::theme::color::make_random_color;
 use crate::theme::components::*;
 use crate::Result;
 use serde::{Deserialize, Serialize};
@@ -142,11 +141,11 @@ impl Theme {
 
     pub fn randomize_if_specified(&mut self) {
         if self.randomize.is_key_color_randomized() {
-            self.set_key_color(make_random_color());
+            self.set_key_color(self.randomize.determine_randomization());
         }
 
         if self.randomize.is_separator_color_randomized() {
-            self.set_separator_color(make_random_color());
+            self.set_separator_color(self.randomize.determine_randomization());
         }
     }
 

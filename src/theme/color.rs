@@ -1,5 +1,13 @@
 use rand::seq::SliceRandom;
+use serde::{Serialize, Deserialize};
 use tui::style::Color;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ColorTypes {
+    Base,
+    Hexadecimal,
+    Indexed,
+}
 
 pub fn make_random_color() -> Color {
     use Color::*;

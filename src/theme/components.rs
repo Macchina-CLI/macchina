@@ -1,4 +1,6 @@
 use crate::theme::borders::Border;
+use crate::theme::color::*;
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use tui::style::Color;
@@ -39,6 +41,7 @@ impl Palette {
 pub struct Randomize {
     key_color: bool,
     separator_color: bool,
+    pick_random_from: ColorTypes,
 }
 
 impl Default for Randomize {
@@ -46,6 +49,7 @@ impl Default for Randomize {
         Randomize {
             key_color: false,
             separator_color: false,
+            pick_random_from: ColorTypes::Base,
         }
     }
 }
@@ -57,6 +61,25 @@ impl Randomize {
 
     pub fn is_separator_color_randomized(&self) -> bool {
         self.separator_color
+    }
+
+    pub fn determine_randomization(&self) -> Color {
+        return match self.pick_random_from {
+            ColorTypes::Base => make_random_color(),
+            ColorTypes::Indexed => {
+                let mut rng = rand::thread_rng();
+                return Color::Indexed(rng.gen_range(0..=127));
+            }
+            ColorTypes::Hexadecimal => {
+                let mut rng = rand::thread_rng();
+                let rgb = (
+                    rng.gen_range(0..=255),
+                    rng.gen_range(0..=255),
+                    rng.gen_range(0..=255),
+                );
+                return Color::Rgb(rgb.0, rgb.1, rgb.2);
+            }
+        };
     }
 }
 
