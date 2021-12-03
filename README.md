@@ -129,7 +129,7 @@ specify a **custom path** for the configuration file through the `--config` flag
 # Customization
 
 Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](themes/Hydrogen.toml) for an example theme.
+[Hydrogen.toml](contrib/themes/Hydrogen.toml) for an example theme.
 
 In order for _macchina_ to be able to find your themes, you need to place them
 in:
