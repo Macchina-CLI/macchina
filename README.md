@@ -112,7 +112,7 @@ back!
 # Configuration
 
 The configuration file defines the behavior of macchina, it does not allow for
-much customization. See [macchina.toml](macchina.toml) for an example
+much customization. See [macchina.toml](doc/macchina.toml) for an example
 configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
@@ -150,7 +150,7 @@ To start using your theme:
 - Lithium
 ```
 
-3. In [macchina.toml](macchina.toml), set `theme` to one of the listed themes,
+3. In [macchina.toml](doc/macchina.toml), set `theme` to one of the listed themes,
    e.g.:
 
 ```bash
