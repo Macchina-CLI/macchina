@@ -64,11 +64,11 @@ impl Randomize {
     }
 
     pub fn determine_randomization(&self) -> Color {
-        return match self.pick_random_from {
+        match self.pick_random_from {
             ColorTypes::Base => make_random_color(),
             ColorTypes::Indexed => {
                 let mut rng = rand::thread_rng();
-                return Color::Indexed(rng.gen_range(0..=127));
+                Color::Indexed(rng.gen_range(0..=127))
             }
             ColorTypes::Hexadecimal => {
                 let mut rng = rand::thread_rng();
@@ -77,9 +77,9 @@ impl Randomize {
                     rng.gen_range(0..=255),
                     rng.gen_range(0..=255),
                 );
-                return Color::Rgb(rgb.0, rgb.1, rgb.2);
+                Color::Rgb(rgb.0, rgb.1, rgb.2)
             }
-        };
+        }
     }
 }
 

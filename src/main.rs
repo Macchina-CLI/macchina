@@ -142,8 +142,8 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
     keys
 }
 
-fn select_ascii(small: bool) -> Option<Text<'static>> {
-    let ascii_art = ascii::get_ascii_art(small);
+fn select_ascii(ascii_size: ascii::AsciiSize) -> Option<Text<'static>> {
+    let ascii_art = ascii::get_ascii_art(ascii_size);
 
     if ascii_art.is_empty() {
         return None;
@@ -239,7 +239,8 @@ fn main() -> Result<()> {
 
     if arg_opt.export_config {
         println!("{}", toml::to_string(&arg_opt).unwrap());
-        println!("This doesn't cover all available options, for more information visit: https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml");
+        println!("This doesn't cover all available options");
+        println!("for more information visit: https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml");
         return Ok(());
     }
 
@@ -266,40 +267,41 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    const MAX_ASCII_HEIGHT: usize = 50;
+    const MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII: usize = 8;
+
     let mut backend = create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
+    let mut ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
 
-    let ascii_area;
+    if theme.is_ascii_visible() {
+        if let Some(file_path) = theme.get_custom_ascii().get_path() {
+            let file_path =
+                extra::expand_home(file_path).expect("Could not expand '~' to \"HOME\"");
+            let ascii_art;
 
-    if let Some(ref file_path) = theme.get_custom_ascii().get_path() {
-        let file_path = extra::expand_home(file_path).expect("Could not expand '~' to \"HOME\"");
-        let ascii_art;
+            if let Some(color) = theme.get_custom_ascii().get_color() {
+                ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+            } else {
+                ascii_art = ascii::get_ascii_from_file(&file_path)?;
+            }
 
-        if let Some(color) = theme.get_custom_ascii().get_color() {
-            ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+            if ascii_art.width() != 0 && ascii_art.height() < MAX_ASCII_HEIGHT {
+                ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
+            }
+        } else if readout_data.len() < MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII
+            || theme.prefers_small_ascii()
+        {
+            // prefer smaller ascii in this case
+            if let Some(ascii) = select_ascii(ascii::AsciiSize::Small) {
+                ascii_area = draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+            }
         } else {
-            ascii_art = ascii::get_ascii_from_file(&file_path)?;
+            // prefer bigger ascii otherwise
+            if let Some(ascii) = select_ascii(ascii::AsciiSize::Big) {
+                ascii_area = draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+            }
         }
-
-        // if the file is empty just default to disabled
-        if ascii_art.width() != 0 && ascii_art.height() < 50 && !theme.is_ascii_hidden() {
-            // because tmp_buffer height is 50
-            ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
-        } else {
-            ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
-        }
-    } else if readout_data.len() <= 6 || theme.prefers_small_ascii() {
-        // prefer smaller ascii if condition is satisfied
-        ascii_area = match (theme.is_ascii_hidden(), select_ascii(true)) {
-            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-        };
-    } else {
-        // prefer bigger ascii
-        ascii_area = match (theme.is_ascii_hidden(), select_ascii(false)) {
-            (false, Some(ascii)) => draw_ascii(ascii.to_owned(), &mut tmp_buffer),
-            _ => Rect::new(0, 1, 0, tmp_buffer.area.height - 1),
-        };
     }
 
     let tmp_buffer_area = tmp_buffer.area;

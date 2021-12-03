@@ -119,8 +119,8 @@ impl Theme {
         self.prefer_small_ascii
     }
 
-    pub fn is_ascii_hidden(&self) -> bool {
-        self.hide_ascii
+    pub fn is_ascii_visible(&self) -> bool {
+        !self.hide_ascii
     }
 
     pub fn get_padding(&self) -> usize {
