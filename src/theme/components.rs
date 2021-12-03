@@ -6,26 +6,32 @@ use tui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Palette {
-    r#type: Option<PaletteType>,
+    r#type: PaletteType,
     glyph: Option<String>,
+    visible: bool,
 }
 
 impl Default for Palette {
     fn default() -> Self {
         Palette {
-            r#type: None,
+            r#type: PaletteType::Full,
             glyph: Some(String::from("   ")),
+            visible: false,
         }
     }
 }
 
 impl Palette {
-    pub fn get_type(&self) -> Option<&PaletteType> {
-        self.r#type.as_ref()
+    pub fn get_type(&self) -> PaletteType {
+        self.r#type.to_owned()
     }
 
     pub fn get_glyph(&self) -> Option<&String> {
         self.glyph.as_ref()
+    }
+
+    pub fn is_visible(&self) -> bool {
+        self.visible
     }
 }
 

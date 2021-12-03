@@ -122,7 +122,7 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if self.theme.get_palette().get_type().is_some() {
+        if self.theme.get_palette().is_visible() {
             self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
         }
 
@@ -182,17 +182,13 @@ impl<'a> ReadoutList<'a> {
             }
         };
 
-        let mut spans = vec![Spans::default()];
-
-        if let Some(t) = palette.get_type() {
-            spans = match t {
-                PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
-                PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
-                PaletteType::Full => vec![
-                    Spans::from(span_vector(&dark_colors)),
-                    Spans::from(span_vector(&light_colors)),
-                ],
-            };
+        let spans = match palette.get_type() {
+            PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
+            PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
+            PaletteType::Full => vec![
+                Spans::from(span_vector(&dark_colors)),
+                Spans::from(span_vector(&light_colors)),
+            ],
         };
 
         let padding = self.theme.get_padding() as u16;
