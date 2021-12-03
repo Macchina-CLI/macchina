@@ -1,3 +1,4 @@
+use crate::theme::color::make_random_color;
 use crate::theme::components::*;
 use crate::Result;
 use serde::{Deserialize, Serialize};
@@ -137,6 +138,16 @@ impl Theme {
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
+    }
+
+    pub fn randomize_if_specified(&mut self) {
+        if self.randomize.is_key_color_randomized() {
+            self.set_key_color(make_random_color());
+        }
+
+        if self.randomize.is_separator_color_randomized() {
+            self.set_separator_color(make_random_color());
+        }
     }
 
     /// Searches for and returns a theme from a given directory.

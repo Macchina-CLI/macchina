@@ -21,7 +21,6 @@ mod doctor;
 pub mod widgets;
 
 use crate::data::ReadoutKey;
-use crate::theme::color::make_random_color;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
@@ -106,20 +105,6 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
     list.render(area, buf);
 }
 
-fn set_theme_properties(theme: &mut Theme) {
-    if theme.get_randomization().is_key_color_randomized() {
-        theme.set_key_color(make_random_color());
-    }
-
-    if theme.get_randomization().is_separator_color_randomized() {
-        theme.set_separator_color(make_random_color());
-    }
-
-    if theme.get_bar().are_delimiters_hidden() {
-        theme.get_bar().to_owned().hide_delimiters();
-    }
-}
-
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     let mut found = false;
@@ -129,7 +114,7 @@ fn create_theme(opt: &Opt) -> Theme {
             if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
                 found = true;
                 theme = custom_theme;
-                set_theme_properties(&mut theme);
+                theme.randomize_if_specified();
             }
         }
 
@@ -160,14 +145,14 @@ fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
 fn select_ascii(small: bool) -> Option<Text<'static>> {
     let ascii_art = ascii::get_ascii_art(small);
 
-    if !ascii_art.is_empty() {
-        Some(ascii_art[0].to_owned())
-    } else {
-        None
+    if ascii_art.is_empty() {
+        return None;
     }
+
+    Some(ascii_art[0].to_owned())
 }
 
-fn list_themes() {
+fn list_themes() -> Result<()> {
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     for dir in locations {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
@@ -203,22 +188,28 @@ fn list_themes() {
             }
         });
     }
+
+    Ok(())
 }
 
-fn main() -> Result<()> {
-    let arg_opt = Opt::from_args();
-
-    if arg_opt.export_config {
-        println!("{}", toml::to_string(&arg_opt).unwrap());
-        return Ok(());
+fn get_version() -> Result<()> {
+    if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
+        println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+    } else {
+        println!("macchina     {}", env!("CARGO_PKG_VERSION"));
     }
 
+    println!("libmacchina  {}", libmacchina::version());
+    Ok(())
+}
+
+fn get_options(arg_opt: Opt) -> Opt {
     let config_opt = match arg_opt.config {
         Some(_) => Opt::read_config(&arg_opt.config.clone().unwrap()),
         None => Opt::get_config(),
     };
 
-    let opt = match config_opt {
+    match config_opt {
         Ok(mut config) => {
             config.patch_args(Opt::from_args());
             config
@@ -240,26 +231,30 @@ fn main() -> Result<()> {
             }
             arg_opt
         }
-    };
+    }
+}
+
+fn main() -> Result<()> {
+    let arg_opt = Opt::from_args();
+
+    if arg_opt.export_config {
+        println!("{}", toml::to_string(&arg_opt).unwrap());
+        println!("This doesn't cover all available options, for more information visit: https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml");
+        return Ok(());
+    }
+
+    let opt = get_options(arg_opt);
 
     if opt.version {
-        if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
-            println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
-        } else {
-            println!("macchina     {}", env!("CARGO_PKG_VERSION"));
-        }
-        println!("libmacchina  {}", libmacchina::version());
-        return Ok(());
+        return get_version();
     }
 
     if opt.list_themes {
-        list_themes();
-        return Ok(());
+        return list_themes();
     }
 
     if opt.ascii_artists {
-        ascii::list_ascii_artists();
-        return Ok(());
+        return ascii::list_ascii_artists();
     }
 
     let theme = create_theme(&opt);
@@ -277,7 +272,7 @@ fn main() -> Result<()> {
     let ascii_area;
 
     if let Some(ref file_path) = theme.get_custom_ascii().get_path() {
-        let file_path = extra::expand_home(file_path).expect("Failed to expand ~ to HOME");
+        let file_path = extra::expand_home(file_path).expect("Could not expand '~' to \"HOME\"");
         let ascii_art;
 
         if let Some(color) = theme.get_custom_ascii().get_color() {
@@ -335,8 +330,8 @@ fn write_buffer_to_console(
 ) -> Result<()> {
     let term_size = backend.size().unwrap_or_default();
 
-    let (_, last_y) =
-        find_last_buffer_cell_index(tmp_buffer).expect("Error while writing to terminal buffer.");
+    let (_, last_y) = find_last_buffer_cell_index(tmp_buffer)
+        .expect("An error occurred while writing to the terminal buffer.");
 
     let last_x = find_widest_cell(tmp_buffer, last_y);
 

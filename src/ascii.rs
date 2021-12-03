@@ -17,7 +17,7 @@ lazy_static! {
     static ref BLACK: Style = Style::default().fg(Color::Black);
 }
 
-pub fn list_ascii_artists() {
+pub fn list_ascii_artists() -> Result<()> {
     println!(
         "- FreeBSD ASCII art (small variant) was taken from {}' {}",
         "Dylan Araps".blue(),
@@ -47,6 +47,8 @@ pub fn list_ascii_artists() {
         "Christopher Johnson's ASCII art collection".blue(),
         "unknown artist".yellow()
     );
+
+    Ok(())
 }
 
 pub fn get_ascii_from_file_override_color(file_path: &Path, color: Color) -> Result<Text<'static>> {
