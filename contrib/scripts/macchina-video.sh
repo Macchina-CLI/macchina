@@ -25,8 +25,8 @@ fi
 
 required="youtube-dl ffmpeg base64 awk jp2a macchina"
 
-for r in $required;do
-    if ! [ -n "$(which $r 2> /dev/null)" ];then # need the quotes
+for r in "$required";do
+    if ! [ -n "$(which "$r" 2> /dev/null)" ];then # need the quotes
         printf '\x1b[31m%s not found\x1b[0m\n' "$r"
         exit 1
     fi
@@ -40,8 +40,8 @@ trap_ctrlc() {
 
     printf '\x1b[?25h' # shows cursor
     if [ -n "$FFMPEG_PID" -a -d "/proc/$FFMPEG_PID" ];then
-        kill -0 $FFMPEG_PID
-        wait $FFMPEG_PID
+        kill -0 "$FFMPEG_PID"
+        wait "$FFMPEG_PID"
     fi
 
     if [ -n "$DIR" -a -d "$DIR" ];then
@@ -51,28 +51,28 @@ trap_ctrlc() {
     exit
 }
 
-mkdir $DIR
+mkdir "$DIR"
 
 # youtube-dl -f best $URL -o - | ffmpeg -i pipe: -r 10 -update 1 "$DIR/out_%d.png" > /dev/null 2>&1 &
-youtube-dl -f best $URL -o - 2>/dev/null | ffmpeg -i pipe: -r 10 "$DIR/out_%d.png" > /dev/null 2>&1 &
+youtube-dl -f best "$URL" -o - 2>/dev/null | ffmpeg -i pipe: -r 10 "$DIR/out_%d.png" > /dev/null 2>&1 &
 FFMPEG_PID=$!
 
 trap trap_ctrlc INT
 
 printf '\x1b[?25l' # hides the cursor
-for img in $(seq 1 999999);do # increasing this too much will break it
+for img in "$(seq 1 999999)";do # increasing this too much will break it
     count=0
     while ! [ -f "$DIR/out_$img.png" ];do 
         sleep .05
         count=$((count+1))
-        if [ $count -ge $WAIT ];then break;fi
+        if [ "$count" -ge "$WAIT" ];then break;fi
     done
     printf '\x1b[s' # saves cursor position
-    target/debug/macchina --custom-ascii <(jp2a --color --width=50 $DIR/out_$img.png)
+    target/debug/macchina --custom-ascii <(jp2a --color --width=50 "$DIR/out_$img".png)
     # jp2a --color --width=50 $DIR/out_$img.png # just display the video wihout macchina
     printf '\x1b[u'
     if [ -f  "$DIR/out_$img.png" ];then
-        rm -f $DIR/out_$img.png
+        rm -f "$DIR/out_$img".png
     fi
     sleep .02
 done
@@ -81,12 +81,12 @@ printf '\x1b[?25h' # shows cursor
 
 
 if [ -n "$FFMPEG_PID" -a -d "/proc/$FFMPEG_PID" ];then
-    kill -0 $FFMPEG_PID
-    wait $FFMPEG_PID
+    kill -0 "$FFMPEG_PID"
+    wait "$FFMPEG_PID"
 fi
 
 if [ -n "$DIR" -a -d "$DIR" ];then
     rm -rf "$DIR" 2> /dev/null
 fi
 
-wait $FFMPEG_PID
+wait "$FFMPEG_PID"
