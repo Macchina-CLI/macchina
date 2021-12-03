@@ -83,22 +83,13 @@ impl Randomize {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ASCII {
     path: Option<PathBuf>,
 
     #[serde(default)]
     #[serde(with = "color_to_tui::optional")]
     color: Option<Color>,
-}
-
-impl Default for ASCII {
-    fn default() -> Self {
-        ASCII {
-            color: None,
-            path: None,
-        }
-    }
 }
 
 impl ASCII {
