@@ -1,5 +1,5 @@
 use rand::seq::SliceRandom;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
