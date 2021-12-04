@@ -97,7 +97,6 @@ impl Randomize {
                     return Color::Rgb(rgb.0, rgb.1, rgb.2);
                 }
             };
-
         }
 
         make_random_color()
