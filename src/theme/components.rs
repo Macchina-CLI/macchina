@@ -133,7 +133,7 @@ impl ASCII {
         if let Some(p) = &self.path {
             return p.to_path_buf();
         }
-        
+
         PathBuf::new()
     }
 }
