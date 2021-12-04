@@ -97,7 +97,6 @@ impl Randomize {
                     return Color::Rgb(rgb.0, rgb.1, rgb.2);
                 }
             };
-
         }
 
         make_random_color()
@@ -214,49 +213,73 @@ impl Block {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Bar {
-    glyph: String,
-    symbol_open: char,
-    symbol_close: char,
-    hide_delimiters: bool,
-    visible: bool,
+    glyph: Option<String>,
+    symbol_open: Option<char>,
+    symbol_close: Option<char>,
+    hide_delimiters: Option<bool>,
+    visible: Option<bool>,
 }
 
 impl Default for Bar {
     fn default() -> Self {
         Bar {
-            glyph: String::new(),
-            symbol_open: '(',
-            symbol_close: ')',
-            hide_delimiters: false,
-            visible: false,
+            glyph: None,
+            symbol_open: Some('('),
+            symbol_close: Some(')'),
+            hide_delimiters: None,
+            visible: None,
         }
     }
 }
 
 impl Bar {
     pub fn is_visible(&self) -> bool {
-        self.visible
+        if let Some(v) = self.visible {
+            return v;
+        }
+
+        false
     }
 
     pub fn get_glyph(&self) -> &str {
-        &self.glyph
+        if let Some(g) = &self.glyph {
+            return g;
+        }
+
+        "●"
     }
 
     pub fn get_symbol_open(&self) -> char {
-        self.symbol_open
+        if let Some(s) = self.symbol_open {
+            return s;
+        }
+
+        '('
     }
 
     pub fn get_symbol_close(&self) -> char {
-        self.symbol_close
+        if let Some(s) = self.symbol_close {
+            return s;
+        }
+
+        ')'
     }
 
     pub fn hide_delimiters(&mut self) {
-        self.symbol_open = '\0';
-        self.symbol_close = '\0';
+        if let Some(h) = self.hide_delimiters {
+            if h {
+                self.symbol_open = Some('\0');
+                self.symbol_close = Some('\0');
+            }
+        }
     }
 
     pub fn are_delimiters_hidden(&self) -> bool {
-        self.hide_delimiters
+        if let Some(h) = self.hide_delimiters {
+            return h;
+        }
+
+        false
     }
 }
 
@@ -308,147 +331,147 @@ impl Default for Keys {
 }
 
 impl Keys {
-    pub fn get_host(&self) -> String {
+    pub fn get_host(&self) -> &str {
         if let Some(h) = &self.host {
-            return h.to_owned();
+            return h;
         }
 
-        String::from("Host")
+        "Host"
     }
 
-    pub fn get_kernel(&self) -> String {
-        if let Some(h) = &self.kernel {
-            return h.to_owned();
+    pub fn get_kernel(&self) -> &str {
+        if let Some(k) = &self.kernel {
+            return k;
         }
 
-        String::from("Kernel")
+        "Kernel"
     }
 
-    pub fn get_battery(&self) -> String {
-        if let Some(h) = &self.battery {
-            return h.to_owned();
+    pub fn get_battery(&self) -> &str {
+        if let Some(b) = &self.battery {
+            return b;
         }
 
-        String::from("Battery")
+        "Battery"
     }
 
-    pub fn get_os(&self) -> String {
-        if let Some(h) = &self.os {
-            return h.to_owned();
+    pub fn get_os(&self) -> &str {
+        if let Some(o) = &self.os {
+            return o;
         }
 
-        String::from("OS")
+        "OS"
     }
 
-    pub fn get_de(&self) -> String {
-        if let Some(h) = &self.de {
-            return h.to_owned();
+    pub fn get_de(&self) -> &str {
+        if let Some(d) = &self.de {
+            return d;
         }
 
-        String::from("DE")
+        "DE"
     }
 
-    pub fn get_wm(&self) -> String {
-        if let Some(h) = &self.wm {
-            return h.to_owned();
+    pub fn get_wm(&self) -> &str {
+        if let Some(w) = &self.wm {
+            return w;
         }
 
-        String::from("WM")
+        "WM"
     }
 
-    pub fn get_distro(&self) -> String {
-        if let Some(h) = &self.distro {
-            return h.to_owned();
+    pub fn get_distro(&self) -> &str {
+        if let Some(d) = &self.distro {
+            return d;
         }
 
-        String::from("Distro")
+        "Distro"
     }
 
-    pub fn get_terminal(&self) -> String {
-        if let Some(h) = &self.terminal {
-            return h.to_owned();
+    pub fn get_terminal(&self) -> &str {
+        if let Some(t) = &self.terminal {
+            return t;
         }
 
-        String::from("Terminal")
+        "Terminal"
     }
 
-    pub fn get_shell(&self) -> String {
-        if let Some(h) = &self.shell {
-            return h.to_owned();
+    pub fn get_shell(&self) -> &str {
+        if let Some(s) = &self.shell {
+            return s;
         }
 
-        String::from("Shell")
+        "Shell"
     }
 
-    pub fn get_packages(&self) -> String {
-        if let Some(h) = &self.packages {
-            return h.to_owned();
+    pub fn get_packages(&self) -> &str {
+        if let Some(p) = &self.packages {
+            return p;
         }
 
-        String::from("Packages")
+        "Packages"
     }
 
-    pub fn get_uptime(&self) -> String {
-        if let Some(h) = &self.uptime {
-            return h.to_owned();
+    pub fn get_uptime(&self) -> &str {
+        if let Some(u) = &self.uptime {
+            return u;
         }
 
-        String::from("Uptime")
+        "Uptime"
     }
 
-    pub fn get_memory(&self) -> String {
-        if let Some(h) = &self.memory {
-            return h.to_owned();
+    pub fn get_memory(&self) -> &str {
+        if let Some(m) = &self.memory {
+            return m;
         }
 
-        String::from("Memory")
+        "Memory"
     }
 
-    pub fn get_machine(&self) -> String {
-        if let Some(h) = &self.machine {
-            return h.to_owned();
+    pub fn get_machine(&self) -> &str {
+        if let Some(m) = &self.machine {
+            return m;
         }
 
-        String::from("Machine")
+        "Machine"
     }
 
-    pub fn get_local_ip(&self) -> String {
-        if let Some(h) = &self.local_ip {
-            return h.to_owned();
+    pub fn get_local_ip(&self) -> &str {
+        if let Some(l) = &self.local_ip {
+            return l;
         }
 
-        String::from("Local IP")
+        "Local IP"
     }
 
-    pub fn get_backlight(&self) -> String {
-        if let Some(h) = &self.backlight {
-            return h.to_owned();
+    pub fn get_backlight(&self) -> &str {
+        if let Some(b) = &self.backlight {
+            return b;
         }
 
-        String::from("Brightness")
+        "Brightness"
     }
 
-    pub fn get_resolution(&self) -> String {
-        if let Some(h) = &self.resolution {
-            return h.to_owned();
+    pub fn get_resolution(&self) -> &str {
+        if let Some(r) = &self.resolution {
+            return r;
         }
 
-        String::from("Resolution")
+        "Resolution"
     }
 
-    pub fn get_cpu_load(&self) -> String {
-        if let Some(h) = &self.cpu_load {
-            return h.to_owned();
+    pub fn get_cpu_load(&self) -> &str {
+        if let Some(c) = &self.cpu_load {
+            return c;
         }
 
-        String::from("CPU Load")
+        "CPU Load"
     }
 
-    pub fn get_cpu(&self) -> String {
-        if let Some(h) = &self.cpu {
-            return h.to_owned();
+    pub fn get_cpu(&self) -> &str {
+        if let Some(c) = &self.cpu {
+            return c;
         }
 
-        String::from("CPU")
+        "CPU"
     }
 }
