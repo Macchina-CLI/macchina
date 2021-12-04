@@ -141,11 +141,11 @@ impl Theme {
 
     pub fn randomize_if_specified(&mut self) {
         if self.randomize.is_key_color_randomized() {
-            self.set_key_color(self.randomize.determine_randomization());
+            self.set_key_color(self.randomize.get_pool());
         }
 
         if self.randomize.is_separator_color_randomized() {
-            self.set_separator_color(self.randomize.determine_randomization());
+            self.set_separator_color(self.randomize.get_pool());
         }
     }
 

@@ -39,47 +39,60 @@ impl Palette {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Randomize {
-    key_color: bool,
-    separator_color: bool,
-    pick_random_from: ColorTypes,
+    key_color: Option<bool>,
+    separator_color: Option<bool>,
+    pool: Option<ColorTypes>,
 }
 
 impl Default for Randomize {
     fn default() -> Self {
         Randomize {
-            key_color: false,
-            separator_color: false,
-            pick_random_from: ColorTypes::Base,
+            key_color: None,
+            separator_color: None,
+            pool: Some(ColorTypes::Base),
         }
     }
 }
 
 impl Randomize {
     pub fn is_key_color_randomized(&self) -> bool {
-        self.key_color
+        if let Some(k) = self.key_color {
+            return k;
+        }
+
+        false
     }
 
     pub fn is_separator_color_randomized(&self) -> bool {
-        self.separator_color
+        if let Some(s) = self.separator_color {
+            return s;
+        }
+
+        false
     }
 
-    pub fn determine_randomization(&self) -> Color {
-        match self.pick_random_from {
-            ColorTypes::Base => make_random_color(),
-            ColorTypes::Indexed => {
-                let mut rng = rand::thread_rng();
-                Color::Indexed(rng.gen_range(0..=127))
-            }
-            ColorTypes::Hexadecimal => {
-                let mut rng = rand::thread_rng();
-                let rgb = (
-                    rng.gen_range(0..=255),
-                    rng.gen_range(0..=255),
-                    rng.gen_range(0..=255),
-                );
-                Color::Rgb(rgb.0, rgb.1, rgb.2)
-            }
+    pub fn get_pool(&self) -> Color {
+        if let Some(pool) = &self.pool {
+            match pool {
+                ColorTypes::Base => return make_random_color(),
+                ColorTypes::Indexed => {
+                    let mut rng = rand::thread_rng();
+                    return Color::Indexed(rng.gen_range(0..=127));
+                }
+                ColorTypes::Hexadecimal => {
+                    let mut rng = rand::thread_rng();
+                    let rgb = (
+                        rng.gen_range(0..=255),
+                        rng.gen_range(0..=255),
+                        rng.gen_range(0..=255),
+                    );
+                    return Color::Rgb(rgb.0, rgb.1, rgb.2);
+                }
+            };
+
         }
+
+        make_random_color()
     }
 }
 
@@ -145,12 +158,12 @@ impl Default for Block {
 }
 
 impl Block {
-    pub fn get_title(&self) -> Option<String> {
+    pub fn get_title(&self) -> String {
         if let Some(t) = &self.title {
-            return Some(t.to_owned());
+            return t.to_owned();
         }
 
-        None
+        String::new()
     }
 
     pub fn get_border_type(&self) -> BorderType {
