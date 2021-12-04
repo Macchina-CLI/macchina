@@ -113,16 +113,28 @@ pub struct ASCII {
 }
 
 impl ASCII {
-    pub fn get_color(&self) -> Option<Color> {
+    pub fn get_color(&self) -> Color {
         if let Some(col) = &self.color {
-            return Some(*col);
+            return *col;
         }
 
-        None
+        Color::White
     }
 
-    pub fn get_path(&self) -> Option<&PathBuf> {
-        self.path.as_ref()
+    pub fn is_color_set(&self) -> bool {
+        self.color.is_some()
+    }
+
+    pub fn is_path_set(&self) -> bool {
+        self.path.is_some()
+    }
+
+    pub fn get_path(&self) -> PathBuf {
+        if let Some(p) = &self.path {
+            return p.to_path_buf();
+        }
+        
+        PathBuf::new()
     }
 }
 

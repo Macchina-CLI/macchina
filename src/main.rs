@@ -277,12 +277,13 @@ fn main() -> Result<()> {
         readout_data.len() < MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII || theme.prefers_small_ascii();
 
     if theme.is_ascii_visible() {
-        if let Some(file_path) = theme.get_custom_ascii().get_path() {
-            let file_path =
-                extra::expand_home(file_path).expect("Could not expand '~' to \"HOME\"");
+        let file_path = extra::expand_home(theme.get_custom_ascii().get_path())
+            .expect("Could not expand '~' to \"HOME\"");
+        if theme.get_custom_ascii().is_path_set() {
             let ascii_art;
 
-            if let Some(color) = theme.get_custom_ascii().get_color() {
+            if theme.get_custom_ascii().is_color_set() {
+                let color = theme.get_custom_ascii().get_color();
                 ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
             } else {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
