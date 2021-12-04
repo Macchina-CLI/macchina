@@ -8,24 +8,28 @@ use tui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Palette {
-    r#type: PaletteType,
+    r#type: Option<PaletteType>,
     glyph: Option<String>,
-    visible: bool,
+    visible: Option<bool>,
 }
 
 impl Default for Palette {
     fn default() -> Self {
         Palette {
-            r#type: PaletteType::Full,
+            r#type: Some(PaletteType::Dark),
             glyph: Some(String::from("   ")),
-            visible: false,
+            visible: None,
         }
     }
 }
 
 impl Palette {
     pub fn get_type(&self) -> PaletteType {
-        self.r#type.to_owned()
+        if let Some(t) = &self.r#type {
+            return t.to_owned();
+        }
+
+        PaletteType::Dark
     }
 
     pub fn get_glyph(&self) -> Option<&String> {
@@ -33,7 +37,11 @@ impl Palette {
     }
 
     pub fn is_visible(&self) -> bool {
-        self.visible
+        if let Some(v) = self.visible {
+            return v;
+        }
+
+        true
     }
 }
 
