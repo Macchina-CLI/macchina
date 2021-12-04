@@ -262,121 +262,193 @@ impl Bar {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Keys {
-    pub host: String,
-    pub kernel: String,
-    pub battery: String,
-    pub os: String,
-    pub de: String,
-    pub wm: String,
-    pub distro: String,
-    pub terminal: String,
-    pub shell: String,
-    pub packages: String,
-    pub uptime: String,
-    pub memory: String,
-    pub machine: String,
-    pub local_ip: String,
-    pub backlight: String,
-    pub resolution: String,
-    pub cpu_load: String,
-    pub cpu: String,
+    pub host: Option<String>,
+    pub kernel: Option<String>,
+    pub battery: Option<String>,
+    pub os: Option<String>,
+    pub de: Option<String>,
+    pub wm: Option<String>,
+    pub distro: Option<String>,
+    pub terminal: Option<String>,
+    pub shell: Option<String>,
+    pub packages: Option<String>,
+    pub uptime: Option<String>,
+    pub memory: Option<String>,
+    pub machine: Option<String>,
+    pub local_ip: Option<String>,
+    pub backlight: Option<String>,
+    pub resolution: Option<String>,
+    pub cpu_load: Option<String>,
+    pub cpu: Option<String>,
 }
 
 impl Default for Keys {
     fn default() -> Self {
         Self {
-            host: String::from("Host"),
-            kernel: String::from("Kernel"),
-            battery: String::from("Battery"),
-            os: String::from("OS"),
-            de: String::from("DE"),
-            wm: String::from("WM"),
-            distro: String::from("Distro"),
-            terminal: String::from("Terminal"),
-            shell: String::from("Shell"),
-            packages: String::from("Packages"),
-            uptime: String::from("Uptime"),
-            memory: String::from("Memory"),
-            machine: String::from("Machine"),
-            local_ip: String::from("Local IP"),
-            backlight: String::from("Brightness"),
-            resolution: String::from("Resolution"),
-            cpu_load: String::from("CPU Load"),
-            cpu: String::from("CPU"),
+            host: Some(String::from("Host")),
+            kernel: Some(String::from("Kernel")),
+            battery: Some(String::from("Battery")),
+            os: Some(String::from("OS")),
+            de: Some(String::from("DE")),
+            wm: Some(String::from("WM")),
+            distro: Some(String::from("Distro")),
+            terminal: Some(String::from("Terminal")),
+            shell: Some(String::from("Shell")),
+            packages: Some(String::from("Packages")),
+            uptime: Some(String::from("Uptime")),
+            memory: Some(String::from("Memory")),
+            machine: Some(String::from("Machine")),
+            local_ip: Some(String::from("Local IP")),
+            backlight: Some(String::from("Brightness")),
+            resolution: Some(String::from("Resolution")),
+            cpu_load: Some(String::from("CPU Load")),
+            cpu: Some(String::from("CPU")),
         }
     }
 }
 
 impl Keys {
-    pub fn get_host(&self) -> &String {
-        &self.host
+    pub fn get_host(&self) -> String {
+        if let Some(h) = &self.host {
+            return h.to_owned();
+        }
+
+        String::from("Host")
     }
 
-    pub fn get_kernel(&self) -> &String {
-        &self.kernel
+    pub fn get_kernel(&self) -> String {
+        if let Some(h) = &self.kernel {
+            return h.to_owned();
+        }
+
+        String::from("Kernel")
     }
 
-    pub fn get_battery(&self) -> &String {
-        &self.battery
+    pub fn get_battery(&self) -> String {
+        if let Some(h) = &self.battery {
+            return h.to_owned();
+        }
+
+        String::from("Battery")
     }
 
-    pub fn get_os(&self) -> &String {
-        &self.os
+    pub fn get_os(&self) -> String {
+        if let Some(h) = &self.os {
+            return h.to_owned();
+        }
+
+        String::from("OS")
     }
 
-    pub fn get_de(&self) -> &String {
-        &self.de
+    pub fn get_de(&self) -> String {
+        if let Some(h) = &self.de {
+            return h.to_owned();
+        }
+
+        String::from("DE")
     }
 
-    pub fn get_wm(&self) -> &String {
-        &self.wm
+    pub fn get_wm(&self) -> String {
+        if let Some(h) = &self.wm {
+            return h.to_owned();
+        }
+
+        String::from("WM")
     }
 
-    pub fn get_distro(&self) -> &String {
-        &self.distro
+    pub fn get_distro(&self) -> String {
+        if let Some(h) = &self.distro {
+            return h.to_owned();
+        }
+
+        String::from("Distro")
     }
 
-    pub fn get_terminal(&self) -> &String {
-        &self.terminal
+    pub fn get_terminal(&self) -> String {
+        if let Some(h) = &self.terminal {
+            return h.to_owned();
+        }
+
+        String::from("Terminal")
     }
 
-    pub fn get_shell(&self) -> &String {
-        &self.shell
+    pub fn get_shell(&self) -> String {
+        if let Some(h) = &self.shell {
+            return h.to_owned();
+        }
+
+        String::from("Shell")
     }
 
-    pub fn get_packages(&self) -> &String {
-        &self.packages
+    pub fn get_packages(&self) -> String {
+        if let Some(h) = &self.packages {
+            return h.to_owned();
+        }
+
+        String::from("Packages")
     }
 
-    pub fn get_uptime(&self) -> &String {
-        &self.uptime
+    pub fn get_uptime(&self) -> String {
+        if let Some(h) = &self.uptime {
+            return h.to_owned();
+        }
+
+        String::from("Uptime")
     }
 
-    pub fn get_memory(&self) -> &String {
-        &self.memory
+    pub fn get_memory(&self) -> String {
+        if let Some(h) = &self.memory {
+            return h.to_owned();
+        }
+
+        String::from("Memory")
     }
 
-    pub fn get_machine(&self) -> &String {
-        &self.machine
+    pub fn get_machine(&self) -> String {
+        if let Some(h) = &self.machine {
+            return h.to_owned();
+        }
+
+        String::from("Machine")
     }
 
-    pub fn get_local_ip(&self) -> &String {
-        &self.local_ip
+    pub fn get_local_ip(&self) -> String {
+        if let Some(h) = &self.local_ip {
+            return h.to_owned();
+        }
+
+        String::from("Local IP")
     }
 
-    pub fn get_backlight(&self) -> &String {
-        &self.backlight
+    pub fn get_backlight(&self) -> String {
+        if let Some(h) = &self.backlight {
+            return h.to_owned();
+        }
+
+        String::from("Brightness")
     }
 
-    pub fn get_resolution(&self) -> &String {
-        &self.resolution
+    pub fn get_resolution(&self) -> String {
+        if let Some(h) = &self.resolution {
+            return h.to_owned();
+        }
+
+        String::from("Resolution")
     }
 
-    pub fn get_cpu_load(&self) -> &String {
-        &self.cpu_load
+    pub fn get_cpu_load(&self) -> String {
+        if let Some(h) = &self.cpu_load {
+            return h.to_owned();
+        }
+
+        String::from("CPU Load")
     }
 
-    pub fn get_cpu(&self) -> &String {
-        &self.cpu
+    pub fn get_cpu(&self) -> String {
+        if let Some(h) = &self.cpu {
+            return h.to_owned();
+        }
+
+        String::from("CPU")
     }
 }
