@@ -105,16 +105,42 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
     list.render(area, buf);
 }
 
+fn print_errors(err: error::Error) {
+    match err {
+        error::Error::ParsingError(err) => match err.line_col() {
+            Some((line, col)) => {
+                //  Indexes are 0-based, let's increment them to make it intuitive
+                println!(
+                    "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
+                    line + 1,
+                    col + 1,
+                    err
+                )
+            }
+            None => println!("\x1b[31mError\x1b[0m: {:?}", err),
+        },
+        error::Error::IOError(err) => {
+            println!("\x1b[31mError\x1b[0m: {:?}", err);
+        }
+    }
+}
+
 fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     let mut found = false;
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     if let Some(opt_theme) = &opt.theme {
         for dir in locations {
-            if let Ok(custom_theme) = Theme::get_theme(opt_theme, dir) {
-                found = true;
-                theme = custom_theme;
-                theme.randomize_if_specified();
+            match Theme::get_theme(opt_theme, dir) {
+                Ok(custom_theme) => {
+                    found = true;
+                    theme = custom_theme;
+                    theme.randomize_if_specified();
+                }
+                Err(err) => {
+                    found = true;
+                    print_errors(err);
+                }
             }
         }
 
@@ -215,20 +241,7 @@ fn get_options(arg_opt: Opt) -> Opt {
             config
         }
         Err(e) => {
-            match e {
-                error::Error::ParsingError(e) => match e.line_col() {
-                    Some((l, c)) => {
-                        println!(
-                            "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
-                            l, c, e
-                        )
-                    }
-                    None => println!("\x1b[31mError\x1b[0m: {:?}", e),
-                },
-                error::Error::IOError(e) => {
-                    println!("\x1b[31mError\x1b[0m: {:?}", e);
-                }
-            }
+            print_errors(e);
             arg_opt
         }
     }
