@@ -128,18 +128,18 @@ impl Default for InnerMargin {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block {
     title: Option<String>,
-    visible: bool,
-    inner_margin: InnerMargin,
-    border: Border,
+    visible: Option<bool>,
+    inner_margin: Option<InnerMargin>,
+    border: Option<Border>,
 }
 
 impl Default for Block {
     fn default() -> Self {
         Block {
             title: None,
-            visible: false,
-            inner_margin: InnerMargin::default(),
-            border: Border::Plain,
+            visible: Some(false),
+            inner_margin: Some(InnerMargin::default()),
+            border: Some(Border::Plain),
         }
     }
 }
@@ -154,24 +154,40 @@ impl Block {
     }
 
     pub fn get_border_type(&self) -> BorderType {
-        match self.border {
-            Border::Plain => BorderType::Plain,
-            Border::Rounded => BorderType::Rounded,
-            Border::Double => BorderType::Double,
-            Border::Thick => BorderType::Thick,
+        if let Some(b) = &self.border {
+            match b {
+                Border::Plain => return BorderType::Plain,
+                Border::Rounded => return BorderType::Rounded,
+                Border::Double => return BorderType::Double,
+                Border::Thick => return BorderType::Thick,
+            };
         }
+
+        BorderType::Plain
     }
 
     pub fn is_visible(&self) -> bool {
-        self.visible
+        if let Some(v) = self.visible {
+            return v;
+        }
+
+        false
     }
 
     pub fn get_horizontal_margin(&self) -> u16 {
-        self.inner_margin.x
+        if let Some(marg) = &self.inner_margin {
+            return marg.x;
+        }
+
+        1
     }
 
     pub fn get_vertical_margin(&self) -> u16 {
-        self.inner_margin.y
+        if let Some(marg) = &self.inner_margin {
+            return marg.y;
+        }
+
+        0
     }
 }
 
