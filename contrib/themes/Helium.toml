@@ -1,5 +1,4 @@
-# for a complete reference, visit
-# https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation
+# Helium.toml
 
 hide_ascii = false
 prefer_small_ascii = false
