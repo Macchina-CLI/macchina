@@ -2,7 +2,7 @@
 name = "macchina"
 version = "6.0.0"
 authors = ["Aziz Ben Ali <ba.tahaaziz@gmail.com>", "Marvin Haschker <marvin@haschker.me>", "Uttarayan Mondal <email@uttarayan.me>"]
-edition = "2018"
+edition = "2021"
 description = "A system information fetcher, with an (unhealthy) emphasis on performance."
 keywords = ["system", "fetch", "cli"]
 repository = "https://github.com/Macchina-CLI/macchina"

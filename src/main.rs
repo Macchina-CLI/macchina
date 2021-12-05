@@ -126,11 +126,15 @@ fn print_errors(err: error::Error) {
 }
 
 fn create_theme(opt: &Opt) -> Theme {
-    let mut theme = Theme::default();
     let mut found = false;
+    let mut theme = Theme::default();
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     if let Some(opt_theme) = &opt.theme {
         for dir in locations {
+            if found {
+                break;
+            }
+
             match Theme::get_theme(opt_theme, dir) {
                 Ok(custom_theme) => {
                     found = true;
@@ -138,8 +142,9 @@ fn create_theme(opt: &Opt) -> Theme {
                     theme.randomize_if_specified();
                 }
                 Err(err) => {
-                    found = true;
-                    print_errors(err);
+                    if !found {
+                        print_errors(err)
+                    }
                 }
             }
         }
