@@ -143,17 +143,11 @@ fn create_theme(opt: &Opt) -> Theme {
                 }
                 Err(err) => {
                     if !found {
-                        print_errors(err)
+                        print_errors(err);
+                        break;
                     }
                 }
             }
-        }
-
-        if !found {
-            println!(
-                "\x1b[31mError\x1b[0m: Could not find \"{}\" in any of the default directories.",
-                opt_theme
-            );
         }
     }
 
