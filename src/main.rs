@@ -177,14 +177,10 @@ fn select_ascii(ascii_size: ascii::AsciiSize) -> Option<Text<'static>> {
     Some(ascii_art[0].to_owned())
 }
 
-fn list_themes() -> Result<()> {
+fn list_themes(opt: &Opt) -> Result<()> {
     let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
     for dir in locations {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-        if entries.is_empty() {
-            continue;
-        }
-
         let custom_themes = entries.iter().filter(|&x| {
             if let Some(ext) = libmacchina::extra::path_extension(x) {
                 ext == "toml"
@@ -193,23 +189,26 @@ fn list_themes() -> Result<()> {
             }
         });
 
-        if custom_themes.clone().count() == 0 {
-            println!(
-                "\nNo custom themes were found in {}",
-                dir.join("macchina/themes")
-                    .to_string_lossy()
-                    .bright_yellow()
-            )
+        let n_themes = custom_themes.clone().count();
+        if n_themes == 0 {
+            if opt.verbose {
+                println!(
+                    "\n{} exists but contains no themes.",
+                    dir.join("macchina/themes")
+                        .to_string_lossy()
+                        .yellow()
+                );
+            }
+
+            return Ok(());
         }
+
+        println!("{}/macchina/themes:", dir.to_string_lossy());
 
         custom_themes.for_each(|x| {
             if let Some(theme) = x.file_name() {
                 let name = theme.to_string_lossy().replace(".toml", "");
-                println!(
-                    "- {} ({}/macchina/themes)",
-                    name.bright_green(),
-                    &dir.to_string_lossy()
-                );
+                println!("- {}", name.bright_green().italic());
             }
         });
     }
@@ -263,7 +262,7 @@ fn main() -> Result<()> {
     }
 
     if opt.list_themes {
-        return list_themes();
+        return list_themes(&opt);
     }
 
     if opt.ascii_artists {

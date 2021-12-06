@@ -103,11 +103,19 @@ pub struct Opt {
         help = "Specify the network interface for the LocalIP readout"
     )]
     pub interface: Option<String>,
+
+    #[structopt(
+        long = "verbose",
+        short = "V",
+        help = "Verbose output"
+    )]
+    pub verbose: bool,
 }
 
 impl Default for Opt {
     fn default() -> Self {
         Opt {
+            verbose: false,
             version: false,
             doctor: false,
             export_config: false,
