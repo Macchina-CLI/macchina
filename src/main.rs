@@ -194,9 +194,7 @@ fn list_themes(opt: &Opt) -> Result<()> {
             if opt.verbose {
                 println!(
                     "\n{} exists but contains no themes.",
-                    dir.join("macchina/themes")
-                        .to_string_lossy()
-                        .yellow()
+                    dir.join("macchina/themes").to_string_lossy().yellow()
                 );
             }
 
@@ -288,13 +286,11 @@ fn main() -> Result<()> {
         readout_data.len() < MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII || theme.prefers_small_ascii();
 
     if theme.is_ascii_visible() {
-        let file_path = extra::expand_home(theme.get_custom_ascii().get_path())
-            .expect("Could not expand '~' to \"HOME\"");
-        if theme.get_custom_ascii().is_path_set() {
+        if let Some(path) = theme.get_custom_ascii().get_path() {
+            let file_path = extra::expand_home(path).expect("Could not expand '~' to \"HOME\"");
             let ascii_art;
 
-            if theme.get_custom_ascii().is_color_set() {
-                let color = theme.get_custom_ascii().get_color();
+            if let Some(color) = theme.get_custom_ascii().get_color() {
                 ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
             } else {
                 ascii_art = ascii::get_ascii_from_file(&file_path)?;
