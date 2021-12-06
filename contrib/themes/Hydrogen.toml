@@ -1,53 +1,48 @@
 # Hydrogen.toml
 
-spacing = 2
-padding = 0
-hide_ascii = true
-prefer_small_ascii = false
-separator = ">"
-key_color = "Cyan"
+spacing         = 2
+padding         = 0
+hide_ascii      = true
+separator       = ">"
+key_color       = "Cyan"
 separator_color = "White"
-palette = "Light"
+palette         = "Light"
 
 [bar]
-glyph = "ߋ"
-symbol_open = '['
-symbol_close = ']'
+glyph           = "ߋ"
+symbol_open     = '['
+symbol_close    = ']'
 hide_delimiters = true
-visible = true
+visible         = true
 
 [box]
-border = "plain"
-visible = true
+border          = "plain"
+visible         = true
 
 [box.inner_margin]
-x = 1
-y = 0
-
-[custom_ascii]
-color = "Green"
-# path = "~/pro/rust/macchina/ascii/rust.ascii"
+x               = 1
+y               = 0
 
 [randomize]
-key_color = false
+key_color       = false
 separator_color = false
 
 [keys]
-host = "Host"
-kernel = "Kernel"
-battery = "Battery"
-os = "OS"
-de = "DE"
-wm = "WM"
-distro = "Distro"
-terminal = "Terminal"
-shell = "Shell"
-packages = "Packages"
-uptime = "Uptime"
-memory = "Memory"
-machine = "Machine"
-local_ip = "Local IP"
-backlight = "Brightness"
-resolution = "Resolution"
-cpu_load = "CPU Load"
-cpu = "CPU"
+host            = "Host"
+kernel          = "Kernel"
+battery         = "Battery"
+os              = "OS"
+de              = "DE"
+wm              = "WM"
+distro          = "Distro"
+terminal        = "Terminal"
+shell           = "Shell"
+packages        = "Packages"
+uptime          = "Uptime"
+memory          = "Memory"
+machine         = "Machine"
+local_ip        = "Local IP"
+backlight       = "Brightness"
+resolution      = "Resolution"
+cpu_load        = "CPU Load"
+cpu             = "CPU"
