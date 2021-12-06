@@ -73,10 +73,6 @@ impl Opt {
             self.list_themes = true;
         }
 
-        if args.verbose {
-            self.verbose = true;
-        }
-
         if args.long_kernel {
             self.long_shell = true;
         }
