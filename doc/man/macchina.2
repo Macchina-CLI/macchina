@@ -2,12 +2,12 @@
 .\"     Title: macchina
 .\"    Author: Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
 .\" Generator: Asciidoctor 2.0.16
-.\"      Date: 2021-12-08
+.\"      Date: 2021-12-09
 .\"    Manual: MACCHINA
 .\"    Source: MACCHINA
 .\"  Language: English
 .\"
-.TH "MACCHINA" "2" "2021-12-08" "MACCHINA" "MACCHINA"
+.TH "MACCHINA" "2" "2021-12-09" "MACCHINA" "MACCHINA"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -44,11 +44,13 @@ This manpage details all the options a theme can accept.
 Defines the amount of spacing to leave between
 .br
 the separator and the content besides it.
+.br
+Takes an integer value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes an integer value, e.g. spacing = 1
+spacing = 1
 .fam
 .fi
 .if n .RE
@@ -59,11 +61,13 @@ Takes an integer value, e.g. spacing = 1
 Defines the amount of padding to leave between
 .br
 the content and its surroundings.
+.br
+Takes an integer value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes an integer value, e.g. padding = 0
+padding = 0
 .fam
 .fi
 .if n .RE
@@ -74,11 +78,13 @@ Takes an integer value, e.g. padding = 0
 Disables the rendering of ASCII, whether it be
 .br
 built\-in or custom.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. hide_ascii = false
+hide_ascii = false
 .fam
 .fi
 .if n .RE
@@ -87,11 +93,13 @@ Takes a boolean value, e.g. hide_ascii = false
 \fBprefer_small_ascii\fP
 .RS 4
 For built\-in ASCII, always use smaller variants.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. prefer_small_ascii = true
+prefer_small_ascii = true
 .fam
 .fi
 .if n .RE
@@ -100,11 +108,13 @@ Takes a boolean value, e.g. prefer_small_ascii = true
 \fBseparator\fP
 .RS 4
 Defines the glyph to use for the separator.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. separator = "\-\->"
+separator = "\-\->"
 .fam
 .fi
 .if n .RE
@@ -113,15 +123,10 @@ Takes a string value, e.g. separator = "\-\->"
 \fBkey_color\fP
 .RS 4
 Defines the color of the keys.
-.sp
-.if n .RS 4
-.nf
-.fam C
-Takes hexadecimal/indexed/predefined color names,
-where casing is insensitive e.g.
-.fam
-.fi
-.if n .RE
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
 .sp
 .if n .RS 4
 .nf
@@ -137,15 +142,10 @@ key_color = "Green"
 \fBseparator_color\fP
 .RS 4
 Defines the color of the separator.
-.sp
-.if n .RS 4
-.nf
-.fam C
-Takes hexadecimal/indexed/predefined color names,
-where casing is insensitive e.g.
-.fam
-.fi
-.if n .RE
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
 .sp
 .if n .RS 4
 .nf
@@ -170,14 +170,8 @@ Defines the type of colors to be displayed in the palette.
 The colors you configure your terminal to use in its colorschemes
 .br
 will be displayed by this component.
-.sp
-.if n .RS 4
-.nf
-.fam C
+.br
 Takes a string value, e.g.
-.fam
-.fi
-.if n .RE
 .sp
 .if n .RS 4
 .nf
@@ -195,11 +189,13 @@ type = "Full"
 Defines the glyph to use for the palette. You should
 .br
 append a space to leave some room between the glyphs.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. glyph = "() "
+glyph = "() "
 .fam
 .fi
 .if n .RE
@@ -208,11 +204,13 @@ Takes a string value, e.g. glyph = "() "
 \fBvisible\fP
 .RS 4
 Defines whether to show or hide the palette.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. visible = true
+visible = true
 .fam
 .fi
 .if n .RE
@@ -230,11 +228,13 @@ hides the bars completely.
 \fBglyph\fP
 .RS 4
 Defines the glyph to use for all bars.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. glyph = "o"
+glyph = "o"
 .fam
 .fi
 .if n .RE
@@ -245,11 +245,13 @@ Takes a string value, e.g. glyph = "o"
 Defines the character to use for opening delimiters. Be sure
 .br
 to surround the value with single quotes and not double quotes.
+.br
+Takes a char value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a char value, e.g. symbol_open = \*(Aq(\*(Aq
+symbol_open = \*(Aq(\*(Aq
 .fam
 .fi
 .if n .RE
@@ -260,11 +262,13 @@ Takes a char value, e.g. symbol_open = \*(Aq(\*(Aq
 Defines the character to use for closing delimiters. Be sure
 .br
 to surround the value with single quotes and not double quotes.
+.br
+Takes a char value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a char value, e.g. symbol_close = \*(Aq)\*(Aq
+symbol_close = \*(Aq)\*(Aq
 .fam
 .fi
 .if n .RE
@@ -273,11 +277,13 @@ Takes a char value, e.g. symbol_close = \*(Aq)\*(Aq
 \fBvisible\fP
 .RS 4
 Defines whether to show or hide the bars.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. visible = true
+visible = true
 .fam
 .fi
 .if n .RE
@@ -288,11 +294,13 @@ Takes a boolean value, e.g. visible = true
 Defines whether to show or hide the bars delimiters, i.e.
 .br
 the characters that surround the bars themselves.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. hide_delimiters = false
+hide_delimiters = false
 .fam
 .fi
 .if n .RE
@@ -304,11 +312,13 @@ The box component renders a box that surrounds your system information.
 \fBtitle\fP
 .RS 4
 Defines the title of the box.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. title = "Hydrogen"
+title = "Hydrogen"
 .fam
 .fi
 .if n .RE
@@ -317,14 +327,8 @@ Takes a string value, e.g. title = "Hydrogen"
 \fBborder\fP
 .RS 4
 Defines the type of border to use for the box.
-.sp
-.if n .RS 4
-.nf
-.fam C
+.br
 Takes a string value, where casing is insensitive e.g.
-.fam
-.fi
-.if n .RE
 .sp
 .if n .RS 4
 .nf
@@ -341,11 +345,13 @@ border = "double"
 \fBvisible\fP
 .RS 4
 Defines whether to show or hide the box.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. visible = true
+visible = true
 .fam
 .fi
 .if n .RE
@@ -357,11 +363,13 @@ Takes a boolean value, e.g. visible = true
 Defines the horizontal margin to leave between
 .br
 the content and the box.
+.br
+Takes an integer value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes an integer value, e.g. x = 2
+x = 2
 .fam
 .fi
 .if n .RE
@@ -369,14 +377,16 @@ Takes an integer value, e.g. x = 2
 .sp
 \fBy\fP
 .RS 4
-Defines the vertical margin to leave between
+Defines the vertical margin to leave
 .br
-the content and the box.
+between the content and the box.
+.br
+Takes an integer value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes an integer value, e.g. y = 1
+y = 1
 .fam
 .fi
 .if n .RE
@@ -390,15 +400,10 @@ ANSI escape sequences are supported.
 \fBcolor\fP
 .RS 4
 Defines the color of the ASCII.
-.sp
-.if n .RS 4
-.nf
-.fam C
-Takes hexadecimal/indexed/predefined color names,
-where casing is insensitive e.g.
-.fam
-.fi
-.if n .RE
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
 .sp
 .if n .RS 4
 .nf
@@ -413,16 +418,11 @@ separator_color = "Green"
 .sp
 \fBpath\fP
 .RS 4
-Defines the path to a file on your filesystem which contains
-the ASCII art you want to display.
-.sp
-.if n .RS 4
-.nf
-.fam C
+Defines the path to a file on your filesystem
+.br
+which contains the ASCII art you want to display.
+.br
 Takes a string value, where casing is sensitive e.g.
-.fam
-.fi
-.if n .RE
 .sp
 .if n .RS 4
 .nf
@@ -439,11 +439,13 @@ This section is used to randomize color selection.
 \fBkey_color\fP
 .RS 4
 Defines whether to randomize the color of the keys.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. key_color = true
+key_color = true
 .fam
 .fi
 .if n .RE
@@ -452,11 +454,13 @@ Takes a boolean value, e.g. key_color = true
 \fBseparator_color\fP
 .RS 4
 Defines whether to randomize the color of the separator.
+.br
+Takes a boolean value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a boolean value, e.g. separator_color = true
+separator_color = true
 .fam
 .fi
 .if n .RE
@@ -465,14 +469,8 @@ Takes a boolean value, e.g. separator_color = true
 \fBpool\fP
 .RS 4
 Defines the pool of colors from which to pick a random color.
-.sp
-.if n .RS 4
-.nf
-.fam C
+.br
 Takes a string value, where casing is insensitive e.g.
-.fam
-.fi
-.if n .RE
 .sp
 .if n .RS 4
 .nf
@@ -521,11 +519,13 @@ customize the keys of each readout.
 \fBhost\fP
 .RS 4
 Defines the text of the Host readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. host = "Host"
+host = "Host"
 .fam
 .fi
 .if n .RE
@@ -534,11 +534,13 @@ Takes a string value, e.g. host = "Host"
 \fBkernel\fP
 .RS 4
 Defines the text of the Kernel readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. kernel = "Kernel"
+kernel = "Kernel"
 .fam
 .fi
 .if n .RE
@@ -547,11 +549,13 @@ Takes a string value, e.g. kernel = "Kernel"
 \fBos\fP
 .RS 4
 Defines the text of the OperatingSystem readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. os = "OS"
+os = "OS"
 .fam
 .fi
 .if n .RE
@@ -560,11 +564,13 @@ Takes a string value, e.g. os = "OS"
 \fBmachine\fP
 .RS 4
 Defines the text of the Machine readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. machine= "Machine"
+machine= "Machine"
 .fam
 .fi
 .if n .RE
@@ -573,11 +579,13 @@ Takes a string value, e.g. machine= "Machine"
 \fBde\fP
 .RS 4
 Defines the text of the \fIDesktopEnvironment\fP readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. de = "DE"
+de = "DE"
 .fam
 .fi
 .if n .RE
@@ -586,11 +594,13 @@ Takes a string value, e.g. de = "DE"
 \fBwm\fP
 .RS 4
 Defines the text of the \fIWindowManager\fP readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. wm = "WM"
+wm = "WM"
 .fam
 .fi
 .if n .RE
@@ -599,11 +609,13 @@ Takes a string value, e.g. wm = "WM"
 \fBdistro\fP
 .RS 4
 Defines the text of the Distribution readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. distro = "Distro"
+distro = "Distro"
 .fam
 .fi
 .if n .RE
@@ -612,11 +624,13 @@ Takes a string value, e.g. distro = "Distro"
 \fBterminal\fP
 .RS 4
 Defines the text of the Terminal readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. terminal = "Term"
+terminal = "Term"
 .fam
 .fi
 .if n .RE
@@ -625,11 +639,13 @@ Takes a string value, e.g. terminal = "Term"
 \fBshell\fP
 .RS 4
 Defines the text of the Shell readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. shell = "Shell"
+shell = "Shell"
 .fam
 .fi
 .if n .RE
@@ -638,11 +654,13 @@ Takes a string value, e.g. shell = "Shell"
 \fBpackages\fP
 .RS 4
 Defines the text of the Packages readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. host = "Host"
+packages = "Packages"
 .fam
 .fi
 .if n .RE
@@ -651,11 +669,13 @@ Takes a string value, e.g. host = "Host"
 \fBuptime\fP
 .RS 4
 Defines the text of the Uptime readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. host = "Host"
+uptime = "Uptime"
 .fam
 .fi
 .if n .RE
@@ -664,11 +684,13 @@ Takes a string value, e.g. host = "Host"
 \fBlocal_ip\fP
 .RS 4
 Defines the text of the LocalIP readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. local_ip = "Local IP"
+local_ip = "Local IP"
 .fam
 .fi
 .if n .RE
@@ -677,11 +699,13 @@ Takes a string value, e.g. local_ip = "Local IP"
 \fBmemory\fP
 .RS 4
 Defines the text of the Memory readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. memory = "Memory"
+memory = "Memory"
 .fam
 .fi
 .if n .RE
@@ -690,11 +714,13 @@ Takes a string value, e.g. memory = "Memory"
 \fBbattery\fP
 .RS 4
 Defines the text of the Battery readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. battery = "Battery"
+battery = "Battery"
 .fam
 .fi
 .if n .RE
@@ -703,11 +729,13 @@ Takes a string value, e.g. battery = "Battery"
 \fBbacklight\fP
 .RS 4
 Defines the text of the Backlight readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. backlight = "Brightness"
+backlight = "Brightness"
 .fam
 .fi
 .if n .RE
@@ -716,11 +744,13 @@ Takes a string value, e.g. backlight = "Brightness"
 \fBresolution\fP
 .RS 4
 Defines the text of the Resolution readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. resolution = "Resolution"
+resolution = "Resolution"
 .fam
 .fi
 .if n .RE
@@ -729,11 +759,13 @@ Takes a string value, e.g. resolution = "Resolution"
 \fBcpu\fP
 .RS 4
 Defines the text of the Processor readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. cpu = "CPU"
+cpu = "CPU"
 .fam
 .fi
 .if n .RE
@@ -742,11 +774,13 @@ Takes a string value, e.g. cpu = "CPU"
 \fBcpu_load\fP
 .RS 4
 Defines the text of the ProcessorLoad readout.
+.br
+Takes a string value, e.g.
 .sp
 .if n .RS 4
 .nf
 .fam C
-Takes a string value, e.g. cpu_load = "CPU %"
+cpu_load = "CPU %"
 .fam
 .fi
 .if n .RE

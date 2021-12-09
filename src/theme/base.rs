@@ -173,7 +173,7 @@ impl Theme {
                         theme = t;
                         true
                     }
-                    Err(_) => false,
+                    _ => false,
                 });
 
             if path.is_none() {
