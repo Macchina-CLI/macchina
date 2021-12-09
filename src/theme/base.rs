@@ -1,5 +1,8 @@
+use crate::cli::Opt;
+use crate::config::Config;
 use crate::theme::components::*;
 use crate::Result;
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use toml;
@@ -156,5 +159,67 @@ impl Theme {
         let buffer = std::fs::read(theme_path)?;
 
         Ok(toml::from_slice(&buffer)?)
+    }
+
+    pub fn create_theme(opt: &Opt) -> Theme {
+        let mut theme = Theme::default();
+        let locations = Config::locations();
+
+        if let Some(opt_theme) = &opt.theme {
+            locations
+                .iter()
+                .find(|&x| match Theme::get_theme(opt_theme, x.to_path_buf()) {
+                    Ok(t) => {
+                        theme = t;
+                        true
+                    }
+                    Err(_) => false,
+                });
+        }
+
+        theme
+    }
+
+    pub fn list_themes(opt: &Opt) -> Result<()> {
+        let locations = Config::locations();
+
+        for dir in locations {
+            let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+            let custom_themes = entries.iter().filter(|&x| {
+                if let Some(ext) = libmacchina::extra::path_extension(x) {
+                    ext == "toml"
+                } else {
+                    false
+                }
+            });
+
+            let n_themes = custom_themes.clone().count();
+            if n_themes == 0 {
+                continue;
+            }
+
+            println!("{}/macchina/themes:", dir.to_string_lossy());
+
+            custom_themes.for_each(|x| {
+                if let Some(theme) = x.file_name() {
+                    let name = theme.to_string_lossy().replace(".toml", "");
+                    if let Some(active_theme) = &opt.theme {
+                        if active_theme == &name {
+                            println!(
+                                "- {} {}",
+                                name.bright_green().italic(),
+                                "[active]".bright_cyan()
+                            );
+                        } else {
+                            println!("- {}", name.bright_green().italic());
+                        }
+                    } else {
+                        println!("- {}", name.bright_green().italic());
+                    }
+                }
+            });
+        }
+
+        Ok(())
     }
 }

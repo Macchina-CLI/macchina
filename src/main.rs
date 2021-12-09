@@ -8,8 +8,7 @@ mod format;
 pub mod theme;
 
 use cli::Opt;
-use colored::Colorize;
-use std::{array, io};
+use std::io;
 use structopt::StructOpt;
 
 #[macro_use]
@@ -20,14 +19,12 @@ mod data;
 mod doctor;
 pub mod widgets;
 
-use crate::data::ReadoutKey;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use data::Readout;
 use error::Result;
 use std::io::Stdout;
-use std::str::FromStr;
 use tui::backend::{Backend, CrosstermBackend};
 use tui::buffer::{Buffer, Cell};
 use tui::layout::{Margin, Rect};
@@ -105,121 +102,6 @@ fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: R
     list.render(area, buf);
 }
 
-fn print_errors(err: error::Error) {
-    match err {
-        error::Error::ParsingError(err) => match err.line_col() {
-            Some((line, col)) => {
-                //  Indexes are 0-based, let's increment them to make it intuitive
-                println!(
-                    "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
-                    line + 1,
-                    col + 1,
-                    err
-                )
-            }
-            None => println!("\x1b[31mError\x1b[0m: {:?}", err),
-        },
-        error::Error::IOError(err) => {
-            println!("\x1b[31mError\x1b[0m: {:?}", err);
-        }
-    }
-}
-
-fn create_theme(opt: &Opt) -> Theme {
-    let mut found = false;
-    let mut theme = Theme::default();
-    let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
-    if let Some(opt_theme) = &opt.theme {
-        for dir in locations {
-            if found {
-                break;
-            }
-
-            match Theme::get_theme(opt_theme, dir) {
-                Ok(custom_theme) => {
-                    found = true;
-                    theme = custom_theme;
-                    theme.randomize_if_specified();
-                }
-                Err(err) => {
-                    if !found {
-                        print_errors(err);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    theme
-}
-
-fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(shown) = opt.show.to_owned() {
-        return shown;
-    }
-
-    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
-        .iter()
-        .map(|f| ReadoutKey::from_str(f).unwrap())
-        .collect();
-
-    keys
-}
-
-fn select_ascii(ascii_size: ascii::AsciiSize) -> Option<Text<'static>> {
-    let ascii_art = ascii::get_ascii_art(ascii_size);
-
-    if ascii_art.is_empty() {
-        return None;
-    }
-
-    Some(ascii_art[0].to_owned())
-}
-
-fn list_themes(opt: &Opt) -> Result<()> {
-    let locations = array::IntoIter::new(extra::config_data_paths()).flatten();
-    for dir in locations {
-        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-        let custom_themes = entries.iter().filter(|&x| {
-            if let Some(ext) = libmacchina::extra::path_extension(x) {
-                ext == "toml"
-            } else {
-                false
-            }
-        });
-
-        let n_themes = custom_themes.clone().count();
-        // skip directory if it contains no themes
-        if n_themes == 0 {
-            continue;
-        }
-
-        println!("{}/macchina/themes:", dir.to_string_lossy());
-
-        custom_themes.for_each(|x| {
-            if let Some(theme) = x.file_name() {
-                let name = theme.to_string_lossy().replace(".toml", "");
-                if let Some(active_theme) = &opt.theme {
-                    if active_theme == &name {
-                        println!(
-                            "- {} {}",
-                            name.bright_green().italic(),
-                            "(active)".bright_cyan()
-                        );
-                    } else {
-                        println!("- {}", name.bright_green().italic());
-                    }
-                } else {
-                    println!("- {}", name.bright_green().italic());
-                }
-            }
-        });
-    }
-
-    Ok(())
-}
-
 fn get_version() -> Result<()> {
     if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
         println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
@@ -228,38 +110,13 @@ fn get_version() -> Result<()> {
     }
 
     println!("libmacchina  {}", libmacchina::version());
+
     Ok(())
-}
-
-fn get_options(arg_opt: Opt) -> Opt {
-    let config_opt = match arg_opt.config {
-        Some(_) => Opt::read_config(&arg_opt.config.clone().unwrap()),
-        None => Opt::get_config(),
-    };
-
-    match config_opt {
-        Ok(mut config) => {
-            config.patch_args(Opt::from_args());
-            config
-        }
-        Err(e) => {
-            print_errors(e);
-            arg_opt
-        }
-    }
 }
 
 fn main() -> Result<()> {
     let arg_opt = Opt::from_args();
-
-    if arg_opt.export_config {
-        println!("{}", toml::to_string(&arg_opt).unwrap());
-        println!("This doesn't cover all available options");
-        println!("for more information visit: https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml");
-        return Ok(());
-    }
-
-    let opt = get_options(arg_opt);
+    let opt = Opt::get_options(arg_opt);
 
     if opt.version {
         return get_version();
@@ -269,17 +126,17 @@ fn main() -> Result<()> {
         return ascii::list_ascii_artists();
     }
 
-    let should_display = should_display(&opt);
-    let theme = create_theme(&opt);
+    if opt.list_themes {
+        return Theme::list_themes(&opt);
+    }
+
+    let theme = Theme::create_theme(&opt);
+    let should_display = data::should_display(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, should_display);
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);
         return Ok(());
-    }
-
-    if opt.list_themes {
-        return list_themes(&opt);
     }
 
     const MAX_ASCII_HEIGHT: usize = 50;
@@ -288,7 +145,7 @@ fn main() -> Result<()> {
     let mut backend = create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
     let mut ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
-    let prefers_builtin_small_ascii =
+    let prefers_small_ascii =
         readout_data.len() < MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII || theme.prefers_small_ascii();
 
     if theme.is_ascii_visible() {
@@ -305,14 +162,14 @@ fn main() -> Result<()> {
             if ascii_art.width() != 0 && ascii_art.height() < MAX_ASCII_HEIGHT {
                 ascii_area = draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
             }
-        } else if prefers_builtin_small_ascii {
+        } else if prefers_small_ascii {
             // prefer smaller ascii in this case
-            if let Some(ascii) = select_ascii(ascii::AsciiSize::Small) {
+            if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Small) {
                 ascii_area = draw_ascii(ascii.to_owned(), &mut tmp_buffer);
             }
         } else {
             // prefer bigger ascii otherwise
-            if let Some(ascii) = select_ascii(ascii::AsciiSize::Big) {
+            if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Big) {
                 ascii_area = draw_ascii(ascii.to_owned(), &mut tmp_buffer);
             }
         }

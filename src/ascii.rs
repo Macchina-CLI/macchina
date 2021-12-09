@@ -25,35 +25,42 @@ pub enum AsciiSize {
 pub fn list_ascii_artists() -> Result<()> {
     println!(
         "- FreeBSD ASCII art (small variant) was taken from {}' {}",
-        "Dylan Araps".blue(),
-        "pfetch".green()
+        "Dylan Araps".bold(),
+        "pfetch".bright_purple()
     );
 
     println!(
         "- macOS ASCII art (big variant) was taken from {}' {}",
-        "Dylan Araps".blue(),
-        "Neofetch".green()
+        "Dylan Araps".bold(),
+        "Neofetch".bright_purple()
     );
 
     println!(
-        "- macOS ASCII art (small variant) was made by {} ({})",
-        "Joan Stark".blue(),
-        "jgs".yellow()
+        "- macOS ASCII art (small variant) was originally made by {}",
+        "Joan Stark".bold(),
     );
 
     println!(
-        "- Linux ASCII art (big variant) was made by {} ({})",
-        "Joan Stark".blue(),
-        "jgs".yellow()
+        "- Linux ASCII art (big variant) was originally made by {}",
+        "Joan Stark".bold(),
     );
 
     println!(
-        "- Linux ASCII art (small variant) was taken from {} ({})",
-        "Christopher Johnson's ASCII art collection".blue(),
-        "unknown artist".yellow()
+        "- Linux ASCII art (small variant) was taken from {}",
+        "Christopher Johnson's ASCII art collection".bold(),
     );
 
     Ok(())
+}
+
+pub fn select_ascii(ascii_size: AsciiSize) -> Option<Text<'static>> {
+    let ascii_art = get_ascii_art(ascii_size);
+
+    if ascii_art.is_empty() {
+        return None;
+    }
+
+    Some(ascii_art[0].to_owned())
 }
 
 pub fn get_ascii_from_file_override_color(file_path: &Path, color: Color) -> Result<Text<'static>> {

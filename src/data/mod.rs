@@ -6,6 +6,7 @@ use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use std::str::FromStr;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
@@ -106,6 +107,19 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(&glyph, " "));
     }
     Spans::from(span_vector)
+}
+
+pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
+    if let Some(shown) = opt.show.to_owned() {
+        return shown;
+    }
+
+    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
+        .iter()
+        .map(|f| ReadoutKey::from_str(f).unwrap())
+        .collect();
+
+    keys
 }
 
 pub fn get_all_readouts<'a>(

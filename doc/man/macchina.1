@@ -2,12 +2,12 @@
 .\"     Title: macchina
 .\"    Author: Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
 .\" Generator: Asciidoctor 2.0.16
-.\"      Date: 2021-11-07
+.\"      Date: 2021-12-02
 .\"    Manual: MACCHINA
 .\"    Source: MACCHINA
 .\"  Language: English
 .\"
-.TH "MACCHINA" "1" "2021-11-07" "MACCHINA" "MACCHINA"
+.TH "MACCHINA" "1" "2021-12-02" "MACCHINA" "MACCHINA"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -36,17 +36,12 @@ macchina \- A system information fetcher, with an (unhealthy) emphasis on perfor
 .sp
 \fB\-\-ascii\-artists\fP
 .RS 4
-Lists the original artists of the ASCII art used by \fBmacchina\fP.
+Lists the original artists of the ASCII art used by macchina.
 .RE
 .sp
 \fB\-d, \-\-doctor\fP
 .RS 4
 Checks the system for failures.
-.RE
-.sp
-\fB\-s, \-\-current\-shell\fP
-.RS 4
-Toggles between the current shell or the default one.
 .RE
 .sp
 \fB\-e, \-\-export\-config\fP
@@ -57,14 +52,14 @@ Prints a template configuration file to stdout.
 \fB\-c, \-\-config\fP=\fIFILE\fP
 .RS 4
 Specify a custom path to a configuration file.
-This is helpful in cases where \fBmacchina\fP fails to parse the configuration
+This is helpful in cases where macchina fails to parse the configuration
 file from the default path, i.e. \fB$XDG_CONFIG_HOME/macchina/macchina.toml\fP.
 .RE
 .sp
 \fB\-t, \-\-theme\fP=\fITHEME\fP
 .RS 4
-Specify which theme to use.
-You should probably verify whether \fBmacchina\fP was able to find your
+Specify the name of the theme to use.
+You should verify whether macchina was able to find your
 theme with \fB\-\-list\-themes\fP.
 .RE
 .sp
@@ -73,7 +68,26 @@ theme with \fB\-\-list\-themes\fP.
 Lists all available themes.
 Themes are \fBTOML\fP files which must be placed in
 \fB$XDG_CONFIG_HOME/macchina/themes\fP.
-Whatever this flag returns to the console, can be used with the \fB\-\-theme\fP flag.
+Whatever this flag returns to the console can be used
+with the \fB\-\-theme\fP flag.
+.RE
+.sp
+\fB\-i, \-\-interface\fP=\fIIF_NAME\fP
+.RS 4
+Specify the network interface for the LocalIP readout,
+e.g. "wlan0", "eth0".
+.RE
+.sp
+\fB\-s, \-\-current\-shell\fP
+.RS 4
+Toggles between the current shell, i.e. the parent of the terminal emulator,
+or the default one.
+.RE
+.sp
+\fB\-C, \-\-logical\-cores\fP
+.RS 4
+Toggles between logical and physical cores
+for the Processor readout.
 .RE
 .sp
 \fB\-K, \-\-long\-kernel\fP
@@ -306,31 +320,14 @@ Battery
 .RE
 .SH "MORE INFORMATION"
 .sp
-For more information, please visit the \fBmacchina\fP \fBrepository\fP: \c
+For more information, please visit the macchina repository: \c
 .URL "https://github.com/Macchina\-CLI/macchina" "" ""
+.SH "LICENSE"
+.sp
+MIT
 .SH "COPYRIGHT"
 .sp
-MIT License
-.sp
 Copyright (c) 2021 Aziz Ben Ali
-.sp
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-.sp
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-.sp
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 .SH "AUTHOR"
 .sp
 Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal

@@ -6,7 +6,7 @@ use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 pub fn uptime(uptime: usize, long: bool) -> String {
     let mut formatted_uptime = String::new();
     let uptime: f32 = uptime as f32;
-    // Uptime is formatted to "x days, y hours, z minutes" if the system
+    // uptime is formatted to "x days, y hours, z minutes" if the system
     // has been up for longer than 60 seconds, and "x seconds" if not.
 
     // "x days", "y hours" or "z minutes" might not show up if their value is 0.
@@ -59,7 +59,8 @@ pub fn uptime(uptime: usize, long: bool) -> String {
             }
         }
     }
-    // Uptime is formatted to seconds only if the system has been up for fewer than 60 seconds
+    // uptime is formatted to seconds only if the
+    // system has been up for fewer than 60 seconds
     else {
         let up_seconds = (uptime % 60.0).floor();
         if up_seconds != 0.0 {
@@ -103,8 +104,6 @@ pub fn cpu_only(model_name: &str) -> String {
     model_name.replace("(TM)", "™").replace("(R)", "®")
 }
 
-/// This function should return a new `String` constructed from the values \
-/// returned by `traits::GeneralReadout::cpu_model_name()` and `num_cpus::get()`
 pub fn cpu(model_name: &str, cpu_cores: usize) -> String {
     format!("{} ({})", cpu_only(model_name), cpu_cores)
 }
@@ -121,7 +120,7 @@ pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, Readou
         )));
     }
 
-    // Pre-allocate an estimated size to reduce the number
+    // pre-allocate an estimated size to reduce the number
     // of reallocations when manipulating the string
     let mut string = String::with_capacity(len * 7);
 

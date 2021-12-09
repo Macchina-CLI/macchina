@@ -11,3 +11,23 @@ pub enum Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+pub fn print_errors(err: Error) {
+    match err {
+        Error::ParsingError(err) => match err.line_col() {
+            Some((line, col)) => {
+                //  Indexes are 0-based, let's increment them to make it intuitive
+                println!(
+                    "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
+                    line + 1,
+                    col + 1,
+                    err
+                )
+            }
+            None => println!("\x1b[31mError\x1b[0m: {:?}", err),
+        },
+        Error::IOError(err) => {
+            println!("\x1b[31mError\x1b[0m: {:?}", err);
+        }
+    }
+}
