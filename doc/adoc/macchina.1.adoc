@@ -70,26 +70,27 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
    Prints version information.
 
 *-o, --show*::
-   Displays only the specified readouts.
+   Display only the specified readouts.
    Possible values are (case-sensitive):
-   - Host
-   - Machine
-   - Kernel
-   - Distribution
-   - OperatingSystem
-   - DesktopEnvironment
-   - WindowManager
-   - Packages
-   - Shell
-   - Terminal
-   - LocalIP
-   - Backlight
-   - Resolution
-   - Uptime
-   - Processor
-   - ProcessorLoad
-   - Memory
-   - Battery
+
+   Host
+   Machine
+   Kernel
+   Distribution
+   OperatingSystem
+   DesktopEnvironment
+   WindowManager
+   Packages
+   Shell
+   Terminal
+   LocalIP
+   Backlight
+   Resolution
+   Uptime
+   Processor
+   ProcessorLoad
+   Memory
+   Battery
 
 == More information
 
