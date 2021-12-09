@@ -165,16 +165,24 @@ impl Theme {
         let mut theme = Theme::default();
         let locations = Config::locations();
 
-        if let Some(opt_theme) = &opt.theme {
-            locations
+        if let Some(th) = &opt.theme {
+            let path = locations
                 .iter()
-                .find(|&x| match Theme::get_theme(opt_theme, x.to_path_buf()) {
+                .find(|&x| match Theme::get_theme(th, x.to_path_buf()) {
                     Ok(t) => {
                         theme = t;
                         true
                     }
                     Err(_) => false,
                 });
+
+            if path.is_none() {
+                println!("{}: \"{}\" does not exist.", "Error".red(), th);
+                println!(
+                    "{}: verify that macchina can find it by running --list-themes",
+                    "Suggestion".yellow()
+                );
+            }
         }
 
         theme
