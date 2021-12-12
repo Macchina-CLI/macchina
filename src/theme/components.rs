@@ -63,7 +63,7 @@ impl Default for Randomize {
 }
 
 impl Randomize {
-    pub fn is_key_color_randomized(&self) -> bool {
+    pub fn rand_key(&self) -> bool {
         if let Some(k) = self.key_color {
             return k;
         }
@@ -71,7 +71,7 @@ impl Randomize {
         false
     }
 
-    pub fn is_separator_color_randomized(&self) -> bool {
+    pub fn rand_sep(&self) -> bool {
         if let Some(s) = self.separator_color {
             return s;
         }
@@ -79,7 +79,7 @@ impl Randomize {
         false
     }
 
-    pub fn get_pool(&self) -> Color {
+    pub fn generate(&self) -> Color {
         if let Some(pool) = &self.pool {
             match pool {
                 ColorTypes::Base => return make_random_color(),

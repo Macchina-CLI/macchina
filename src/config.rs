@@ -11,16 +11,17 @@ pub struct Config;
 
 impl Config {
     pub fn locations() -> Vec<PathBuf> {
-        let mut dirs = vec![];
+        let mut dirs = vec![
+            _dirs::macos_config_dir().unwrap_or_default(),
+            _dirs::localbase_dir().unwrap_or_default(),
+            _dirs::usr_share_dir().unwrap_or_default(),
+        ];
 
-        #[cfg(not(target_os = "macos"))]
-        dirs.push(dirs::config_dir().unwrap_or_default());
-        dirs.push(_dirs::macos_config_dir().unwrap_or_default());
-        dirs.push(_dirs::localbase_dir().unwrap_or_default());
-        dirs.push(_dirs::usr_share_dir().unwrap_or_default());
+        if cfg!(not(target_os = "macos")) {
+            dirs.push(dirs::config_dir().unwrap_or_default());
+        }
 
         dirs.retain(|x| x.exists());
-
         dirs
     }
 

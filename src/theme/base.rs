@@ -5,12 +5,8 @@ use crate::Result;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use toml;
 use tui::style::Color;
 
-/// This structure defines the skeleton of custom themes which are deserialized from TOML files.
-/// See [https://github.com/Macchina-CLI/macchina/blob/main/theme/Carbon.toml](this) for an example
-/// theme.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Theme {
@@ -53,7 +49,7 @@ impl Default for Theme {
 
 impl Theme {
     pub fn new(custom: Theme) -> Self {
-        Self {
+        Theme {
             bar: custom.bar,
             key_color: custom.key_color,
             separator: custom.separator,
@@ -98,24 +94,12 @@ impl Theme {
         &self.separator
     }
 
-    pub fn set_separator(&mut self, separator: impl ToString) {
-        self.separator = separator.to_string()
-    }
-
-    pub fn get_separator_color(&self) -> Color {
-        self.separator_color
-    }
-
-    pub fn set_separator_color(&mut self, color: Color) {
-        self.separator_color = color
-    }
-
     pub fn get_key_color(&self) -> Color {
         self.key_color
     }
 
-    pub fn set_key_color(&mut self, color: Color) {
-        self.key_color = color
+    pub fn get_separator_color(&self) -> Color {
+        self.separator_color
     }
 
     pub fn prefers_small_ascii(&self) -> bool {
@@ -130,104 +114,111 @@ impl Theme {
         self.padding
     }
 
-    pub fn set_padding(&mut self, size: usize) {
-        self.padding = size
-    }
-
     pub fn get_spacing(&self) -> usize {
         self.spacing
+    }
+
+    pub fn set_separator_color(&mut self, color: Color) {
+        self.separator_color = color;
+    }
+
+    pub fn set_padding(&mut self, size: usize) {
+        self.padding = size
     }
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing;
     }
 
-    pub fn randomize_if_specified(&mut self) {
-        if self.randomize.is_key_color_randomized() {
-            self.set_key_color(self.randomize.get_pool());
-        }
-
-        if self.randomize.is_separator_color_randomized() {
-            self.set_separator_color(self.randomize.get_pool());
-        }
+    pub fn set_key_color(&mut self, color: Color) {
+        self.key_color = color;
     }
 
-    /// Searches for and returns a theme from a given directory.
-    pub fn get_theme(name: &str, dir: PathBuf) -> Result<Self> {
-        let theme_path = dir.join(&format!("macchina/themes/{}.toml", name));
-
-        let buffer = std::fs::read(theme_path)?;
-
-        Ok(toml::from_slice(&buffer)?)
+    pub fn set_separator(&mut self, separator: impl ToString) {
+        self.separator = separator.to_string()
     }
 
-    pub fn create_theme(opt: &Opt) -> Theme {
-        let mut theme = Theme::default();
-        let locations = Config::locations();
+    pub fn set_randomization(&mut self) {
+        if self.randomize.rand_key() {
+            self.key_color = self.randomize.generate();
+        }
 
-        if let Some(th) = &opt.theme {
-            let path = locations
-                .iter()
-                .find(|&x| match Theme::get_theme(th, x.to_path_buf()) {
-                    Ok(t) => {
-                        theme = t;
-                        true
-                    }
-                    _ => false,
-                });
+        if self.randomize.rand_sep() {
+            self.separator_color = self.randomize.generate();
+        }
+    }
+}
 
-            if path.is_none() {
-                println!("{}: \"{}\" does not exist.", "Error".red(), th);
-                println!(
-                    "{}: verify that macchina can find it by running --list-themes",
-                    "Suggestion".yellow()
-                );
+/// Searches for and returns a theme from a given directory.
+pub fn get_theme(name: &str, dir: &PathBuf) -> Result<Theme> {
+    let theme_path = dir.join(&format!("macchina/themes/{}.toml", name));
+    let buffer = std::fs::read(theme_path)?;
+    Ok(toml::from_slice(&buffer)?)
+}
+
+pub fn create_theme(opt: &Opt) -> Theme {
+    let mut theme = Theme::default();
+    let locations = Config::locations();
+    if let Some(th) = &opt.theme {
+        let t = locations.iter().find(|&d| match get_theme(th, d) {
+            Ok(t) => {
+                theme = t;
+                theme.set_randomization();
+                true
             }
-        }
+            _ => false,
+        });
 
-        theme
+        if t.is_none() {
+            println!(
+                "{}: \"{}\" could not be found, verify it exists with --list-themes.",
+                "Error".red(),
+                th
+            )
+        }
     }
 
-    pub fn list_themes(opt: &Opt) -> Result<()> {
-        let locations = Config::locations();
+    theme
+}
 
-        for dir in locations {
-            let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-            let custom_themes = entries.iter().filter(|&x| {
-                if let Some(ext) = libmacchina::extra::path_extension(x) {
-                    ext == "toml"
-                } else {
-                    false
-                }
-            });
-
-            let n_themes = custom_themes.clone().count();
-            if n_themes == 0 {
-                continue;
+pub fn list_themes(opt: &Opt) -> Result<()> {
+    let locations = Config::locations();
+    for dir in locations {
+        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
+        let custom_themes = entries.iter().filter(|&x| {
+            if let Some(ext) = libmacchina::extra::path_extension(x) {
+                ext == "toml"
+            } else {
+                false
             }
+        });
 
-            println!("{}/macchina/themes:", dir.to_string_lossy());
+        let n_themes = custom_themes.clone().count();
+        if n_themes == 0 {
+            continue;
+        }
 
-            custom_themes.for_each(|x| {
-                if let Some(theme) = x.file_name() {
-                    let name = theme.to_string_lossy().replace(".toml", "");
-                    if let Some(active_theme) = &opt.theme {
-                        if active_theme == &name {
-                            println!(
-                                "- {} {}",
-                                name.bright_green().italic(),
-                                "[active]".bright_cyan()
-                            );
-                        } else {
-                            println!("- {}", name.bright_green().italic());
-                        }
+        println!("{}/macchina/themes:", dir.to_string_lossy());
+
+        custom_themes.for_each(|x| {
+            if let Some(theme) = x.file_name() {
+                let name = theme.to_string_lossy().replace(".toml", "");
+                if let Some(active_theme) = &opt.theme {
+                    if active_theme == &name {
+                        println!(
+                            "- {} {}",
+                            name.bright_green().italic(),
+                            "[active]".bright_cyan()
+                        );
                     } else {
                         println!("- {}", name.bright_green().italic());
                     }
+                } else {
+                    println!("- {}", name.bright_green().italic());
                 }
-            });
-        }
-
-        Ok(())
+            }
+        });
     }
+
+    Ok(())
 }
