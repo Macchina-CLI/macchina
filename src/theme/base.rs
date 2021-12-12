@@ -1,10 +1,10 @@
 use crate::cli::Opt;
-use crate::config::Config;
+use crate::config;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::path::Path;
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -150,7 +150,7 @@ impl Theme {
 }
 
 /// Searches for and returns a theme from a given directory.
-pub fn get_theme(name: &str, dir: &PathBuf) -> Result<Theme> {
+pub fn get_theme(name: &str, dir: &Path) -> Result<Theme> {
     let theme_path = dir.join(&format!("macchina/themes/{}.toml", name));
     let buffer = std::fs::read(theme_path)?;
     Ok(toml::from_slice(&buffer)?)
@@ -158,7 +158,7 @@ pub fn get_theme(name: &str, dir: &PathBuf) -> Result<Theme> {
 
 pub fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    let locations = Config::locations();
+    let locations = config::locations();
     if let Some(th) = &opt.theme {
         let t = locations.iter().find(|&d| match get_theme(th, d) {
             Ok(t) => {
@@ -182,7 +182,7 @@ pub fn create_theme(opt: &Opt) -> Theme {
 }
 
 pub fn list_themes(opt: &Opt) -> Result<()> {
-    let locations = Config::locations();
+    let locations = config::locations();
     for dir in locations {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
         let custom_themes = entries.iter().filter(|&x| {

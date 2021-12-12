@@ -14,7 +14,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub fn print_errors(err: Error) {
     match err {
-        Error::ParsingError(err) => match err.line_col() { Some((line, col)) => {
+        Error::ParsingError(err) => match err.line_col() {
+            Some((line, col)) => {
                 //  Indexes are 0-based, we increment
                 //  them to make them less confusing
                 println!(

@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config;
 use crate::data;
 use crate::error;
 use serde::{Deserialize, Serialize};
@@ -174,8 +174,8 @@ impl Opt {
 
     pub fn get_options(arg_opt: Opt) -> Opt {
         let config_opt = match arg_opt.config {
-            Some(_) => Config::read_config(&arg_opt.config.clone().unwrap()),
-            None => Config::get_config(),
+            Some(_) => config::read_config(&arg_opt.config.clone().unwrap()),
+            None => config::get_config(),
         };
 
         match config_opt {

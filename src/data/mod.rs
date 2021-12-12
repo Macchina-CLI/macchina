@@ -247,7 +247,11 @@ pub fn get_all_readouts<'a>(
     }
 
     if should_display.contains(&ReadoutKey::LocalIP) {
-        match general_readout.local_ip(opt.interface.to_owned()) {
+        use libmacchina::traits::NetworkReadout as _;
+        use libmacchina::NetworkReadout;
+
+        let network_readout = NetworkReadout::new();
+        match network_readout.logical_address(opt.interface.as_deref()) {
             Ok(s) => readout_values.push(Readout::new(ReadoutKey::LocalIP, s)),
             Err(e) => readout_values.push(Readout::new_err(ReadoutKey::LocalIP, e)),
         }
