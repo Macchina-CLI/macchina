@@ -260,14 +260,13 @@ impl<'a> ReadoutList<'a> {
 
         if self.theme.get_separator().is_empty() {
             values.push(max_key_width as u16);
-            values.push(self.theme.get_spacing() as u16);
-            values.push(readout_data.width() as u16);
         } else {
             values.push(max_key_width as u16 + self.theme.get_spacing() as u16);
             values.push(themed_separator.width() as u16);
-            values.push(self.theme.get_spacing() as u16);
-            values.push(readout_data.width() as u16);
         }
+
+        values.push(self.theme.get_spacing() as u16);
+        values.push(readout_data.width() as u16);
 
         if self.theme.get_padding() > 0 {
             values.insert(0, self.theme.get_padding() as u16)

@@ -22,7 +22,7 @@ pub enum AsciiSize {
     Small,
 }
 
-pub fn list_ascii_artists() -> Result<()> {
+pub fn list_ascii_artists() {
     println!(
         "- FreeBSD ASCII art (small variant) was taken from {}' {}",
         "Dylan Araps".bold(),
@@ -49,8 +49,6 @@ pub fn list_ascii_artists() -> Result<()> {
         "- Linux ASCII art (small variant) was taken from {}",
         "Christopher Johnson's ASCII art collection".bold(),
     );
-
-    Ok(())
 }
 
 pub fn select_ascii(ascii_size: AsciiSize) -> Option<Text<'static>> {

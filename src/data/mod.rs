@@ -125,7 +125,7 @@ pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
 pub fn get_all_readouts<'a>(
     opt: &Opt,
     theme: &Theme,
-    should_display: Vec<ReadoutKey>,
+    should_display: &[ReadoutKey],
 ) -> Vec<Readout<'a>> {
     use crate::format::cpu as format_cpu;
     use crate::format::cpu_only as format_cpu_only;

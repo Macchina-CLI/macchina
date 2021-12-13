@@ -23,24 +23,31 @@ use tui::layout::Rect;
 extern crate lazy_static;
 
 fn main() -> Result<()> {
-    let arg_opt = Opt::from_args();
-    let opt = Opt::get_options(arg_opt);
+    let opt = Opt::get_options();
 
     if opt.version {
-        return get_version();
+        get_version();
+        return Ok(());
     }
 
     if opt.ascii_artists {
-        return ascii::list_ascii_artists();
+        ascii::list_ascii_artists();
+        return Ok(());
     }
 
     if opt.list_themes {
-        return theme::list_themes(&opt);
+        theme::list_themes(&opt);
+        return Ok(());
+    }
+
+    if opt.export_config {
+        println!("{}", toml::to_string(&Opt::from_args()).unwrap());
+        return Ok(());
     }
 
     let theme = theme::create_theme(&opt);
     let should_display = data::should_display(&opt);
-    let readout_data = data::get_all_readouts(&opt, &theme, should_display);
+    let readout_data = data::get_all_readouts(&opt, &theme, &should_display);
 
     if opt.doctor {
         doctor::print_doctor(&readout_data);
@@ -49,7 +56,6 @@ fn main() -> Result<()> {
 
     const MAX_ASCII_HEIGHT: usize = 50;
     const MINIMUM_READOUTS_TO_PREFER_SMALL_ASCII: usize = 8;
-
     let mut backend = buffer::create_backend();
     let mut tmp_buffer = Buffer::empty(Rect::new(0, 0, 500, 50));
     let mut ascii_area = Rect::new(0, 1, 0, tmp_buffer.area.height - 1);
@@ -105,7 +111,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn get_version() -> Result<()> {
+fn get_version() {
     if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
         println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
     } else {
@@ -113,6 +119,4 @@ fn get_version() -> Result<()> {
     }
 
     println!("libmacchina  {}", libmacchina::version());
-
-    Ok(())
 }
