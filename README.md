@@ -99,7 +99,7 @@ Why are they separate?
   way we handle customization answers this need.
 
 Learn how to [make your own](#customization), and maybe have a look at the
-[documentation](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation)
+[documentation](doc/adoc/macchina.2.adoc)
 while you're at it.
 
 ## Doctor
@@ -173,11 +173,11 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 
 **Linux**:
 
-- [wmctrl](https://pkgs.org/download/wmctrl)
+- [wmctrl]
 
 **NetBSD**:
 
-- [wmctrl](https://pkgs.org/download/wmctrl)
+- [wmctrl]
 
 # Installation
 
@@ -293,3 +293,4 @@ me](mailto:ba.tahaaziz@gmail.com).
   art collection (unknown artist)
 
 [libmacchina]: https://github.com/Macchina-CLI/libmacchina
+[wmctrl]: https://pkgs.org/download/wmctrl
