@@ -16,82 +16,76 @@ jobs:
           - x86_64-unknown-netbsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+
         include:
           - os: ubuntu-latest
             name: Linux
             target: x86_64-unknown-linux-gnu
             cross: false
             strip: true
-            test: true
 
           - os: macos-latest
             name: macOS
             target: x86_64-apple-darwin
             cross: false
             strip: true
-            test: true
 
           - os: windows-latest
             name: Windows
             target: x86_64-pc-windows-msvc
             cross: false
             strip: true
-            test: true
 
           - os: ubuntu-latest
             name: NetBSD
             target: x86_64-unknown-netbsd
             cross: true
             strip: true
-            test: false
 
           - os: ubuntu-latest
             name: Android
             target: aarch64-linux-android
             cross: true
             strip: true
-            test: false
 
           - os: ubuntu-latest
             name: Linux
             target: aarch64-unknown-linux-gnu
             cross: true
             strip: true
-            test: true
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup rust toolchain
+      - name: Bootstrap
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          components: clippy
+          components: rustfmt, clippy
           target: ${{ matrix.target }}
 
-      - name: Cargo Clippy
+      - name: Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          use-cross: ${{ matrix.cross }}
+        continue-on-error: false
+
+      - name: Lints
         uses: actions-rs/cargo@v1
         with:
           command: clippy
           args: --target=${{ matrix.target }} -- --no-deps -D clippy::all
           use-cross: ${{ matrix.cross }}
-        continue-on-error: true
+        continue-on-error: false
 
-      - name: Cargo Build
+      - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --target=${{ matrix.target }}
           use-cross: ${{ matrix.cross }}
-
-      - name: Cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --target=${{ matrix.target }}
-          use-cross: ${{ matrix.cross }}
-        if: ${{ matrix.test }}
 
       - name: Doctor
         uses: actions-rs/cargo@v1
