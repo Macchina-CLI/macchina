@@ -91,12 +91,14 @@ so you can create a bunch of them and switch between them at any time.
 Why are they separate?
 
 - **Modularity** — themes are an engine of their own, and their sole purpose is
-  customizing the look of the program, so it makes sense to separate them from
-  the configuration file.
+  to provide an interface that allows for the modification of _macchina's_
+  visual components. It makes sense to separate them from the main
+  configuration file.
+
 - **Portability** — sure, the configuration file is shareable, but what if you
   wanted to share the look of _your macchina_ and not its behavior? What if you
-  wanted to switch between dozens of themes that you very carefully designed? The
-  way we handle customization answers this need.
+  wanted to switch between dozens of themes that you very carefully designed?
+  The way we handle customization answers this need.
 
 Learn how to [make your own](#customization), and maybe have a look at the
 [documentation](doc/adoc/macchina.2.adoc)
@@ -122,17 +124,18 @@ place `macchina.toml` inside:
 - `$HOME/Library/Application Support/macchina` on macOS.
 - `%AppData%/macchina` on Windows.
 
-In the case that _macchina_ fails to find your configuration file, you may
-specify a **custom path** for the configuration file through the `--config` flag or the
-`MACCHINA_CONF` environment variable.
+If _macchina_ is not utilizing your configuration file, despite you placing it
+in the correct location, you should tell _macchina_ where to find it by passing
+the file's path to `--config`.
 
 # Customization
 
-Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](contrib/themes/Hydrogen.toml) for an example theme.
+Themes are **TOML** files that describe the layout and styling of
+_macchina_. See [Hydrogen.toml](contrib/themes/Hydrogen.toml) for an example
+theme.
 
-In order for _macchina_ to be able to find your themes, you need to place them
-in:
+In order for _macchina_ to be able to find your themes,
+you need to place them in:
 
 - `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina/themes` on macOS.
@@ -142,19 +145,13 @@ To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
 
-2. If all goes well, you should see one or more themes listed, e.g.:
+2. If all goes well, you should see one or more themes listed.
 
-```
-- Hydrogen
-- Helium
-- Lithium
-```
-
-3. In [macchina.toml](doc/macchina.toml), set `theme` to one of the listed themes,
-   e.g.:
+3. In [macchina.toml](doc/macchina.toml), set `theme` to one of the listed
+   themes, e.g.:
 
 ```bash
-theme = "Helium" # case-sensitive
+theme = "Helium" # case-sensitive!
 ```
 
 4. You're good to go! _macchina_ will start using your theme.
