@@ -2,6 +2,11 @@ use crate::data::Readout;
 use colored::Colorize;
 use libmacchina::traits::ReadoutError;
 
+#[cfg(windows)]
+fn activate_virtual_terminal() {
+    colored::control::set_virtual_terminal(true).expect("Could not activate virtual terminal.");
+}
+
 fn split_failed_items<'a>(
     failed_items: &'a [&Readout],
 ) -> (Vec<&'a Readout<'a>>, Vec<&'a Readout<'a>>) {
@@ -59,11 +64,6 @@ fn print_warnings<'a>(warn_items: &[&'a Readout<'a>], total_failed_items: usize)
             warn.yellow()
         );
     }
-}
-
-#[cfg(windows)]
-fn activate_virtual_terminal() {
-    colored::control::set_virtual_terminal(true).expect("Could not activate virtual terminal.");
 }
 
 pub(crate) fn print_doctor(data: &[Readout]) {

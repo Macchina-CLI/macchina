@@ -1,5 +1,6 @@
 use crate::cli::Opt;
 use crate::config;
+use crate::data::ReadoutKey;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
@@ -145,6 +146,29 @@ impl Theme {
 
         if self.randomize.rand_sep() {
             self.separator_color = self.randomize.generate();
+        }
+    }
+
+    pub fn key(&self, readout_key: &ReadoutKey) -> &str {
+        match *readout_key {
+            ReadoutKey::Host => self.get_keys().get_host(),
+            ReadoutKey::Kernel => self.get_keys().get_kernel(),
+            ReadoutKey::OperatingSystem => self.get_keys().get_os(),
+            ReadoutKey::Machine => self.get_keys().get_machine(),
+            ReadoutKey::Distribution => self.get_keys().get_distro(),
+            ReadoutKey::LocalIP => self.get_keys().get_local_ip(),
+            ReadoutKey::Resolution => self.get_keys().get_resolution(),
+            ReadoutKey::Shell => self.get_keys().get_shell(),
+            ReadoutKey::Terminal => self.get_keys().get_terminal(),
+            ReadoutKey::WindowManager => self.get_keys().get_wm(),
+            ReadoutKey::DesktopEnvironment => self.get_keys().get_de(),
+            ReadoutKey::Packages => self.get_keys().get_packages(),
+            ReadoutKey::Processor => self.get_keys().get_cpu(),
+            ReadoutKey::ProcessorLoad => self.get_keys().get_cpu_load(),
+            ReadoutKey::Battery => self.get_keys().get_battery(),
+            ReadoutKey::Backlight => self.get_keys().get_backlight(),
+            ReadoutKey::Uptime => self.get_keys().get_uptime(),
+            ReadoutKey::Memory => self.get_keys().get_memory(),
         }
     }
 }

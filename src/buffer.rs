@@ -95,6 +95,7 @@ pub fn write_buffer_to_console(
     print!("{}", "\n".repeat(last_y as usize + 1));
 
     let mut cursor_y: u16 = 0;
+
     if atty::is(Stream::Stdout) {
         cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
     }

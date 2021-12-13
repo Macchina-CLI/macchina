@@ -80,7 +80,7 @@ impl<'a> Widget for ReadoutList<'a> {
         }
 
         let mut height = 0;
-        let keys = self.keys_to_text(&self.theme.get_key_color());
+        let keys = self.keys_to_text(&self.theme);
         let max_key_width = Self::get_max_key_width(&keys);
         let themed_separator = Self::get_themed_separator(
             self.theme.get_separator(),
@@ -205,102 +205,21 @@ impl<'a> ReadoutList<'a> {
         *height += area.height + 1;
     }
 
-    fn keys_to_text(&self, key_color: &Color) -> HashMap<ReadoutKey, Text> {
-        let color_style = Style::default().fg(*key_color);
+    fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text> {
+        let color_style = Style::default().fg(theme.get_key_color());
 
-        let mut keys = HashMap::new();
-
-        keys.insert(
-            ReadoutKey::Host,
-            Text::styled(self.theme.get_keys().get_host(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Machine,
-            Text::styled(self.theme.get_keys().get_machine(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Kernel,
-            Text::styled(self.theme.get_keys().get_kernel(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Distribution,
-            Text::styled(self.theme.get_keys().get_distro(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::OperatingSystem,
-            Text::styled(self.theme.get_keys().get_os(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::DesktopEnvironment,
-            Text::styled(self.theme.get_keys().get_de(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::WindowManager,
-            Text::styled(self.theme.get_keys().get_wm(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Packages,
-            Text::styled(self.theme.get_keys().get_packages(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Shell,
-            Text::styled(self.theme.get_keys().get_shell(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Terminal,
-            Text::styled(self.theme.get_keys().get_terminal(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::LocalIP,
-            Text::styled(self.theme.get_keys().get_local_ip(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Battery,
-            Text::styled(self.theme.get_keys().get_battery(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Backlight,
-            Text::styled(self.theme.get_keys().get_backlight(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Resolution,
-            Text::styled(self.theme.get_keys().get_resolution(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Memory,
-            Text::styled(self.theme.get_keys().get_memory(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Processor,
-            Text::styled(self.theme.get_keys().get_cpu(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::ProcessorLoad,
-            Text::styled(self.theme.get_keys().get_cpu_load(), color_style),
-        );
-
-        keys.insert(
-            ReadoutKey::Uptime,
-            Text::styled(self.theme.get_keys().get_uptime(), color_style),
-        );
-
-        keys
+        self.items
+            .iter()
+            .map(|i| {
+                (
+                    i.0,
+                    Text::styled(
+                        theme.key(&i.0).to_string(),
+                        color_style,
+                    ),
+                )
+            })
+            .collect()
     }
 
     fn get_max_key_width(keys: &HashMap<ReadoutKey, Text>) -> usize {
