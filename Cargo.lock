@@ -132,7 +132,8 @@ dependencies = [
 [[package]]
 name = "color-to-tui"
 version = "0.1.3"
-source = "git+https://github.com/uttarayan21/color-to-tui?branch=master#2d460d43235b631f97e48f045645387bf150acae"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c29ae196ccd59e8728359cc08deebb18872baa0a81fcfbf4209c6e54fc12079c"
 dependencies = [
  "serde",
  "tui",
