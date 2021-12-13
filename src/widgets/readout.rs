@@ -80,7 +80,7 @@ impl<'a> Widget for ReadoutList<'a> {
         }
 
         let mut height = 0;
-        let keys = self.keys_to_text(&self.theme);
+        let keys = self.keys_to_text(self.theme);
         let max_key_width = Self::get_max_key_width(&keys);
         let themed_separator = Self::get_themed_separator(
             self.theme.get_separator(),
@@ -206,19 +206,11 @@ impl<'a> ReadoutList<'a> {
     }
 
     fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text> {
-        let color_style = Style::default().fg(theme.get_key_color());
+        let style = Style::default().fg(theme.get_key_color());
 
         self.items
             .iter()
-            .map(|i| {
-                (
-                    i.0,
-                    Text::styled(
-                        theme.key(&i.0).to_string(),
-                        color_style,
-                    ),
-                )
-            })
+            .map(|i| (i.0, Text::styled(theme.key(&i.0).to_string(), style)))
             .collect()
     }
 
