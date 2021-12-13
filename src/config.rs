@@ -1,106 +1,76 @@
 use crate::cli::Opt;
-use dirs::config_dir;
-use std::io::Read;
+use crate::error::Result;
+use libmacchina::dirs as _dirs;
+use std::io;
 use std::path::{Path, PathBuf};
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
-impl Opt {
-    pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt, &'static str> {
-        let path = Path::new(path);
-        if !path.exists() {
-            return Err("Failed to locate the configuration file.");
-        }
+pub fn locations() -> Vec<PathBuf> {
+    let mut dirs = vec![];
 
-        if let Ok(mut file) = std::fs::File::open(path) {
-            let mut buffer: Vec<u8> = Vec::new();
-            if file.read_to_end(&mut buffer).is_ok() {
-                return toml::from_slice(&buffer).or(Err("Failed to parse configuration file."));
-            }
-
-            return Err("Failed to read configuration file.");
-        }
-
-        Err("Failed to open configuration file.")
+    if cfg!(target_os = "macos") {
+        dirs.push(config_dir().unwrap_or_default());
+    } else {
+        dirs.push(dirs::config_dir().unwrap_or_default());
     }
 
-    pub fn get_config() -> Result<Opt, &'static str> {
-        if let Some(path) = std::env::var_os("MACCHINA_CONF") {
-            return Opt::read_config(&path);
-        } else if let Some(mut path) = config_dir() {
-            match cfg!(target_os = "macos") {
-                true => {
-                    if let Ok(home) = std::env::var("HOME") {
-                        path = PathBuf::from(home)
-                            .join(".config")
-                            .join(PKG_NAME)
-                            .join(format!("{}.toml", PKG_NAME));
-                    }
+    if cfg!(target_os = "linux") {
+        dirs.push(usr_share_dir().unwrap_or_default());
+    }
+
+    if cfg!(target_os = "netbsd") {
+        dirs.push(_dirs::localbase_dir().unwrap_or_default());
+    }
+
+    dirs.retain(|x| x.exists());
+    dirs
+}
+
+pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
+    let path = Path::new(path);
+    Ok(if Path::exists(path) {
+        let config_buffer = std::fs::read(path)?;
+        Ok(toml::from_slice(&config_buffer)?)
+    } else {
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            "Could not locate the configuration file",
+        ))
+    }?)
+}
+
+pub fn get_config() -> Result<Opt> {
+    if let Some(mut path) = config_dir() {
+        match cfg!(target_os = "macos") {
+            true => {
+                if let Ok(home) = std::env::var("HOME") {
+                    path = PathBuf::from(home)
+                        .join(".config")
+                        .join(PKG_NAME)
+                        .join(format!("{}.toml", PKG_NAME));
                 }
-                _ => {
-                    path.push(PKG_NAME);
-                    path.push(format!("{}.toml", PKG_NAME));
-                }
             }
-
-            return Opt::read_config(&path);
+            false => {
+                path.push(PKG_NAME);
+                path.push(format!("{}.toml", PKG_NAME));
+            }
         }
 
-        Ok(Opt::default())
+        return read_config(&path);
     }
 
-    /// Patches `opt` struct with the values provided in the command-line
-    pub fn patch_args(&mut self, args: Self) {
-        if args.version {
-            self.version = true;
-        }
+    Ok(Opt::default())
+}
 
-        if args.doctor {
-            self.doctor = true;
-        }
-
-        if args.export_config {
-            self.export_config = true;
-        }
-
-        if args.current_shell {
-            self.current_shell = true;
-        }
-
-        if args.long_shell {
-            self.long_shell = true;
-        }
-
-        if args.long_uptime {
-            self.long_uptime = true;
-        }
-
-        if args.list_themes {
-            self.list_themes = true;
-        }
-
-        if args.long_kernel {
-            self.long_shell = true;
-        }
-
-        if args.ascii_artists {
-            self.ascii_artists = true;
-        }
-
-        if args.config.is_some() {
-            self.config = args.config;
-        }
-
-        if args.theme.is_some() {
-            self.theme = args.theme;
-        }
-
-        if args.show.is_some() {
-            self.show = args.show;
-        }
-
-        if args.interface.is_some() {
-            self.interface = args.interface;
-        }
+pub fn config_dir() -> Option<PathBuf> {
+    if let Ok(home) = std::env::var("HOME") {
+        Some(PathBuf::from(home).join(".config"))
+    } else {
+        None
     }
+}
+
+pub fn usr_share_dir() -> Option<PathBuf> {
+    Some(PathBuf::from("/usr/share"))
 }

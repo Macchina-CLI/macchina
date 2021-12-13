@@ -5,22 +5,26 @@ Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
-<img src="screenshots/preview.png" alt="Preview" />
-
 <a href="https://crates.io/crates/macchina">
     <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
+</a>
+
+<a href="https://github.com/Macchina-CLI/macchina/actions">
+   <img src="https://github.com/Macchina-CLI/macchina/actions/workflows/macchina.yml/badge.svg" alt="CI">
 </a>
 
 <a href="https://crates.io/crates/macchina">
     <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
 </a>
 
+<img src="assets/preview.png" alt="Preview" />
+
 </div>
 
 # Table of Contents
 
 - [About](#about)
-- [Performance](#performance)
+- [Benchmarks](#benchmarks)
 - [Features](#features)
 - [Configuration](#configuration)
 - [Customization](#customization)
@@ -33,17 +37,19 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 # About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
-memory usage, processor load and much more.
+memory usage, processor load and much more. _macchina_ is **basic** by default
+and **extensible** by design.
 
-If you're interested in the library _macchina_ uses to fetch system information,
-have a look at [libmacchina](https://github.com/Macchina-CLI/libmacchina);
-fetching-related issues should be filed on that repository.
+If you're interested in the library _macchina_ uses to fetch system
+information, have a look at
+[libmacchina]; fetching-related
+issues should be filed on that repository.
 
-# Performance <a name="performance"></a>
-
-_macchina_ is **lightning fast**, see for yourself:
+# Benchmarks <a name="benchmarks"></a>
 
 > Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
+
+_macchina_ is **lightning fast**, see for yourself:
 
 ## Linux
 
@@ -82,39 +88,48 @@ _macchina_ has a theming system which you can use to customize pretty much any
 visual aspect of the program. Themes live **outside** the configuration file,
 so you can create a bunch of them and switch between them at any time.
 
-Learn how to [make your own](#customization) — there is
+Why are they separate?
+
+- **Modularity** — themes are an engine of their own, and their sole purpose is
+  customizing the look of the program, so it makes sense to separate them from
+  the configuration file.
+- **Portability** — sure, the configuration file is shareable, but what if you
+  wanted to share the look of _your macchina_ and not its behavior? What if you
+  wanted to switch between dozens of themes that you very carefully designed? The
+  way we handle customization answers this need.
+
+Learn how to [make your own](#customization), and maybe have a look at the
 [documentation](https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation)
-in case something is not quite so clear.
+while you're at it.
 
 ## Doctor
 
-_libmacchina_ can sometimes fail to fetch certain readouts, and _macchina_ has
-a feature in place that describes why they failed. You don't have to guess
-what went wrong, `--doctor` has your back!
+[libmacchina] can sometimes fail
+to fetch certain readouts, and _macchina_ has a feature in place that describes
+why they failed. You don't have to guess what went wrong, `--doctor` has your
+back!
 
 # Configuration
 
 The configuration file defines the behavior of macchina, it does not allow for
-much customization. See
-[macchina.toml](https://github.com/Macchina-CLI/macchina/blob/main/macchina.toml)
-for an example configuration file.
+much customization. See [macchina.toml](doc/macchina.toml) for an example
+configuration file.
 
 In order for _macchina_ to be able to read the configuration file, you need to
-place `macchina.toml` in:
+place `macchina.toml` inside:
 
 - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
 - `$HOME/Library/Application Support/macchina` on macOS.
 - `%AppData%/macchina` on Windows.
 
 In the case that _macchina_ fails to find your configuration file, you may
-specify a __custom path__ for the configuration file through the `--config` flag or the
+specify a **custom path** for the configuration file through the `--config` flag or the
 `MACCHINA_CONF` environment variable.
 
 # Customization
 
 Themes define the look, layout and styling of _macchina_. See
-[Hydrogen.toml](https://github.com/Macchina-CLI/macchina/blob/main/themes/Hydrogen.toml)
-for an example theme.
+[Hydrogen.toml](contrib/themes/Hydrogen.toml) for an example theme.
 
 In order for _macchina_ to be able to find your themes, you need to place them
 in:
@@ -126,9 +141,23 @@ in:
 To start using your theme:
 
 1. Run `macchina --list-themes` to verify that macchina has listed your theme.
-2. Add that same name you see in your terminal to the `theme` option in
-   `macchina.toml`
-3. You're good to go! _macchina_ will start using your theme.
+
+2. If all goes well, you should see one or more themes listed, e.g.:
+
+```
+- Hydrogen
+- Helium
+- Lithium
+```
+
+3. In [macchina.toml](doc/macchina.toml), set `theme` to one of the listed themes,
+   e.g.:
+
+```bash
+theme = "Helium" # case-sensitive
+```
+
+4. You're good to go! _macchina_ will start using your theme.
 
 # Dependencies
 
@@ -136,7 +165,7 @@ To start using your theme:
 
 The following are required dependencies if you're building from source or installing through `cargo`:
 
-- _libgit2_
+- [libgit2](https://pkgs.org/download/libgit2)
 
 ### Runtime dependencies
 
@@ -144,12 +173,11 @@ The following are _optional_ dependencies, they only extend what macchina can fe
 
 **Linux**:
 
-- _wmctrl_
-  - **Gentoo**: _portage-utils_
+- [wmctrl](https://pkgs.org/download/wmctrl)
 
 **NetBSD**:
 
-- _wmctrl_
+- [wmctrl](https://pkgs.org/download/wmctrl)
 
 # Installation
 
@@ -189,24 +217,6 @@ pkg install macchina
 scoop install macchina
 ```
 
-### Arch Linux
-
-- Use the AUR package that pulls and installs the latest release:
-
-```bash
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
-
-- Or use the AUR package that pulls and builds from upstream:
-
-```bash
-git clone https://aur.archlinux.org/macchina-git.git
-cd macchina
-makepkg -si
-```
-
 ### Nix
 
 - Where `<channel>` is `nixpkgs` or `nixos`:
@@ -215,14 +225,31 @@ makepkg -si
 nix-env -iA <channel>.macchina
 ```
 
-The
-[installation wiki page](https://github.com/grtcdr/macchina/wiki/Installation)
-lists some other ways you can install the program or the steps to compile from
-source.
+### Arch Linux
 
-You might prefer running the
-[prebuilt binary](https://github.com/grtcdr/macchina/releases) that corresponds
-with your operating system.
+- _Option 1:_ Use the AUR package that pulls and installs the latest release:
+
+```bash
+git clone https://aur.archlinux.org/macchina.git
+cd macchina
+makepkg -si
+```
+
+- _Option 2:_ Use the AUR package that pulls and installs from upstream:
+
+```bash
+git clone https://aur.archlinux.org/macchina-git.git
+cd macchina
+makepkg -si
+```
+
+The [installation wiki
+page](https://github.com/grtcdr/macchina/wiki/Installation) lists some other
+ways you can install the program or the steps to compile from source.
+
+You might prefer running the [prebuilt
+binary](https://github.com/grtcdr/macchina/releases) that corresponds with your
+operating system.
 
 # Packaging Status
 
@@ -233,7 +260,12 @@ with your operating system.
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
 _macchina_, like many other open-source projects, would not be where it is
-right now without the help of its contributors, thank you all so much!
+right now without the help of its contributors — Thank you all so much!
+
+Looking to help? [Read this first.](CONTRIBUTING.md)
+
+The following are some awesome people that have helped make _macchina_ a really
+cool fetcher:
 
 - Support for **NetBSD** would not have been possible without the help and
   testing of NetBSD/pkgsrc package maintainer
@@ -248,8 +280,8 @@ right now without the help of its contributors, thank you all so much!
 
 Some of the ASCII art displayed in macchina is **not** our own.
 
-If you (the artist) are not okay with us using your ASCII art, please
-[contact me](mailto:ba.tahaaziz@gmail.com).
+If you (the artist) are not okay with us using your ASCII art, please [contact
+me](mailto:ba.tahaaziz@gmail.com).
 
 - FreeBSD ASCII art (small variant) was taken from Dylan Araps'
   [pfetch](https://github.com/dylanaraps/pfetch)
@@ -259,3 +291,5 @@ If you (the artist) are not okay with us using your ASCII art, please
 - Linux ASCII art (big variant) was made by Joan Stark (jgs)
 - Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII
   art collection (unknown artist)
+
+[libmacchina]: https://github.com/Macchina-CLI/libmacchina

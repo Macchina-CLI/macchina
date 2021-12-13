@@ -1,0 +1,57 @@
+# Lithium.toml
+
+spacing         = 1
+padding         = 0
+hide_ascii      = true
+separator       = " "
+key_color       = "Yellow"
+separator_color = "Yellow"
+
+[palette]
+type            = "Light"
+glyph           = " ● "
+visible         = true
+
+[bar]
+glyph           = "●"
+symbol_open     = '('
+symbol_close    = ')'
+visible         = false
+hide_delimiters = true
+
+[box]
+title           = " "
+border          = "plain"
+visible         = false
+
+[box.inner_margin]
+x               = 2
+y               = 1
+
+[custom_ascii]
+color           = "Yellow"
+
+[randomize]
+key_color       = false
+separator_color = false
+pool            = "base"
+
+[keys]
+host            = "Host"
+kernel          = "Kernel"
+battery         = "Battery"
+os              = "OS"
+de              = "DE"
+wm              = "WM"
+distro          = "Distro"
+terminal        = "Terminal"
+shell           = "Shell"
+packages        = "Packages"
+uptime          = "Uptime"
+memory          = "Memory"
+machine         = "Machine"
+local_ip        = "IP"
+backlight       = "Brightness"
+resolution      = "Resolution"
+cpu_load        = "CPU Load"
+cpu             = "CPU"

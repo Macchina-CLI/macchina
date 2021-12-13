@@ -4,9 +4,9 @@ use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
 /// This function should return a new `String` constructed from the value \
 /// returned by `traits::GeneralReadout::uptime()`
 pub fn uptime(uptime: usize, long: bool) -> String {
-    let mut formatted_uptime = String::new();
+    let mut fmt = String::new();
     let uptime: f32 = uptime as f32;
-    // Uptime is formatted to "x days, y hours, z minutes" if the system
+    // uptime is formatted to "x days, y hours, z minutes" if the system
     // has been up for longer than 60 seconds, and "x seconds" if not.
 
     // "x days", "y hours" or "z minutes" might not show up if their value is 0.
@@ -19,56 +19,57 @@ pub fn uptime(uptime: usize, long: bool) -> String {
         match long {
             false => {
                 if up_days != 0.0 {
-                    formatted_uptime.push_str(&up_days.to_string());
-                    formatted_uptime.push_str("d ");
+                    fmt.push_str(&up_days.to_string());
+                    fmt.push_str("d ");
                 }
                 if up_hours != 0.0 {
-                    formatted_uptime.push_str(&up_hours.to_string());
-                    formatted_uptime.push_str("h ");
+                    fmt.push_str(&up_hours.to_string());
+                    fmt.push_str("h ");
                 }
                 if up_minutes != 0.0 {
-                    formatted_uptime.push_str(&up_minutes.to_string());
-                    formatted_uptime.push('m');
+                    fmt.push_str(&up_minutes.to_string());
+                    fmt.push('m');
                 }
             }
             true => {
                 if up_days != 0.0 {
-                    formatted_uptime.push_str(&up_days.to_string());
+                    fmt.push_str(&up_days.to_string());
                     if (up_days - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(" day ");
+                        fmt.push_str(" day ");
                     } else {
-                        formatted_uptime.push_str(" days ");
+                        fmt.push_str(" days ");
                     }
                 }
                 if up_hours != 0.0 {
-                    formatted_uptime.push_str(&up_hours.to_string());
+                    fmt.push_str(&up_hours.to_string());
                     if (up_hours - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(" hour ");
+                        fmt.push_str(" hour ");
                     } else {
-                        formatted_uptime.push_str(" hours ");
+                        fmt.push_str(" hours ");
                     }
                 }
                 if up_minutes != 0.0 {
-                    formatted_uptime.push_str(&up_minutes.to_string());
+                    fmt.push_str(&up_minutes.to_string());
                     if (up_minutes - 1.0).abs() < 0.001 {
-                        formatted_uptime.push_str(" minute");
+                        fmt.push_str(" minute");
                     } else {
-                        formatted_uptime.push_str(" minutes");
+                        fmt.push_str(" minutes");
                     }
                 }
             }
         }
     }
-    // Uptime is formatted to seconds only if the system has been up for fewer than 60 seconds
+    // uptime is formatted to seconds only if the
+    // system has been up for fewer than 60 seconds
     else {
         let up_seconds = (uptime % 60.0).floor();
         if up_seconds != 0.0 {
-            formatted_uptime = up_seconds.to_string();
-            formatted_uptime.push('s');
+            fmt = up_seconds.to_string();
+            fmt.push('s');
         }
     }
 
-    formatted_uptime.trim().to_string()
+    fmt.trim().to_string()
 }
 
 /// This function should return a new `String` constructed from the values \
@@ -103,8 +104,6 @@ pub fn cpu_only(model_name: &str) -> String {
     model_name.replace("(TM)", "™").replace("(R)", "®")
 }
 
-/// This function should return a new `String` constructed from the values \
-/// returned by `traits::GeneralReadout::cpu_model_name()` and `num_cpus::get()`
 pub fn cpu(model_name: &str, cpu_cores: usize) -> String {
     format!("{} ({})", cpu_only(model_name), cpu_cores)
 }
@@ -121,7 +120,7 @@ pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, Readou
         )));
     }
 
-    // Pre-allocate an estimated size to reduce the number
+    // pre-allocate an estimated size to reduce the number
     // of reallocations when manipulating the string
     let mut string = String::with_capacity(len * 7);
 

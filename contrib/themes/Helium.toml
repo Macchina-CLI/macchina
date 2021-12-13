@@ -1,0 +1,51 @@
+# Helium.toml
+
+hide_ascii      = false
+spacing         = 2
+padding         = 0
+separator       = "->"
+key_color       = "Blue"
+separator_color = "Yellow"
+
+[bar]
+glyph           = "o"
+symbol_open     = "("
+symbol_close    = ")"
+hide_delimiters = false
+visible         = false
+
+[box]
+title           = " Helium "
+border          = "rounded"
+visible         = false
+
+[box.inner_margin]
+x               = 2
+y               = 1
+
+[custom_ascii]
+color           = "Yellow"
+
+[randomize]
+key_color       = false
+separator_color = false
+
+[keys]
+host            = "Host"
+kernel          = "Kernel"
+battery         = "Battery"
+os              = "OS"
+de              = "DE"
+wm              = "WM"
+distro          = "Distro"
+terminal        = "Terminal"
+shell           = "Shell"
+packages        = "Packages"
+uptime          = "Uptime"
+memory          = "Memory"
+machine         = "Machine"
+local_ip        = "IP"
+backlight       = "Brightness"
+resolution      = "Resolution"
+cpu_load        = "CPU Load"
+cpu             = "CPU"

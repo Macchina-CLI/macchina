@@ -1,0 +1,798 @@
+'\" t
+.\"     Title: macchina
+.\"    Author: Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
+.\" Generator: Asciidoctor 2.0.16
+.\"      Date: 2021-12-09
+.\"    Manual: MACCHINA
+.\"    Source: MACCHINA
+.\"  Language: English
+.\"
+.TH "MACCHINA" "2" "2021-12-09" "MACCHINA" "MACCHINA"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+macchina \- A system information fetcher, with an (unhealthy) emphasis on performance.
+.SH "SYNOPSIS"
+.sp
+\fB$XDG_CONFIG_HOME/macchina/themes\fP, \fB~/.config/macchina/themes\fP, \fB$MACCHINA_DIR/themes\fP
+.SH "DESCRIPTION"
+.sp
+Themes are your interface to customizing all aspects of macchina.
+.br
+This manpage details all the options a theme can accept.
+.SH "GENERAL OPTIONS"
+.sp
+\fBspacing\fP
+.RS 4
+Defines the amount of spacing to leave between
+.br
+the separator and the content besides it.
+.br
+Takes an integer value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+spacing = 1
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBpadding\fP
+.RS 4
+Defines the amount of padding to leave between
+.br
+the content and its surroundings.
+.br
+Takes an integer value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+padding = 0
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBhide_ascii\fP
+.RS 4
+Disables the rendering of ASCII, whether it be
+.br
+built\-in or custom.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+hide_ascii = false
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBprefer_small_ascii\fP
+.RS 4
+For built\-in ASCII, always use smaller variants.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+prefer_small_ascii = true
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBseparator\fP
+.RS 4
+Defines the glyph to use for the separator.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+separator = "\-\->"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBkey_color\fP
+.RS 4
+Defines the color of the keys.
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+key_color = "#00FF00" or
+key_color = "046" or
+key_color = "Green"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBseparator_color\fP
+.RS 4
+Defines the color of the separator.
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+separator_color = "#00FF00" or
+separator_color = "046" or
+separator_color = "Green"
+.fam
+.fi
+.if n .RE
+.RE
+.SH "PALETTE SECTION"
+.sp
+This section is optional, omitting it from the configuration
+.br
+hides the palette completely.
+.sp
+\fBtype\fP
+.RS 4
+Defines the type of colors to be displayed in the palette.
+.br
+The colors you configure your terminal to use in its colorschemes
+.br
+will be displayed by this component.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+type = "Dark" or
+type = "Light" or
+type = "Full"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBglyph\fP
+.RS 4
+Defines the glyph to use for the palette. You should
+.br
+append a space to leave some room between the glyphs.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+glyph = "() "
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBvisible\fP
+.RS 4
+Defines whether to show or hide the palette.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+visible = true
+.fam
+.fi
+.if n .RE
+.RE
+.SH "BAR SECTION:"
+.sp
+Bars are a good way to visualize your system usage without
+.br
+seeing the statistics, they range from 0% to 100%.
+.sp
+This section is optional, omitting it from the configuration
+.br
+hides the bars completely.
+.sp
+\fBglyph\fP
+.RS 4
+Defines the glyph to use for all bars.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+glyph = "o"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBsymbol_open\fP
+.RS 4
+Defines the character to use for opening delimiters. Be sure
+.br
+to surround the value with single quotes and not double quotes.
+.br
+Takes a char value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+symbol_open = \*(Aq(\*(Aq
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBsymbol_close\fP
+.RS 4
+Defines the character to use for closing delimiters. Be sure
+.br
+to surround the value with single quotes and not double quotes.
+.br
+Takes a char value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+symbol_close = \*(Aq)\*(Aq
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBvisible\fP
+.RS 4
+Defines whether to show or hide the bars.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+visible = true
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBhide_delimiters\fP
+.RS 4
+Defines whether to show or hide the bars delimiters, i.e.
+.br
+the characters that surround the bars themselves.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+hide_delimiters = false
+.fam
+.fi
+.if n .RE
+.RE
+.SH "BOX SECTION"
+.sp
+The box component renders a box that surrounds your system information.
+.sp
+\fBtitle\fP
+.RS 4
+Defines the title of the box.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+title = "Hydrogen"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBborder\fP
+.RS 4
+Defines the type of border to use for the box.
+.br
+Takes a string value, where casing is insensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+border = "plain" or
+border = "thick" or
+border = "rounded" or
+border = "double"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBvisible\fP
+.RS 4
+Defines whether to show or hide the box.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+visible = true
+.fam
+.fi
+.if n .RE
+.RE
+.SH "BOX.INNER_MARGIN SECTION"
+.sp
+\fBx\fP
+.RS 4
+Defines the horizontal margin to leave between
+.br
+the content and the box.
+.br
+Takes an integer value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+x = 2
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBy\fP
+.RS 4
+Defines the vertical margin to leave
+.br
+between the content and the box.
+.br
+Takes an integer value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+y = 1
+.fam
+.fi
+.if n .RE
+.RE
+.SH "CUSTOM_ASCII SECTION"
+.sp
+This section can be used to specify your own ASCII.
+.br
+ANSI escape sequences are supported.
+.sp
+\fBcolor\fP
+.RS 4
+Defines the color of the ASCII.
+.br
+Takes hexadecimal/indexed/predefined color
+.br
+names, where casing is insensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+separator_color = "#00FF00" or
+separator_color = "046" or
+separator_color = "Green"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBpath\fP
+.RS 4
+Defines the path to a file on your filesystem
+.br
+which contains the ASCII art you want to display.
+.br
+Takes a string value, where casing is sensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+path = "~/ascii/arch_linux"
+.fam
+.fi
+.if n .RE
+.RE
+.SH "RANDOMIZE SECTION"
+.sp
+This section is used to randomize color selection.
+.sp
+\fBkey_color\fP
+.RS 4
+Defines whether to randomize the color of the keys.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+key_color = true
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBseparator_color\fP
+.RS 4
+Defines whether to randomize the color of the separator.
+.br
+Takes a boolean value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+separator_color = true
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBpool\fP
+.RS 4
+Defines the pool of colors from which to pick a random color.
+.br
+Takes a string value, where casing is insensitive e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+pool = "hexadecimal" or
+pool = "indexed" or
+pool = "base"
+.fam
+.fi
+.if n .RE
+.sp
+.if n .RS 4
+.nf
+.fam C
+If "hexadecimal" is specified, you\*(Aqll get a random color ranging
+from #000000 to #FFFFFF
+.fam
+.fi
+.if n .RE
+.sp
+.if n .RS 4
+.nf
+.fam C
+If "indexed" is specified, you\*(Aqll get a random color ranging
+from 0 to 255
+.fam
+.fi
+.if n .RE
+.sp
+.if n .RS 4
+.nf
+.fam C
+If "base" is specified, you\*(Aqll get random color from the following
+set of colors: "Black", "White", "Red", "Green", "Blue", "Yellow",
+"Magenta" and "Cyan".
+.fam
+.fi
+.if n .RE
+.RE
+.SH "KEYS SECTION"
+.sp
+This section provides the options needed to
+.br
+customize the keys of each readout.
+.sp
+\fBhost\fP
+.RS 4
+Defines the text of the Host readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+host = "Host"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBkernel\fP
+.RS 4
+Defines the text of the Kernel readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+kernel = "Kernel"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBos\fP
+.RS 4
+Defines the text of the OperatingSystem readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+os = "OS"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBmachine\fP
+.RS 4
+Defines the text of the Machine readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+machine= "Machine"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBde\fP
+.RS 4
+Defines the text of the \fIDesktopEnvironment\fP readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+de = "DE"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBwm\fP
+.RS 4
+Defines the text of the \fIWindowManager\fP readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+wm = "WM"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBdistro\fP
+.RS 4
+Defines the text of the Distribution readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+distro = "Distro"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBterminal\fP
+.RS 4
+Defines the text of the Terminal readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+terminal = "Term"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBshell\fP
+.RS 4
+Defines the text of the Shell readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+shell = "Shell"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBpackages\fP
+.RS 4
+Defines the text of the Packages readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+packages = "Packages"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBuptime\fP
+.RS 4
+Defines the text of the Uptime readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+uptime = "Uptime"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBlocal_ip\fP
+.RS 4
+Defines the text of the LocalIP readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+local_ip = "Local IP"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBmemory\fP
+.RS 4
+Defines the text of the Memory readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+memory = "Memory"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBbattery\fP
+.RS 4
+Defines the text of the Battery readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+battery = "Battery"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBbacklight\fP
+.RS 4
+Defines the text of the Backlight readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+backlight = "Brightness"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBresolution\fP
+.RS 4
+Defines the text of the Resolution readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+resolution = "Resolution"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBcpu\fP
+.RS 4
+Defines the text of the Processor readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+cpu = "CPU"
+.fam
+.fi
+.if n .RE
+.RE
+.sp
+\fBcpu_load\fP
+.RS 4
+Defines the text of the ProcessorLoad readout.
+.br
+Takes a string value, e.g.
+.sp
+.if n .RS 4
+.nf
+.fam C
+cpu_load = "CPU %"
+.fam
+.fi
+.if n .RE
+.RE
+.SH "SEE ALSO"
+.sp
+macchina(1)
+.SH "COPYRIGHT"
+.sp
+Copyright (c) 2021 Aziz Ben Ali
+.br
+Distributed under the terms of the MIT license.
+.SH "AUTHOR"
+.sp
+Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
