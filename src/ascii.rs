@@ -350,9 +350,7 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
             ];
 
             vec![Text::from(
-                art.iter()
-                    .map(|f| f.to_owned())
-                    .collect::<Vec<Spans>>(),
+                art.iter().map(|f| f.to_owned()).collect::<Vec<Spans>>(),
             )]
         }
         AsciiSize::Small => {
