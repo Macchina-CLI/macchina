@@ -7,7 +7,7 @@ use structopt::StructOpt;
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
 
-#[derive(StructOpt, Debug, Serialize, Deserialize)]
+#[derive(StructOpt, Debug, Default, Serialize, Deserialize)]
 #[structopt(author = AUTHORS, about = ABOUT)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
@@ -104,27 +104,6 @@ pub struct Opt {
         help = "Specify the network interface for the LocalIP readout"
     )]
     pub interface: Option<String>,
-}
-
-impl Default for Opt {
-    fn default() -> Self {
-        Opt {
-            export_config: false,
-            current_shell: false,
-            long_shell: false,
-            long_uptime: false,
-            long_kernel: false,
-            list_themes: false,
-            ascii_artists: false,
-            physical_cores: false,
-            version: false,
-            doctor: false,
-            config: None,
-            theme: None,
-            show: None,
-            interface: None,
-        }
-    }
 }
 
 impl Opt {
