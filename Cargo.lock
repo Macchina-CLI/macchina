@@ -470,7 +470,7 @@ dependencies = [
  "regex",
  "sqlite",
  "sysctl",
- "vergen 6.0.0",
+ "vergen",
  "walkdir",
  "windows 0.28.0",
  "winreg",
@@ -542,7 +542,7 @@ dependencies = [
  "toml",
  "tui",
  "unicode-width",
- "vergen 5.1.18",
+ "vergen",
 ]
 
 [[package]]
@@ -1178,23 +1178,6 @@ name = "vec_map"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
-
-[[package]]
-name = "vergen"
-version = "5.1.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d48696c0fbbdafd9553e14c4584b4b9583931e9474a3ae506f1872b890d0b47"
-dependencies = [
- "anyhow",
- "cfg-if",
- "chrono",
- "enum-iterator",
- "getset",
- "git2",
- "rustc_version",
- "rustversion",
- "thiserror",
-]
 
 [[package]]
 name = "vergen"
