@@ -1,4 +1,4 @@
-= macchina(2)
+= macchina(7)
 Aziz Ben Ali, Marvin Haschker and Uttarayan Mondal
 v6.0.0
 :doctype: manpage

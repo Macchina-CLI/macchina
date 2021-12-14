@@ -78,7 +78,7 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 
 == See Also
 
-macchina(2)
+macchina(7)
 
 == Copyright
 
