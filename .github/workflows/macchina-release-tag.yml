@@ -3,7 +3,7 @@ on:
     tags:
       - 'v*'
 
-name: Release macchina
+name: Release
 
 jobs:
   changelog:
@@ -80,26 +80,26 @@ jobs:
             strip: true
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup rust toolchain
+      - name: Bootstrap
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: ${{ matrix.target }}
 
-      - name: Cargo Build
+      - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --target=${{ matrix.target }} --release
           use-cross: ${{ matrix.cross }}
 
-      - name: Move binaries
+      - name: Rename binaries
         run: mv ${{ matrix.artifact_name }} ${{ matrix.release_name }}
 
-      - name: Upload Binaries
+      - name: Upload binaries
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ matrix.release_name }}

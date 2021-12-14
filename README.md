@@ -9,12 +9,12 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
     <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
 </a>
 
-<a href="https://github.com/Macchina-CLI/macchina/actions">
-   <img src="https://github.com/Macchina-CLI/macchina/actions/workflows/macchina.yml/badge.svg" alt="CI">
-</a>
-
 <a href="https://crates.io/crates/macchina">
     <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
+</a>
+
+<a href="https://github.com/Macchina-CLI/macchina/actions">
+   <img src="https://github.com/Macchina-CLI/macchina/actions/workflows/macchina.yml/badge.svg" alt="CI">
 </a>
 
 <img src="assets/preview.png" alt="Preview" />
@@ -121,7 +121,7 @@ In order for _macchina_ to be able to read the configuration file, you need to
 place `macchina.toml` inside:
 
 - `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
-- `$HOME/Library/Application Support/macchina` on macOS.
+- `$HOME/.config/macchina` on macOS.
 - `%AppData%/macchina` on Windows.
 
 If _macchina_ is not utilizing your configuration file, despite you placing it
@@ -138,7 +138,7 @@ In order for _macchina_ to be able to find your themes,
 you need to place them in:
 
 - `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
-- `$HOME/Library/Application Support/macchina/themes` on macOS.
+- `$HOME/.config/macchina/themes` on macOS.
 - `%AppData%/macchina/themes` on Windows.
 
 To start using your theme:

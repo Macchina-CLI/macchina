@@ -69,37 +69,21 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 *-v, --version*::
    Prints version information.
 
-*-o, --show*::
-   Display only the specified readouts.
-   Possible values are (case-sensitive):
+*-o, --show*:: 
+   Display only the specified readouts. + 
+   Possible values are (case-sensitive): +
+   Host, Machine, Kernel, Distribution, OperatingSystem, DesktopEnvironment,
+   WindowManager, Packages, Shell, Terminal, LocalIP, Backlight, Resolution,
+   Uptime, Processor, ProcessorLoad, Memory, Battery
 
-   Host
-   Machine
-   Kernel
-   Distribution
-   OperatingSystem
-   DesktopEnvironment
-   WindowManager
-   Packages
-   Shell
-   Terminal
-   LocalIP
-   Backlight
-   Resolution
-   Uptime
-   Processor
-   ProcessorLoad
-   Memory
-   Battery
+== See Also
 
-== More information
-
-For more information, please visit the macchina repository: https://github.com/Macchina-CLI/macchina
-
-== License
-
-MIT
+macchina(2)
 
 == Copyright
 
 Copyright (c) 2021 Aziz Ben Ali
+
+== License
+
+MIT

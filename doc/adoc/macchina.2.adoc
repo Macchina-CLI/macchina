@@ -12,11 +12,11 @@ macchina - A system information fetcher, with an (unhealthy) emphasis on perform
 
 == Synopsis
 
-*$XDG_CONFIG_HOME/macchina/themes*, *~/.config/macchina/themes*, *$MACCHINA_DIR/themes*
+*$XDG_CONFIG_HOME/macchina/themes*, *~/.config/macchina/themes*.
 
 == Description
 
-Themes are your interface to customizing all aspects of macchina. +
+Themes are your interface to customizing all visual aspects of macchina. +
 This manpage details all the options a theme can accept.
 
 == General Options
@@ -357,4 +357,7 @@ macchina(1)
 == Copyright
 
 Copyright (c) 2021 Aziz Ben Ali +
-Distributed under the terms of the MIT license.
+
+== License
+
+MIT
