@@ -116,7 +116,11 @@ impl<'a> Widget for ReadoutList<'a> {
             }
 
             Paragraph::new(readout_key.clone()).render(*layout_iter.next().unwrap(), buf);
-            Paragraph::new(themed_separator.clone()).render(*layout_iter.next().unwrap(), buf);
+
+            if !self.theme.get_separator().is_empty() {
+                Paragraph::new(themed_separator.clone()).render(*layout_iter.next().unwrap(), buf);
+            }
+
             layout_iter.next();
             Paragraph::new(readout_data.to_owned()).render(*layout_iter.next().unwrap(), buf);
             height += readout_data.height() as u16;
@@ -252,12 +256,17 @@ impl<'a> ReadoutList<'a> {
         themed_separator: &Text,
         readout_data: &Text,
     ) -> Vec<u16> {
-        let mut values = vec![
-            max_key_width as u16 + self.theme.get_spacing() as u16,
-            themed_separator.width() as u16,
-            self.theme.get_spacing() as u16,
-            readout_data.width() as u16,
-        ];
+        let mut values = vec![];
+
+        if self.theme.get_separator().is_empty() {
+            values.push(max_key_width as u16);
+        } else {
+            values.push(max_key_width as u16 + self.theme.get_spacing() as u16);
+            values.push(themed_separator.width() as u16);
+        }
+
+        values.push(self.theme.get_spacing() as u16);
+        values.push(readout_data.width() as u16);
 
         if self.theme.get_padding() > 0 {
             values.insert(0, self.theme.get_padding() as u16)

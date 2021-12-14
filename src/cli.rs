@@ -83,6 +83,15 @@ pub struct Opt {
     pub config: Option<std::path::PathBuf>,
 
     #[structopt(
+        long = "export-config",
+        short = "e",
+        help = "Prints a template configuration file to stdout",
+        conflicts_with = "doctor"
+    )]
+    #[serde(skip_serializing, skip_deserializing)]
+    pub export_config: bool,
+
+    #[structopt(
         long = "ascii-artists",
         help = "Lists the original artists of the ASCII art used by macchina"
     )]
@@ -100,15 +109,16 @@ pub struct Opt {
 impl Default for Opt {
     fn default() -> Self {
         Opt {
-            version: false,
-            doctor: false,
+            export_config: false,
             current_shell: false,
             long_shell: false,
             long_uptime: false,
-            long_kernel: true,
+            long_kernel: false,
             list_themes: false,
             ascii_artists: false,
             physical_cores: false,
+            version: false,
+            doctor: false,
             config: None,
             theme: None,
             show: None,
@@ -125,6 +135,10 @@ impl Opt {
 
         if args.doctor {
             self.doctor = true;
+        }
+
+        if args.export_config {
+            self.export_config = true;
         }
 
         if args.current_shell {
@@ -172,20 +186,21 @@ impl Opt {
         }
     }
 
-    pub fn get_options(arg_opt: Opt) -> Opt {
-        let config_opt = match arg_opt.config {
-            Some(_) => config::read_config(&arg_opt.config.clone().unwrap()),
+    pub fn get_options() -> Opt {
+        let args = Opt::from_args();
+        let config_opt = match args.config {
+            Some(_) => config::read_config(&args.config.clone().unwrap()),
             None => config::get_config(),
         };
 
         match config_opt {
             Ok(mut config) => {
-                config.parse_args(arg_opt);
+                config.parse_args(args);
                 config
             }
             Err(e) => {
                 error::print_errors(e);
-                arg_opt
+                args
             }
         }
     }

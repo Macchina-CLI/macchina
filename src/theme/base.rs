@@ -205,7 +205,7 @@ pub fn create_theme(opt: &Opt) -> Theme {
     theme
 }
 
-pub fn list_themes(opt: &Opt) -> Result<()> {
+pub fn list_themes(opt: &Opt) {
     let locations = config::locations();
     for dir in locations {
         let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
@@ -243,6 +243,4 @@ pub fn list_themes(opt: &Opt) -> Result<()> {
             }
         });
     }
-
-    Ok(())
 }
