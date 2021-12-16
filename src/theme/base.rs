@@ -1,6 +1,5 @@
 use crate::cli::Opt;
 use crate::data::ReadoutKey;
-use crate::theme;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
@@ -283,7 +282,7 @@ pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(th) = &opt.theme {
         let name = &(th.to_owned() + ".toml");
-        locations.iter().any(|d| match get_theme(name, &d) {
+        locations.iter().any(|d| match get_theme(name, d) {
             Ok(mut t) => {
                 t.set_randomization();
                 theme = t;
@@ -299,7 +298,7 @@ pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
 pub fn list_themes(locations: &[PathBuf]) {
     use libmacchina::extra::path_extension;
     for dir in locations {
-        let entries = libmacchina::extra::list_dir_entries(&dir);
+        let entries = libmacchina::extra::list_dir_entries(dir);
         println!("{}:", dir.to_string_lossy());
         entries
             .iter()
