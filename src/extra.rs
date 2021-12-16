@@ -22,3 +22,15 @@ pub fn expand_home<P: AsRef<Path>>(initial_path: P) -> Option<PathBuf> {
         }
     })
 }
+
+pub fn config_dir() -> Option<PathBuf> {
+    if let Ok(home) = std::env::var("HOME") {
+        Some(PathBuf::from(home).join(".config"))
+    } else {
+        None
+    }
+}
+
+pub fn usr_share_dir() -> Option<PathBuf> {
+    Some(PathBuf::from("/usr/share"))
+}

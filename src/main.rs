@@ -12,12 +12,10 @@ mod format;
 pub mod theme;
 pub mod widgets;
 
-use cli::Opt;
+use cli::{Opt, PKG_NAME};
 use error::Result;
 use structopt::StructOpt;
-use tui::backend::Backend;
-use tui::buffer::Buffer;
-use tui::layout::Rect;
+use tui::{backend::Backend, buffer::Buffer, layout::Rect};
 
 #[macro_use]
 extern crate lazy_static;
@@ -46,7 +44,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let theme = theme::create_theme(&locations, &opt);
+    let theme = theme::create_theme(locations, &opt);
     let should_display = data::should_display(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, &should_display);
 
@@ -114,9 +112,14 @@ fn main() -> Result<()> {
 
 fn get_version() {
     if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
-        println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+        println!(
+            "{}     {} ({})",
+            PKG_NAME,
+            env!("CARGO_PKG_VERSION"),
+            git_sha
+        );
     } else {
-        println!("macchina     {}", env!("CARGO_PKG_VERSION"));
+        println!("{}     {}", PKG_NAME, env!("CARGO_PKG_VERSION"));
     }
 
     println!("libmacchina  {}", libmacchina::version());

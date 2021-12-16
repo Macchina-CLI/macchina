@@ -1,10 +1,8 @@
-use crate::cli::Opt;
+use crate::cli::{Opt, PKG_NAME};
 use crate::error::Result;
-use crate::theme;
+use crate::extra;
 use std::io;
 use std::path::{Path, PathBuf};
-
-pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
     let path = Path::new(path);
@@ -20,7 +18,7 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
 }
 
 pub fn get_config() -> Result<Opt> {
-    if let Some(mut path) = theme::config_dir() {
+    if let Some(mut path) = extra::config_dir() {
         match cfg!(target_os = "macos") {
             true => {
                 if let Ok(home) = std::env::var("HOME") {

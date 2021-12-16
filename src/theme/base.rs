@@ -1,10 +1,10 @@
-use crate::cli::Opt;
+use crate::cli::{Opt, PKG_NAME};
 use crate::data::ReadoutKey;
+use crate::extra;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
 use dirs;
-use libmacchina::dirs as _dirs;
 use libmacchina::extra::list_dir_entries;
 use libmacchina::extra::path_extension;
 use serde::{Deserialize, Serialize};
@@ -22,7 +22,7 @@ pub struct Theme {
     randomize: Randomize,
     spacing: usize,
     padding: usize,
-    palette: Palette,
+    palette: Option<Palette>,
     hide_ascii: bool,
     prefer_small_ascii: bool,
     keys: Keys,
@@ -46,14 +46,13 @@ impl Default for Theme {
             key_color: Color::Blue,
             separator_color: Color::Yellow,
             separator: String::from("-"),
-            palette: Palette::default(),
+            palette: None,
             randomize: Randomize::default(),
             custom_ascii: ASCII::default(),
             bar: Bar::default(),
             r#box: Block::default(),
             keys: Keys::default(),
             name: String::new(),
-            // error: String::new(),
             filepath: PathBuf::new(),
             active: false,
             hide_ascii: false,
@@ -118,8 +117,8 @@ impl Theme {
         &self.custom_ascii
     }
 
-    pub fn get_palette(&self) -> &Palette {
-        &self.palette
+    pub fn get_palette(&self) -> Option<&Palette> {
+        self.palette.as_ref()
     }
 
     pub fn get_block(&self) -> &Block {
@@ -227,9 +226,14 @@ impl Theme {
 impl fmt::Display for Theme {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.is_active() {
-            write!(f, "- {} {}", self.name.green().italic(), "[active]".cyan())
+            write!(
+                f,
+                "- {} {}",
+                self.name.bright_green().italic(),
+                "(active)".cyan().bold()
+            )
         } else {
-            write!(f, "- {}", self.name.green().italic())
+            write!(f, "- {}", self.name.bright_green().italic())
         }
     }
 }
@@ -247,29 +251,32 @@ pub fn read_theme(name: &str, dir: &Path) -> Result<Theme> {
     Ok(toml::from_slice(&buffer)?)
 }
 
+/// Predefined locations where macchina should search.
 pub fn locations() -> Vec<PathBuf> {
     let mut dirs = vec![];
 
-    if cfg!(target_os = "macos") {
-        dirs.push(config_dir().unwrap_or_default());
+    if cfg!(target_os = "linux") {
+        dirs.push(extra::config_dir().unwrap_or_default());
     } else {
         dirs.push(dirs::config_dir().unwrap_or_default());
     }
 
     if cfg!(target_os = "linux") {
-        dirs.push(usr_share_dir().unwrap_or_default());
+        dirs.push(extra::usr_share_dir().unwrap_or_default());
     }
 
     if cfg!(target_os = "netbsd") {
-        dirs.push(_dirs::localbase_dir().unwrap_or_default());
+        dirs.push(libmacchina::dirs::localbase_dir().unwrap_or_default());
     }
 
     dirs.retain(|x| x.exists());
-    dirs.iter().map(|x| x.join("macchina/themes")).collect()
+    dirs.iter()
+        .map(|x| x.join(PKG_NAME).join("themes"))
+        .collect()
 }
 
 /// Searches for and returns the specified theme.
-pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
+pub fn create_theme(locations: Vec<PathBuf>, opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(t) = &opt.theme {
         let name = &(t.to_owned() + ".toml");
@@ -303,28 +310,17 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
             .iter()
             .filter(|&x| path_extension(x).unwrap_or_default() == "toml")
             .for_each(|dir| {
-                if let Some(name) = dir.file_name() {
-                    if let Some(str) = name.to_str() {
-                        if let Ok(mut theme) = read_theme(str, dir.parent().unwrap()) {
-                            theme.set_filepath(dir.join(str));
+                if let Some(str) = dir.file_name() {
+                    if let Some(name) = str.to_str() {
+                        if let Ok(mut theme) = read_theme(name, dir.parent().unwrap()) {
+                            theme.set_filepath(dir.join(name));
                             theme.set_name();
                             theme.set_active(opt.theme.as_ref());
                             println!("{}", theme.to_string());
+                        } else {
                         }
                     }
                 }
             });
     })
-}
-
-pub fn config_dir() -> Option<PathBuf> {
-    if let Ok(home) = std::env::var("HOME") {
-        Some(PathBuf::from(home).join(".config"))
-    } else {
-        None
-    }
-}
-
-pub fn usr_share_dir() -> Option<PathBuf> {
-    Some(PathBuf::from("/usr/share"))
 }

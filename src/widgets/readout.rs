@@ -1,6 +1,5 @@
 use crate::data::{Readout, ReadoutKey};
-use crate::theme::components::Palette;
-use crate::theme::components::PaletteType;
+use crate::theme::components::{Palette, PaletteType};
 use crate::theme::Theme;
 use std::collections::HashMap;
 use tui::buffer::Buffer;
@@ -126,8 +125,8 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if self.theme.get_palette().is_visible() {
-            self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
+        if let Some(pal) = self.theme.get_palette() {
+            self.print_palette(buf, &list_area, &mut height, pal);
         }
 
         Self::render_block(
@@ -150,6 +149,10 @@ impl<'a> ReadoutList<'a> {
         height: &mut u16,
         palette: &Palette,
     ) {
+        if !palette.is_visible() {
+            return;
+        }
+
         let light_colors = [
             Color::DarkGray,
             Color::LightRed,
@@ -173,7 +176,7 @@ impl<'a> ReadoutList<'a> {
         ];
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
-            if let Some(glyph) = self.theme.get_palette().get_glyph() {
+            if let Some(glyph) = palette.get_glyph() {
                 colors
                     .iter()
                     .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
