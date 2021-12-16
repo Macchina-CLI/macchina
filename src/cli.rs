@@ -170,7 +170,7 @@ impl Opt {
     pub fn get_options() -> Opt {
         let args = Opt::from_args();
         let config_opt = match args.config {
-            Some(_) => config::read_config(&args.config.clone().unwrap()),
+            Some(ref path) => config::read_config_file(path),
             None => config::get_config(),
         };
 

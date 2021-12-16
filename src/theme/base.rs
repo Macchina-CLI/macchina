@@ -4,7 +4,6 @@ use crate::extra;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
-use dirs;
 use libmacchina::extra::list_dir_entries;
 use libmacchina::extra::path_extension;
 use serde::{Deserialize, Serialize};
@@ -255,10 +254,8 @@ pub fn read_theme(name: &str, dir: &Path) -> Result<Theme> {
 pub fn locations() -> Vec<PathBuf> {
     let mut dirs = vec![];
 
-    if cfg!(target_os = "linux") {
+    if cfg!(target_os = "linux") || cfg!(target_os = "macos") || cfg!(target_os = "windows") {
         dirs.push(extra::config_dir().unwrap_or_default());
-    } else {
-        dirs.push(dirs::config_dir().unwrap_or_default());
     }
 
     if cfg!(target_os = "linux") {
@@ -302,25 +299,29 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
     // 2. Print current location
     // 2. Iterate over TOML files
     // 3. Display theme info.
-    locations.iter().for_each(|dir| {
-        println!("{}:", dir.to_string_lossy());
-        let mut entries = list_dir_entries(dir);
-        entries.sort();
-        entries
-            .iter()
-            .filter(|&x| path_extension(x).unwrap_or_default() == "toml")
-            .for_each(|dir| {
-                if let Some(str) = dir.file_name() {
-                    if let Some(name) = str.to_str() {
-                        if let Ok(mut theme) = read_theme(name, dir.parent().unwrap()) {
-                            theme.set_filepath(dir.join(name));
-                            theme.set_name();
-                            theme.set_active(opt.theme.as_ref());
-                            println!("{}", theme.to_string());
-                        } else {
-                        }
+
+    for theme_folder in locations {
+        println!("{}:", theme_folder.display());
+        let entries = list_dir_entries(&theme_folder);
+        let entries = entries.iter()
+            .filter(|f| f.is_file())
+            .filter(|f| path_extension(f) == Some("toml"));
+
+        for theme_path in entries {
+            if let Some(theme_filename) = theme_path.file_name() {
+                if let Some(theme_filename) = theme_filename.to_str() {
+                    let theme = read_theme(theme_filename, &theme_folder);
+                    if let Ok(mut theme) = theme {
+                        theme.set_filepath(theme_path.clone());
+                        theme.set_name();
+                        theme.set_active(opt.theme.as_ref());
+                        println!("{}", theme.to_string());
+                    } else if let Err(e) = theme {
+                        println!("Could not create theme {}: {:?}", theme_filename, e);
                     }
                 }
-            });
-    })
+            }
+        }
+
+    }
 }

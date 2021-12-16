@@ -2,9 +2,9 @@ use crate::cli::{Opt, PKG_NAME};
 use crate::error::Result;
 use crate::extra;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 
-pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
+pub fn read_config_file(path: &std::path::PathBuf) -> Result<Opt> {
     let path = Path::new(path);
     Ok(if Path::exists(path) {
         let config_buffer = std::fs::read(path)?;
@@ -12,29 +12,18 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
     } else {
         Err(io::Error::new(
             io::ErrorKind::NotFound,
-            "Could not locate the configuration file",
+            "Could not locate the configuration file.",
         ))
     }?)
 }
 
 pub fn get_config() -> Result<Opt> {
     if let Some(mut path) = extra::config_dir() {
-        match cfg!(target_os = "macos") {
-            true => {
-                if let Ok(home) = std::env::var("HOME") {
-                    path = PathBuf::from(home)
-                        .join(".config")
-                        .join(PKG_NAME)
-                        .join(format!("{}.toml", PKG_NAME));
-                }
-            }
-            false => {
-                path.push(PKG_NAME);
-                path.push(format!("{}.toml", PKG_NAME));
-            }
+        path.push(PKG_NAME);
+        path.push(format!("{}.toml", PKG_NAME));
+        if Path::exists(&path) {
+            return read_config_file(&path);
         }
-
-        return read_config(&path);
     }
 
     Ok(Opt::default())
