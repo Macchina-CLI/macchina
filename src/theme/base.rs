@@ -1,11 +1,14 @@
 use crate::cli::Opt;
-use crate::config;
 use crate::data::ReadoutKey;
+use crate::theme;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
+use dirs;
+use libmacchina::dirs as _dirs;
 use serde::{Deserialize, Serialize};
-use std::path::Path;
+use std::fmt;
+use std::path::{Path, PathBuf};
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,6 +29,14 @@ pub struct Theme {
     key_color: Color,
     #[serde(with = "color_to_tui")]
     separator_color: Color,
+    #[serde(skip_serializing, skip_deserializing)]
+    name: String,
+    #[serde(skip_serializing, skip_deserializing)]
+    filepath: PathBuf,
+    #[serde(skip_serializing, skip_deserializing)]
+    active: bool,
+    // #[serde(skip_serializing, skip_deserializing)]
+    // error: String,
 }
 
 impl Default for Theme {
@@ -34,16 +45,20 @@ impl Default for Theme {
             key_color: Color::Blue,
             separator_color: Color::Yellow,
             separator: String::from("-"),
-            hide_ascii: false,
-            prefer_small_ascii: false,
             palette: Palette::default(),
-            spacing: 2,
-            padding: 2,
             randomize: Randomize::default(),
             custom_ascii: ASCII::default(),
             bar: Bar::default(),
             r#box: Block::default(),
             keys: Keys::default(),
+            name: String::new(),
+            // error: String::new(),
+            filepath: PathBuf::new(),
+            active: false,
+            hide_ascii: false,
+            prefer_small_ascii: false,
+            spacing: 2,
+            padding: 2,
         }
     }
 }
@@ -64,8 +79,51 @@ impl Theme {
             custom_ascii: custom.custom_ascii,
             randomize: custom.randomize,
             keys: custom.keys,
+            name: custom.name,
+            filepath: custom.filepath,
+            active: custom.active,
+            // error: custom.error,
         }
     }
+
+    pub fn is_ascii_visible(&self) -> bool {
+        !self.hide_ascii
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.active
+    }
+
+    pub fn get_filepath(&self) -> PathBuf {
+        self.filepath.to_owned()
+    }
+
+    // pub fn get_error(&self) -> String {
+    //     self.error.to_owned()
+    // }
+
+    pub fn get_name(&self) -> String {
+        self.name.to_owned()
+    }
+
+    pub fn set_name(&mut self) {
+        if let Some(f) = self.filepath.file_stem() {
+            if let Some(s) = f.to_str() {
+                self.name = s.to_string();
+            }
+        }
+    }
+
+    pub fn set_filepath(&mut self, p: PathBuf) {
+        self.filepath = p
+    }
+
+    // pub fn set_error<S>(&mut self, e: S)
+    // where
+    //     S: std::string::ToString,
+    // {
+    //     self.error = e.to_string();
+    // }
 
     pub fn get_bar(&self) -> &Bar {
         &self.bar
@@ -107,16 +165,20 @@ impl Theme {
         self.prefer_small_ascii
     }
 
-    pub fn is_ascii_visible(&self) -> bool {
-        !self.hide_ascii
-    }
-
     pub fn get_padding(&self) -> usize {
         self.padding
     }
 
     pub fn get_spacing(&self) -> usize {
         self.spacing
+    }
+
+    pub fn set_active(&mut self, opt: &Opt) {
+        if let Some(t) = &opt.theme {
+            if &self.name == t {
+                self.active = true;
+            }
+        }
     }
 
     pub fn set_separator_color(&mut self, color: Color) {
@@ -151,96 +213,117 @@ impl Theme {
 
     pub fn key(&self, readout_key: &ReadoutKey) -> &str {
         match *readout_key {
-            ReadoutKey::Host => self.get_keys().get_host(),
-            ReadoutKey::Kernel => self.get_keys().get_kernel(),
-            ReadoutKey::OperatingSystem => self.get_keys().get_os(),
-            ReadoutKey::Machine => self.get_keys().get_machine(),
-            ReadoutKey::Distribution => self.get_keys().get_distro(),
-            ReadoutKey::LocalIP => self.get_keys().get_local_ip(),
-            ReadoutKey::Resolution => self.get_keys().get_resolution(),
-            ReadoutKey::Shell => self.get_keys().get_shell(),
-            ReadoutKey::Terminal => self.get_keys().get_terminal(),
-            ReadoutKey::WindowManager => self.get_keys().get_wm(),
-            ReadoutKey::DesktopEnvironment => self.get_keys().get_de(),
-            ReadoutKey::Packages => self.get_keys().get_packages(),
-            ReadoutKey::Processor => self.get_keys().get_cpu(),
-            ReadoutKey::ProcessorLoad => self.get_keys().get_cpu_load(),
-            ReadoutKey::Battery => self.get_keys().get_battery(),
-            ReadoutKey::Backlight => self.get_keys().get_backlight(),
-            ReadoutKey::Uptime => self.get_keys().get_uptime(),
-            ReadoutKey::Memory => self.get_keys().get_memory(),
+            ReadoutKey::Host => self.keys.get_host(),
+            ReadoutKey::Kernel => self.keys.get_kernel(),
+            ReadoutKey::OperatingSystem => self.keys.get_os(),
+            ReadoutKey::Machine => self.keys.get_machine(),
+            ReadoutKey::Distribution => self.keys.get_distro(),
+            ReadoutKey::LocalIP => self.keys.get_local_ip(),
+            ReadoutKey::Resolution => self.keys.get_resolution(),
+            ReadoutKey::Shell => self.keys.get_shell(),
+            ReadoutKey::Terminal => self.keys.get_terminal(),
+            ReadoutKey::WindowManager => self.keys.get_wm(),
+            ReadoutKey::DesktopEnvironment => self.keys.get_de(),
+            ReadoutKey::Packages => self.keys.get_packages(),
+            ReadoutKey::Processor => self.keys.get_cpu(),
+            ReadoutKey::ProcessorLoad => self.keys.get_cpu_load(),
+            ReadoutKey::Battery => self.keys.get_battery(),
+            ReadoutKey::Backlight => self.keys.get_backlight(),
+            ReadoutKey::Uptime => self.keys.get_uptime(),
+            ReadoutKey::Memory => self.keys.get_memory(),
         }
+    }
+}
+
+impl fmt::Display for Theme {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.is_active() {
+            write!(f, "- {} {}", self.name.green().italic(), "[active]".cyan())
+        } else {
+            write!(f, "- {}", self.name.green().italic())
+        }
+    }
+}
+
+impl PartialEq for Theme {
+    fn eq(&self, other: &Self) -> bool {
+        self.filepath == other.filepath || self.name == other.name
     }
 }
 
 /// Searches for and returns a theme from a given directory.
 pub fn get_theme(name: &str, dir: &Path) -> Result<Theme> {
-    let theme_path = dir.join(&format!("macchina/themes/{}.toml", name));
+    let theme_path = dir.join(&name);
     let buffer = std::fs::read(theme_path)?;
     Ok(toml::from_slice(&buffer)?)
 }
 
-pub fn create_theme(opt: &Opt) -> Theme {
+pub fn locations() -> Vec<PathBuf> {
+    let mut dirs = vec![];
+
+    if cfg!(target_os = "macos") {
+        dirs.push(config_dir().unwrap_or_default());
+    } else {
+        dirs.push(dirs::config_dir().unwrap_or_default());
+    }
+
+    if cfg!(target_os = "linux") {
+        dirs.push(usr_share_dir().unwrap_or_default());
+    }
+
+    if cfg!(target_os = "netbsd") {
+        dirs.push(_dirs::localbase_dir().unwrap_or_default());
+    }
+
+    dirs.retain(|x| x.exists());
+    dirs.iter().map(|x| x.join("macchina/themes")).collect()
+}
+
+pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    let locations = config::locations();
     if let Some(th) = &opt.theme {
-        let t = locations.iter().find(|&d| match get_theme(th, d) {
-            Ok(t) => {
+        let name = &(th.to_owned() + ".toml");
+        locations.iter().any(|d| match get_theme(name, &d) {
+            Ok(mut t) => {
+                t.set_randomization();
                 theme = t;
-                theme.set_randomization();
                 true
             }
             _ => false,
         });
-
-        if t.is_none() {
-            println!(
-                "{}: \"{}\" could not be found, verify it exists with --list-themes.",
-                "Error".red(),
-                th
-            )
-        }
     }
 
     theme
 }
 
-pub fn list_themes(opt: &Opt) {
-    let locations = config::locations();
+pub fn list_themes(locations: &[PathBuf]) {
+    use libmacchina::extra::path_extension;
     for dir in locations {
-        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-        let custom_themes = entries.iter().filter(|&x| {
-            if let Some(ext) = libmacchina::extra::path_extension(x) {
-                ext == "toml"
-            } else {
-                false
-            }
-        });
-
-        let n_themes = custom_themes.clone().count();
-        if n_themes == 0 {
-            continue;
-        }
-
-        println!("{}/macchina/themes:", dir.to_string_lossy());
-
-        custom_themes.for_each(|x| {
-            if let Some(theme) = x.file_name() {
-                let name = theme.to_string_lossy().replace(".toml", "");
-                if let Some(active_theme) = &opt.theme {
-                    if active_theme == &name {
-                        println!(
-                            "- {} {}",
-                            name.bright_green().italic(),
-                            "[active]".bright_cyan()
-                        );
-                    } else {
-                        println!("- {}", name.bright_green().italic());
+        let entries = libmacchina::extra::list_dir_entries(&dir);
+        println!("{}:", dir.to_string_lossy());
+        entries
+            .iter()
+            .filter(|&x| path_extension(x).unwrap_or_default() == "toml")
+            .for_each(|dir| {
+                if let Some(name) = dir.file_name() {
+                    if let Some(str) = name.to_str() {
+                        if let Ok(theme) = get_theme(str, dir.parent().unwrap()) {
+                            println!("{}", theme.to_string());
+                        }
                     }
-                } else {
-                    println!("- {}", name.bright_green().italic());
                 }
-            }
-        });
+            });
     }
+}
+
+pub fn config_dir() -> Option<PathBuf> {
+    if let Ok(home) = std::env::var("HOME") {
+        Some(PathBuf::from(home).join(".config"))
+    } else {
+        None
+    }
+}
+
+pub fn usr_share_dir() -> Option<PathBuf> {
+    Some(PathBuf::from("/usr/share"))
 }

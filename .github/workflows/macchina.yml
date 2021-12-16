@@ -93,4 +93,3 @@ jobs:
           command: run
           args: --target=${{ matrix.target }} -- --doctor
           use-cross: ${{ matrix.cross }}
-        if: ${{ matrix.test }}

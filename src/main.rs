@@ -1,4 +1,3 @@
-#![warn(clippy::all)]
 mod ascii;
 mod bars;
 mod buffer;
@@ -24,6 +23,7 @@ extern crate lazy_static;
 
 fn main() -> Result<()> {
     let opt = Opt::get_options();
+    let locations = theme::locations();
 
     if opt.version {
         get_version();
@@ -36,7 +36,7 @@ fn main() -> Result<()> {
     }
 
     if opt.list_themes {
-        theme::list_themes(&opt);
+        theme::list_themes(&locations);
         return Ok(());
     }
 
@@ -45,7 +45,7 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-    let theme = theme::create_theme(&opt);
+    let theme = theme::create_theme(&locations, &opt);
     let should_display = data::should_display(&opt);
     let readout_data = data::get_all_readouts(&opt, &theme, &should_display);
 

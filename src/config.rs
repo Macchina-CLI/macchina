@@ -1,31 +1,10 @@
 use crate::cli::Opt;
 use crate::error::Result;
-use libmacchina::dirs as _dirs;
+use crate::theme;
 use std::io;
 use std::path::{Path, PathBuf};
 
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
-
-pub fn locations() -> Vec<PathBuf> {
-    let mut dirs = vec![];
-
-    if cfg!(target_os = "macos") {
-        dirs.push(config_dir().unwrap_or_default());
-    } else {
-        dirs.push(dirs::config_dir().unwrap_or_default());
-    }
-
-    if cfg!(target_os = "linux") {
-        dirs.push(usr_share_dir().unwrap_or_default());
-    }
-
-    if cfg!(target_os = "netbsd") {
-        dirs.push(_dirs::localbase_dir().unwrap_or_default());
-    }
-
-    dirs.retain(|x| x.exists());
-    dirs
-}
 
 pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
     let path = Path::new(path);
@@ -41,7 +20,7 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
 }
 
 pub fn get_config() -> Result<Opt> {
-    if let Some(mut path) = config_dir() {
+    if let Some(mut path) = theme::config_dir() {
         match cfg!(target_os = "macos") {
             true => {
                 if let Ok(home) = std::env::var("HOME") {
@@ -61,16 +40,4 @@ pub fn get_config() -> Result<Opt> {
     }
 
     Ok(Opt::default())
-}
-
-pub fn config_dir() -> Option<PathBuf> {
-    if let Ok(home) = std::env::var("HOME") {
-        Some(PathBuf::from(home).join(".config"))
-    } else {
-        None
-    }
-}
-
-pub fn usr_share_dir() -> Option<PathBuf> {
-    Some(PathBuf::from("/usr/share"))
 }
