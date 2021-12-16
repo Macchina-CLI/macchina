@@ -37,7 +37,7 @@ fn main() -> Result<()> {
     }
 
     if opt.list_themes {
-        theme::list_themes(&locations);
+        theme::list_themes(locations, &opt);
         return Ok(());
     }
 

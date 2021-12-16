@@ -5,6 +5,8 @@ use crate::Result;
 use colored::Colorize;
 use dirs;
 use libmacchina::dirs as _dirs;
+use libmacchina::extra::list_dir_entries;
+use libmacchina::extra::path_extension;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -81,7 +83,6 @@ impl Theme {
             name: custom.name,
             filepath: custom.filepath,
             active: custom.active,
-            // error: custom.error,
         }
     }
 
@@ -97,32 +98,9 @@ impl Theme {
         self.filepath.to_owned()
     }
 
-    // pub fn get_error(&self) -> String {
-    //     self.error.to_owned()
-    // }
-
     pub fn get_name(&self) -> String {
         self.name.to_owned()
     }
-
-    pub fn set_name(&mut self) {
-        if let Some(f) = self.filepath.file_stem() {
-            if let Some(s) = f.to_str() {
-                self.name = s.to_string();
-            }
-        }
-    }
-
-    pub fn set_filepath(&mut self, p: PathBuf) {
-        self.filepath = p
-    }
-
-    // pub fn set_error<S>(&mut self, e: S)
-    // where
-    //     S: std::string::ToString,
-    // {
-    //     self.error = e.to_string();
-    // }
 
     pub fn get_bar(&self) -> &Bar {
         &self.bar
@@ -172,11 +150,33 @@ impl Theme {
         self.spacing
     }
 
-    pub fn set_active(&mut self, opt: &Opt) {
-        if let Some(t) = &opt.theme {
-            if &self.name == t {
+    pub fn set_active(&mut self, theme_name: Option<&String>) {
+        if let Some(name) = theme_name {
+            if self.name.eq(name) {
                 self.active = true;
             }
+        }
+    }
+
+    fn set_name(&mut self) {
+        if let Some(f) = self.filepath.file_stem() {
+            if let Some(s) = f.to_str() {
+                self.name = s.to_string();
+            }
+        }
+    }
+
+    fn set_filepath(&mut self, p: PathBuf) {
+        self.filepath = p
+    }
+
+    fn set_randomization(&mut self) {
+        if self.randomize.rand_key() {
+            self.key_color = self.randomize.generate();
+        }
+
+        if self.randomize.rand_sep() {
+            self.separator_color = self.randomize.generate();
         }
     }
 
@@ -198,16 +198,6 @@ impl Theme {
 
     pub fn set_separator(&mut self, separator: impl ToString) {
         self.separator = separator.to_string()
-    }
-
-    pub fn set_randomization(&mut self) {
-        if self.randomize.rand_key() {
-            self.key_color = self.randomize.generate();
-        }
-
-        if self.randomize.rand_sep() {
-            self.separator_color = self.randomize.generate();
-        }
     }
 
     pub fn key(&self, readout_key: &ReadoutKey) -> &str {
@@ -251,7 +241,7 @@ impl PartialEq for Theme {
 }
 
 /// Searches for and returns a theme from a given directory.
-pub fn get_theme(name: &str, dir: &Path) -> Result<Theme> {
+pub fn read_theme(name: &str, dir: &Path) -> Result<Theme> {
     let theme_path = dir.join(&name);
     let buffer = std::fs::read(theme_path)?;
     Ok(toml::from_slice(&buffer)?)
@@ -278,13 +268,17 @@ pub fn locations() -> Vec<PathBuf> {
     dirs.iter().map(|x| x.join("macchina/themes")).collect()
 }
 
+/// Searches for and returns the specified theme.
 pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    if let Some(th) = &opt.theme {
-        let name = &(th.to_owned() + ".toml");
-        locations.iter().any(|d| match get_theme(name, d) {
+    if let Some(t) = &opt.theme {
+        let name = &(t.to_owned() + ".toml");
+        locations.iter().any(|d| match read_theme(&name, d) {
             Ok(mut t) => {
                 t.set_randomization();
+                t.set_filepath(d.join(&name));
+                t.set_name();
+                t.set_active(opt.theme.as_ref());
                 theme = t;
                 true
             }
@@ -295,24 +289,32 @@ pub fn create_theme(locations: &[PathBuf], opt: &Opt) -> Theme {
     theme
 }
 
-pub fn list_themes(locations: &[PathBuf]) {
-    use libmacchina::extra::path_extension;
-    for dir in locations {
-        let entries = libmacchina::extra::list_dir_entries(dir);
+/// Prints out a list of available themes.
+pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
+    // 1. Iterate over locations
+    // 2. Print current location
+    // 2. Iterate over TOML files
+    // 3. Display theme info.
+    locations.iter().for_each(|dir| {
         println!("{}:", dir.to_string_lossy());
+        let mut entries = list_dir_entries(dir);
+        entries.sort();
         entries
             .iter()
             .filter(|&x| path_extension(x).unwrap_or_default() == "toml")
             .for_each(|dir| {
                 if let Some(name) = dir.file_name() {
                     if let Some(str) = name.to_str() {
-                        if let Ok(theme) = get_theme(str, dir.parent().unwrap()) {
+                        if let Ok(mut theme) = read_theme(str, dir.parent().unwrap()) {
+                            theme.set_filepath(dir.join(str));
+                            theme.set_name();
+                            theme.set_active(opt.theme.as_ref());
                             println!("{}", theme.to_string());
                         }
                     }
                 }
             });
-    }
+    })
 }
 
 pub fn config_dir() -> Option<PathBuf> {
