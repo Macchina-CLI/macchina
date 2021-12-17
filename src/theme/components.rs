@@ -41,7 +41,7 @@ impl Palette {
             return v;
         }
 
-        true
+        false
     }
 }
 

@@ -125,9 +125,7 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        if self.theme.get_palette().is_visible() {
-            self.print_palette(buf, &list_area, &mut height, &self.theme.get_palette());
-        }
+        self.print_palette(buf, &list_area, &mut height, &self.theme.get_palette());
 
         Self::render_block(
             self.block,
