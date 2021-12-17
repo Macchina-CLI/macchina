@@ -6,7 +6,10 @@ hide_ascii      = true
 separator       = ">"
 key_color       = "Cyan"
 separator_color = "White"
-palette         = "Light"
+
+[palette]
+type = "Full"
+visible = false
 
 [bar]
 glyph           = "ߋ"
