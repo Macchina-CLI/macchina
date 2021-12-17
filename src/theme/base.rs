@@ -22,7 +22,7 @@ pub struct Theme {
     randomize: Randomize,
     spacing: usize,
     padding: usize,
-    palette: Option<Palette>,
+    palette: Palette,
     hide_ascii: bool,
     prefer_small_ascii: bool,
     keys: Keys,
@@ -46,7 +46,7 @@ impl Default for Theme {
             key_color: Color::Blue,
             separator_color: Color::Yellow,
             separator: String::from("-"),
-            palette: None,
+            palette: Palette::default(),
             randomize: Randomize::default(),
             custom_ascii: ASCII::default(),
             bar: Bar::default(),
@@ -117,8 +117,8 @@ impl Theme {
         &self.custom_ascii
     }
 
-    pub fn get_palette(&self) -> Option<&Palette> {
-        self.palette.as_ref()
+    pub fn get_palette(&self) -> &Palette {
+        &self.palette
     }
 
     pub fn get_block(&self) -> &Block {
