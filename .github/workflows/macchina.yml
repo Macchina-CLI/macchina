@@ -23,36 +23,42 @@ jobs:
             target: x86_64-unknown-linux-gnu
             cross: false
             strip: true
+            doctor: true
 
           - os: macos-latest
             name: macOS
             target: x86_64-apple-darwin
             cross: false
             strip: true
+            doctor: true
 
           - os: windows-latest
             name: Windows
             target: x86_64-pc-windows-msvc
             cross: false
             strip: true
+            doctor: true
 
           - os: ubuntu-latest
             name: NetBSD
             target: x86_64-unknown-netbsd
             cross: true
             strip: true
+            doctor: false 
 
           - os: ubuntu-latest
             name: Android
             target: aarch64-linux-android
             cross: true
             strip: true
+            doctor: false 
 
           - os: ubuntu-latest
             name: Linux
             target: aarch64-unknown-linux-gnu
             cross: true
             strip: true
+            doctor: true
 
     steps:
       - name: Checkout
@@ -93,3 +99,4 @@ jobs:
           command: run
           args: --target=${{ matrix.target }} -- --doctor
           use-cross: ${{ matrix.cross }}
+        if: ${{ matrix.doctor }}
