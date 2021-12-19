@@ -5,8 +5,6 @@ use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
 use dirs;
-use libmacchina::extra::list_dir_entries;
-use libmacchina::extra::path_extension;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -261,13 +259,11 @@ pub fn locations() -> Vec<PathBuf> {
         dirs.push(dirs::config_dir().unwrap_or_default());
     }
 
-    if cfg!(target_os = "linux") {
-        dirs.push(extra::usr_share_dir().unwrap_or_default());
-    }
+    #[cfg(target_os = "linux")]
+    dirs.push(extra::usr_share_dir().unwrap_or_default());
 
-    if cfg!(target_os = "netbsd") {
-        dirs.push(libmacchina::dirs::localbase_dir().unwrap_or_default());
-    }
+    #[cfg(target_os = "netbsd")]
+    dirs.push(libmacchina::dirs::localbase_dir().unwrap_or_default());
 
     dirs.retain(|x| x.exists());
     dirs.iter()
@@ -304,11 +300,11 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
     // 3. Display theme info.
     locations.iter().for_each(|dir| {
         println!("{}:", dir.to_string_lossy());
-        let mut entries = list_dir_entries(dir);
+        let mut entries = extra::list_entries(dir);
         entries.sort();
         entries
             .iter()
-            .filter(|&x| path_extension(x).unwrap_or_default() == "toml")
+            .filter(|&x| extra::path_extension(x).unwrap_or_default() == "toml")
             .for_each(|dir| {
                 if let Some(str) = dir.file_name() {
                     if let Some(name) = str.to_str() {
