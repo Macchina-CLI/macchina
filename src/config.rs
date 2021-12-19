@@ -1,6 +1,5 @@
 use crate::cli::{Opt, PKG_NAME};
 use crate::error::Result;
-use crate::extra;
 use std::io;
 use std::path::{Path, PathBuf};
 
@@ -18,7 +17,7 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
 }
 
 pub fn get_config() -> Result<Opt> {
-    if let Some(mut path) = extra::config_dir() {
+    if let Some(mut path) = dirs::config_dir() {
         match cfg!(target_os = "macos") {
             true => {
                 if let Ok(home) = std::env::var("HOME") {
