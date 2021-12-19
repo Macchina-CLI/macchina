@@ -228,33 +228,27 @@ scoop install macchina
 
 ### Nix
 
-- Where `<channel>` is `nixpkgs` or `nixos`:
 
 ```bash
+# <channel> can be "nixpkgs" or "nixos"
 nix-env -iA <channel>.macchina
 ```
 
 ### Arch Linux
 
-- _Option 1:_ Use the AUR package that pulls and installs the latest release:
-
 ```bash
+# Option 1: Use the AUR package that pulls and installs the latest release:
 git clone https://aur.archlinux.org/macchina.git
 cd macchina
 makepkg -si
-```
 
-- _Option 2:_ Use the AUR package that pulls and installs from upstream:
-
-```bash
+# Option 2: Use the AUR package that pulls and installs from upstream:
 git clone https://aur.archlinux.org/macchina-git.git
 cd macchina
 makepkg -si
 ```
 
 ### Fedora Linux
-
-You can install macchina from the COPR via
 
 ```
 sudo dnf copr enable varlad/macchina
