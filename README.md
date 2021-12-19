@@ -252,6 +252,15 @@ cd macchina
 makepkg -si
 ```
 
+### Fedora Linux
+
+You can install macchina from the COPR via
+
+```
+sudo dnf copr enable varlad/macchina
+sudo dnf install macchina
+```
+
 The [installation wiki
 page](https://github.com/grtcdr/macchina/wiki/Installation) lists some other
 ways you can install the program or the steps to compile from source.
