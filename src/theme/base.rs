@@ -246,3 +246,17 @@ pub fn list_themes(opt: &Opt) {
         });
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_additional_themes() -> Result<()> {
+        for theme in std::fs::read_dir("contrib/themes")? {
+            let theme = theme?.path();
+            get_theme(&theme)?;
+        }
+        Ok(())
+    }
+}
