@@ -74,3 +74,14 @@ pub fn config_dir() -> Option<PathBuf> {
 pub fn usr_share_dir() -> Option<PathBuf> {
     Some(PathBuf::from("/usr/share"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_documentation_config() -> Result<()> {
+        read_config("doc/macchina.toml")?;
+        Ok(())
+    }
+}
