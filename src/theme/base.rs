@@ -276,7 +276,7 @@ pub fn create_theme(locations: Vec<PathBuf>, opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(t) = &opt.theme {
         let name = &(t.to_owned() + ".toml");
-        locations.iter().any(|d| match read_theme(&name, d) {
+        locations.iter().any(|d| match read_theme(name, d) {
             Ok(mut t) => {
                 t.set_randomization();
                 t.set_filepath(d.join(&name));
@@ -312,7 +312,7 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
                             theme.set_filepath(dir.join(name));
                             theme.set_name();
                             theme.set_active(opt.theme.as_ref());
-                            println!("{}", theme.to_string());
+                            println!("{}", theme);
                         } else {
                         }
                     }

@@ -64,26 +64,24 @@ fn main() -> Result<()> {
     if theme.is_ascii_visible() {
         if let Some(path) = theme.get_custom_ascii().get_path() {
             let file_path = extra::expand_home(path).expect("Could not expand '~' to \"HOME\"");
-            let ascii_art;
-
-            if let Some(color) = theme.get_custom_ascii().get_color() {
-                ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+            let ascii_art = if let Some(color) = theme.get_custom_ascii().get_color() {
+               ascii::get_ascii_from_file_override_color(&file_path, color)?
             } else {
-                ascii_art = ascii::get_ascii_from_file(&file_path)?;
-            }
+                ascii::get_ascii_from_file(&file_path)?
+            };
 
             if ascii_art.width() != 0 && ascii_art.height() < MAX_ASCII_HEIGHT {
-                ascii_area = buffer::draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii_art, &mut tmp_buffer);
             }
         } else if prefers_small_ascii {
             // prefer smaller ascii in this case
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Small) {
-                ascii_area = buffer::draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         } else {
             // prefer bigger ascii otherwise
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Big) {
-                ascii_area = buffer::draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         }
     }
