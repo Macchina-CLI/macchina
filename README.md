@@ -25,7 +25,7 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 </div>
 
-# About
+## About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
 memory usage, processor load and much more. _macchina_ is **basic** by default
@@ -42,7 +42,7 @@ Check out the [benchmarks wiki page](https://github.com/Macchina-CLI/macchina/wi
 
 ## Features
 
-## Themes
+### Themes
 
 _macchina_ has a theming system which you can use to customize pretty much any
 visual aspect of the program. Themes live **outside** the configuration file,
@@ -64,20 +64,20 @@ Learn how to [make your own](#customization), and maybe have a look at the
 [documentation](doc/adoc/macchina.2.adoc)
 while you're at it.
 
-## Doctor
+### Doctor
 
 In the event of fetching failures, which can occur for various reasons, the
 `--doctor` flag that can tell you why that might be happening.
 
-# Configuration
+## Configuration
 
 See the [configuration wiki page](https://github.com/Macchina-CLI/macchina/wiki/Configuration).
 
-# Customization
+## Customization
 
 Have a look at the [customization wiki page](https://github.com/Macchina-CLI/macchina/wiki/Customization).
 
-# Installation
+## Installation
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
 
@@ -87,7 +87,7 @@ page](https://github.com/Macchina-CLI/macchina/wiki/Installation).
 [Prebuilt binaries](https://github.com/grtcdr/macchina/releases) are also
 provided in every release, feel free to use them.
 
-# Contributors
+## Contributors
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
