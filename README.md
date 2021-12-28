@@ -25,19 +25,6 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 </div>
 
-# Table of Contents
-
-- [About](#about)
-- [Benchmarks](#benchmarks)
-- [Features](#features)
-- [Configuration](#configuration)
-- [Customization](#customization)
-- [Dependencies](#dependencies)
-- [Installation](#installation)
-- [Packaging Status](#packaging-status)
-- [Contributors](#contributors)
-- [ASCII Art](#ascii-art)
-
 # About
 
 _macchina_ lets you view system information, like your kernel version, uptime,
@@ -49,50 +36,11 @@ information, have a look at
 [libmacchina]; fetching-related
 issues should be filed on that repository.
 
-# Benchmarks <a name="benchmarks"></a>
+## Benchmarks <a name="benchmarks"></a>
 
-> Execution time is measured using [hyperfine](https://github.com/sharkdp/hyperfine)
+Check out the [benchmarks wiki page](https://github.com/Macchina-CLI/macchina/wiki/Benchmarks).
 
-_macchina_ is **lightning fast**, see for yourself:
-
-## Linux
-
-This benchmark was performed on an _Intel® Core™ i5-8265U_
-
-| Command    | Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | --------: | -------: | -------: |
-| `macchina` | 2.8 ± 0.4 |      2.3 |      4.6 |
-
-- [x] Up-to-date
-
-## macOS
-
-| Command    | Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | --------: | -------: | -------: |
-| `macchina` | 5.0 ± 0.2 |      4.7 |      5.9 |
-
-- [ ] Up-to-date
-
-## NetBSD
-
-This benchmark was performed inside a virtual machine on an _Intel® Core™
-i5-8265U_
-
-| Command    |  Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | ---------: | -------: | -------: |
-| `macchina` | 17.7 ± 1.6 |     16.8 |     27.2 |
-
-- [ ] Up-to-date
-
-## Windows
-
-| Command    | Mean [ms] | Min [ms] | Max [ms] |
-| :--------- | --------: | -------: | -------: |
-| `macchina` | 9.0 ± 0.4 |      8.2 |     11.7 |
-
-- [ ] Up-to-date
-
-# Features
+## Features
 
 ## Themes
 
@@ -118,151 +66,26 @@ while you're at it.
 
 ## Doctor
 
-[libmacchina] can sometimes fail
-to fetch certain readouts, and _macchina_ has a feature in place that describes
-why they failed. You don't have to guess what went wrong, `--doctor` has your
-back!
+In the event of fetching failures, which can occur for various reasons, the
+`--doctor` flag that can tell you why that might be happening.
 
 # Configuration
 
-The configuration file defines the behavior of macchina, it does not allow for
-much customization. See [macchina.toml](doc/macchina.toml) for an example
-configuration file.
-
-In order for _macchina_ to be able to read the configuration file, you need to
-place `macchina.toml` inside:
-
-- `$XDG_CONFIG_HOME/macchina` on Linux and the BSDs.
-- `$HOME/.config/macchina` on macOS.
-- `%AppData%/macchina` on Windows.
-
-If _macchina_ is not utilizing your configuration file, despite you placing it
-in the correct location, you should tell _macchina_ where to find it by passing
-the file's path to `--config`.
+See the [configuration wiki page](https://github.com/Macchina-CLI/macchina/wiki/Configuration).
 
 # Customization
 
-Themes are **TOML** files that describe the layout and styling of
-_macchina_. See [Hydrogen.toml](contrib/themes/Hydrogen.toml) for an example
-theme.
+Have a look at the [customization wiki page](https://github.com/Macchina-CLI/macchina/wiki/Customization).
 
-In order for _macchina_ to be able to find your themes,
-you need to place them in:
-
-- `$XDG_CONFIG_HOME/macchina/themes` on Linux and the BSDs.
-- `$HOME/.config/macchina/themes` on macOS.
-- `%AppData%/macchina/themes` on Windows.
-
-To start using your theme:
-
-1. Run `macchina --list-themes` to verify that macchina has listed your theme.
-
-2. If all goes well, you should see one or more themes listed.
-
-3. In [macchina.toml](doc/macchina.toml), set `theme` to one of the listed
-   themes, e.g.:
-
-```bash
-theme = "Helium" # case-sensitive!
-```
-
-4. You're good to go! _macchina_ will start using your theme.
-
-# Dependencies
-
-### Build dependencies
-
-The following are required dependencies if you're building from source or installing through `cargo`:
-
-- [libgit2](https://pkgs.org/download/libgit2)
-
-### Runtime dependencies
-
-The following are _optional_ dependencies, they only extend what macchina can fetch:
-
-**Linux**:
-
-- [wmctrl]
-
-**NetBSD**:
-
-- [wmctrl]
-
-# Installation
-
-### Cargo
-
-```
-cargo install macchina
-```
-
-### Pkgsrc
-
-```
-pkgin install macchina
-```
-
-### openSUSE Tumbleweed
-
-```
-zypper in macchina
-```
-
-### Homebrew
-
-```
-brew install macchina
-```
-
-### Termux
-
-```
-pkg install macchina
-```
-
-### Windows
-
-```
-scoop install macchina
-```
-
-### Nix
-
-- Where `<channel>` is `nixpkgs` or `nixos`:
-
-```bash
-nix-env -iA <channel>.macchina
-```
-
-### Arch Linux
-
-- _Option 1:_ Use the AUR package that pulls and installs the latest release:
-
-```bash
-git clone https://aur.archlinux.org/macchina.git
-cd macchina
-makepkg -si
-```
-
-- _Option 2:_ Use the AUR package that pulls and installs from upstream:
-
-```bash
-git clone https://aur.archlinux.org/macchina-git.git
-cd macchina
-makepkg -si
-```
-
-The [installation wiki
-page](https://github.com/grtcdr/macchina/wiki/Installation) lists some other
-ways you can install the program or the steps to compile from source.
-
-You might prefer running the [prebuilt
-binary](https://github.com/grtcdr/macchina/releases) that corresponds with your
-operating system.
-
-# Packaging Status
+# Installation & Building from Source
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
+
+Check out the [installation wiki
+page](https://github.com/Macchina-CLI/macchina/wiki/Installation).
+
+[Prebuilt binaries](https://github.com/grtcdr/macchina/releases) are also
+provided in every release, feel free to use them.
 
 # Contributors
 
@@ -270,8 +93,6 @@ operating system.
 
 _macchina_, like many other open-source projects, would not be where it is
 right now without the help of its contributors — Thank you all so much!
-
-Looking to help? [Read this first.](CONTRIBUTING.md)
 
 The following are some awesome people that have helped make _macchina_ a really
 cool fetcher:
@@ -284,6 +105,8 @@ cool fetcher:
   [123marvin123](https://github.com/123marvin123)
 - Support for **OpenWrt** and **Android** was made possible through the many
   contributions of [uttarayan21](https://github.com/uttarayan21)
+
+Looking to help? [Read this first.](CONTRIBUTING.md)
 
 # ASCII Art
 
