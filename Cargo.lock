@@ -478,7 +478,6 @@ dependencies = [
  "regex",
  "sqlite",
  "sysctl",
- "vergen",
  "walkdir",
  "which",
  "windows 0.29.0",

@@ -60,9 +60,7 @@ Why are they separate?
   wanted to switch between dozens of themes that you very carefully designed?
   The way we handle customization answers this need.
 
-Learn how to [make your own](#customization), and maybe have a look at the
-[documentation](doc/adoc/macchina.2.adoc)
-while you're at it.
+Learn how to [make your own](#customization).
 
 ### Doctor
 
@@ -125,4 +123,3 @@ me](mailto:ba.tahaaziz@gmail.com).
   art collection (unknown artist)
 
 [libmacchina]: https://github.com/Macchina-CLI/libmacchina
-[wmctrl]: https://pkgs.org/download/wmctrl
