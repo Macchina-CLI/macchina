@@ -77,7 +77,7 @@ See the [configuration wiki page](https://github.com/Macchina-CLI/macchina/wiki/
 
 Have a look at the [customization wiki page](https://github.com/Macchina-CLI/macchina/wiki/Customization).
 
-# Installation & Building from Source
+# Installation
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
 
