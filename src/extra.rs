@@ -1,37 +1,13 @@
-use std::path::{Path, PathBuf};
+use std::env;
 use std::ffi::OsStr;
-
-/// Expands `~` to its appropriate value.
-///
-/// Thanks to Andrey Tyukin
-/// https://stackoverflow.com/questions/54267608/expand-tilde-in-rust-path-idiomatically
-pub fn expand_home<P: AsRef<Path>>(initial_path: P) -> Option<PathBuf> {
-    let p = initial_path.as_ref();
-
-    if !p.starts_with("~") {
-        return Some(p.to_path_buf());
-    }
-
-    if p.eq(Path::new("~")) {
-        return dirs::home_dir();
-    }
-
-    dirs::home_dir().map(|mut h| {
-        if h == Path::new("/") {
-            p.strip_prefix("~").unwrap().to_path_buf()
-        } else {
-            h.push(p.strip_prefix("~/").unwrap());
-            h
-        }
-    })
-}
+use std::fs;
+use std::path::{Path, PathBuf};
 
 /// Simply returns `$HOME/.config`
 pub fn config_dir() -> Option<PathBuf> {
-    if let Ok(home) = std::env::var("HOME") {
-        Some(PathBuf::from(home).join(".config"))
-    } else {
-        None
+    match env::var("HOME") {
+        Ok(home) => Some(PathBuf::from(home).join(".config")),
+        _ => None,
     }
 }
 
@@ -41,20 +17,18 @@ pub fn usr_share_dir() -> Option<PathBuf> {
 }
 
 /// Returns the entries of a given path.
-pub fn list_entries(path: &Path) -> Vec<PathBuf> {
-    let mut directory_entries: Vec<PathBuf> = Vec::new();
-    let directory = std::fs::read_dir(path);
-
-    if let Ok(dir) = directory {
-        for entry in dir.flatten() {
-            directory_entries.push(entry.path())
+pub fn get_entries(path: &Path) -> Option<Vec<PathBuf>> {
+    match fs::read_dir(path) {
+        Ok(dir) => {
+            let mut entries: Vec<PathBuf> = Vec::new();
+            dir.flatten().for_each(|x| entries.push(x.path()));
+            Some(entries)
         }
+        _ => None,
     }
-
-    directory_entries
 }
 
-/// Returns the extension of a give path.
+/// Returns the extension of a given path.
 pub fn path_extension(path: &Path) -> Option<&str> {
     path.extension().and_then(OsStr::to_str)
 }

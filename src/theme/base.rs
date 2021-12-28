@@ -259,8 +259,9 @@ pub fn locations() -> Vec<PathBuf> {
         dirs.push(dirs::config_dir().unwrap_or_default());
     }
 
-    #[cfg(target_os = "linux")]
-    dirs.push(extra::usr_share_dir().unwrap_or_default());
+    if cfg!(target_os = "linux") {
+        dirs.push(extra::usr_share_dir().unwrap_or_default());
+    }
 
     #[cfg(target_os = "netbsd")]
     dirs.push(libmacchina::dirs::localbase_dir().unwrap_or_default());
@@ -300,23 +301,24 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
     // 3. Display theme info.
     locations.iter().for_each(|dir| {
         println!("{}:", dir.to_string_lossy());
-        let mut entries = extra::list_entries(dir);
-        entries.sort();
-        entries
-            .iter()
-            .filter(|&x| extra::path_extension(x).unwrap_or_default() == "toml")
-            .for_each(|dir| {
-                if let Some(str) = dir.file_name() {
-                    if let Some(name) = str.to_str() {
-                        if let Ok(mut theme) = read_theme(name, dir.parent().unwrap()) {
-                            theme.set_filepath(dir.join(name));
-                            theme.set_name();
-                            theme.set_active(opt.theme.as_ref());
-                            println!("{}", theme);
-                        } else {
+        if let Some(mut entries) = extra::get_entries(dir) {
+            entries.sort();
+            entries
+                .iter()
+                .filter(|&x| extra::path_extension(x).unwrap_or_default() == "toml")
+                .for_each(|dir| {
+                    if let Some(str) = dir.file_name() {
+                        if let Some(name) = str.to_str() {
+                            if let Ok(mut theme) = read_theme(name, dir.parent().unwrap()) {
+                                theme.set_filepath(dir.join(name));
+                                theme.set_name();
+                                theme.set_active(opt.theme.as_ref());
+                                println!("{}", theme);
+                            } else {
+                            }
                         }
                     }
-                }
-            });
+                });
+        }
     })
 }

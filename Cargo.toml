@@ -17,6 +17,7 @@ features = ["hash"]
 
 [dependencies]
 bytesize = "1.0.1"
+shellexpand = "2.1.0"
 clap = "2.34.0"
 tui = { version = "0.16.0", default-features = false, features = ["crossterm"] }
 atty= "0.2.14"

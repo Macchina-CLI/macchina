@@ -63,9 +63,11 @@ fn main() -> Result<()> {
 
     if theme.is_ascii_visible() {
         if let Some(path) = theme.get_custom_ascii().get_path() {
-            let file_path = extra::expand_home(path).expect("Could not expand '~' to \"HOME\"");
+            let expanded = shellexpand::tilde(&path.to_string_lossy()).to_string();
+            let file_path =
+                std::path::PathBuf::from(expanded);
             let ascii_art = if let Some(color) = theme.get_custom_ascii().get_color() {
-               ascii::get_ascii_from_file_override_color(&file_path, color)?
+                ascii::get_ascii_from_file_override_color(&file_path, color)?
             } else {
                 ascii::get_ascii_from_file(&file_path)?
             };
