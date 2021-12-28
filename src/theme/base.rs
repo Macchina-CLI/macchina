@@ -174,9 +174,8 @@ impl Theme {
 }
 
 /// Searches for and returns a theme from a given directory.
-pub fn get_theme(name: &str, dir: &Path) -> Result<Theme> {
-    let theme_path = dir.join(&format!("macchina/themes/{}.toml", name));
-    let buffer = std::fs::read(theme_path)?;
+pub fn get_theme(path: &Path) -> Result<Theme> {
+    let buffer = std::fs::read(path)?;
     Ok(toml::from_slice(&buffer)?)
 }
 
@@ -184,13 +183,16 @@ pub fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     let locations = config::locations();
     if let Some(th) = &opt.theme {
-        let t = locations.iter().find(|&d| match get_theme(th, d) {
-            Ok(t) => {
-                theme = t;
-                theme.set_randomization();
-                true
+        let t = locations.iter().find(|&d| {
+            let theme_path = d.join(&format!("macchina/themes/{}.toml", th));
+            match get_theme(&theme_path) {
+                Ok(t) => {
+                    theme = t;
+                    theme.set_randomization();
+                    true
+                }
+                _ => false,
             }
-            _ => false,
         });
 
         if t.is_none() {
@@ -242,5 +244,19 @@ pub fn list_themes(opt: &Opt) {
                 }
             }
         });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_additional_themes() -> Result<()> {
+        for theme in std::fs::read_dir("contrib/themes")? {
+            let theme = theme?.path();
+            get_theme(&theme)?;
+        }
+        Ok(())
     }
 }
