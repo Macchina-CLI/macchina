@@ -242,12 +242,6 @@ impl PartialEq for Theme {
     }
 }
 
-/// Searches for and returns a theme from a given directory.
-pub fn get_theme(path: &Path) -> Result<Theme> {
-    let buffer = std::fs::read(path)?;
-    Ok(toml::from_slice(&buffer)?)
-}
-
 /// Predefined locations where macchina should search.
 pub fn locations() -> Vec<PathBuf> {
     let mut dirs = vec![];
@@ -271,12 +265,18 @@ pub fn locations() -> Vec<PathBuf> {
         .collect()
 }
 
+/// Searches for and returns a theme from a given directory.
+pub fn get_theme(path: &Path) -> Result<Theme> {
+    let buffer = std::fs::read(path)?;
+    Ok(toml::from_slice(&buffer)?)
+}
+
 /// Searches for and returns the specified theme.
-pub fn create_theme(locations: Vec<PathBuf>, opt: &Opt) -> Theme {
+pub fn create_theme(opt: &Opt) -> Theme {
+    let locations = locations();
     let mut theme = Theme::default();
-    let locations = config::locations();
     if let Some(th) = &opt.theme {
-        let t = locations.iter().find(|&d| {
+        locations.iter().find(|&d| {
             let theme_path = d.join(&format!("macchina/themes/{}.toml", th));
             match get_theme(&theme_path) {
                 Ok(t) => {
@@ -293,27 +293,32 @@ pub fn create_theme(locations: Vec<PathBuf>, opt: &Opt) -> Theme {
 }
 
 /// Prints out a list of available themes.
-pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
+pub fn list_themes(opt: &Opt) {
     // 1. Iterate over locations
     // 2. Print current location
     // 2. Iterate over TOML files
-    // 3. Display theme info.
+    // 3. Display themes.
+    let locations = locations();
     locations.iter().for_each(|dir| {
         println!("{}:", dir.to_string_lossy());
         if let Some(mut entries) = extra::get_entries(dir) {
             entries.sort();
             entries
                 .iter()
-                .filter(|&x| extra::path_extension(x).unwrap_or_default() == "toml")
-                .for_each(|dir| {
-                    if let Some(str) = dir.file_name() {
+                .filter(|x| extra::path_extension(x).unwrap_or_default() == "toml")
+                .for_each(|theme| {
+                    if let Some(str) = theme.file_name() {
                         if let Some(name) = str.to_str() {
-                            if let Ok(mut theme) = read_theme(name, dir.parent().unwrap()) {
-                                theme.set_filepath(dir.join(name));
-                                theme.set_name();
-                                theme.set_active(opt.theme.as_ref());
-                                println!("{}", theme);
-                            } else {
+                            match get_theme(theme) {
+                                Ok(mut t) => {
+                                    t.set_filepath(dir.join(name));
+                                    t.set_name();
+                                    t.set_active(opt.theme.as_ref());
+                                    println!("{}", t);
+                                }
+                                Err(e) => {
+                                    println!("- {}: {}", name.replace(".toml", ""), e.to_string().yellow());
+                                }
                             }
                         }
                     }
