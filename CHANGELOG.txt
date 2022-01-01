@@ -1,5 +1,24 @@
 # Changelog
 
-## macchina v6.0.1
+## macchina v6.0.2
 
-- Use the correct section numbering for our manpages.
+This version only includes changes, bugfixes and improvements that come
+directly from libmacchina (our backend), these changes include:
+- general: Several API/structural changes, including unexposing certain
+  modules, as well as optimizations to heavily used functions and our own
+  directory finders.
+- general: Your solid state/hard drive will be relieved to know that we no
+  longer make overabundant calls to our built-in implementation of which[1],
+  performance has not regressed nor improved.
+- general: Explicity mark unimplemented methods, this has no effect on
+  macchina.
+- macOS: Fail fast when retrieving ShellKind::Current.
+- Windows: Scoop support for the package readout.
+- build: Improved CI which should help us only deploy better, cleaner and
+  optimal code.
+
+This release is brought to you the following magnificent contributors:
+- [FantasyTeddy](https://github.com/FantasyTeddy)
+
+[1]: which: a common unix tool that traverses your PATH to look for a given
+program.

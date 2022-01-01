@@ -12,7 +12,7 @@ build = "build.rs"
 
 
 [dependencies]
-libmacchina = "5.0.3"
+libmacchina = { version = "6.0.0", features = ["version"] }
 bytesize = "1.0.1"
 shellexpand = "2.1.0"
 clap = "2.34.0"
