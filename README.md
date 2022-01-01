@@ -83,7 +83,7 @@ Check out the [installation wiki
 page](https://github.com/Macchina-CLI/macchina/wiki/Installation).
 
 [Prebuilt binaries](https://github.com/grtcdr/macchina/releases) are also
-provided in every release, feel free to use them.
+provided with every release, feel free to use them.
 
 ## Contributors
 

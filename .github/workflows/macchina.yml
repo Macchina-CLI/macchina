@@ -93,6 +93,13 @@ jobs:
           args: --target=${{ matrix.target }}
           use-cross: ${{ matrix.cross }}
 
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --target=${{ matrix.target }}
+        if: ${{ !matrix.cross }}
+
       - name: Doctor
         uses: actions-rs/cargo@v1
         with:

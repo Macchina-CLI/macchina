@@ -243,9 +243,8 @@ impl PartialEq for Theme {
 }
 
 /// Searches for and returns a theme from a given directory.
-pub fn read_theme(name: &str, dir: &Path) -> Result<Theme> {
-    let theme_path = dir.join(&name);
-    let buffer = std::fs::read(theme_path)?;
+pub fn get_theme(path: &Path) -> Result<Theme> {
+    let buffer = std::fs::read(path)?;
     Ok(toml::from_slice(&buffer)?)
 }
 
@@ -275,18 +274,18 @@ pub fn locations() -> Vec<PathBuf> {
 /// Searches for and returns the specified theme.
 pub fn create_theme(locations: Vec<PathBuf>, opt: &Opt) -> Theme {
     let mut theme = Theme::default();
-    if let Some(t) = &opt.theme {
-        let name = &(t.to_owned() + ".toml");
-        locations.iter().any(|d| match read_theme(name, d) {
-            Ok(mut t) => {
-                t.set_randomization();
-                t.set_filepath(d.join(&name));
-                t.set_name();
-                t.set_active(opt.theme.as_ref());
-                theme = t;
-                true
+    let locations = config::locations();
+    if let Some(th) = &opt.theme {
+        let t = locations.iter().find(|&d| {
+            let theme_path = d.join(&format!("macchina/themes/{}.toml", th));
+            match get_theme(&theme_path) {
+                Ok(t) => {
+                    theme = t;
+                    theme.set_randomization();
+                    true
+                }
+                _ => false,
             }
-            _ => false,
         });
     }
 
@@ -321,4 +320,18 @@ pub fn list_themes(locations: Vec<PathBuf>, opt: &Opt) {
                 });
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_additional_themes() -> Result<()> {
+        for theme in std::fs::read_dir("contrib/themes")? {
+            let theme = theme?.path();
+            get_theme(&theme)?;
+        }
+        Ok(())
+    }
 }
