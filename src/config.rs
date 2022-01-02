@@ -41,7 +41,14 @@ mod tests {
 
     #[test]
     fn documentation_config() -> Result<()> {
-        read_config("doc/macchina.toml")?;
+        let opt = read_config("doc/macchina.toml")?;
+
+        assert!(opt.long_uptime);
+        assert!(!opt.long_shell);
+        assert!(!opt.long_kernel);
+        assert!(opt.current_shell);
+        assert!(opt.physical_cores);
+        assert_eq!(opt.interface,Some(String::from("wlan0")));
         Ok(())
     }
 }
