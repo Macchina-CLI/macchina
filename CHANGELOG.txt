@@ -2,7 +2,7 @@
 
 ## macchina v6.0.2
 
-This version only includes changes, bugfixes and improvements that come
+This version mainly includes changes, bugfixes and improvements that come
 directly from libmacchina (our backend), these changes include:
 - general: Several API/structural changes, including unexposing certain
   modules, as well as optimizations to heavily used functions and our own
@@ -16,6 +16,10 @@ directly from libmacchina (our backend), these changes include:
 - Windows: Scoop support for the package readout.
 - build: Improved CI which should help us only deploy better, cleaner and
   optimal code.
+
+## Other changes
+
+- Refactored theme handling.
 
 This release is brought to you the following magnificent contributors:
 - [FantasyTeddy](https://github.com/FantasyTeddy)

@@ -10,7 +10,6 @@ license = "MIT"
 readme = "README.md"
 build = "build.rs"
 
-
 [dependencies]
 libmacchina = { version = "6.0.0", features = ["version"] }
 bytesize = "1.0.1"
@@ -40,6 +39,7 @@ features = ["build", "cargo", "git", "rustc"]
 opt-level = 3
 debug = false
 lto = true
+incremental = true
 codegen-units = 1
 
 [features]

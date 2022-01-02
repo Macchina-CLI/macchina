@@ -34,8 +34,6 @@ pub struct Theme {
     filepath: PathBuf,
     #[serde(skip_serializing, skip_deserializing)]
     active: bool,
-    // #[serde(skip_serializing, skip_deserializing)]
-    // error: String,
 }
 
 impl Default for Theme {
