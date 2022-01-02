@@ -8,9 +8,8 @@ key_color       = "Cyan"
 separator_color = "White"
 
 [palette]
-type            = "Light"
-glyph           = "[] "
-visible         = true
+type = "Full"
+visible = false
 
 [bar]
 glyph           = "ߋ"

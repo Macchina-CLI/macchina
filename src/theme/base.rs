@@ -1,11 +1,13 @@
-use crate::cli::Opt;
-use crate::config;
+use crate::cli::{Opt, PKG_NAME};
 use crate::data::ReadoutKey;
+use crate::extra;
 use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
+use dirs;
 use serde::{Deserialize, Serialize};
-use std::path::Path;
+use std::fmt;
+use std::path::{Path, PathBuf};
 use tui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -26,6 +28,12 @@ pub struct Theme {
     key_color: Color,
     #[serde(with = "color_to_tui")]
     separator_color: Color,
+    #[serde(skip_serializing, skip_deserializing)]
+    name: String,
+    #[serde(skip_serializing, skip_deserializing)]
+    filepath: PathBuf,
+    #[serde(skip_serializing, skip_deserializing)]
+    active: bool,
 }
 
 impl Default for Theme {
@@ -34,16 +42,19 @@ impl Default for Theme {
             key_color: Color::Blue,
             separator_color: Color::Yellow,
             separator: String::from("-"),
-            hide_ascii: false,
-            prefer_small_ascii: false,
             palette: Palette::default(),
-            spacing: 2,
-            padding: 2,
             randomize: Randomize::default(),
             custom_ascii: ASCII::default(),
             bar: Bar::default(),
             r#box: Block::default(),
             keys: Keys::default(),
+            name: String::new(),
+            filepath: PathBuf::new(),
+            active: false,
+            hide_ascii: false,
+            prefer_small_ascii: false,
+            spacing: 2,
+            padding: 2,
         }
     }
 }
@@ -64,7 +75,26 @@ impl Theme {
             custom_ascii: custom.custom_ascii,
             randomize: custom.randomize,
             keys: custom.keys,
+            name: custom.name,
+            filepath: custom.filepath,
+            active: custom.active,
         }
+    }
+
+    pub fn is_ascii_visible(&self) -> bool {
+        !self.hide_ascii
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.active
+    }
+
+    pub fn get_filepath(&self) -> PathBuf {
+        self.filepath.to_owned()
+    }
+
+    pub fn get_name(&self) -> String {
+        self.name.to_owned()
     }
 
     pub fn get_bar(&self) -> &Bar {
@@ -107,16 +137,42 @@ impl Theme {
         self.prefer_small_ascii
     }
 
-    pub fn is_ascii_visible(&self) -> bool {
-        !self.hide_ascii
-    }
-
     pub fn get_padding(&self) -> usize {
         self.padding
     }
 
     pub fn get_spacing(&self) -> usize {
         self.spacing
+    }
+
+    pub fn set_active(&mut self, theme_name: Option<&String>) {
+        if let Some(name) = theme_name {
+            if self.name.eq(name) {
+                self.active = true;
+            }
+        }
+    }
+
+    fn set_name(&mut self) {
+        if let Some(f) = self.filepath.file_stem() {
+            if let Some(s) = f.to_str() {
+                self.name = s.to_string();
+            }
+        }
+    }
+
+    fn set_filepath(&mut self, p: PathBuf) {
+        self.filepath = p
+    }
+
+    fn set_randomization(&mut self) {
+        if self.randomize.rand_key() {
+            self.key_color = self.randomize.generate();
+        }
+
+        if self.randomize.rand_sep() {
+            self.separator_color = self.randomize.generate();
+        }
     }
 
     pub fn set_separator_color(&mut self, color: Color) {
@@ -139,38 +195,72 @@ impl Theme {
         self.separator = separator.to_string()
     }
 
-    pub fn set_randomization(&mut self) {
-        if self.randomize.rand_key() {
-            self.key_color = self.randomize.generate();
-        }
-
-        if self.randomize.rand_sep() {
-            self.separator_color = self.randomize.generate();
-        }
-    }
-
     pub fn key(&self, readout_key: &ReadoutKey) -> &str {
         match *readout_key {
-            ReadoutKey::Host => self.get_keys().get_host(),
-            ReadoutKey::Kernel => self.get_keys().get_kernel(),
-            ReadoutKey::OperatingSystem => self.get_keys().get_os(),
-            ReadoutKey::Machine => self.get_keys().get_machine(),
-            ReadoutKey::Distribution => self.get_keys().get_distro(),
-            ReadoutKey::LocalIP => self.get_keys().get_local_ip(),
-            ReadoutKey::Resolution => self.get_keys().get_resolution(),
-            ReadoutKey::Shell => self.get_keys().get_shell(),
-            ReadoutKey::Terminal => self.get_keys().get_terminal(),
-            ReadoutKey::WindowManager => self.get_keys().get_wm(),
-            ReadoutKey::DesktopEnvironment => self.get_keys().get_de(),
-            ReadoutKey::Packages => self.get_keys().get_packages(),
-            ReadoutKey::Processor => self.get_keys().get_cpu(),
-            ReadoutKey::ProcessorLoad => self.get_keys().get_cpu_load(),
-            ReadoutKey::Battery => self.get_keys().get_battery(),
-            ReadoutKey::Backlight => self.get_keys().get_backlight(),
-            ReadoutKey::Uptime => self.get_keys().get_uptime(),
-            ReadoutKey::Memory => self.get_keys().get_memory(),
+            ReadoutKey::Host => self.keys.get_host(),
+            ReadoutKey::Kernel => self.keys.get_kernel(),
+            ReadoutKey::OperatingSystem => self.keys.get_os(),
+            ReadoutKey::Machine => self.keys.get_machine(),
+            ReadoutKey::Distribution => self.keys.get_distro(),
+            ReadoutKey::LocalIP => self.keys.get_local_ip(),
+            ReadoutKey::Resolution => self.keys.get_resolution(),
+            ReadoutKey::Shell => self.keys.get_shell(),
+            ReadoutKey::Terminal => self.keys.get_terminal(),
+            ReadoutKey::WindowManager => self.keys.get_wm(),
+            ReadoutKey::DesktopEnvironment => self.keys.get_de(),
+            ReadoutKey::Packages => self.keys.get_packages(),
+            ReadoutKey::Processor => self.keys.get_cpu(),
+            ReadoutKey::ProcessorLoad => self.keys.get_cpu_load(),
+            ReadoutKey::Battery => self.keys.get_battery(),
+            ReadoutKey::Backlight => self.keys.get_backlight(),
+            ReadoutKey::Uptime => self.keys.get_uptime(),
+            ReadoutKey::Memory => self.keys.get_memory(),
         }
     }
+}
+
+impl fmt::Display for Theme {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.is_active() {
+            write!(
+                f,
+                "- {} {}",
+                self.name.bright_green().italic(),
+                "(active)".cyan().bold()
+            )
+        } else {
+            write!(f, "- {}", self.name.bright_green().italic())
+        }
+    }
+}
+
+impl PartialEq for Theme {
+    fn eq(&self, other: &Self) -> bool {
+        self.filepath == other.filepath || self.name == other.name
+    }
+}
+
+/// Predefined locations where macchina should search.
+pub fn locations() -> Vec<PathBuf> {
+    let mut dirs = vec![];
+
+    if cfg!(target_os = "linux") {
+        dirs.push(extra::config_dir().unwrap_or_default());
+    } else {
+        dirs.push(dirs::config_dir().unwrap_or_default());
+    }
+
+    if cfg!(target_os = "linux") {
+        dirs.push(extra::usr_share_dir().unwrap_or_default());
+    }
+
+    #[cfg(target_os = "netbsd")]
+    dirs.push(libmacchina::dirs::localbase_dir().unwrap_or_default());
+
+    dirs.retain(|x| x.exists());
+    dirs.iter()
+        .map(|x| x.join(PKG_NAME).join("themes"))
+        .collect()
 }
 
 /// Searches for and returns a theme from a given directory.
@@ -179,11 +269,12 @@ pub fn get_theme(path: &Path) -> Result<Theme> {
     Ok(toml::from_slice(&buffer)?)
 }
 
+/// Searches for and returns the specified theme.
 pub fn create_theme(opt: &Opt) -> Theme {
+    let locations = locations();
     let mut theme = Theme::default();
-    let locations = config::locations();
     if let Some(th) = &opt.theme {
-        let t = locations.iter().find(|&d| {
+        locations.iter().find(|&d| {
             let theme_path = d.join(&format!("macchina/themes/{}.toml", th));
             match get_theme(&theme_path) {
                 Ok(t) => {
@@ -194,57 +285,44 @@ pub fn create_theme(opt: &Opt) -> Theme {
                 _ => false,
             }
         });
-
-        if t.is_none() {
-            println!(
-                "{}: \"{}\" could not be found, verify it exists with --list-themes.",
-                "Error".red(),
-                th
-            )
-        }
     }
 
     theme
 }
 
+/// Prints out a list of available themes.
 pub fn list_themes(opt: &Opt) {
-    let locations = config::locations();
-    for dir in locations {
-        let entries = libmacchina::extra::list_dir_entries(&dir.join("macchina/themes"));
-        let custom_themes = entries.iter().filter(|&x| {
-            if let Some(ext) = libmacchina::extra::path_extension(x) {
-                ext == "toml"
-            } else {
-                false
-            }
-        });
-
-        let n_themes = custom_themes.clone().count();
-        if n_themes == 0 {
-            continue;
-        }
-
-        println!("{}/macchina/themes:", dir.to_string_lossy());
-
-        custom_themes.for_each(|x| {
-            if let Some(theme) = x.file_name() {
-                let name = theme.to_string_lossy().replace(".toml", "");
-                if let Some(active_theme) = &opt.theme {
-                    if active_theme == &name {
-                        println!(
-                            "- {} {}",
-                            name.bright_green().italic(),
-                            "[active]".bright_cyan()
-                        );
-                    } else {
-                        println!("- {}", name.bright_green().italic());
+    // 1. Iterate over locations
+    // 2. Print current location
+    // 2. Iterate over TOML files
+    // 3. Display themes.
+    let locations = locations();
+    locations.iter().for_each(|dir| {
+        println!("{}:", dir.to_string_lossy());
+        if let Some(mut entries) = extra::get_entries(dir) {
+            entries.sort();
+            entries
+                .iter()
+                .filter(|x| extra::path_extension(x).unwrap_or_default() == "toml")
+                .for_each(|theme| {
+                    if let Some(str) = theme.file_name() {
+                        if let Some(name) = str.to_str() {
+                            match get_theme(theme) {
+                                Ok(mut t) => {
+                                    t.set_filepath(dir.join(name));
+                                    t.set_name();
+                                    t.set_active(opt.theme.as_ref());
+                                    println!("{}", t);
+                                }
+                                Err(e) => {
+                                    println!("- {}: {}", name.replace(".toml", ""), e.to_string().yellow());
+                                }
+                            }
+                        }
                     }
-                } else {
-                    println!("- {}", name.bright_green().italic());
-                }
-            }
-        });
-    }
+                });
+        }
+    })
 }
 
 #[cfg(test)]

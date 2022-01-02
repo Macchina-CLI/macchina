@@ -1,3 +1,4 @@
+use colored::Colorize;
 use std::io;
 use thiserror::Error;
 
@@ -16,19 +17,18 @@ pub fn print_errors(err: Error) {
     match err {
         Error::ParsingError(err) => match err.line_col() {
             Some((line, col)) => {
-                //  Indexes are 0-based, we increment
-                //  them to make them less confusing
                 println!(
-                    "\x1b[31mError\x1b[0m: At line {} column {}\nCaused by: {}",
-                    line + 1,
-                    col + 1,
+                    "{}: At line {} column {}\nCaused by: {}",
+                    "Error".bright_red(),
+                    (line + 1).to_string().yellow(),
+                    (col + 1).to_string().yellow(),
                     err
                 )
             }
-            None => println!("\x1b[31mError\x1b[0m: {:?}", err),
+            None => println!("{}: {:?}", "Error".bright_red(), err),
         },
         Error::IOError(err) => {
-            println!("\x1b[31mError\x1b[0m: {:?}", err);
+            return println!("{}: {:?}", "Error".bright_red(), err);
         }
     }
 }

@@ -12,12 +12,10 @@ mod format;
 pub mod theme;
 pub mod widgets;
 
-use cli::Opt;
+use cli::{Opt, PKG_NAME};
 use error::Result;
 use structopt::StructOpt;
-use tui::backend::Backend;
-use tui::buffer::Buffer;
-use tui::layout::Rect;
+use tui::{backend::Backend, buffer::Buffer, layout::Rect};
 
 #[macro_use]
 extern crate lazy_static;
@@ -64,27 +62,27 @@ fn main() -> Result<()> {
 
     if theme.is_ascii_visible() {
         if let Some(path) = theme.get_custom_ascii().get_path() {
-            let file_path = extra::expand_home(path).expect("Could not expand '~' to \"HOME\"");
-            let ascii_art;
-
-            if let Some(color) = theme.get_custom_ascii().get_color() {
-                ascii_art = ascii::get_ascii_from_file_override_color(&file_path, color)?;
+            let expanded = shellexpand::tilde(&path.to_string_lossy()).to_string();
+            let file_path =
+                std::path::PathBuf::from(expanded);
+            let ascii_art = if let Some(color) = theme.get_custom_ascii().get_color() {
+                ascii::get_ascii_from_file_override_color(&file_path, color)?
             } else {
-                ascii_art = ascii::get_ascii_from_file(&file_path)?;
-            }
+                ascii::get_ascii_from_file(&file_path)?
+            };
 
             if ascii_art.width() != 0 && ascii_art.height() < MAX_ASCII_HEIGHT {
-                ascii_area = buffer::draw_ascii(ascii_art.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii_art, &mut tmp_buffer);
             }
         } else if prefers_small_ascii {
             // prefer smaller ascii in this case
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Small) {
-                ascii_area = buffer::draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         } else {
             // prefer bigger ascii otherwise
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Big) {
-                ascii_area = buffer::draw_ascii(ascii.to_owned(), &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         }
     }
@@ -113,9 +111,14 @@ fn main() -> Result<()> {
 
 fn get_version() {
     if let Some(git_sha) = option_env!("VERGEN_GIT_SHA_SHORT") {
-        println!("macchina     {} ({})", env!("CARGO_PKG_VERSION"), git_sha);
+        println!(
+            "{}     {} ({})",
+            PKG_NAME,
+            env!("CARGO_PKG_VERSION"),
+            git_sha
+        );
     } else {
-        println!("macchina     {}", env!("CARGO_PKG_VERSION"));
+        println!("{}     {}", PKG_NAME, env!("CARGO_PKG_VERSION"));
     }
 
     println!("libmacchina  {}", libmacchina::version());
