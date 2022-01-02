@@ -275,7 +275,7 @@ pub fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(th) = &opt.theme {
         locations.iter().find(|&d| {
-            let theme_path = d.join(&format!("macchina/themes/{}.toml", th));
+            let theme_path = d.join(&format!("{}.toml", th));
             match get_theme(&theme_path) {
                 Ok(t) => {
                     theme = t;
@@ -315,7 +315,11 @@ pub fn list_themes(opt: &Opt) {
                                     println!("{}", t);
                                 }
                                 Err(e) => {
-                                    println!("- {}: {}", name.replace(".toml", ""), e.to_string().yellow());
+                                    println!(
+                                        "- {}: {}",
+                                        name.replace(".toml", ""),
+                                        e.to_string().yellow()
+                                    );
                                 }
                             }
                         }

@@ -1,4 +1,5 @@
 #![warn(clippy::all)]
+
 mod ascii;
 mod bars;
 mod buffer;
