@@ -1,19 +1,15 @@
 use crate::cli::{Opt, PKG_NAME};
 use crate::error::Result;
-use std::io;
 use std::path::{Path, PathBuf};
 
 pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
     let path = Path::new(path);
-    Ok(if Path::exists(path) {
+    if path.exists() {
         let config_buffer = std::fs::read(path)?;
         Ok(toml::from_slice(&config_buffer)?)
     } else {
-        Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            "Could not locate the configuration file",
-        ))
-    }?)
+        Ok(Opt::default())
+    }
 }
 
 pub fn get_config() -> Result<Opt> {
