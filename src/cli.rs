@@ -3,6 +3,7 @@ use crate::data;
 use crate::error;
 use serde::{Deserialize, Serialize};
 use std::default::Default;
+use structopt::clap::AppSettings;
 use structopt::StructOpt;
 
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
@@ -10,7 +11,7 @@ pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 #[derive(StructOpt, Debug, Default, Serialize, Deserialize)]
-#[structopt(author = AUTHORS, about = ABOUT)]
+#[structopt(author = AUTHORS, about = ABOUT, setting = AppSettings::ColoredHelp)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
     #[structopt(
