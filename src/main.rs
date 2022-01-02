@@ -1,4 +1,5 @@
 #![warn(clippy::all)]
+
 mod ascii;
 mod bars;
 mod buffer;
@@ -63,8 +64,7 @@ fn main() -> Result<()> {
     if theme.is_ascii_visible() {
         if let Some(path) = theme.get_custom_ascii().get_path() {
             let expanded = shellexpand::tilde(&path.to_string_lossy()).to_string();
-            let file_path =
-                std::path::PathBuf::from(expanded);
+            let file_path = std::path::PathBuf::from(expanded);
             let ascii_art = if let Some(color) = theme.get_custom_ascii().get_color() {
                 ascii::get_ascii_from_file_override_color(&file_path, color)?
             } else {
