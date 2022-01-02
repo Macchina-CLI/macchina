@@ -18,10 +18,11 @@ pub fn print_errors(err: Error) {
         Error::ParsingError(err) => match err.line_col() {
             Some((line, col)) => {
                 println!(
-                    "{}: At line {} column {}\nCaused by: {}",
+                    "{}: At line {} column {}.\n{}: {}",
                     "Error".bright_red(),
                     (line + 1).to_string().yellow(),
                     (col + 1).to_string().yellow(),
+                    "Caused by".bold(),
                     err
                 )
             }

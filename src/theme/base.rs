@@ -1,5 +1,6 @@
 use crate::cli::{Opt, PKG_NAME};
 use crate::data::ReadoutKey;
+use crate::error;
 use crate::extra;
 use crate::theme::components::*;
 use crate::Result;
@@ -274,15 +275,22 @@ pub fn create_theme(opt: &Opt) -> Theme {
     let locations = locations();
     let mut theme = Theme::default();
     if let Some(th) = &opt.theme {
-        locations.iter().find(|&d| {
-            let theme_path = d.join(&format!("{}.toml", th));
-            match get_theme(&theme_path) {
+        locations.iter().find(|d| {
+            let path = d.join(&format!("{}.toml", th));
+            if !path.exists() {
+                return false;
+            }
+
+            match get_theme(&path) {
                 Ok(t) => {
                     theme = t;
                     theme.set_randomization();
                     true
                 }
-                _ => false,
+                Err(e) => {
+                    error::print_errors(e);
+                    false
+                }
             }
         });
     }
