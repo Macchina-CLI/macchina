@@ -13,21 +13,18 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
 }
 
 pub fn get_config() -> Result<Opt> {
-    if let Some(mut path) = dirs::config_dir() {
-        match cfg!(target_os = "macos") {
-            true => {
-                if let Ok(home) = std::env::var("HOME") {
-                    path = PathBuf::from(home)
-                        .join(".config")
-                        .join(PKG_NAME)
-                        .join(format!("{}.toml", PKG_NAME));
-                }
-            }
-            false => {
-                path.push(PKG_NAME);
-                path.push(format!("{}.toml", PKG_NAME));
-            }
+    if cfg!(target_os = "linux") {
+        if let Ok(home) = std::env::var("HOME") {
+            let path = PathBuf::from(home)
+                .join(".config")
+                .join(PKG_NAME)
+                .join(format!("{}.toml", PKG_NAME));
+
+            return read_config(&path);
         }
+    } else if let Some(mut path) = dirs::config_dir() {
+        path.push(PKG_NAME);
+        path.push(format!("{}.toml", PKG_NAME));
 
         return read_config(&path);
     }
@@ -48,7 +45,7 @@ mod tests {
         assert!(!opt.long_kernel);
         assert!(opt.current_shell);
         assert!(opt.physical_cores);
-        assert_eq!(opt.interface,Some(String::from("wlan0")));
+        assert_eq!(opt.interface, Some(String::from("wlan0")));
         Ok(())
     }
 }
