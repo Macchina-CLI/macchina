@@ -13,7 +13,7 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
 }
 
 pub fn get_config() -> Result<Opt> {
-    if cfg!(target_os = "linux") {
+    if cfg!(target_os = "macos") {
         if let Ok(home) = std::env::var("HOME") {
             let path = PathBuf::from(home)
                 .join(".config")
