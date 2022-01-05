@@ -1,5 +1,5 @@
 # Changelog
 
-## macchina v6.0.3
+## macchina v6.0.5
 
-- Bugfix: don't whine about a missing configuration.
+- Fix incorrect target_os for a cfg flag.

@@ -245,7 +245,7 @@ impl PartialEq for Theme {
 pub fn locations() -> Vec<PathBuf> {
     let mut dirs = vec![];
 
-    if cfg!(target_os = "linux") {
+    if cfg!(target_os = "macos") {
         dirs.push(extra::config_dir().unwrap_or_default());
     } else {
         dirs.push(dirs::config_dir().unwrap_or_default());
