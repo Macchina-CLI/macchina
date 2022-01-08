@@ -38,7 +38,7 @@ mod tests {
 
     #[test]
     fn documentation_config() -> Result<()> {
-        let opt = read_config("doc/macchina.toml")?;
+        let opt = read_config("macchina.toml")?;
 
         assert!(opt.long_uptime);
         assert!(!opt.long_shell);
