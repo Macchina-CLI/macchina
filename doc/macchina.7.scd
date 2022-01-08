@@ -310,4 +310,4 @@ key.
 
 # SEE ALSO
 
-MACCHINA(1)
+macchina(1)

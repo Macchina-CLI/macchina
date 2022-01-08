@@ -87,7 +87,7 @@ performance.
 
 # SEE ALSO
 
-MACCHINA(7)
+macchina(7)
 
 # AUTHORS
 
