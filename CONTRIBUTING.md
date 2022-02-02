@@ -16,13 +16,4 @@ Other than that, all contributions are welcome.
 
 ## Alright, are there any specific code styles I should be following?
 
-I personally don't really think about that — We have a bot that will
-automatically format everything the best it can when you submit a PR; the end
-result is _muy bueno_ readability and a consistent code style across
-the whole project.
-
-## Got it! Where should I start?
-
-_libmacchina_, definitely. We're lacking a lot in the unit testing department.
-Also, even though we've minimized our dependency list, we could use a hand
-writing our own implementation of things.
+`cargo fmt` and `cargo clippy` are your friends.
