@@ -89,20 +89,20 @@ provided with every release, feel free to use them.
 
 [![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
 
-_macchina_, like many other open-source projects, would not be where it is
-right now without the help of its contributors — Thank you all so much!
+_macchina_, like many other open source projects, would not be where it is
+right now without the help of its contributors — Whether you've helped drive it
+forward by contributing to the codebase, packaged it so we didn't have to, or
+recommended it to someone — _We love you_ :heart:
 
-The following are some awesome people that have helped make _macchina_ a really
-cool fetcher:
-
-- Support for **NetBSD** would not have been possible without the help and
-  testing of NetBSD/pkgsrc package maintainer
-  [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org)
-- Support for **macOS** and **Windows** would not have been possible without
-  the help, testing and major contributions of
-  [123marvin123](https://github.com/123marvin123)
-- Support for **OpenWrt** and **Android** was made possible through the many
-  contributions of [uttarayan21](https://github.com/uttarayan21)
+The following is a list of awesome people that have truly shaped _macchina_:
+- [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided massive
+  amounts of help, feedback and testing, and is currently packaging macchina on
+  **NetBSD**.
+- [123marvin123](https://github.com/123marvin123): Co-author of (lib)macchina and
+  author of countless high-quality contributions and primarily, support for
+  macOS and Windows.
+- [uttarayan21](https://github.com/uttarayan21): Co-author of (lib)macchina and
+  author of numerous shipshape contributions and primarily, support for Android and OpenWrt.
 
 Looking to help? [Read this first.](CONTRIBUTING.md)
 
