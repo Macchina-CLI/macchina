@@ -36,7 +36,7 @@ information, have a look at
 [libmacchina]; fetching-related
 issues should be filed on that repository.
 
-# Status
+## Status
 
 _macchina_ is currently in **maintenance mode**, i.e. bug fixes and little
 optimizations are prioritized over the addition of new features. This is due to
