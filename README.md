@@ -36,6 +36,23 @@ information, have a look at
 [libmacchina]; fetching-related
 issues should be filed on that repository.
 
+# Status
+
+_macchina_ is currently in **maintenance mode**, i.e. bug fixes and little
+optimizations are prioritized over the addition of new features. This is due to
+the fact that the authors do not have the time to focus on moving the project
+forward while keeping up with the demanding nature of our lives. _macchina_
+**will**, **at some point**, although I can't say when, **leave this stage**
+and implement all the bells and whistles the community has been requesting. We
+want to ensure that this project can compete in a healthy way with other
+similar projects, so we can provide you with an alternative that is both usable
+from the standpoint of both the advanced, or novice user. Furthermore, we want
+to keep the promise of continuing to attain great performance, the goal we
+initially set out to achieve.
+
+We hope you understand our situation and continue to support
+_macchina_.
+
 ## Benchmarks <a name="benchmarks"></a>
 
 Check out the [benchmarks wiki page](https://github.com/Macchina-CLI/macchina/wiki/Benchmarks).
@@ -96,12 +113,12 @@ recommended it to someone — _We love you_ :heart:
 
 The following is a list of awesome people that have truly shaped _macchina_:
 - [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided massive
-  amounts of help, feedback and testing, and is currently packaging macchina on
+  amounts of help, feedback and testing, and is currently packaging _macchina_ on
   **NetBSD**.
-- [123marvin123](https://github.com/123marvin123): Co-author of (lib)macchina and
+- [123marvin123](https://github.com/123marvin123): Co-author of _(lib)macchina_ and
   author of countless high-quality contributions and primarily, support for
   macOS and Windows.
-- [uttarayan21](https://github.com/uttarayan21): Co-author of (lib)macchina and
+- [uttarayan21](https://github.com/uttarayan21): Co-author of _(lib)macchina_ and
   author of numerous shipshape contributions and primarily, support for Android and OpenWrt.
 
 Looking to help? [Read this first.](CONTRIBUTING.md)
