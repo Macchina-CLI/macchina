@@ -5,11 +5,11 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "MACCHINA" "7" "2022-01-08"
+.TH "MACCHINA" "7" "2022-03-13"
 .P
 .SH NAME
 .P
-macchina - themeing.\&
+macchina - theming.\&
 .P
 .SH SYNOPSIS
 .P
@@ -17,7 +17,8 @@ macchina - themeing.\&
 .P
 .SH DESCRIPTION
 .P
-Themes are your interface to customizing all visual aspects of macchina.\&
+Themes are your interface to customizing all visual aspects of macchina, the
+following manpage covers everything you need to know to design your own theme.\&
 .P
 .SH GENERAL OPTIONS
 .P
@@ -135,8 +136,8 @@ separator_color = "Green"
 .RE
 .SH PALETTE SECTION
 .P
-This section is entirely optional, omitting it from the configuration
-hides the palette completely.\&
+This section, noted \fB[palette]\fR, offers a visual component that displays and
+represents the active colorscheme of your terminal emulator.\&
 .P
 .SS type
 .RS 4
@@ -191,11 +192,7 @@ visible = true
 .RE
 .SH BAR SECTION
 .P
-Bars are a good way to visualize your system usage without seeing the
-statistics, they range from 0% to 100%.\&
-.P
-This section is entirely optional, omitting it from the configuration
-hides bars completely.\&
+This section, noted \fB[bar]\fR, replaces data that ranges from 0-100% with bars.\&
 .P
 .SS glyph
 .RS 4
@@ -237,7 +234,8 @@ hide_delimiters = false
 .RE
 .SH BOX SECTION
 .P
-The box component renders a box that surrounds your system information.\&
+The section, noted \fB[box]\fR, offers a box component which is rendered to surround
+your system information.\&
 .P
 .SS title
 .RS 4
@@ -317,7 +315,7 @@ y = 1
 .RE
 .SH CUSTOM_ASCII SECTION
 .P
-This section can be used to specify your own ASCII.\&
+This section, noted \fB[custom_ascii]\fR, allows you to specify your own ASCII art.\&
 ANSI escape sequences are supported.\&
 .P
 .SS color
@@ -367,7 +365,7 @@ path = "~/ascii/arch_linux"
 .RE
 .SH RANDOMIZE SECTION
 .P
-This section is used to randomize color selection.\&
+This section, noted \fB[randomize]\fR, is used to randomize color selection.\&
 .P
 .SS key_color
 .RS 4
@@ -430,8 +428,10 @@ set of colors: "Black", "White", "Red", "Green", "Blue", "Yellow",
 .RE
 .SH KEYS SECTION
 .P
-This section provides the options needed to customize the text of each readout'\&s
-key.\&
+This section, noted \fB[keys]\fR, allows you to modify the text of each key.\& e.\&g.\& the
+"Processor" readout, which by default shows up as "CPU" in macchina'\&s output,
+can be renamed to something different by setting the "cpu" option defined in
+this section.\&
 .P
 .SS host
 .RS 4

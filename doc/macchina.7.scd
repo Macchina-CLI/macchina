@@ -2,7 +2,7 @@ MACCHINA(7)
 
 # NAME
 
-macchina - themeing.
+macchina - theming.
 
 # SYNOPSIS
 
@@ -10,7 +10,8 @@ macchina - themeing.
 
 # DESCRIPTION
 
-Themes are your interface to customizing all visual aspects of macchina.
+Themes are your interface to customizing all visual aspects of macchina, the
+following manpage covers everything you need to know to design your own theme.
 
 # GENERAL OPTIONS
 
@@ -64,8 +65,8 @@ Themes are your interface to customizing all visual aspects of macchina.
 	
 # PALETTE SECTION
 
-This section is entirely optional, omitting it from the configuration
-hides the palette completely.
+This section, noted *[palette]*, offers a visual component that displays and
+represents the active colorscheme of your terminal emulator.
 
 ## type
 	Defines the glyph to use for the palette. You should
@@ -89,11 +90,7 @@ hides the palette completely.
 
 # BAR SECTION
 
-Bars are a good way to visualize your system usage without seeing the
-statistics, they range from 0% to 100%.
-
-This section is entirely optional, omitting it from the configuration
-hides bars completely.
+This section, noted *[bar]*, replaces data that ranges from 0-100% with bars.
 
 ## glyph
 	Defines the glyph to use for all bars, e.g.
@@ -125,7 +122,8 @@ hides bars completely.
 
 # BOX SECTION
 
-The box component renders a box that surrounds your system information.
+The section, noted *[box]*, offers a box component which is rendered to surround
+your system information.
 
 ## title
 	Defines the title of the box, e.g.
@@ -162,7 +160,7 @@ The box component renders a box that surrounds your system information.
 
 # CUSTOM_ASCII SECTION
 
-This section can be used to specify your own ASCII.
+This section, noted *[custom_ascii]*, allows you to specify your own ASCII art.
 ANSI escape sequences are supported.
 
 ## color
@@ -183,7 +181,7 @@ ANSI escape sequences are supported.
 
 # RANDOMIZE SECTION
 
-This section is used to randomize color selection.
+This section, noted *[randomize]*, is used to randomize color selection.
 
 ## key_color
 	Defines whether to randomize the color of the keys, e.g.
@@ -215,8 +213,10 @@ This section is used to randomize color selection.
 
 # KEYS SECTION
 
-This section provides the options needed to customize the text of each readout's
-key.
+This section, noted *[keys]*, allows you to modify the text of each key. e.g. the
+"Processor" readout, which by default shows up as "CPU" in macchina's output,
+can be renamed to something different by setting the "cpu" option defined in
+this section.
 
 ## host
 	Defines the text of the Host readout, e.g.
