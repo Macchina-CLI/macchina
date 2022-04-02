@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "MACCHINA" "7" "2022-03-13"
+.TH "MACCHINA" "7" "2022-04-02"
 .P
 .SH NAME
 .P
@@ -306,9 +306,8 @@ x = 2
 .P
 .RE
 .SS y
+Defines the vertical margin to leave between the content and the box, e.\&g.\&
 .RS 4
-Defines the vertical margin to leave
-between the content and the box, e.\&g.\&
 .P
 y = 1
 .P
@@ -319,48 +318,45 @@ This section, noted \fB[custom_ascii]\fR, allows you to specify your own ASCII a
 ANSI escape sequences are supported.\&
 .P
 .SS color
-.RS 4
+.P
 Defines the color of the ASCII.\&
+.RS 4
 .P
-Takes hexadecimal/indexed/predefined color
-names, where casing is insensitive e.\&g.\&
+.RE
+Accepts hexadecimal values:
 .P
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.IP \(bu 4
-.\}
-separator_color = "#00FF00" or
+color = "#00FF00"
+.P
 .RE
+Indexed values:
+.P
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.IP \(bu 4
-.\}
-separator_color = "046" or
+color = "046"
+.P
 .RE
+Predefined color names, where casing is insensitive:
+.P
 .RS 4
-.ie n \{\
-\h'-04'\(bu\h'+03'\c
-.\}
-.el \{\
-.IP \(bu 4
-.\}
-separator_color = "Green"
-
-.RE
+color = "Green"
 .P
 .RE
 .SS path
-.RS 4
+.P
 Defines the path to a file on your filesystem
 which contains the ASCII art you want to display, e.\&g.\&
+.RS 4
 .P
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.IP \(bu 4
+.\}
 path = "~/ascii/arch_linux"
+
+.RE
 .P
 .RE
 .SH RANDOMIZE SECTION
@@ -368,16 +364,25 @@ path = "~/ascii/arch_linux"
 This section, noted \fB[randomize]\fR, is used to randomize color selection.\&
 .P
 .SS key_color
-.RS 4
 Defines whether to randomize the color of the keys, e.\&g.\&
 .P
+.RS 4
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.IP \(bu 4
+.\}
 key_color = true
+
+.RE
 .P
 .RE
 .SS separator_color
-.RS 4
 Defines whether to randomize the color of the separator, e.\&g.\&
 .P
+.RS 4
 separator_color = true
 .P
 .RE
