@@ -1,6 +1,5 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
-use clap::arg_enum;
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
@@ -10,30 +9,28 @@ use std::str::FromStr;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
-arg_enum! {
-    /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[allow(clippy::upper_case_acronyms)]
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum ReadoutKey {
-        Host,
-        Machine,
-        Kernel,
-        Distribution,
-        OperatingSystem,
-        DesktopEnvironment,
-        WindowManager,
-        Packages,
-        Shell,
-        Terminal,
-        LocalIP,
-        Backlight,
-        Resolution,
-        Uptime,
-        Processor,
-        ProcessorLoad,
-        Memory,
-        Battery,
-    }
+/// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
+#[allow(clippy::upper_case_acronyms)]
+#[derive(clap::ArgEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ReadoutKey {
+    Host,
+    Machine,
+    Kernel,
+    Distribution,
+    OperatingSystem,
+    DesktopEnvironment,
+    WindowManager,
+    Packages,
+    Shell,
+    Terminal,
+    LocalIP,
+    Backlight,
+    Resolution,
+    Uptime,
+    Processor,
+    ProcessorLoad,
+    Memory,
+    Battery,
 }
 
 #[derive(Debug, Clone)]
