@@ -13,7 +13,6 @@ mod format;
 pub mod theme;
 pub mod widgets;
 
-use buffer::Side;
 use cli::{Opt, PKG_NAME};
 use error::Result;
 use structopt::StructOpt;
@@ -73,17 +72,17 @@ fn main() -> Result<()> {
             };
 
             if ascii_art.width() != 0 && ascii_art.height() < MAX_ASCII_HEIGHT {
-                ascii_area = buffer::draw_ascii(Side::Left, ascii_art, &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii_art, &mut tmp_buffer);
             }
         } else if prefers_small_ascii {
             // prefer smaller ascii in this case
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Small) {
-                ascii_area = buffer::draw_ascii(Side::Left, ascii, &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         } else {
             // prefer bigger ascii otherwise
             if let Some(ascii) = ascii::select_ascii(ascii::AsciiSize::Big) {
-                ascii_area = buffer::draw_ascii(Side::Left, ascii, &mut tmp_buffer);
+                ascii_area = buffer::draw_ascii(ascii, &mut tmp_buffer);
             }
         }
     }
