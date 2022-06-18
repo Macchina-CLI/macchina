@@ -24,12 +24,11 @@ pub struct Opt {
     pub version: bool,
 
     #[structopt(
-    short = "o",
-    long = "show",
-    possible_values = & data::ReadoutKey::variants(),
-    case_insensitive = true,
-    help = "Displays only the specified readouts",
-    min_values = 1,
+        short = "o",
+        long = "show",
+        case_insensitive = true,
+        help = "Displays only the specified readouts",
+        min_values = 1
     )]
     pub show: Option<Vec<data::ReadoutKey>>,
 

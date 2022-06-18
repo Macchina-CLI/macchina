@@ -1,37 +1,103 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
+use crate::bars;
+use clap::ValueEnum;
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use std::str::FromStr;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
-/// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]
-#[derive(clap::ArgEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(clap::ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ReadoutKey {
-    Host,
-    Machine,
-    Kernel,
-    Distribution,
-    OperatingSystem,
-    DesktopEnvironment,
-    WindowManager,
-    Packages,
-    Shell,
-    Terminal,
-    LocalIP,
     Backlight,
-    Resolution,
-    Uptime,
+    Battery,
+    DesktopEnvironment,
+    Distribution,
+    Host,
+    Kernel,
+    LocalIP,
+    Machine,
+    Memory,
+    OperatingSystem,
+    Packages,
     Processor,
     ProcessorLoad,
-    Memory,
-    Battery,
+    Resolution,
+    Shell,
+    Terminal,
+    Uptime,
+    WindowManager,
 }
+
+impl std::str::FromStr for ReadoutKey {
+    type Err = ReadoutKeyParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_ref() {
+            "backlight" => Ok(ReadoutKey::Backlight),
+            "battery" => Ok(ReadoutKey::Battery),
+            "desktopenvironment" => Ok(ReadoutKey::DesktopEnvironment),
+            "distribution" => Ok(ReadoutKey::Distribution),
+            "host" => Ok(ReadoutKey::Host),
+            "kernel" => Ok(ReadoutKey::Kernel),
+            "localip" => Ok(ReadoutKey::LocalIP),
+            "machine" => Ok(ReadoutKey::Machine),
+            "memory" => Ok(ReadoutKey::Memory),
+            "operatingsystem" => Ok(ReadoutKey::OperatingSystem),
+            "packages" => Ok(ReadoutKey::Packages),
+            "processor" => Ok(ReadoutKey::Processor),
+            "processorload" => Ok(ReadoutKey::ProcessorLoad),
+            "resolution" => Ok(ReadoutKey::Resolution),
+            "shell" => Ok(ReadoutKey::Shell),
+            "terminal" => Ok(ReadoutKey::Terminal),
+            "uptime" => Ok(ReadoutKey::Uptime),
+            "windowmanager" => Ok(ReadoutKey::WindowManager),
+            _ => Err(ReadoutKeyParseError::UnknownReadout),
+        }
+    }
+}
+
+impl std::fmt::Display for ReadoutKey {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match *self {
+            ReadoutKey::Backlight => write!(f, "Backlight"),
+            ReadoutKey::Battery => write!(f, "Battery"),
+            ReadoutKey::DesktopEnvironment => write!(f, "DesktopEnvironment"),
+            ReadoutKey::Distribution => write!(f, "Distribution"),
+            ReadoutKey::Host => write!(f, "Host"),
+            ReadoutKey::Kernel => write!(f, "Kernel"),
+            ReadoutKey::LocalIP => write!(f, "LocalIP"),
+            ReadoutKey::Machine => write!(f, "Machine"),
+            ReadoutKey::Memory => write!(f, "Memory"),
+            ReadoutKey::OperatingSystem => write!(f, "OperatingSystem"),
+            ReadoutKey::Packages => write!(f, "Packages"),
+            ReadoutKey::Processor => write!(f, "Processor"),
+            ReadoutKey::ProcessorLoad => write!(f, "ProcessorLoad"),
+            ReadoutKey::Resolution => write!(f, "Resolution"),
+            ReadoutKey::Shell => write!(f, "Shell"),
+            ReadoutKey::Terminal => write!(f, "Terminal"),
+            ReadoutKey::Uptime => write!(f, "Uptime"),
+            ReadoutKey::WindowManager => write!(f, "WindowManager"),
+        }
+    }
+}
+
+#[derive(Debug)]
+enum ReadoutKeyParseError {
+    UnknownReadout,
+}
+
+impl std::fmt::Display for ReadoutKeyParseError {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Unknown readout.")
+    }
+}
+
 
 #[derive(Debug, Clone)]
 pub struct Readout<'a>(pub ReadoutKey, pub Result<Text<'a>, ReadoutError>);
@@ -111,9 +177,9 @@ pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
         return shown;
     }
 
-    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
+    let keys: Vec<ReadoutKey> = ReadoutKey::value_variants()
         .iter()
-        .map(|f| ReadoutKey::from_str(f).unwrap())
+        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap())
         .collect();
 
     keys
@@ -130,7 +196,7 @@ pub fn get_all_readouts<'a>(
     use crate::format::host as format_host;
     use crate::format::uptime as format_uptime;
     use libmacchina::traits::GeneralReadout as _;
-    let mut readout_values = Vec::with_capacity(ReadoutKey::variants().len());
+    let mut readout_values = Vec::with_capacity(ReadoutKey::value_variants().len());
     let general_readout = GeneralReadout::new();
 
     if should_display.contains(&ReadoutKey::Host) {
@@ -325,7 +391,7 @@ pub fn get_all_readouts<'a>(
             }
             (Ok(b), true) => readout_values.push(Readout::new(
                 ReadoutKey::Backlight,
-                create_bar(theme, crate::bars::num_to_blocks(b as u8)),
+                create_bar(theme, bars::num_to_blocks(b as u8)),
             )),
             (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Backlight, e)),
         }
@@ -337,12 +403,12 @@ pub fn get_all_readouts<'a>(
                 if u > 100 {
                     readout_values.push(Readout::new(
                         ReadoutKey::ProcessorLoad,
-                        create_bar(theme, crate::bars::num_to_blocks(100_u8)),
+                        create_bar(theme, bars::num_to_blocks(100_u8)),
                     ))
                 }
                 readout_values.push(Readout::new(
                     ReadoutKey::ProcessorLoad,
-                    create_bar(theme, crate::bars::num_to_blocks(u as u8)),
+                    create_bar(theme, bars::num_to_blocks(u as u8)),
                 ))
             }
             (Ok(u), _) => {
@@ -363,7 +429,7 @@ pub fn get_all_readouts<'a>(
         match (total, used) {
             (Ok(total), Ok(used)) => {
                 if theme.get_bar().is_visible() {
-                    let bar = create_bar(theme, crate::bars::memory(used, total));
+                    let bar = create_bar(theme, bars::memory(used, total));
                     readout_values.push(Readout::new(ReadoutKey::Memory, bar))
                 } else {
                     readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
@@ -388,7 +454,7 @@ pub fn get_all_readouts<'a>(
         match (percentage, state) {
             (Ok(p), Ok(s)) => {
                 if theme.get_bar().is_visible() {
-                    let bar = create_bar(theme, crate::bars::num_to_blocks(p));
+                    let bar = create_bar(theme, bars::num_to_blocks(p));
                     readout_values.push(Readout::new(key, bar));
                 } else {
                     readout_values.push(Readout::new(key, format_bat(p, s)));

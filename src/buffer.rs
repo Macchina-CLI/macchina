@@ -49,10 +49,27 @@ pub fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
     None
 }
 
-pub fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
+pub enum Side {
+    Bottom,
+    Right,
+    Left,
+    Top,
+}
+
+pub fn draw_ascii(side: Side, ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
+    let mut x = 0;
+    let mut y = &x;
+
+    match side {
+        Side::Bottom => x = 1,
+        Side::Top => x = 1,
+        Side::Left => x = 1,
+        Side::Right => x = 1,
+    }
+
     let ascii_rect = Rect {
-        x: 1,
-        y: 1,
+        x: x,
+        y: *y,
         width: ascii.width() as u16,
         height: ascii.height() as u16,
     };
