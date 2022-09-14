@@ -15,7 +15,6 @@ pub mod widgets;
 
 use cli::{Opt, PKG_NAME};
 use error::Result;
-use structopt::StructOpt;
 use tui::{backend::Backend, buffer::Buffer, layout::Rect};
 
 #[macro_use]
@@ -36,11 +35,6 @@ fn main() -> Result<()> {
 
     if opt.list_themes {
         theme::list_themes(&opt);
-        return Ok(());
-    }
-
-    if opt.export_config {
-        println!("{}", toml::to_string(&Opt::from_args()).unwrap());
         return Ok(());
     }
 

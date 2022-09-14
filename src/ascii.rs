@@ -1,4 +1,5 @@
 use crate::Result;
+use ansi_to_tui::IntoText;
 use colored::Colorize;
 use io::Read;
 use std::fs::File;
@@ -61,22 +62,22 @@ pub fn select_ascii(ascii_size: AsciiSize) -> Option<Text<'static>> {
     Some(ascii_art[0].to_owned())
 }
 
+pub fn get_ascii_from_file(file_path: &Path) -> Result<Text<'static>> {
+    let file = File::open(file_path)?;
+    let mut buffer = Vec::new();
+    let mut reader = BufReader::new(file);
+    reader.read_to_end(&mut buffer)?;
+    Ok(buffer.into_text().unwrap_or_default())
+}
+
 pub fn get_ascii_from_file_override_color(file_path: &Path, color: Color) -> Result<Text<'static>> {
     let file = File::open(file_path)?;
     let mut reader = BufReader::new(file);
     let mut buffer: Vec<u8> = Vec::new();
     reader.read_to_end(&mut buffer)?;
-    Ok(
-        ansi_to_tui::ansi_to_text_override_style(buffer, Style::default().fg(color))
-            .unwrap_or_default(),
-    )
-}
-pub fn get_ascii_from_file(file_path: &Path) -> Result<Text<'static>> {
-    let file = File::open(file_path)?;
-    let mut reader = BufReader::new(file);
-    let mut buffer: Vec<u8> = Vec::new();
-    reader.read_to_end(&mut buffer)?;
-    Ok(ansi_to_tui::ansi_to_text(buffer).unwrap_or_default())
+    let mut text = buffer.into_text().unwrap_or_default();
+    text.patch_style(Style::default().fg(color));
+    Ok(text)
 }
 
 // The following is a slightly modified

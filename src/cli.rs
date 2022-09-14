@@ -1,21 +1,17 @@
 use crate::config;
 use crate::data;
 use crate::error;
+use clap::Parser;
 use serde::{Deserialize, Serialize};
 use std::default::Default;
-use structopt::clap::AppSettings;
-use structopt::StructOpt;
 
-pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
-pub const ABOUT: &str = env!("CARGO_PKG_DESCRIPTION");
 pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
-#[derive(StructOpt, Debug, Default, Serialize, Deserialize)]
-#[structopt(author = AUTHORS, about = ABOUT, setting = AppSettings::ColoredHelp)]
+#[derive(Parser, Debug, Default, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Opt {
-    #[structopt(
-        short = "v",
+    #[clap(
+        short = 'v',
         long = "version",
         help = "Prints version information",
         conflicts_with = "doctor"
@@ -23,87 +19,77 @@ pub struct Opt {
     #[serde(skip_serializing, skip_deserializing)]
     pub version: bool,
 
-    #[structopt(
-    short = "o",
+    #[clap(
+    short = 'o',
     long = "show",
-    possible_values = & data::ReadoutKey::variants(),
+    possible_values = data::ReadoutKey::variants(),
     case_insensitive = true,
     help = "Displays only the specified readouts",
     min_values = 1,
     )]
     pub show: Option<Vec<data::ReadoutKey>>,
 
-    #[structopt(short = "d", long = "doctor", help = "Checks the system for failures")]
+    #[clap(short = 'd', long = "doctor", help = "Checks the system for failures")]
     #[serde(skip_serializing, skip_deserializing)]
     pub doctor: bool,
 
-    #[structopt(short = "U", long = "long-uptime", help = "Lengthens uptime output")]
+    #[clap(short = 'U', long = "long-uptime", help = "Lengthens uptime output")]
     pub long_uptime: bool,
 
-    #[structopt(short = "S", long = "long-shell", help = "Lengthens shell output")]
+    #[clap(short = 'S', long = "long-shell", help = "Lengthens shell output")]
     pub long_shell: bool,
 
-    #[structopt(short = "K", long = "long-kernel", help = "Lengthens kernel output")]
+    #[clap(short = 'K', long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
-    #[structopt(
-        short = "C",
+    #[clap(
+        short = 'C',
         long = "physical-cores",
         help = "Toggles between logical and physical cores"
     )]
     pub physical_cores: bool,
 
-    #[structopt(
-        short = "s",
+    #[clap(
+        short = 's',
         long = "current-shell",
         help = "Toggles between the current shell and the default one"
     )]
     pub current_shell: bool,
 
-    #[structopt(
-        short = "t",
+    #[clap(
+        short = 't',
         long = "theme",
         case_insensitive = true,
         help = "Specify the name of the theme"
     )]
     pub theme: Option<String>,
 
-    #[structopt(
+    #[clap(
         long = "list-themes",
-        short = "l",
+        short = 'l',
         help = "Lists all available themes: built-in and custom"
     )]
     #[serde(skip_serializing, skip_deserializing)]
     pub list_themes: bool,
 
-    #[structopt(
+    #[clap(
         long = "config",
-        short = "c",
-        help = "Specify a custom path for the configuration file",
-        conflicts_with = "export_config"
+        short = 'c',
+        help = "Specify a custom path for the configuration file"
     )]
     #[serde(skip_serializing, skip_deserializing)]
     pub config: Option<std::path::PathBuf>,
 
-    #[structopt(
-        long = "export-config",
-        short = "e",
-        help = "Prints a template configuration file to stdout",
-        conflicts_with = "doctor"
-    )]
-    #[serde(skip_serializing, skip_deserializing)]
-    pub export_config: bool,
-
-    #[structopt(
+    #[clap(
         long = "ascii-artists",
         help = "Lists the original artists of the ASCII art used by macchina"
     )]
     #[serde(skip_serializing, skip_deserializing)]
     pub ascii_artists: bool,
 
-    #[structopt(
+    #[clap(
         long = "interface",
-        short = "i",
+        short = 'i',
         help = "Specify the network interface for the LocalIP readout"
     )]
     pub interface: Option<String>,
@@ -117,10 +103,6 @@ impl Opt {
 
         if args.doctor {
             self.doctor = true;
-        }
-
-        if args.export_config {
-            self.export_config = true;
         }
 
         if args.current_shell {

@@ -11,27 +11,26 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = { version = "6.1.1", features = ["version"] }
+libmacchina = { version = "6.2.0", features = ["version"] }
 bytesize = "1.1.0"
-shellexpand = "2.1.0"
-clap = "2.34.0"
+shellexpand = "2.1.2"
+clap = { version = "3.2.21", features = ["derive"] }
 atty= "0.2.14"
 colored = "2.0.0"
-structopt = "0.3.25"
 rand = "0.8.5"
-unicode-width = "0.1.9"
+unicode-width = "0.1.10"
 lazy_static = "1.4.0"
-ansi-to-tui = "0.6.0"
-dirs = "4.0"
-toml = "0.5.9"
-serde_json = "1.0.81"
+ansi-to-tui = "1.0.1"
 color-to-tui = "0.2.0"
-thiserror = "1.0.31"
+dirs = "4.0.0"
+toml = "0.5.9"
+serde_json = "1.0.85"
+thiserror = "1.0.35"
 tui = { version = "0.18.0", default-features = false, features = ["crossterm"] }
-serde = { version = "1.0.137", features = ["derive"] }
+serde = { version = "1.0.144", features = ["derive"] }
 
 [build-dependencies.vergen]
-version = "6.0.0"
+version = "7.4.2"
 default-features = false
 features = ["build", "cargo", "git", "rustc"]
 
