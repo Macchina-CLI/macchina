@@ -1,6 +1,12 @@
 # Changelog
 
-## macchina v6.0.6
+## `6.1.0`
+
+- Updated dependencies to their latest versions
+- Removed `--export-config` flag
+- Renamed `CHANGELOG.txt` to `CHANGELOG.md`
+
+## `6.0.6`
 
 Bump libmacchina to v6.1.0:
 - Fixes a bug that causes the package readout to display "0 (cargo)" if
@@ -12,7 +18,7 @@ Bump libmacchina to v6.1.0:
 Contributors:
 - luckman212 
 
-## macchina v6.0.5
+## `6.0.5`
 
 - Fix incorrect target_os for a cfg flag.
 
