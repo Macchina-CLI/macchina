@@ -1,10 +1,21 @@
 # Changelog
 
-## `6.1.0`
+## `6.1.2`
+
+- Fixed an issue that caused installations through `cargo` to fail due to a
+  malformed lockfile.
+
+##  `6.1.1`
 
 - Updated dependencies to their latest versions
 - Removed `--export-config` flag
 - Renamed `CHANGELOG.txt` to `CHANGELOG.md`
+
+## `6.1.0`
+
+Yanked.
+
+See [this commit for specifics](https://github.com/Macchina-CLI/macchina/commit/60440d3b1c680ee9a712633eb4330a3e2493bc01).
 
 ## `6.0.6`
 
