@@ -116,7 +116,7 @@ The following is a list of awesome people that have truly shaped _macchina_:
 - [uttarayan21](https://github.com/uttarayan21): Co-author of _(lib)macchina_ and
   author of numerous shipshape contributions and primarily, support for Android and OpenWrt.
 
-Looking to help? [Read this first.](CONTRIBUTING.md)
+Looking to help? [Read this first.](.github/CONTRIBUTING.md)
 
 # ASCII Art
 
