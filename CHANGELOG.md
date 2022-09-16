@@ -15,8 +15,6 @@
 
 Yanked.
 
-See [this commit for specifics](https://github.com/Macchina-CLI/macchina/commit/60440d3b1c680ee9a712633eb4330a3e2493bc01).
-
 ## `6.0.6`
 
 Bump libmacchina to v6.1.0:
