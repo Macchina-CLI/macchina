@@ -1,6 +1,0 @@
-* Things to do
-
-** TODO Update structopt :dependency:
-+ Latest version: 0.3.26
-** TODO Update clap :dependency:
-+ Latest version: 3.2.7

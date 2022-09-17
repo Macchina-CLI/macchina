@@ -1,5 +1,24 @@
 # Changelog
 
+## `6.1.4`
+
+### Fixes
+
+We hope this release addresses the build issues that have been occurring lately.
+
+### Features
+
+libmacchina has been bumped to `v6.3.0` which includes a new feature:
+- Implement backlight readout for macOS
+
+@123marvin123
+
+## `6.1.3`
+
+Yanked.
+
+See [this comment for specifics](https://github.com/Macchina-CLI/macchina/issues/263#issuecomment-1250045395).
+
 ## `6.1.2`
 
 - Fixed an issue that caused installations through `cargo` to fail due to a
