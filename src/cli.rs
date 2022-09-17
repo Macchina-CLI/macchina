@@ -9,6 +9,7 @@ pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 #[derive(Parser, Debug, Default, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
+#[clap(version,global_setting(clap::AppSettings::NoAutoVersion))]
 pub struct Opt {
     #[clap(
         short = 'v',
