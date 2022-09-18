@@ -1,5 +1,9 @@
 # Changelog
 
+## `6.1.5`
+
+Fixed `--version` not displaying the version. -- Author: @123marvin123
+
 ## `6.1.4`
 
 ### Fixes
