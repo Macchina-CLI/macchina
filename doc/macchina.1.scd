@@ -2,8 +2,8 @@ MACCHINA(1)
 
 # NAME
 
-macchina - A system information frontend, with an (unhealthy) emphasis on
-performance.
+macchina - A system information frontend, with an (unhealthy) emphasis
+on performance.
 
 # SYNOPSIS
 
@@ -23,17 +23,19 @@ performance.
 	This is helpful in cases where macchina fails to parse the configuration
 	file from the default path, i.e. *$XDG_CONFIG_HOME/macchina/macchina.toml*.
 
-*-t, --theme*=_THEME_
-	Specify the name of the theme to use.
-
-	You should verify whether macchina was able to find your
-	theme with *--list-themes*.
-
 *-l, --list-themes*
 	Lists all available themes.
 
-	Themes are *TOML* files which must be placed in *$XDG_CONFIG_HOME/macchina/themes*.
-	Whatever this flag returns to the console can be used with the *--theme* flag.
+	Themes are *TOML* files which must be placed in
+	*$XDG_CONFIG_HOME/macchina/themes*.  Whatever this flag
+	returns to the console can be used with the *--theme* flag.
+
+*-t, --theme*=_THEME_
+	Specify the name of the theme to use, i.e. its basename and
+	without the ".toml" extension.
+
+	You should verify whether macchina was able to find your theme
+	with *--list-themes*.
 
 *-i, --interface*=_IF_NAME_
 	Specify the network interface for the LocalIP readout, e.g. "wlan0", "eth0".

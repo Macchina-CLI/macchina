@@ -5,12 +5,12 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "MACCHINA" "1" "2022-01-08"
+.TH "MACCHINA" "1" "2022-10-17"
 .P
 .SH NAME
 .P
-macchina - A system information frontend, with an (unhealthy) emphasis on
-performance.\&
+macchina - A system information frontend, with an (unhealthy) emphasis
+on performance.\&
 .P
 .SH SYNOPSIS
 .P
@@ -36,20 +36,22 @@ This is helpful in cases where macchina fails to parse the configuration
 file from the default path, i.\&e.\& \fB$XDG_CONFIG_HOME/macchina/macchina.\&toml\fR.\&
 .P
 .RE
-\fB-t, --theme\fR=\fITHEME\fR
-.RS 4
-Specify the name of the theme to use.\&
-.P
-You should verify whether macchina was able to find your
-theme with \fB--list-themes\fR.\&
-.P
-.RE
 \fB-l, --list-themes\fR
 .RS 4
 Lists all available themes.\&
 .P
-Themes are \fBTOML\fR files which must be placed in \fB$XDG_CONFIG_HOME/macchina/themes\fR.\&
-Whatever this flag returns to the console can be used with the \fB--theme\fR flag.\&
+Themes are \fBTOML\fR files which must be placed in
+\fB$XDG_CONFIG_HOME/macchina/themes\fR.\&  Whatever this flag
+returns to the console can be used with the \fB--theme\fR flag.\&
+.P
+.RE
+\fB-t, --theme\fR=\fITHEME\fR
+.RS 4
+Specify the name of the theme to use, i.\&e.\& its basename and
+without the ".\&toml" extension.\&
+.P
+You should verify whether macchina was able to find your theme
+with \fB--list-themes\fR.\&
 .P
 .RE
 \fB-i, --interface\fR=\fIIF_NAME\fR
