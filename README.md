@@ -32,19 +32,19 @@ memory usage, processor load and much more. _macchina_ is **basic** by default
 and **extensible** by design.
 
 If you're interested in the library _macchina_ uses to fetch system
-information, have a look at
-[libmacchina]; fetching-related
-issues should be filed on that repository.
+information, have a look at [libmacchina]; fetching-related issues
+should be filed on that repository.
 
 ## Status
 
-_macchina_ is currently in **maintenance mode**, i.e. bug fixes and little
-optimizations are much more prioritized over the addition of new features. This
-is due to the fact that, we (the authors) do not have the time to focus on
-moving the project forward, and expanding on what is currently offered while
-keeping up with the demanding nature of our lives. _macchina_ **will at some
-point**, although I can't say when, **leave this stage** and implement all the
-bells and whistles the community has been requesting.
+_macchina_ is currently in **maintenance mode**, meaning bug fixes and
+little optimizations are much more prioritized over the addition of
+new features. This is due to the fact that we (the authors) do not
+have the time to focus on moving the project forward, or expanding on
+what is currently offered while keeping up with the demanding nature
+of our lives. _macchina_ will at some point (although I can't say
+when) leave this stage and implement all the bells and whistles the
+community has been requesting.
 
 We hope you understand our situation and continue to support _macchina_.
 
