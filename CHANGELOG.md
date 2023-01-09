@@ -1,5 +1,9 @@
 # Changelog
 
+## `6.1.8`
+
+- Don't panic when unwrapping ReadoutKey::from_str (Fixes: https://github.com/Macchina-CLI/macchina/issues/270)
+
 ## `6.1.7`
 
 - All dependencies have been bumped to their latest version.
@@ -58,7 +62,7 @@ Bump libmacchina to v6.1.0:
   (https://github.com/Macchina-CLI/libmacchina/commit/608a1dde39def981d2750f4221c217151b80437e)
 
 Contributors:
-- luckman212 
+- @luckman212
 
 ## `6.0.5`
 
