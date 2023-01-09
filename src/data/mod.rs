@@ -139,7 +139,7 @@ pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
 
     let keys: Vec<ReadoutKey> = ReadoutKey::value_variants()
         .iter()
-        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap())
+        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap_or(*f))
         .collect();
 
     keys
