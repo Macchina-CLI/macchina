@@ -1,5 +1,9 @@
 # Changelog
 
+## `6.1.7`
+
+- All dependencies have been bumped to their latest version.
+
 ## `6.1.6`
 
 libmacchina has been bumped to `v6.3.1` which:
