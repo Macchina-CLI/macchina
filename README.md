@@ -5,10 +5,6 @@ Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
-<a href="https://matrix.to/#/#macchina:matrix.org">
-    <img src="https://img.shields.io/matrix/macchina:matrix.org" alt="Matrix" />
-</a>
-
 <a href="https://crates.io/crates/macchina">
     <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
 </a>

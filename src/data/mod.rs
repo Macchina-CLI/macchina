@@ -1,38 +1,61 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
-use clap::arg_enum;
+use clap::ValueEnum;
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
-use std::str::FromStr;
+use std::fmt::Display;
 use tui::style::{Color, Style};
 use tui::text::{Span, Spans, Text};
 
-arg_enum! {
-    /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
-    #[allow(clippy::upper_case_acronyms)]
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum ReadoutKey {
-        Host,
-        Machine,
-        Kernel,
-        Distribution,
-        OperatingSystem,
-        DesktopEnvironment,
-        WindowManager,
-        Packages,
-        Shell,
-        Terminal,
-        LocalIP,
-        Backlight,
-        Resolution,
-        Uptime,
-        Processor,
-        ProcessorLoad,
-        Memory,
-        Battery,
+/// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
+#[allow(clippy::upper_case_acronyms)]
+#[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ReadoutKey {
+    Host,
+    Machine,
+    Kernel,
+    Distribution,
+    OperatingSystem,
+    DesktopEnvironment,
+    WindowManager,
+    Packages,
+    Shell,
+    Terminal,
+    LocalIP,
+    Backlight,
+    Resolution,
+    Uptime,
+    Processor,
+    ProcessorLoad,
+    Memory,
+    Battery,
+}
+
+impl Display for ReadoutKey {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            Self::Host => write!(f, "Host"),
+            Self::Machine => write!(f, "Machine"),
+            Self::Kernel => write!(f, "Kernel"),
+            Self::Distribution => write!(f, "Distribution"),
+            Self::OperatingSystem => write!(f, "OperatingSystem"),
+            Self::DesktopEnvironment => write!(f, "DesktopEnvironment"),
+            Self::WindowManager => write!(f, "WindowManager"),
+            Self::Packages => write!(f, "Packages"),
+            Self::Shell => write!(f, "Shell"),
+            Self::Terminal => write!(f, "Terminal"),
+            Self::LocalIP => write!(f, "LocalIP"),
+            Self::Backlight => write!(f, "Backlight"),
+            Self::Resolution => write!(f, "Resolution"),
+            Self::Uptime => write!(f, "Uptime"),
+            Self::Processor => write!(f, "Processor"),
+            Self::ProcessorLoad => write!(f, "ProcessorLoad"),
+            Self::Memory => write!(f, "Memory"),
+            Self::Battery => write!(f, "Battery"),
+        }
     }
 }
 
@@ -114,9 +137,9 @@ pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
         return shown;
     }
 
-    let keys: Vec<ReadoutKey> = ReadoutKey::variants()
+    let keys: Vec<ReadoutKey> = ReadoutKey::value_variants()
         .iter()
-        .map(|f| ReadoutKey::from_str(f).unwrap())
+        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap())
         .collect();
 
     keys
@@ -133,7 +156,7 @@ pub fn get_all_readouts<'a>(
     use crate::format::host as format_host;
     use crate::format::uptime as format_uptime;
     use libmacchina::traits::GeneralReadout as _;
-    let mut readout_values = Vec::with_capacity(ReadoutKey::variants().len());
+    let mut readout_values = Vec::with_capacity(ReadoutKey::value_variants().len());
     let general_readout = GeneralReadout::new();
 
     if should_display.contains(&ReadoutKey::Host) {

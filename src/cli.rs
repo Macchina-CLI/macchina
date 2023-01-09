@@ -9,7 +9,6 @@ pub const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 #[derive(Parser, Debug, Default, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
-#[clap(version,global_setting(clap::AppSettings::NoAutoVersion))]
 pub struct Opt {
     #[clap(
         short = 'v',
@@ -21,12 +20,9 @@ pub struct Opt {
     pub version: bool,
 
     #[clap(
-    short = 'o',
-    long = "show",
-    possible_values = data::ReadoutKey::variants(),
-    case_insensitive = true,
-    help = "Displays only the specified readouts",
-    min_values = 1,
+        short = 'o',
+        long = "show",
+        help = "Displays only the specified readouts"
     )]
     pub show: Option<Vec<data::ReadoutKey>>,
 
@@ -57,12 +53,7 @@ pub struct Opt {
     )]
     pub current_shell: bool,
 
-    #[clap(
-        short = 't',
-        long = "theme",
-        case_insensitive = true,
-        help = "Specify the name of the theme"
-    )]
+    #[clap(short = 't', long = "theme", help = "Specify the name of the theme")]
     pub theme: Option<String>,
 
     #[clap(
@@ -152,7 +143,7 @@ impl Opt {
     }
 
     pub fn get_options() -> Opt {
-        let args = Opt::from_args();
+        let args = Opt::parse();
         let config_opt = match args.config {
             Some(_) => config::read_config(&args.config.clone().unwrap()),
             None => config::get_config(),
