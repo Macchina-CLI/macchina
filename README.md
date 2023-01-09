@@ -32,7 +32,7 @@ community has been requesting.
 
 We hope you understand our situation and continue to support _macchina_.
 
-## Benchmarks <a name="benchmarks"></a>
+## Benchmarks
 
 Check out the [benchmarks wiki page](https://github.com/Macchina-CLI/macchina/wiki/Benchmarks).
 
@@ -73,22 +73,16 @@ Have a look at the [customization wiki page](https://github.com/Macchina-CLI/mac
 
 ## Installation
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/macchina.svg)](https://repology.org/project/macchina/versions)
-
-Check out the [installation wiki
-page](https://github.com/Macchina-CLI/macchina/wiki/Installation).
-
-[Prebuilt binaries](https://github.com/grtcdr/macchina/releases) are also
-provided with every release, feel free to use them.
+Check out the [installation wiki page](https://github.com/Macchina-CLI/macchina/wiki/Installation). 
+We also provide [prebuilt binaries](https://github.com/grtcdr/macchina/releases) with every release.
 
 ## Contributors
 
-[![Crates.io](https://contrib.rocks/image?repo=grtcdr/macchina)](https://github.com/grtcdr/macchina/graphs/contributors)
-
-_macchina_, like many other open source projects, would not be where it is
-right now without the help of its contributors — Whether you've helped drive it
-forward by contributing to the codebase, packaged it so we didn't have to, or
-recommended it to someone — _We love you_ :heart:
+_macchina_ like many other open source projects, would not be where it
+is right now without the help of its contributors. Whether you've
+helped drive it forward by contributing to the codebase, packaged it
+so we didn't have to, or recommended it to someone you know — we truly
+appreciate your support!
 
 The following is a list of awesome people that have truly shaped _macchina_:
 - [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided massive
@@ -101,21 +95,5 @@ The following is a list of awesome people that have truly shaped _macchina_:
   author of numerous shipshape contributions and primarily, support for Android and OpenWrt.
 
 Looking to help? [Read this first.](.github/CONTRIBUTING.md)
-
-# ASCII Art
-
-Some of the ASCII art displayed in macchina is **not** our own.
-
-If you (the artist) are not okay with us using your ASCII art, please [contact
-me](mailto:ba.tahaaziz@gmail.com).
-
-- FreeBSD ASCII art (small variant) was taken from Dylan Araps'
-  [pfetch](https://github.com/dylanaraps/pfetch)
-- macOS ASCII art (big variant) was taken from Dylan Araps'
-  [Neofetch](https://github.com/dylanaraps/neofetch)
-- macOS ASCII art (small variant) was made by Joan Stark (jgs)
-- Linux ASCII art (big variant) was made by Joan Stark (jgs)
-- Linux ASCII art (small variant) was taken from Christopher Johnson's ASCII
-  art collection (unknown artist)
 
 [libmacchina]: https://github.com/Macchina-CLI/libmacchina
