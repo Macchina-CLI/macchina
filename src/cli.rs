@@ -22,7 +22,8 @@ pub struct Opt {
     #[clap(
         short = 'o',
         long = "show",
-        help = "Displays only the specified readouts"
+        help = "Displays only the specified readouts",
+        hide_possible_values = true
     )]
     pub show: Option<Vec<data::ReadoutKey>>,
 

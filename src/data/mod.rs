@@ -1,6 +1,6 @@
 use crate::cli::Opt;
 use crate::theme::Theme;
-use clap::ValueEnum;
+use clap::{Parser, ValueEnum};
 use libmacchina::traits::ShellFormat;
 use libmacchina::traits::{ReadoutError, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
@@ -12,7 +12,7 @@ use tui::text::{Span, Spans, Text};
 
 /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]
-#[derive(ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Parser, ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ReadoutKey {
     Host,
     Machine,
