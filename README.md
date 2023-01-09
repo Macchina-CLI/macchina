@@ -5,27 +5,15 @@ Fast, minimal and customizable system information frontend.
 
 Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
-<a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/v/macchina?label=Version" alt="Version" />
-</a>
-
-<a href="https://crates.io/crates/macchina">
-    <img src="https://img.shields.io/crates/d/macchina?label=Downloads" alt="Downloads" />
-</a>
-
-<a href="https://github.com/Macchina-CLI/macchina/actions">
-   <img src="https://github.com/Macchina-CLI/macchina/actions/workflows/macchina.yml/badge.svg" alt="CI">
-</a>
-
 <img src="assets/preview.png" alt="Preview" />
-
 </div>
 
 ## About
 
-_macchina_ lets you view system information, like your kernel version, uptime,
-memory usage, processor load and much more. _macchina_ is **basic** by default
-and **extensible** by design.
+[macchina](https://crates.io/crates/macchina) lets you view system
+information, like your kernel version, uptime, memory usage, processor
+load and much more. _macchina_ is basic by default and extensible by
+design.
 
 If you're interested in the library _macchina_ uses to fetch system
 information, have a look at [libmacchina]; fetching-related issues
