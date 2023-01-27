@@ -85,9 +85,9 @@ so we didn't have to, or recommended it to someone you know — we truly
 appreciate your support!
 
 The following is a list of awesome people that have truly shaped _macchina_:
-- [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided massive
-  amounts of help, feedback and testing, and is currently packaging _macchina_ on
-  **NetBSD**.
+- [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided
+  massive amounts of help, feedback and testing, and is currently
+  packaging _macchina_ on NetBSD.
 - [123marvin123](https://github.com/123marvin123): Co-author of _(lib)macchina_ and
   author of countless high-quality contributions and primarily, support for
   macOS and Windows.
