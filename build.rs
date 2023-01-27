@@ -9,7 +9,7 @@ fn main() {
         *config.git_mut().sha_kind_mut() = ShaKind::Short;
 
         if let Err(e) = vergen::vergen(config) {
-            eprintln!("{}", e)
+            eprintln!("{e}")
         }
     }
 }

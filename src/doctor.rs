@@ -49,10 +49,7 @@ fn print_warnings<'a>(warn_items: &[&'a Readout<'a>], total_failed_items: usize)
 
     let warn_len = warn_items.len().to_string().bright_yellow();
     let err_len = total_failed_items.to_string().bright_red();
-    println!(
-        "\n{} of the {} unsuccessful read(s) resulted in a warning:",
-        warn_len, err_len
-    );
+    println!("\n{warn_len} of the {err_len} unsuccessful read(s) resulted in a warning:");
 
     for warn_item in warn_items {
         let key = warn_item.0;

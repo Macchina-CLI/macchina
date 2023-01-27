@@ -18,13 +18,13 @@ pub fn get_config() -> Result<Opt> {
             let path = PathBuf::from(home)
                 .join(".config")
                 .join(PKG_NAME)
-                .join(format!("{}.toml", PKG_NAME));
+                .join(format!("{PKG_NAME}.toml"));
 
             return read_config(&path);
         }
     } else if let Some(mut path) = dirs::config_dir() {
         path.push(PKG_NAME);
-        path.push(format!("{}.toml", PKG_NAME));
+        path.push(format!("{PKG_NAME}.toml"));
 
         return read_config(&path);
     }

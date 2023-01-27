@@ -16,7 +16,7 @@ pub struct ReadoutList<'a> {
     block_inner_margin: Margin,
 }
 
-impl<'a, 'b> ReadoutList<'a> {
+impl<'a> ReadoutList<'a> {
     pub fn new<T>(items: T, theme: &'a Theme) -> ReadoutList<'a>
     where
         T: Into<Vec<Readout<'a>>>,

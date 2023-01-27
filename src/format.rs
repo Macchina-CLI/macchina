@@ -75,7 +75,7 @@ pub fn uptime(uptime: usize, long: bool) -> String {
 /// This function should return a new `String` constructed from the values \
 /// returned by `traits::GeneralReadout::username()` and `traits::GeneralReadout::hostname()`
 pub fn host(username: &str, hostname: &str) -> String {
-    format!("{}@{}", username, hostname)
+    format!("{username}@{hostname}")
 }
 
 /// This function should return a new `String` constructed from the values \
@@ -95,7 +95,7 @@ pub fn memory(total: u64, used: u64) -> String {
     let total = ByteSize::kb(total);
     let used = ByteSize::kb(used);
 
-    format!("{}/{}", used, total)
+    format!("{used}/{total}")
 }
 
 /// This function should return a new `String` constructed from the value \
@@ -109,7 +109,7 @@ pub fn cpu(model_name: &str, cpu_cores: usize) -> String {
 }
 
 pub fn cpu_usage(used: usize) -> String {
-    format!("{}%", used)
+    format!("{used}%")
 }
 
 pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, ReadoutError> {

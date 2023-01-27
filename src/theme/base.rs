@@ -276,7 +276,7 @@ pub fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(th) = &opt.theme {
         locations.iter().find(|d| {
-            let path = d.join(&format!("{}.toml", th));
+            let path = d.join(&format!("{th}.toml"));
             if !path.exists() {
                 return false;
             }
@@ -320,7 +320,7 @@ pub fn list_themes(opt: &Opt) {
                                     t.set_filepath(dir.join(name));
                                     t.set_name();
                                     t.set_active(opt.theme.as_ref());
-                                    println!("{}", t);
+                                    println!("{t}");
                                 }
                                 Err(e) => {
                                     println!(
