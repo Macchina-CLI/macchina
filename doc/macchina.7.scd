@@ -7,7 +7,7 @@ macchina - theming.
 *$XDG_CONFIG_HOME/macchina/themes*, *~/.config/macchina/themes*.
 
 # DESCRIPTION
-Themes are your interface to customizing all visual aspects of macchina, the
+Themes are your interface to customizing all visual aspects of macchina. The
 following manpage covers everything you need to know to design your own theme.
 
 # GENERAL OPTIONS
@@ -77,7 +77,7 @@ This section, noted *[palette]*, offers a visual component that displays and
 represents the active colorscheme of your terminal emulator.
 
 ## type
-Defines the glyph to use for the palette, with possible values of "Dark",
+Defines the color set to use for the palette, with possible values of "Dark",
 "Light", "Full" (case-sensitive).
 
 ## glyph
