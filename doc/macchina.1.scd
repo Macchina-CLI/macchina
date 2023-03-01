@@ -64,6 +64,9 @@ on performance.
 *-o, --show*
 	Display only the specified readouts.
 
+	Please note that the order these are listed in will be the order that they are
+	displayed in.
+
 	Possible values are (case-sensitive):
 	- Host
 	- Machine
