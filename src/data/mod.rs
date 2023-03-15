@@ -2,9 +2,10 @@ use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::{Parser, ValueEnum};
 use libmacchina::traits::GeneralReadout as _;
-use libmacchina::traits::ShellFormat;
-use libmacchina::traits::{ReadoutError, ShellKind};
-use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
+use libmacchina::traits::{ReadoutError, ShellFormat, ShellKind};
+use libmacchina::{
+    BatteryReadout, GeneralReadout, GpuReadout, KernelReadout, MemoryReadout, PackageReadout,
+};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Display;
@@ -33,6 +34,7 @@ pub enum ReadoutKey {
     ProcessorLoad,
     Memory,
     Battery,
+    GPU,
 }
 
 impl Display for ReadoutKey {
@@ -56,6 +58,7 @@ impl Display for ReadoutKey {
             Self::ProcessorLoad => write!(f, "ProcessorLoad"),
             Self::Memory => write!(f, "Memory"),
             Self::Battery => write!(f, "Battery"),
+            Self::GPU => write!(f, "GPU"),
         }
     }
 }
@@ -190,6 +193,7 @@ pub fn get_all_readouts<'a>(
             ReadoutKey::WindowManager => {
                 handle_readout_window_manager(&mut readout_values, &general_readout)
             }
+            ReadoutKey::GPU => handle_readout_gpu(&mut readout_values),
         };
     }
 
@@ -484,5 +488,26 @@ fn handle_readout_window_manager(
             _ => readout_values.push(Readout::new(ReadoutKey::WindowManager, w)),
         },
         Err(e) => readout_values.push(Readout::new_err(ReadoutKey::WindowManager, e)),
+    }
+}
+
+fn handle_readout_gpu(readout_values: &mut Vec<Readout>) {
+    use libmacchina::traits::GpuReadout as _;
+
+    let gpu_readout = GpuReadout::new();
+
+    let gpus = match gpu_readout.list_gpus() {
+        Ok(gpus) => gpus,
+        Err(_) => {
+            readout_values.push(Readout::new_err(
+                ReadoutKey::GPU,
+                ReadoutError::Warning(String::from("No GPUs were detected {}")),
+            ));
+            vec![]
+        }
+    };
+
+    for gpu in gpus {
+        readout_values.push(Readout::new(ReadoutKey::GPU, gpu));
     }
 }
