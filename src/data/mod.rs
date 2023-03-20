@@ -3,9 +3,7 @@ use crate::theme::Theme;
 use clap::{Parser, ValueEnum};
 use libmacchina::traits::GeneralReadout as _;
 use libmacchina::traits::{ReadoutError, ShellFormat, ShellKind};
-use libmacchina::{
-    BatteryReadout, GeneralReadout, GpuReadout, KernelReadout, MemoryReadout, PackageReadout,
-};
+use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Display;
@@ -193,7 +191,7 @@ pub fn get_all_readouts<'a>(
             ReadoutKey::WindowManager => {
                 handle_readout_window_manager(&mut readout_values, &general_readout)
             }
-            ReadoutKey::GPU => handle_readout_gpu(&mut readout_values),
+            ReadoutKey::GPU => handle_readout_gpu(&mut readout_values, &general_readout),
         };
     }
 
@@ -491,12 +489,8 @@ fn handle_readout_window_manager(
     }
 }
 
-fn handle_readout_gpu(readout_values: &mut Vec<Readout>) {
-    use libmacchina::traits::GpuReadout as _;
-
-    let gpu_readout = GpuReadout::new();
-
-    let gpus = match gpu_readout.list_gpus() {
+fn handle_readout_gpu(readout_values: &mut Vec<Readout>, general_readout: &GeneralReadout) {
+    let gpus = match general_readout.gpus() {
         Ok(gpus) => gpus,
         Err(_) => {
             readout_values.push(Readout::new_err(
