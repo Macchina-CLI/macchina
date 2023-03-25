@@ -86,6 +86,7 @@ on performance.
 	- ProcessorLoad
 	- Memory
 	- Battery
+	- GPU
 
 *--ascii-artists*
 	Lists the original artists of the ASCII art used by macchina.
