@@ -29,7 +29,7 @@ pub fn print_errors(err: Error) {
             None => println!("{}: {:?}", "Error".bright_red(), err),
         },
         Error::IOError(err) => {
-            return println!("{}: {:?}", "Error".bright_red(), err);
+            println!("{}: {:?}", "Error".bright_red(), err);
         }
     }
 }

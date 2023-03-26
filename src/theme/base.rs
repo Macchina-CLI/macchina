@@ -276,7 +276,7 @@ pub fn create_theme(opt: &Opt) -> Theme {
     let mut theme = Theme::default();
     if let Some(th) = &opt.theme {
         locations.iter().find(|d| {
-            let path = d.join(&format!("{th}.toml"));
+            let path = d.join(format!("{th}.toml"));
             if !path.exists() {
                 return false;
             }
