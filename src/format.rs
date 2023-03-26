@@ -91,11 +91,19 @@ pub fn battery(percentage: u8, state: BatteryState) -> String {
 
 /// This function should return a new `String` constructed from the values \
 /// returned by `traits::MemoryReadout::used()` and `traits::MemoryReadout::total()`
-pub fn memory(total: u64, used: u64) -> String {
-    let total = ByteSize::kb(total);
-    let used = ByteSize::kb(used);
+pub fn memory(total: u64, used: u64, percentage: bool) -> String {
+    let total_kb = ByteSize::kb(total);
+    let used_kb = ByteSize::kb(used);
 
-    format!("{used}/{total}")
+    let mut output = String::new();
+    output.push_str(&format!("{used_kb} / {total_kb}"));
+
+    if percentage {
+        let p = (used as f64 / total as f64 * 100f64).ceil() as usize;
+        output.push_str(&format!(" ({p}%)"));
+    };
+
+    output
 }
 
 /// This function should return a new `String` constructed from the value \

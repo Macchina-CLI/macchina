@@ -182,7 +182,7 @@ pub fn get_all_readouts<'a>(
             ReadoutKey::ProcessorLoad => {
                 handle_readout_processor_load(&mut readout_values, &general_readout, theme)
             }
-            ReadoutKey::Memory => handle_readout_memory(&mut readout_values, theme),
+            ReadoutKey::Memory => handle_readout_memory(&mut readout_values, theme, opt),
             ReadoutKey::Battery => handle_readout_battery(&mut readout_values, theme),
             ReadoutKey::DesktopEnvironment => {
                 handle_readout_desktop_environment(&mut readout_values, &general_readout)
@@ -393,7 +393,7 @@ fn handle_readout_processor_load(
     }
 }
 
-fn handle_readout_memory(readout_values: &mut Vec<Readout>, theme: &Theme) {
+fn handle_readout_memory(readout_values: &mut Vec<Readout>, theme: &Theme, opt: &Opt) {
     use crate::format::memory as format_mem;
     use libmacchina::traits::MemoryReadout as _;
 
@@ -407,7 +407,7 @@ fn handle_readout_memory(readout_values: &mut Vec<Readout>, theme: &Theme) {
                 let bar = create_bar(theme, crate::bars::memory(used, total));
                 readout_values.push(Readout::new(ReadoutKey::Memory, bar))
             } else {
-                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used)))
+                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used, opt.memory_percentage)))
             }
         }
         (Err(e), _) | (_, Err(e)) => readout_values.push(Readout::new_err(ReadoutKey::Memory, e)),

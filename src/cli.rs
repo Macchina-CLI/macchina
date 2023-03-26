@@ -40,6 +40,9 @@ pub struct Opt {
     #[clap(short = 'K', long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
+    #[clap(short = 'm', long = "memory-percentage", help = "Show memory usage in percentage")]
+    pub memory_percentage: bool,
+
     #[clap(
         short = 'C',
         long = "physical-cores",
@@ -116,6 +119,10 @@ impl Opt {
 
         if args.long_kernel {
             self.long_shell = true;
+        }
+
+        if args.memory_percentage {
+            self.memory_percentage = args.memory_percentage;
         }
 
         if args.physical_cores {
