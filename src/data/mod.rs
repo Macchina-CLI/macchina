@@ -490,18 +490,13 @@ fn handle_readout_window_manager(
 }
 
 fn handle_readout_gpu(readout_values: &mut Vec<Readout>, general_readout: &GeneralReadout) {
-    let gpus = match general_readout.gpus() {
-        Ok(gpus) => gpus,
-        Err(_) => {
-            readout_values.push(Readout::new_err(
-                ReadoutKey::GPU,
-                ReadoutError::Warning(String::from("No GPUs were detected {}")),
-            ));
-            vec![]
+    match general_readout.gpus() {
+        Ok(gpus) => {
+            for gpu in gpus {
+                readout_values.push(Readout::new(ReadoutKey::GPU, gpu));
+            }
         }
-    };
 
-    for gpu in gpus {
-        readout_values.push(Readout::new(ReadoutKey::GPU, gpu));
-    }
+        Err(e) => readout_values.push(Readout::new_err(ReadoutKey::GPU, e)),
+    };
 }
