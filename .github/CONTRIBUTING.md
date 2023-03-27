@@ -1,6 +1,6 @@
 Thanks for taking interest in our project, we'd love to work with you.
 
-We've compiled, for your convenienve, a list of the most relevant
+We've compiled, for your convenience, a list of the most relevant
 questions and answers that you should know about before you contribute
 to the project.
 
