@@ -2,8 +2,7 @@ use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::{Parser, ValueEnum};
 use libmacchina::traits::GeneralReadout as _;
-use libmacchina::traits::ShellFormat;
-use libmacchina::traits::{ReadoutError, ShellKind};
+use libmacchina::traits::{ReadoutError, ShellFormat, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
@@ -33,6 +32,7 @@ pub enum ReadoutKey {
     ProcessorLoad,
     Memory,
     Battery,
+    GPU,
 }
 
 impl Display for ReadoutKey {
@@ -56,6 +56,7 @@ impl Display for ReadoutKey {
             Self::ProcessorLoad => write!(f, "ProcessorLoad"),
             Self::Memory => write!(f, "Memory"),
             Self::Battery => write!(f, "Battery"),
+            Self::GPU => write!(f, "GPU"),
         }
     }
 }
@@ -190,6 +191,7 @@ pub fn get_all_readouts<'a>(
             ReadoutKey::WindowManager => {
                 handle_readout_window_manager(&mut readout_values, &general_readout)
             }
+            ReadoutKey::GPU => handle_readout_gpu(&mut readout_values, &general_readout),
         };
     }
 
@@ -485,4 +487,16 @@ fn handle_readout_window_manager(
         },
         Err(e) => readout_values.push(Readout::new_err(ReadoutKey::WindowManager, e)),
     }
+}
+
+fn handle_readout_gpu(readout_values: &mut Vec<Readout>, general_readout: &GeneralReadout) {
+    match general_readout.gpus() {
+        Ok(gpus) => {
+            for gpu in gpus {
+                readout_values.push(Readout::new(ReadoutKey::GPU, gpu));
+            }
+        }
+
+        Err(e) => readout_values.push(Readout::new_err(ReadoutKey::GPU, e)),
+    };
 }

@@ -216,6 +216,7 @@ impl Theme {
             ReadoutKey::Backlight => self.keys.get_backlight(),
             ReadoutKey::Uptime => self.keys.get_uptime(),
             ReadoutKey::Memory => self.keys.get_memory(),
+            ReadoutKey::GPU => self.keys.get_gpu(),
         }
     }
 }

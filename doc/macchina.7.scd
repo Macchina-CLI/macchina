@@ -304,5 +304,10 @@ Defines the text of the ProcessorLoad readout, e.g.:
 
 	cpu_load = "CPU %"
 
+## gpu
+Defines the text of the GPU readout(s), e.g.:
+
+	gpu = "GPU"
+
 # SEE ALSO
 macchina(1)

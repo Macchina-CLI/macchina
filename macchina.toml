@@ -15,7 +15,7 @@ current_shell = true
 
 # Toggle between displaying the number of physical or logical cores of your
 # processor.
-physical_cores = true 
+physical_cores = true
 
 # Themes need to be placed in "$XDG_CONFIG_DIR/macchina/themes" beforehand.
 # e.g.:
@@ -44,5 +44,6 @@ physical_cores = true
 #   - ProcessorLoad
 #   - Memory
 #   - Battery
+#   - GPU
 # Example:
 #   show = ["Battery", "Memory", ...]

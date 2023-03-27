@@ -299,6 +299,7 @@ pub struct Keys {
     pub resolution: Option<String>,
     pub cpu_load: Option<String>,
     pub cpu: Option<String>,
+    pub gpu: Option<String>,
 }
 
 impl Default for Keys {
@@ -322,6 +323,7 @@ impl Default for Keys {
             resolution: Some(String::from("Resolution")),
             cpu_load: Some(String::from("CPU Load")),
             cpu: Some(String::from("CPU")),
+            gpu: Some(String::from("GPU")),
         }
     }
 }
@@ -469,5 +471,13 @@ impl Keys {
         }
 
         "CPU"
+    }
+
+    pub fn get_gpu(&self) -> &str {
+        if let Some(m) = &self.gpu {
+            return m;
+        }
+
+        "GPU"
     }
 }
