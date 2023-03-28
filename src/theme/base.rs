@@ -217,6 +217,7 @@ impl Theme {
             ReadoutKey::Uptime => self.keys.get_uptime(),
             ReadoutKey::Memory => self.keys.get_memory(),
             ReadoutKey::GPU => self.keys.get_gpu(),
+            ReadoutKey::DiskSpace => self.keys.get_disk_space(),
         }
     }
 }
