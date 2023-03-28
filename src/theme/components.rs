@@ -325,7 +325,7 @@ impl Default for Keys {
             cpu_load: Some(String::from("CPU Load")),
             cpu: Some(String::from("CPU")),
             gpu: Some(String::from("GPU")),
-            disk_space: Some(String::from("Disk space")),
+            disk_space: Some(String::from("Disk Space")),
         }
     }
 }
