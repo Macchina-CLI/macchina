@@ -33,6 +33,7 @@ pub enum ReadoutKey {
     Memory,
     Battery,
     GPU,
+    DiskSpace,
 }
 
 impl Display for ReadoutKey {
@@ -57,6 +58,7 @@ impl Display for ReadoutKey {
             Self::Memory => write!(f, "Memory"),
             Self::Battery => write!(f, "Battery"),
             Self::GPU => write!(f, "GPU"),
+            Self::DiskSpace => write!(f, "DiskSpace"),
         }
     }
 }
@@ -192,6 +194,9 @@ pub fn get_all_readouts<'a>(
                 handle_readout_window_manager(&mut readout_values, &general_readout)
             }
             ReadoutKey::GPU => handle_readout_gpu(&mut readout_values, &general_readout),
+            ReadoutKey::DiskSpace => {
+                handle_readout_disk_space(&mut readout_values, &general_readout, theme, opt)
+            }
         };
     }
 
@@ -406,10 +411,13 @@ fn handle_readout_memory(readout_values: &mut Vec<Readout>, theme: &Theme, opt: 
     match (total, used) {
         (Ok(total), Ok(used)) => {
             if theme.get_bar().is_visible() {
-                let bar = create_bar(theme, crate::bars::memory(used, total));
+                let bar = create_bar(theme, crate::bars::usage(used, total));
                 readout_values.push(Readout::new(ReadoutKey::Memory, bar))
             } else {
-                readout_values.push(Readout::new(ReadoutKey::Memory, format_mem(total, used, opt.memory_percentage)))
+                readout_values.push(Readout::new(
+                    ReadoutKey::Memory,
+                    format_mem(total, used, opt.memory_percentage),
+                ))
             }
         }
         (Err(e), _) | (_, Err(e)) => readout_values.push(Readout::new_err(ReadoutKey::Memory, e)),
@@ -499,4 +507,28 @@ fn handle_readout_gpu(readout_values: &mut Vec<Readout>, general_readout: &Gener
 
         Err(e) => readout_values.push(Readout::new_err(ReadoutKey::GPU, e)),
     };
+}
+
+fn handle_readout_disk_space(
+    readout_values: &mut Vec<Readout>,
+    general_readout: &GeneralReadout,
+    theme: &Theme,
+    opt: &Opt,
+) {
+    use crate::format::disk_space as format_disk_space;
+
+    match general_readout.disk_space() {
+        Ok((used, total)) => {
+            if theme.get_bar().is_visible() {
+                let bar = create_bar(theme, crate::bars::usage(used, total));
+                readout_values.push(Readout::new(ReadoutKey::DiskSpace, bar))
+            } else {
+                readout_values.push(Readout::new(
+                    ReadoutKey::DiskSpace,
+                    format_disk_space(used, total, opt.disk_space_percentage),
+                ))
+            }
+        }
+        Err(e) => readout_values.push(Readout::new_err(ReadoutKey::DiskSpace, e)),
+    }
 }

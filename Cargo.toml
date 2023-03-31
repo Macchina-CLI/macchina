@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = { version = "6.4.1", features = ["version"] }
+libmacchina = { version = "7.0.0", features = ["version"] }
 bytesize = "1.1.0"
 shellexpand = "3.0.0"
 clap = { version = "4.0.32", features = ["derive"] }

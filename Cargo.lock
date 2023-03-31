@@ -690,9 +690,9 @@ dependencies = [
 
 [[package]]
 name = "libmacchina"
-version = "6.4.0"
+version = "7.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07f8d808d1a5f51f461fccc7690501ccdf706157fcdb296c02be552c7617e6b6"
+checksum = "4448964d60d5aff7076f8bedfafdc4f07c2203e901cb3223ada87b2858caf4ba"
 dependencies = [
  "cfg-if 1.0.0",
  "core-foundation 0.9.3",

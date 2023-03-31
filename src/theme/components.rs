@@ -300,6 +300,7 @@ pub struct Keys {
     pub cpu_load: Option<String>,
     pub cpu: Option<String>,
     pub gpu: Option<String>,
+    pub disk_space: Option<String>,
 }
 
 impl Default for Keys {
@@ -324,6 +325,7 @@ impl Default for Keys {
             cpu_load: Some(String::from("CPU Load")),
             cpu: Some(String::from("CPU")),
             gpu: Some(String::from("GPU")),
+            disk_space: Some(String::from("Disk Space")),
         }
     }
 }
@@ -479,5 +481,13 @@ impl Keys {
         }
 
         "GPU"
+    }
+
+    pub fn get_disk_space(&self) -> &str {
+        if let Some(d) = &self.disk_space {
+            return d;
+        }
+
+        "Disk Space"
     }
 }

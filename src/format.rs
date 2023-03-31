@@ -139,3 +139,18 @@ pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, Readou
 
     Ok(string)
 }
+
+pub fn disk_space(used: u64, total: u64, percentage: bool) -> String {
+    let used_kb = ByteSize::b(used);
+    let total_kb = ByteSize::b(total);
+
+    let mut output = String::new();
+    output.push_str(&format!("{used_kb} / {total_kb}"));
+
+    if percentage {
+        let p = (used as f64 / total as f64 * 100f64).ceil() as usize;
+        output.push_str(&format!(" ({p}%)"));
+    };
+
+    output
+}

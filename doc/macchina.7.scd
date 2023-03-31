@@ -309,5 +309,10 @@ Defines the text of the GPU readout(s), e.g.:
 
 	gpu = "GPU"
 
+## disk_space
+Defines the text of the disk space readout, e.g.:
+
+	disk_space = "Disk Space"
+
 # SEE ALSO
 macchina(1)

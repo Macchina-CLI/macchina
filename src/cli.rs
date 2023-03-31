@@ -40,8 +40,19 @@ pub struct Opt {
     #[clap(short = 'K', long = "long-kernel", help = "Lengthens kernel output")]
     pub long_kernel: bool,
 
-    #[clap(short = 'm', long = "memory-percentage", help = "Show memory usage in percentage")]
+    #[clap(
+        short = 'm',
+        long = "memory-percentage",
+        help = "Show memory usage in percentage"
+    )]
     pub memory_percentage: bool,
+
+    #[clap(
+        short = 'p',
+        long = "disk-space-percentage",
+        help = "Show disk space usage in percentage"
+    )]
+    pub disk_space_percentage: bool,
 
     #[clap(
         short = 'C',
@@ -123,6 +134,10 @@ impl Opt {
 
         if args.memory_percentage {
             self.memory_percentage = args.memory_percentage;
+        }
+
+        if args.disk_space_percentage {
+            self.disk_space_percentage = args.disk_space_percentage;
         }
 
         if args.physical_cores {
