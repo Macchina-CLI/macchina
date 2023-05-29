@@ -57,6 +57,16 @@ pub struct Opt {
     pub disk_space_percentage: bool,
 
     #[clap(
+        short = 'D',
+        long = "disks",
+        use_value_delimiter = true,
+        value_delimiter = ',',
+        help = "Comma separated list of disk(s) to show disk space readout for, e.g.
+'/,/home/user/'"
+    )]
+    pub disks: Option<Vec<String>>,
+
+    #[clap(
         short = 'C',
         long = "physical-cores",
         help = "Toggles between logical and physical cores"
@@ -164,6 +174,10 @@ impl Opt {
 
         if args.interface.is_some() {
             self.interface = args.interface;
+        }
+
+        if args.disks.is_some() {
+            self.disks = args.disks
         }
     }
 
