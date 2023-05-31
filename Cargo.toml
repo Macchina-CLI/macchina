@@ -14,19 +14,19 @@ build = "build.rs"
 libmacchina = { version = "7.0.0", features = ["version"] }
 bytesize = "1.1.0"
 shellexpand = "3.0.0"
-clap = { version = "4.0.32", features = ["derive"] }
+clap = { version = "4.1.14", features = ["derive"] }
 atty= "0.2.14"
 colored = "2.0.0"
 rand = "0.8.5"
 unicode-width = "0.1.10"
 lazy_static = "1.4.0"
-ansi-to-tui = "2.0.0"
-color-to-tui = "0.2.0"
+ansi-to-tui = "3.0.0"
+color-to-tui = "0.3.0"
 dirs = "4.0.0"
 toml = "0.5.10"
 serde_json = "1.0.91"
 thiserror = "1.0.38"
-tui = { version = "0.19.0", default-features = false, features = ["crossterm"] }
+tui = { package = "ratatui", version = "0.20.1", default-features = false, features = ["crossterm"] }
 serde = { version = "1.0.152", features = ["derive"] }
 
 [build-dependencies.vergen]
