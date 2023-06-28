@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use tui::style::Color;
+use ratatui::style::Color;
 
 #[derive(Debug, Clone)]
 pub enum ColorTypes {

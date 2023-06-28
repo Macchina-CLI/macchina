@@ -9,7 +9,7 @@ use dirs;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::path::{Path, PathBuf};
-use tui::style::Color;
+use ratatui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]

@@ -3,8 +3,8 @@ use crate::theme::color::*;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use tui::style::Color;
-use tui::widgets::BorderType;
+use ratatui::style::Color;
+use ratatui::widgets::BorderType;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Palette {

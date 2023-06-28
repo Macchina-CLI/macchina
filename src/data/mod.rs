@@ -7,8 +7,8 @@ use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, 
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Display;
-use tui::style::{Color, Style};
-use tui::text::{Span, Spans, Text};
+use ratatui::style::{Color, Style};
+use ratatui::text::{Span, Line, Text};
 
 /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]

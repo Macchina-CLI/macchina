@@ -5,8 +5,8 @@ use io::Read;
 use std::fs::File;
 use std::io::{self, BufReader};
 use std::path::Path;
-use tui::style::{Color, Style};
-use tui::text::{Span, Spans, Text};
+use ratatui::style::{Color, Style};
+use ratatui::text::{Span, Line, Text};
 
 lazy_static! {
     static ref BLUE: Style = Style::default().fg(Color::Blue);
@@ -106,8 +106,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
         AsciiSize::Small => {
@@ -124,8 +124,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
     }
@@ -153,8 +153,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
         AsciiSize::Small => {
@@ -169,8 +169,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
     }
@@ -201,8 +201,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
         AsciiSize::Small => {
@@ -218,8 +218,8 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 
             vec![Text::from(
                 art.iter()
-                    .map(|f| Spans::from(f.to_owned()))
-                    .collect::<Vec<Spans>>(),
+                    .map(|f| Line::from(f.to_owned()))
+                    .collect::<Vec<Line>>(),
             )]
         }
     }
@@ -230,49 +230,49 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
     match size {
         AsciiSize::Big => {
-            let art: Vec<Spans> = vec![
-                Spans::from(vec![Span::styled("       a8888b.", *WHITE)]),
-                Spans::from(vec![Span::styled("      d888888b.", *WHITE)]),
-                Spans::from(vec![Span::styled("      8P\"YP\"Y88", *WHITE)]),
-                Spans::from(vec![Span::styled("      8|o||o|88", *WHITE)]),
-                Spans::from(vec![
+            let art: Vec<Line> = vec![
+                Line::from(vec![Span::styled("       a8888b.", *WHITE)]),
+                Line::from(vec![Span::styled("      d888888b.", *WHITE)]),
+                Line::from(vec![Span::styled("      8P\"YP\"Y88", *WHITE)]),
+                Line::from(vec![Span::styled("      8|o||o|88", *WHITE)]),
+                Line::from(vec![
                     Span::styled("      8", *WHITE),
                     Span::styled("'    .", *YELLOW),
                     Span::styled("88", *WHITE),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("      8", *WHITE),
                     Span::styled("`._.'", *YELLOW),
                     Span::styled(" Y8.", *WHITE),
                 ]),
-                Spans::from(vec![Span::styled("     d/      `8b.", *WHITE)]),
-                Spans::from(vec![Span::styled("    dP        Y8b.", *WHITE)]),
-                Spans::from(vec![Span::styled("   d8:       ::88b.", *WHITE)]),
-                Spans::from(vec![Span::styled("  d8\"         'Y88b", *WHITE)]),
-                Spans::from(vec![Span::styled(" :8P           :888", *WHITE)]),
-                Spans::from(vec![Span::styled("  8a.         _a88P", *WHITE)]),
-                Spans::from(vec![
+                Line::from(vec![Span::styled("     d/      `8b.", *WHITE)]),
+                Line::from(vec![Span::styled("    dP        Y8b.", *WHITE)]),
+                Line::from(vec![Span::styled("   d8:       ::88b.", *WHITE)]),
+                Line::from(vec![Span::styled("  d8\"         'Y88b", *WHITE)]),
+                Line::from(vec![Span::styled(" :8P           :888", *WHITE)]),
+                Line::from(vec![Span::styled("  8a.         _a88P", *WHITE)]),
+                Line::from(vec![
                     Span::styled("._/\"Y", *YELLOW),
                     Span::styled("aa     .", *WHITE),
                     Span::styled("|", *YELLOW),
                     Span::styled(" 88P", *WHITE),
                     Span::styled("|", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("\\    Y", *YELLOW),
                     Span::styled("P\"    `", *WHITE),
                     Span::styled("|     `.", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("/     \\", *YELLOW),
                     Span::styled(".___.d", *WHITE),
                     Span::styled("|    .'", *YELLOW),
                 ]),
-                Spans::from(vec![Span::styled("`--..__)     `._.'", *YELLOW)]),
+                Line::from(vec![Span::styled("`--..__)     `._.'", *YELLOW)]),
             ];
 
             vec![Text::from(
-                art.iter().map(|f| f.to_owned()).collect::<Vec<Spans>>(),
+                art.iter().map(|f| f.to_owned()).collect::<Vec<Line>>(),
             )]
         }
         AsciiSize::Small => {
@@ -280,22 +280,22 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
             // taken from: https://asciiart.website/index.php
             // Artist attribution missing.
             // Thank you to whoever made it :^)
-            let art: Vec<Spans> = vec![
-                Spans::from(vec![Span::styled("    .--.", *WHITE)]),
-                Spans::from(vec![
+            let art: Vec<Line> = vec![
+                Line::from(vec![Span::styled("    .--.", *WHITE)]),
+                Line::from(vec![
                     Span::styled("   |o", *WHITE),
                     Span::styled("_", *YELLOW),
                     Span::styled("o |", *WHITE),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("   |", *WHITE),
                     Span::styled("\\_/", *YELLOW),
                     Span::styled(" |", *WHITE),
                 ]),
-                Spans::from(vec![Span::styled("  //   \\ \\", *WHITE)]),
-                Spans::from(vec![Span::styled(" (|     | )", *WHITE)]),
-                Spans::from(vec![Span::styled("/'\\_   _/`\\", *WHITE)]),
-                Spans::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
+                Line::from(vec![Span::styled("  //   \\ \\", *WHITE)]),
+                Line::from(vec![Span::styled(" (|     | )", *WHITE)]),
+                Line::from(vec![Span::styled("/'\\_   _/`\\", *WHITE)]),
+                Line::from(vec![Span::styled("\\___)=(___/", *WHITE)]),
             ];
 
             vec![Text::from(art)]
@@ -308,13 +308,13 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
     // The following ASCII art was made by Dylan Araps
     // and taken from https://github.com/dylanaraps/pfetch
 
-    let art: Vec<Spans> = vec![
-        Spans::from(vec![Span::styled("/\\,-'''''-,/\\", *RED)]),
-        Spans::from(vec![Span::styled("\\_)       (_//", *RED)]),
-        Spans::from(vec![Span::styled(" |           |", *RED)]),
-        Spans::from(vec![Span::styled(" |           |", *RED)]),
-        Spans::from(vec![Span::styled("  ;         ;", *RED)]),
-        Spans::from(vec![Span::styled("   '-_____-'", *RED)]),
+    let art: Vec<Line> = vec![
+        Line::from(vec![Span::styled("/\\,-'''''-,/\\", *RED)]),
+        Line::from(vec![Span::styled("\\_)       (_//", *RED)]),
+        Line::from(vec![Span::styled(" |           |", *RED)]),
+        Line::from(vec![Span::styled(" |           |", *RED)]),
+        Line::from(vec![Span::styled("  ;         ;", *RED)]),
+        Line::from(vec![Span::styled("   '-_____-'", *RED)]),
     ];
 
     vec![Text::from(art)]
@@ -324,53 +324,53 @@ pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
 pub(crate) fn get_ascii_art(size: AsciiSize) -> Vec<Text<'static>> {
     match size {
         AsciiSize::Big => {
-            let art: Vec<Spans> = vec![
-                Spans::from(vec![
+            let art: Vec<Line> = vec![
+                Line::from(vec![
                     Span::styled("\\\\", *WHITE),
                     Span::styled("`-______,----__", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled(" \\\\", *WHITE),
                     Span::styled("        __,---`.", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("  \\\\", *WHITE),
                     Span::styled("       `.____", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("   \\\\", *WHITE),
                     Span::styled("-______,----`.", *YELLOW),
                 ]),
-                Spans::from(vec![Span::styled("    \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("     \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("      \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("       \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("        \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("         \\\\", *WHITE)]),
-                Spans::from(vec![Span::styled("          \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("    \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("     \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("      \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("       \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("        \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("         \\\\", *WHITE)]),
+                Line::from(vec![Span::styled("          \\\\", *WHITE)]),
             ];
 
             vec![Text::from(
-                art.iter().map(|f| f.to_owned()).collect::<Vec<Spans>>(),
+                art.iter().map(|f| f.to_owned()).collect::<Vec<Line>>(),
             )]
         }
         AsciiSize::Small => {
-            let art: Vec<Spans> = vec![
-                Spans::from(vec![
+            let art: Vec<Line> = vec![
+                Line::from(vec![
                     Span::styled("()", *BLACK),
                     Span::styled("ncncncncncnc", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled(" \\\\", *BLACK),
                     Span::styled("ncncncnc", *YELLOW),
                 ]),
-                Spans::from(vec![
+                Line::from(vec![
                     Span::styled("  \\\\", *BLACK),
                     Span::styled("ncncncncncn", *YELLOW),
                 ]),
-                Spans::from(vec![Span::styled("   \\\\", *BLACK)]),
-                Spans::from(vec![Span::styled("    \\\\", *BLACK)]),
-                Spans::from(vec![Span::styled("     \\\\", *BLACK)]),
+                Line::from(vec![Span::styled("   \\\\", *BLACK)]),
+                Line::from(vec![Span::styled("    \\\\", *BLACK)]),
+                Line::from(vec![Span::styled("     \\\\", *BLACK)]),
             ];
 
             vec![Text::from(art)]

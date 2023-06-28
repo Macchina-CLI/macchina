@@ -15,7 +15,7 @@ pub mod widgets;
 
 use cli::{Opt, PKG_NAME};
 use error::Result;
-use tui::{backend::Backend, buffer::Buffer, layout::Rect};
+use ratatui::{backend::Backend, buffer::Buffer, layout::Rect};
 
 #[macro_use]
 extern crate lazy_static;

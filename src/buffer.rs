@@ -4,11 +4,11 @@ use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use std::io;
 use std::io::Stdout;
-use tui::backend::{Backend, CrosstermBackend};
-use tui::buffer::{Buffer, Cell};
-use tui::layout::{Margin, Rect};
-use tui::text::Text;
-use tui::widgets::{Block, Borders, Paragraph, Widget};
+use ratatui::backend::{Backend, CrosstermBackend};
+use ratatui::buffer::{Buffer, Cell};
+use ratatui::layout::{Margin, Rect};
+use ratatui::text::Text;
+use ratatui::widgets::{Block, Borders, Paragraph, Widget};
 use unicode_width::UnicodeWidthStr;
 
 pub fn create_backend() -> CrosstermBackend<Stdout> {
