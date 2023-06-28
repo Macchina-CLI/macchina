@@ -188,11 +188,11 @@ impl<'a> ReadoutList<'a> {
         };
 
         let spans = match palette.get_type() {
-            PaletteType::Light => vec![Spans::from(span_vector(&light_colors))],
-            PaletteType::Dark => vec![Spans::from(span_vector(&dark_colors))],
+            PaletteType::Light => vec![Line::from(span_vector(&light_colors))],
+            PaletteType::Dark => vec![Line::from(span_vector(&dark_colors))],
             PaletteType::Full => vec![
-                Spans::from(span_vector(&dark_colors)),
-                Spans::from(span_vector(&light_colors)),
+                Line::from(span_vector(&dark_colors)),
+                Line::from(span_vector(&light_colors)),
             ],
         };
 

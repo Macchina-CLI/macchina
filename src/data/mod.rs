@@ -90,7 +90,7 @@ fn colored_glyphs(glyph: &str, blocks: usize) -> String {
         .join(" ")
 }
 
-fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
+fn create_bar<'a>(theme: &Theme, blocks: usize) -> Line<'a> {
     if theme.get_bar().are_delimiters_hidden() {
         let mut span_vector = vec![Span::raw(""), Span::raw("")];
 
@@ -109,7 +109,7 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
         if theme.get_key_color() == Color::White {
             span_vector[1].content = Cow::from(span_vector[1].content.replace(glyph, " "));
         }
-        return Spans::from(span_vector);
+        return Line::from(span_vector);
     }
 
     let mut span_vector = vec![
@@ -133,7 +133,7 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Spans<'a> {
     if theme.get_key_color() == Color::White {
         span_vector[2].content = Cow::from(span_vector[2].content.replace(glyph, " "));
     }
-    Spans::from(span_vector)
+    Line::from(span_vector)
 }
 
 pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
