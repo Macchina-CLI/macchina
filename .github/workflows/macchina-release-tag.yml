@@ -114,15 +114,19 @@ jobs:
           args: --target=${{ matrix.target }} --release
           use-cross: ${{ matrix.cross }}
 
+      - name: Set env
+        echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}" >> $env:GITHUB_ENV
+
       - name: Rename binaries
-        run: mv ${{ matrix.artifact_name }} macchina-${{ GITHUB_REF#refs/*/ }}-${{ matrix.release_suffix }}
+        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
 
       - name: Permission regrant
-        run: chmod 755 macchina-${{ GITHUB_REF#refs/*/ }}-${{ matrix.release_suffix }}
-        if: ${{ matrix.target != 'x86_64-pc-windows-msvc' }}
+        run: chmod 755 ${{ env.RELEASE_NAME }}
+        if: !contains(${{ matrix.target }}, 'indows')
+
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          files: macchina-${{ GITHUB_REF#refs/*/ }}-${{ matrix.release_suffix }} 
+          files: ${{ env.RELEASE_NAME }} 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
