@@ -125,11 +125,7 @@ jobs:
         if: ${{ !contains(matrix.target, 'indows') }}
 
       - name: Rename binaries
-        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
-
-      - name: Permission regrant
-        run: chmod 755 ${{ env.RELEASE_NAME }}
-        if: ${{ !contains(matrix.target, 'indows') }}
+        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }} 
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
