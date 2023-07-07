@@ -30,20 +30,22 @@ jobs:
           - x86_64-unknown-netbsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+          - aarch64-apple-darwin
+          - armv7-unknown-linux-gnueabihf
         include:
           - os: ubuntu-latest
             name: Linux
             target: x86_64-unknown-linux-gnu
             artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
-            release_name: macchina-linux-x86_64
+            release_suffix: linux-x86_64
             cross: false
             strip: true
 
           - os: macos-latest
-            name: Macos
+            name: macOS
             target: x86_64-apple-darwin
             artifact_name: target/x86_64-apple-darwin/release/macchina
-            release_name: macchina-macos-x86_64
+            release_suffix: macos-x86_64
             cross: false
             strip: true
 
@@ -51,7 +53,7 @@ jobs:
             name: Windows
             target: x86_64-pc-windows-msvc
             artifact_name: target/x86_64-pc-windows-msvc/release/macchina.exe
-            release_name: macchina-windows-x86_64.exe
+            release_suffix: windows-x86_64.exe
             cross: false
             strip: true
 
@@ -59,7 +61,7 @@ jobs:
             name: NetBSD
             target: x86_64-unknown-netbsd
             artifact_name: target/x86_64-unknown-netbsd/release/macchina
-            release_name: macchina-netbsd-x86_64
+            release_suffix: netbsd-x86_64
             cross: true
             strip: true
 
@@ -67,7 +69,7 @@ jobs:
             name: Android
             target: aarch64-linux-android
             artifact_name: target/aarch64-linux-android/release/macchina
-            release_name: macchina-android-aarch64
+            release_suffix: android-aarch64
             cross: true
             strip: true
 
@@ -75,7 +77,23 @@ jobs:
             name: Linux aarch64
             target: aarch64-unknown-linux-gnu
             artifact_name: target/aarch64-unknown-linux-gnu/release/macchina
-            release_name: macchina-linux-aarch64
+            release_suffix: linux-aarch64
+            cross: true
+            strip: true
+
+          - os: macos-latest
+            name: macOS aarch64
+            target: aarch64-apple-darwin
+            artifact_name: target/aarch64-apple-darwin/release/macchina
+            release_suffix: macos-aarch64
+            cross: false
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux ARMv7
+            target: armv7-unknown-linux-gnueabihf
+            artifact_name: target/armv7-unknown-linux-gnueabihf/release/macchina
+            release_suffix: linux-gnueabihf-armv7
             cross: true
             strip: true
 
@@ -96,12 +114,15 @@ jobs:
           args: --target=${{ matrix.target }} --release
           use-cross: ${{ matrix.cross }}
 
+      - name: Set env
+        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}" >> $GITHUB_ENV
+
       - name: Rename binaries
-        run: mv ${{ matrix.artifact_name }} ${{ matrix.release_name }}
+        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ matrix.release_name }}
+          files: ${{ env.RELEASE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

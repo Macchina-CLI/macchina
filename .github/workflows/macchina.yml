@@ -16,6 +16,8 @@ jobs:
           - x86_64-unknown-netbsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+          - aarch64-apple-darwin
+          - armv7-unknown-linux-gnueabihf
 
         include:
           - os: ubuntu-latest
@@ -51,6 +53,18 @@ jobs:
           - os: ubuntu-latest
             name: Linux
             target: aarch64-unknown-linux-gnu
+            cross: true
+            strip: true
+
+          - os: macos-latest
+            name: macOS aarch64
+            target: aarch64-apple-darwin
+            cross: false
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux ARMv7
+            target: armv7-unknown-linux-gnueabihf
             cross: true
             strip: true
 
@@ -92,7 +106,7 @@ jobs:
         with:
           command: test
           args: --target=${{ matrix.target }}
-        if: ${{ !matrix.cross }}
+        if: ${{ !matrix.cross && matrix.target != 'aarch64-apple-darwin' }}
 
       - name: Doctor
         uses: actions-rs/cargo@v1
