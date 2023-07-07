@@ -122,7 +122,7 @@ jobs:
 
       - name: Permission regrant
         run: chmod 755 ${{ env.RELEASE_NAME }}
-        if: !contains(${{ matrix.target }}, 'indows')
+        if: ${{ !contains(matrix.target, 'indows') }}
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
