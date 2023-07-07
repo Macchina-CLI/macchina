@@ -114,8 +114,15 @@ jobs:
           args: --target=${{ matrix.target }} --release
           use-cross: ${{ matrix.cross }}
 
-      - name: Set env
-        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}" >> $env:GITHUB_ENV
+      - name: Set env (Windows)
+        run: |
+          chcp 65001 # utf-8
+          echo ("RELEASE_NAME=macchina-" + $env:GITHUB_REF.replace('refs/tags/', '') + "-${{ matrix.release_suffix }}") >> $env:GITHUB_ENV
+        if: ${{ contains(matrix.target, 'indows') }}
+
+      - name: Set env (UNIX)
+        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}" >> $GITHUB_ENV
+        if: ${{ !contains(matrix.target, 'indows') }}
 
       - name: Rename binaries
         run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
