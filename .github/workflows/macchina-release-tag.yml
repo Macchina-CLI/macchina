@@ -25,24 +25,36 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
           - x86_64-apple-darwin
           - x86_64-pc-windows-msvc
           - x86_64-unknown-netbsd
+          - x86_64-unknown-freebsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
           - aarch64-apple-darwin
+          - aarch64-pc-windows-msvc
           - armv7-unknown-linux-gnueabihf
         include:
           - os: ubuntu-latest
-            name: Linux
+            name: Linux GNU x86_64
             target: x86_64-unknown-linux-gnu
             artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
-            release_suffix: linux-x86_64
+            release_suffix: linux-gnu-x86_64
             cross: false
             strip: true
 
+          - os: ubuntu-latest
+            name: Linux musl x86_64
+            target: x86_64-unknown-linux-musl
+            artifact_name: target/x86_64-unknown-linux-musl/release/macchina
+            release_suffix: linux-musl-x86_64
+            cross: true
+            strip: true
+
           - os: macos-latest
-            name: macOS
+            name: macOS x86_64
             target: x86_64-apple-darwin
             artifact_name: target/x86_64-apple-darwin/release/macchina
             release_suffix: macos-x86_64
@@ -50,7 +62,7 @@ jobs:
             strip: true
 
           - os: windows-latest
-            name: Windows
+            name: Windows x86_64
             target: x86_64-pc-windows-msvc
             artifact_name: target/x86_64-pc-windows-msvc/release/macchina.exe
             release_suffix: windows-x86_64.exe
@@ -58,7 +70,7 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: NetBSD
+            name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             artifact_name: target/x86_64-unknown-netbsd/release/macchina
             release_suffix: netbsd-x86_64
@@ -66,7 +78,15 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Android
+            name: freeBSD x86_64
+            target: x86_64-unknown-freebsd
+            artifact_name: target/x86_64-unknown-freebsd/release/macchina
+            release_suffix: freebsd-x86_64
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Android aarch64
             target: aarch64-linux-android
             artifact_name: target/aarch64-linux-android/release/macchina
             release_suffix: android-aarch64
@@ -74,10 +94,18 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Linux aarch64
+            name: Linux GNU aarch64
             target: aarch64-unknown-linux-gnu
             artifact_name: target/aarch64-unknown-linux-gnu/release/macchina
-            release_suffix: linux-aarch64
+            release_suffix: linux-gnu-aarch64
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux musl aarch64
+            target: aarch64-unknown-linux-musl
+            artifact_name: target/aarch64-unknown-linux-musl/release/macchina
+            release_suffix: linux-musl-aarch64
             cross: true
             strip: true
 
@@ -86,6 +114,14 @@ jobs:
             target: aarch64-apple-darwin
             artifact_name: target/aarch64-apple-darwin/release/macchina
             release_suffix: macos-aarch64
+            cross: false
+            strip: true
+
+          - os: windows-latest
+            name: Windows aarch64
+            target: aarch64-pc-windows-msvc
+            artifact_name: target/aarch64-pc-windows-msvc/release/macchina.exe
+            release_suffix: windows-aarch64.exe
             cross: false
             strip: true
 

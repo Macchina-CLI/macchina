@@ -11,54 +11,82 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
           - x86_64-apple-darwin
           - x86_64-pc-windows-msvc
           - x86_64-unknown-netbsd
+          - x86_64-unknown-freebsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
           - aarch64-apple-darwin
+          - aarch64-pc-windows-msvc
           - armv7-unknown-linux-gnueabihf
 
         include:
           - os: ubuntu-latest
-            name: Linux
+            name: Linux GNU x86_64
             target: x86_64-unknown-linux-gnu
             cross: false
             strip: true
 
+          - os: ubuntu-latest
+            name: Linux musl x86_64
+            target: x86_64-unknown-linux-musl
+            cross: true
+            strip: true
+
           - os: macos-latest
-            name: macOS
+            name: macOS x86_64
             target: x86_64-apple-darwin
             cross: false
             strip: true
 
           - os: windows-latest
-            name: Windows
+            name: Windows x86_64
             target: x86_64-pc-windows-msvc
             cross: false
             strip: true
 
           - os: ubuntu-latest
-            name: NetBSD
+            name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             cross: true
             strip: true
 
           - os: ubuntu-latest
-            name: Android
+            name: freeBSD x86_64
+            target: x86_64-unknown-freebsd
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Android aarch64
             target: aarch64-linux-android
             cross: true
             strip: true
 
           - os: ubuntu-latest
-            name: Linux
+            name: Linux GNU aarch64
             target: aarch64-unknown-linux-gnu
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux musl aarch64
+            target: aarch64-unknown-linux-musl
             cross: true
             strip: true
 
           - os: macos-latest
             name: macOS aarch64
             target: aarch64-apple-darwin
+            cross: false
+            strip: true
+
+          - os: windows-latest
+            name: Windows aarch64
+            target: aarch64-pc-windows-msvc
             cross: false
             strip: true
 
@@ -106,7 +134,7 @@ jobs:
         with:
           command: test
           args: --target=${{ matrix.target }}
-        if: ${{ !matrix.cross && matrix.target != 'aarch64-apple-darwin' }}
+        if: ${{ !matrix.cross && !contains(matrix.target, 'aarch64') }}
 
       - name: Doctor
         uses: actions-rs/cargo@v1
