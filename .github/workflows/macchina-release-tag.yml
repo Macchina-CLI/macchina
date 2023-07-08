@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 name: Release
 
@@ -121,15 +121,20 @@ jobs:
         if: ${{ contains(matrix.target, 'indows') }}
 
       - name: Set env (UNIX)
-        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}" >> $GITHUB_ENV
+        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}.tar.gz" >> $GITHUB_ENV
         if: ${{ !contains(matrix.target, 'indows') }}
 
-      - name: Rename binaries
-        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }} 
+      - name: Compress binaries (UNIX)
+        run: tar cfzv ${{ env.RELEASE_NAME }} -C "$(dirname ${{ matrix.artifact_name}})" "$(basename ${{ matrix.artifact_name }})";
+        if: ${{ !contains(matrix.target, 'indows') }}
+
+      - name: Rename binaries (Windows)
+        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
+        if: ${{ contains(matrix.target, 'indows') }}
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.RELEASE_NAME }} 
+          files: ${{ env.RELEASE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
