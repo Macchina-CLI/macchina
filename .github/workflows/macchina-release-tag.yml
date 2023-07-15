@@ -154,19 +154,19 @@ jobs:
         run: |
           chcp 65001 # utf-8
           echo ("RELEASE_NAME=macchina-" + $env:GITHUB_REF.replace('refs/tags/', '') + "-${{ matrix.release_suffix }}") >> $env:GITHUB_ENV
-        if: ${{ contains(matrix.target, 'indows') }} # incase w is capitalized
+        if: ${{ contains(matrix.target, 'windows') }}
 
       - name: Set env (UNIX)
         run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}.tar.gz" >> $GITHUB_ENV
-        if: ${{ !contains(matrix.target, 'indows') }} # incase w is capitalized
+        if: ${{ !contains(matrix.target, 'windows') }}
 
       - name: Compress binaries (UNIX)
         run: tar cfzv ${{ env.RELEASE_NAME }} -C "$(dirname ${{ matrix.artifact_name}})" "$(basename ${{ matrix.artifact_name }})";
-        if: ${{ !contains(matrix.target, 'indows') }} # incase w is capitalized
+        if: ${{ !contains(matrix.target, 'windows') }}
 
       - name: Rename binaries (Windows)
         run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
-        if: ${{ contains(matrix.target, 'indows') }} # incase w is capitalized
+        if: ${{ contains(matrix.target, 'windows') }}
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
