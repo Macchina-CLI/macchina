@@ -38,7 +38,7 @@ jobs:
           - armv7-unknown-linux-gnueabihf
         include:
           - os: ubuntu-latest
-            name: Linux GNU x86_64
+            name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
             release_suffix: linux-gnu-x86_64
@@ -94,7 +94,7 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Linux GNU aarch64
+            name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             artifact_name: target/aarch64-unknown-linux-gnu/release/macchina
             release_suffix: linux-gnu-aarch64
@@ -126,7 +126,7 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Linux ARMv7
+            name: GNU/Linux ARMv7
             target: armv7-unknown-linux-gnueabihf
             artifact_name: target/armv7-unknown-linux-gnueabihf/release/macchina
             release_suffix: linux-gnueabihf-armv7
@@ -154,19 +154,19 @@ jobs:
         run: |
           chcp 65001 # utf-8
           echo ("RELEASE_NAME=macchina-" + $env:GITHUB_REF.replace('refs/tags/', '') + "-${{ matrix.release_suffix }}") >> $env:GITHUB_ENV
-        if: ${{ contains(matrix.target, 'indows') }}
+        if: ${{ contains(matrix.target, 'indows') }} # incase w is capitalized
 
       - name: Set env (UNIX)
         run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}.tar.gz" >> $GITHUB_ENV
-        if: ${{ !contains(matrix.target, 'indows') }}
+        if: ${{ !contains(matrix.target, 'indows') }} # incase w is capitalized
 
       - name: Compress binaries (UNIX)
         run: tar cfzv ${{ env.RELEASE_NAME }} -C "$(dirname ${{ matrix.artifact_name}})" "$(basename ${{ matrix.artifact_name }})";
-        if: ${{ !contains(matrix.target, 'indows') }}
+        if: ${{ !contains(matrix.target, 'indows') }} # incase w is capitalized
 
       - name: Rename binaries (Windows)
         run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
-        if: ${{ contains(matrix.target, 'indows') }}
+        if: ${{ contains(matrix.target, 'indows') }} # incase w is capitalized
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1

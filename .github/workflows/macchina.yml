@@ -25,7 +25,7 @@ jobs:
 
         include:
           - os: ubuntu-latest
-            name: Linux GNU x86_64
+            name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             cross: false
             strip: true
@@ -67,7 +67,7 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Linux GNU aarch64
+            name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             cross: true
             strip: true
@@ -91,7 +91,7 @@ jobs:
             strip: true
 
           - os: ubuntu-latest
-            name: Linux ARMv7
+            name: GNU/Linux ARMv7
             target: armv7-unknown-linux-gnueabihf
             cross: true
             strip: true
