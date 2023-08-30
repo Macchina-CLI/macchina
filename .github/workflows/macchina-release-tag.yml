@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 name: Release
 
@@ -25,57 +25,111 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
           - x86_64-apple-darwin
           - x86_64-pc-windows-msvc
           - x86_64-unknown-netbsd
+          - x86_64-unknown-freebsd
           - aarch64-linux-android
           - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+          - aarch64-apple-darwin
+          - aarch64-pc-windows-msvc
+          - armv7-unknown-linux-gnueabihf
         include:
           - os: ubuntu-latest
-            name: Linux
+            name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             artifact_name: target/x86_64-unknown-linux-gnu/release/macchina
-            release_name: macchina-linux-x86_64
+            release_suffix: linux-gnu-x86_64
             cross: false
             strip: true
 
+          - os: ubuntu-latest
+            name: Linux musl x86_64
+            target: x86_64-unknown-linux-musl
+            artifact_name: target/x86_64-unknown-linux-musl/release/macchina
+            release_suffix: linux-musl-x86_64
+            cross: true
+            strip: true
+
           - os: macos-latest
-            name: Macos
+            name: macOS x86_64
             target: x86_64-apple-darwin
             artifact_name: target/x86_64-apple-darwin/release/macchina
-            release_name: macchina-macos-x86_64
+            release_suffix: macos-x86_64
             cross: false
             strip: true
 
           - os: windows-latest
-            name: Windows
+            name: Windows x86_64
             target: x86_64-pc-windows-msvc
             artifact_name: target/x86_64-pc-windows-msvc/release/macchina.exe
-            release_name: macchina-windows-x86_64.exe
+            release_suffix: windows-x86_64.exe
             cross: false
             strip: true
 
           - os: ubuntu-latest
-            name: NetBSD
+            name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             artifact_name: target/x86_64-unknown-netbsd/release/macchina
-            release_name: macchina-netbsd-x86_64
+            release_suffix: netbsd-x86_64
             cross: true
             strip: true
 
           - os: ubuntu-latest
-            name: Android
+            name: freeBSD x86_64
+            target: x86_64-unknown-freebsd
+            artifact_name: target/x86_64-unknown-freebsd/release/macchina
+            release_suffix: freebsd-x86_64
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Android aarch64
             target: aarch64-linux-android
             artifact_name: target/aarch64-linux-android/release/macchina
-            release_name: macchina-android-aarch64
+            release_suffix: android-aarch64
             cross: true
             strip: true
 
           - os: ubuntu-latest
-            name: Linux aarch64
+            name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             artifact_name: target/aarch64-unknown-linux-gnu/release/macchina
-            release_name: macchina-linux-aarch64
+            release_suffix: linux-gnu-aarch64
+            cross: true
+            strip: true
+
+          - os: ubuntu-latest
+            name: Linux musl aarch64
+            target: aarch64-unknown-linux-musl
+            artifact_name: target/aarch64-unknown-linux-musl/release/macchina
+            release_suffix: linux-musl-aarch64
+            cross: true
+            strip: true
+
+          - os: macos-latest
+            name: macOS aarch64
+            target: aarch64-apple-darwin
+            artifact_name: target/aarch64-apple-darwin/release/macchina
+            release_suffix: macos-aarch64
+            cross: false
+            strip: true
+
+          - os: windows-latest
+            name: Windows aarch64
+            target: aarch64-pc-windows-msvc
+            artifact_name: target/aarch64-pc-windows-msvc/release/macchina.exe
+            release_suffix: windows-aarch64.exe
+            cross: false
+            strip: true
+
+          - os: ubuntu-latest
+            name: GNU/Linux ARMv7
+            target: armv7-unknown-linux-gnueabihf
+            artifact_name: target/armv7-unknown-linux-gnueabihf/release/macchina
+            release_suffix: linux-gnueabihf-armv7
             cross: true
             strip: true
 
@@ -96,12 +150,27 @@ jobs:
           args: --target=${{ matrix.target }} --release
           use-cross: ${{ matrix.cross }}
 
-      - name: Rename binaries
-        run: mv ${{ matrix.artifact_name }} ${{ matrix.release_name }}
+      - name: Set env (Windows)
+        run: |
+          chcp 65001 # utf-8
+          echo ("RELEASE_NAME=macchina-" + $env:GITHUB_REF.replace('refs/tags/', '') + "-${{ matrix.release_suffix }}") >> $env:GITHUB_ENV
+        if: ${{ contains(matrix.target, 'windows') }}
+
+      - name: Set env (UNIX)
+        run: echo "RELEASE_NAME=macchina-${GITHUB_REF#refs/*/}-${{ matrix.release_suffix }}.tar.gz" >> $GITHUB_ENV
+        if: ${{ !contains(matrix.target, 'windows') }}
+
+      - name: Compress binaries (UNIX)
+        run: tar cfzv ${{ env.RELEASE_NAME }} -C "$(dirname ${{ matrix.artifact_name}})" "$(basename ${{ matrix.artifact_name }})";
+        if: ${{ !contains(matrix.target, 'windows') }}
+
+      - name: Rename binaries (Windows)
+        run: mv ${{ matrix.artifact_name }} ${{ env.RELEASE_NAME }}
+        if: ${{ contains(matrix.target, 'windows') }}
 
       - name: Upload binaries
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ matrix.release_name }}
+          files: ${{ env.RELEASE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
