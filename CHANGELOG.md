@@ -1,5 +1,22 @@
 # Changelog
 
+## `6.2.0`
+
+- Add a new `--memory-percentage` flag to display used memory in percentage.
+
+Rolv Apneseth:
+- Minor fixes to the documentation (#274)
+- Display readouts in the configured order (#275)
+- Add a new GPU readout (#278)
+- Add a new disk space readout (#283)
+
+Adrian Groh:
+- Add a workaround for failing Android build (#280)
+- Fix lint warnings (#281)
+
+Matthias Baer:
+- Migrate from `tui-rs` to `ratatui` (#287)
+
 ## `6.1.8`
 
 - Don't panic when unwrapping ReadoutKey::from_str (Fixes: https://github.com/Macchina-CLI/macchina/issues/270)
@@ -67,4 +84,3 @@ Contributors:
 ## `6.0.5`
 
 - Fix incorrect `target_os` for a particular `cfg!` flag.
-
