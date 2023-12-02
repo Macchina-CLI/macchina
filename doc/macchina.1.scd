@@ -105,7 +105,7 @@ macchina(7)
 # AUTHORS
 
 Written and maintained by the Macchina-CLI team:
-- Aziz Ben Ali <ba.tahaaziz@gmail.com>
+- Taha Aziz Ben Ali <tahaaziz.benali@esprit.tn>
 - Uttarayan Mondal <email@uttarayan.me>
 - Marvin Haschker <marvin@haschker.me>
 
