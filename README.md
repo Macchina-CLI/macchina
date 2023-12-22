@@ -76,6 +76,30 @@ Have a look at the [customization wiki page](https://github.com/Macchina-CLI/mac
 Check out the [installation wiki page](https://github.com/Macchina-CLI/macchina/wiki/Installation). 
 We also provide [prebuilt binaries](https://github.com/grtcdr/macchina/releases) with every release.
 
+## Use
+To display your system information everytime you open your shell:
+Add `macchina` to the bottom of your `.rc` file (`.bashrc`, `.zshrc`, etc) after the prompt is loaded:
+
+```sh
+# appearance
+autoload -Uz promptinit && promptinit && prompt powerlevel10k
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+macchina
+```
+
+
+
+
+To minimize the added ***startup [time](https://forum.endeavouros.com/t/tip-a-better-way-to-add-neofetch-to-your-bashrc/15116/7)*** to *bash* or *zsh* you can instead do:
+
+```sh
+[ "$(date +%j)" != "$(cat ~/.mf.prevtime 2>/dev/null)" ] && { macchina > ~/.mf; date +%j > ~/.mf.prevtime; cat ~/.mf; } || cat ~/.mf
+``` 
+
+
 ## Contributors
 
 _macchina_ like many other open source projects, would not be where it
