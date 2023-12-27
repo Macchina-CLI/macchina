@@ -19,7 +19,7 @@ on performance.
 
 *-c, --config*=_FILE_
 	Specify a custom path to a configuration file.
-	
+
 	This is helpful in cases where macchina fails to parse the configuration
 	file from the default path, i.e. *$XDG_CONFIG_HOME/macchina/macchina.toml*.
 
@@ -54,6 +54,12 @@ on performance.
 
 *-U, --long-uptime*
 	Lengthens uptime output.
+
+*-m, --memory-percentage*
+	Show memory usage in percentage
+
+*-p, --disk-space-percentage*
+	Show disk space usage in percentage
 
 *-h, --help*
 	Prints help information.
