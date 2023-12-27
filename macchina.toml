@@ -17,12 +17,6 @@ current_shell = true
 # processor.
 physical_cores = true
 
-# Display percentage next to memory usage
-memory_percentage = false
-
-# Display percentage next to disk space usage
-disk_space_percentage = false
-
 # Themes need to be placed in "$XDG_CONFIG_DIR/macchina/themes" beforehand.
 # e.g.:
 #  if theme path is /home/foo/.config/macchina/themes/Sodium.toml
