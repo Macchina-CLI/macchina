@@ -6,10 +6,10 @@ use crate::theme::components::*;
 use crate::Result;
 use colored::Colorize;
 use dirs;
+use ratatui::style::Color;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::path::{Path, PathBuf};
-use ratatui::style::Color;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -268,8 +268,12 @@ pub fn locations() -> Vec<PathBuf> {
 
 /// Searches for and returns a theme from a given directory.
 pub fn get_theme(path: &Path) -> Result<Theme> {
-    let buffer = std::fs::read(path)?;
-    Ok(toml::from_slice(&buffer)?)
+    use std::fs;
+    use std::str;
+
+    let buffer = fs::read(path)?;
+    let contents = str::from_utf8(buffer.as_slice())?;
+    Ok(toml::from_str(contents)?)
 }
 
 /// Searches for and returns the specified theme.

@@ -5,8 +5,9 @@ use std::path::{Path, PathBuf};
 pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> {
     let path = Path::new(path);
     if path.exists() {
-        let config_buffer = std::fs::read(path)?;
-        Ok(toml::from_slice(&config_buffer)?)
+        let buffer = std::fs::read(path)?;
+        let contents = std::str::from_utf8(buffer.as_slice())?;
+        Ok(toml::from_str(&contents)?)
     } else {
         Ok(Opt::default())
     }
