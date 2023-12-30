@@ -23,7 +23,9 @@ pub struct Opt {
         short = 'o',
         long = "show",
         help = "Displays only the specified readouts",
-        hide_possible_values = true
+        hide_possible_values = true,
+        use_value_delimiter = true,
+        value_delimiter = ','
     )]
     pub show: Option<Vec<data::ReadoutKey>>,
 
