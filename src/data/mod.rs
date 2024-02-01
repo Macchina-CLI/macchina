@@ -13,6 +13,7 @@ use ratatui::text::{Span, Line, Text};
 /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]
 #[derive(Parser, ValueEnum, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[clap(rename_all = "kebab-case")]
 pub enum ReadoutKey {
     Host,
     Machine,
