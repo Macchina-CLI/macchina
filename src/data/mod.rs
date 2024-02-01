@@ -4,11 +4,11 @@ use clap::{Parser, ValueEnum};
 use libmacchina::traits::GeneralReadout as _;
 use libmacchina::traits::{ReadoutError, ShellFormat, ShellKind};
 use libmacchina::{BatteryReadout, GeneralReadout, KernelReadout, MemoryReadout, PackageReadout};
+use ratatui::style::{Color, Style};
+use ratatui::text::{Line, Span, Text};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Display;
-use ratatui::style::{Color, Style};
-use ratatui::text::{Span, Line, Text};
 
 /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]

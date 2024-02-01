@@ -1,12 +1,12 @@
 use crate::data::{Readout, ReadoutKey};
 use crate::theme::components::{Palette, PaletteType};
 use crate::theme::Theme;
-use std::collections::HashMap;
 use ratatui::buffer::Buffer;
 use ratatui::layout::{Margin, Rect};
 use ratatui::style::{Color, Style};
-use ratatui::text::{Span, Line, Text};
+use ratatui::text::{Line, Span, Text};
 use ratatui::widgets::{Block, Paragraph, Widget};
+use std::collections::HashMap;
 
 pub struct ReadoutList<'a> {
     block: Option<Block<'a>>,
