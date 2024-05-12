@@ -2,13 +2,13 @@ use crate::data::Readout;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
-use std::io;
-use std::io::Stdout;
 use ratatui::backend::{Backend, CrosstermBackend};
 use ratatui::buffer::{Buffer, Cell};
 use ratatui::layout::{Margin, Rect};
 use ratatui::text::Text;
 use ratatui::widgets::{Block, Borders, Paragraph, Widget};
+use std::io;
+use std::io::Stdout;
 use unicode_width::UnicodeWidthStr;
 
 pub fn create_backend() -> CrosstermBackend<Stdout> {
@@ -110,7 +110,7 @@ pub fn write_buffer_to_console(
         .iter()
         .enumerate()
         .filter(|(_previous, cell)| {
-            let curr_width = cell.symbol.width();
+            let curr_width = cell.symbol().width();
             if curr_width == 0 {
                 return false;
             }
