@@ -1,10 +1,10 @@
 use crate::theme::borders::Border;
 use crate::theme::color::*;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 use ratatui::style::Color;
 use ratatui::widgets::BorderType;
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Palette {

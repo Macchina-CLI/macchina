@@ -2,11 +2,11 @@ use crate::Result;
 use ansi_to_tui::IntoText;
 use colored::Colorize;
 use io::Read;
+use ratatui::style::{Color, Style};
+use ratatui::text::{Line, Span, Text};
 use std::fs::File;
 use std::io::{self, BufReader};
 use std::path::Path;
-use ratatui::style::{Color, Style};
-use ratatui::text::{Span, Line, Text};
 
 lazy_static! {
     static ref BLUE: Style = Style::default().fg(Color::Blue);
