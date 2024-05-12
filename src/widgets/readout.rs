@@ -104,7 +104,7 @@ impl<'a> Widget for ReadoutList<'a> {
                 self.create_item_constraints(max_key_width, &themed_separator, readout_data);
             let layout = Self::create_layout(&list_item_area, &constraints);
 
-            let total_line_width = constraints.iter().sum::<u16>() + constraints.len() as u16 - 1;
+            let total_line_width = constraints.iter().sum::<u16>();
             if total_line_width > max_line_width {
                 max_line_width = total_line_width;
             }
@@ -125,7 +125,13 @@ impl<'a> Widget for ReadoutList<'a> {
             height += readout_data.height() as u16;
         }
 
-        self.print_palette(buf, &list_area, &mut height, self.theme.get_palette());
+        self.print_palette(
+            buf,
+            &list_area,
+            &mut height,
+            &mut max_line_width,
+            self.theme.get_palette(),
+        );
 
         Self::render_block(
             self.block,
@@ -145,6 +151,7 @@ impl<'a> ReadoutList<'a> {
         buf: &mut Buffer,
         list_area: &Rect,
         height: &mut u16,
+        max_line_width: &mut u16,
         palette: &Palette,
     ) {
         if !palette.is_visible() {
@@ -174,17 +181,24 @@ impl<'a> ReadoutList<'a> {
         ];
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
+            let mut spans: Vec<Span<'_>> = Vec::with_capacity(colors.len() * 2);
+            let spacing_span = Span::raw(" ".repeat(palette.get_spacing()));
             if let Some(glyph) = palette.get_glyph() {
-                colors
-                    .iter()
-                    .map(|c| Span::styled(glyph.to_owned(), Style::default().fg(c.to_owned())))
-                    .collect()
+                for c in colors {
+                    spans.push(Span::styled(
+                        glyph.to_owned(),
+                        Style::default().fg(c.to_owned()),
+                    ));
+                    spans.push(spacing_span.clone());
+                }
             } else {
-                colors
-                    .iter()
-                    .map(|c| Span::styled("   ", Style::default().bg(c.to_owned())))
-                    .collect()
+                for c in colors {
+                    spans.push(Span::styled("   ", Style::default().bg(c.to_owned())));
+                    spans.push(spacing_span.clone());
+                }
             }
+            spans.pop();
+            spans
         };
 
         let spans = match palette.get_type() {
@@ -195,6 +209,18 @@ impl<'a> ReadoutList<'a> {
                 Line::from(span_vector(&light_colors)),
             ],
         };
+
+        let mut width_values = vec![];
+        if self.theme.get_padding() > 0 {
+            width_values.push(self.theme.get_padding())
+        }
+        if let Some(span_max_width) = spans.iter().map(|s| s.width()).max() {
+            width_values.push(span_max_width);
+        }
+        let palette_max_line_width: usize = width_values.iter().sum();
+        if palette_max_line_width as u16 > *max_line_width {
+            *max_line_width = palette_max_line_width as u16;
+        }
 
         let padding = self.theme.get_padding() as u16;
 

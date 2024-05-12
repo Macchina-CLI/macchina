@@ -1,15 +1,16 @@
 use crate::theme::borders::Border;
 use crate::theme::color::*;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 use ratatui::style::Color;
 use ratatui::widgets::BorderType;
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Palette {
     r#type: Option<PaletteType>,
     glyph: Option<String>,
+    spacing: Option<usize>,
     visible: Option<bool>,
 }
 
@@ -18,6 +19,7 @@ impl Default for Palette {
         Palette {
             r#type: Some(PaletteType::Dark),
             glyph: Some(String::from("   ")),
+            spacing: Some(0),
             visible: None,
         }
     }
@@ -34,6 +36,14 @@ impl Palette {
 
     pub fn get_glyph(&self) -> Option<&String> {
         self.glyph.as_ref()
+    }
+
+    pub fn get_spacing(&self) -> usize {
+        if let Some(v) = self.spacing {
+            return v;
+        }
+
+        0
     }
 
     pub fn is_visible(&self) -> bool {

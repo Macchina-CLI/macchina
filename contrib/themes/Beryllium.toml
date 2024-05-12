@@ -10,7 +10,8 @@ border          = "plain"
 visible         = true
 
 [palette]
-glyph           = "○  "
+glyph           = "○"
+spacing         = 2
 visible         = true
 
 [bar]
