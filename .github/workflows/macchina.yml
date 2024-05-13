@@ -50,73 +50,61 @@ jobs:
             name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             cross: false
-            strip: true
 
           - os: ubuntu-latest
             name: Linux musl x86_64
             target: x86_64-unknown-linux-musl
             cross: true
-            strip: true
 
           - os: macos-latest
             name: macOS x86_64
             target: x86_64-apple-darwin
             cross: false
-            strip: true
 
           - os: windows-latest
             name: Windows x86_64
             target: x86_64-pc-windows-msvc
             cross: false
-            strip: true
 
           - os: ubuntu-latest
             name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             cross: true
-            strip: true
 
           - os: ubuntu-latest
             name: freeBSD x86_64
             target: x86_64-unknown-freebsd
             cross: true
-            strip: true
 
           - os: ubuntu-latest
             name: Android aarch64
             target: aarch64-linux-android
             cross: true
-            strip: true
 
           - os: ubuntu-latest
             name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             cross: true
-            strip: true
 
           - os: ubuntu-latest
             name: Linux musl aarch64
             target: aarch64-unknown-linux-musl
             cross: true
-            strip: true
 
           - os: macos-latest
             name: macOS aarch64
             target: aarch64-apple-darwin
             cross: false
-            strip: true
 
           - os: windows-latest
             name: Windows aarch64
             target: aarch64-pc-windows-msvc
             cross: false
-            strip: true
 
           - os: ubuntu-latest
             name: GNU/Linux ARMv7
             target: armv7-unknown-linux-gnueabihf
             cross: true
-            strip: true
 
     steps:
       - name: Checkout
