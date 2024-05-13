@@ -50,61 +50,73 @@ jobs:
             name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             cross: false
+            test: true
 
           - os: ubuntu-latest
             name: Linux musl x86_64
             target: x86_64-unknown-linux-musl
             cross: true
+            test: true
 
           - os: macos-latest
             name: macOS x86_64
             target: x86_64-apple-darwin
             cross: false
+            test: true
 
           - os: windows-latest
             name: Windows x86_64
             target: x86_64-pc-windows-msvc
             cross: false
+            test: true
 
           - os: ubuntu-latest
             name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             cross: true
+            test: false
 
           - os: ubuntu-latest
             name: freeBSD x86_64
             target: x86_64-unknown-freebsd
             cross: true
+            test: false
 
           - os: ubuntu-latest
             name: Android aarch64
             target: aarch64-linux-android
             cross: true
+            test: true
 
           - os: ubuntu-latest
             name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             cross: true
+            test: true
 
           - os: ubuntu-latest
             name: Linux musl aarch64
             target: aarch64-unknown-linux-musl
             cross: true
+            test: true
 
           - os: macos-latest
             name: macOS aarch64
             target: aarch64-apple-darwin
             cross: false
+            test: true
 
           - os: windows-latest
             name: Windows aarch64
             target: aarch64-pc-windows-msvc
             cross: false
+            test: false
 
           - os: ubuntu-latest
             name: GNU/Linux ARMv7
             target: armv7-unknown-linux-gnueabihf
             cross: true
+            test: true
 
     steps:
       - name: Checkout
@@ -124,8 +136,8 @@ jobs:
 
       - name: Test
         run: ${{ env.PROGRAM }} test --target=${{ matrix.target }}
-        if: ${{ !matrix.cross && !contains(matrix.target, 'aarch64') }}
+        if: ${{ matrix.test }}
 
       - name: Doctor
         run: ${{ env.PROGRAM }} run --target=${{ matrix.target }} -- --doctor
-        if: ${{ matrix.test }}
+        if: ${{ !matrix.cross && matrix.test }}
