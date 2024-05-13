@@ -6,6 +6,8 @@ jobs:
   checks:
     name: ${{ matrix.name }} (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
+    env:
+      PROGRAM: ${{ matrix.cross && 'cross' || 'cargo' }}
     strategy:
       fail-fast: false
       matrix:
@@ -98,48 +100,34 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Bootstrap
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           components: rustfmt, clippy
-          target: ${{ matrix.target }}
+          targets: ${{ matrix.target }}
+      
+      - name: Install cross
+        run: cargo install cross --git https://github.com/cross-rs/cross
+        if: ${{ matrix.cross }}
 
       - name: Formatting
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          use-cross: ${{ matrix.cross }}
+        run: cargo fmt --all -- --check
+        if: ${{ !matrix.cross }}
         continue-on-error: false
 
       - name: Lints
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --target=${{ matrix.target }} -- --no-deps -D clippy::all
-          use-cross: ${{ matrix.cross }}
+        run: ${{ env.PROGRAM }} clippy --target=${{ matrix.target }} -- --no-deps -D clippy::all
         continue-on-error: false
 
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --target=${{ matrix.target }}
-          use-cross: ${{ matrix.cross }}
+        run: ${{ env.PROGRAM }} build --target=${{ matrix.target }}
 
       - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --target=${{ matrix.target }}
+        run: ${{ env.PROGRAM }} test --target=${{ matrix.target }}
         if: ${{ !matrix.cross && !contains(matrix.target, 'aarch64') }}
 
       - name: Doctor
-        uses: actions-rs/cargo@v1
-        with:
-          command: run
-          args: --target=${{ matrix.target }} -- --doctor
-          use-cross: ${{ matrix.cross }}
+        run: ${{ env.PROGRAM }} run --target=${{ matrix.target }} -- --doctor
         if: ${{ matrix.test }}
