@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Create a report to help improve Macchina
-title: "[BUG]"
+title: ""
 labels: bug
 assignees: ''
 
