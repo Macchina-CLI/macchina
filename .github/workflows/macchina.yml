@@ -6,6 +6,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Lint
+    env:
+      RUSTFLAGS: "-Dwarnings"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,7 +21,7 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Clippy
-        run: cargo clippy --all-targets --all-features -- --no-deps -D clippy::all
+        run: cargo clippy --all-targets --all-features
 
   checks:
     name: ${{ matrix.name }} (${{ matrix.target }})
