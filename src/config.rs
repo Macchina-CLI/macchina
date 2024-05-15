@@ -7,7 +7,7 @@ pub fn read_config<S: AsRef<std::ffi::OsStr> + ?Sized>(path: &S) -> Result<Opt> 
     if path.exists() {
         let buffer = std::fs::read(path)?;
         let contents = std::str::from_utf8(buffer.as_slice())?;
-        Ok(toml::from_str(&contents)?)
+        Ok(toml::from_str(contents)?)
     } else {
         Ok(Opt::default())
     }
