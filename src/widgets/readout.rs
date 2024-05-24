@@ -166,7 +166,7 @@ impl<'a> ReadoutList<'a> {
             Color::LightBlue,
             Color::LightMagenta,
             Color::LightCyan,
-            Color::Gray,
+            Color::White,
         ];
 
         let dark_colors = [
@@ -177,7 +177,7 @@ impl<'a> ReadoutList<'a> {
             Color::Blue,
             Color::Magenta,
             Color::Cyan,
-            Color::White,
+            Color::Gray,
         ];
 
         let span_vector = |colors: &[Color]| -> Vec<_> {
