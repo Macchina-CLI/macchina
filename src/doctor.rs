@@ -56,7 +56,7 @@ fn print_warnings<'a>(warn_items: &[&'a Readout<'a>], total_failed_items: usize)
         let warn = warn_item.1.as_ref().err().unwrap().to_string();
 
         println!(
-            "Readout \"{}\" threw a warning with message: {}",
+            " Readout \"{}\" threw a warning with message: {}",
             key.to_string().bright_blue(),
             warn.yellow()
         );
@@ -71,17 +71,13 @@ pub(crate) fn print_doctor(data: &[Readout]) {
     activate_virtual_terminal();
 
     println!(
-        "Let's check your system for {}... Here's a summary:\n",
-        "errors".bright_red()
-    );
-
-    println!(
-        "We've collected {} {}, including {} {} and {} read(s) which resulted in a {}.",
+        "We've collected a total of {} {} including {} {} and {} {} resulting in a {}.\n",
         data.len().to_string().bright_green(),
         "readouts".bright_green(),
         err_items.len().to_string().bright_red(),
         "failed read(s)".bright_red(),
-        warn_items.len(),
+        warn_items.len().to_string().bright_yellow(),
+        "read(s)".bright_yellow(),
         "warning".bright_yellow()
     );
 
