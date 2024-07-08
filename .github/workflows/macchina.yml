@@ -3,6 +3,26 @@ on: [push, pull_request]
 name: CI
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    env:
+      RUSTFLAGS: "-Dwarnings"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bootstrap
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features
+
   checks:
     name: ${{ matrix.name }} (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
@@ -30,73 +50,73 @@ jobs:
             name: GNU/Linux x86_64
             target: x86_64-unknown-linux-gnu
             cross: false
-            strip: true
+            test: true
 
           - os: ubuntu-latest
             name: Linux musl x86_64
             target: x86_64-unknown-linux-musl
             cross: true
-            strip: true
+            test: true
 
           - os: macos-latest
             name: macOS x86_64
             target: x86_64-apple-darwin
             cross: false
-            strip: true
+            test: true
 
           - os: windows-latest
             name: Windows x86_64
             target: x86_64-pc-windows-msvc
             cross: false
-            strip: true
+            test: true
 
           - os: ubuntu-latest
             name: NetBSD x86_64
             target: x86_64-unknown-netbsd
             cross: true
-            strip: true
+            test: false
 
           - os: ubuntu-latest
             name: freeBSD x86_64
             target: x86_64-unknown-freebsd
             cross: true
-            strip: true
+            test: false
 
           - os: ubuntu-latest
             name: Android aarch64
             target: aarch64-linux-android
             cross: true
-            strip: true
+            test: true
 
           - os: ubuntu-latest
             name: GNU/Linux aarch64
             target: aarch64-unknown-linux-gnu
             cross: true
-            strip: true
+            test: true
 
           - os: ubuntu-latest
             name: Linux musl aarch64
             target: aarch64-unknown-linux-musl
             cross: true
-            strip: true
+            test: true
 
           - os: macos-latest
             name: macOS aarch64
             target: aarch64-apple-darwin
             cross: false
-            strip: true
+            test: true
 
           - os: windows-latest
             name: Windows aarch64
             target: aarch64-pc-windows-msvc
             cross: false
-            strip: true
+            test: false
 
           - os: ubuntu-latest
             name: GNU/Linux ARMv7
             target: armv7-unknown-linux-gnueabihf
             cross: true
-            strip: true
+            test: true
 
     steps:
       - name: Checkout
@@ -105,29 +125,19 @@ jobs:
       - name: Bootstrap
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt, clippy
           targets: ${{ matrix.target }}
       
       - name: Install cross
         run: cargo install cross --git https://github.com/cross-rs/cross
         if: ${{ matrix.cross }}
 
-      - name: Formatting
-        run: cargo fmt --all -- --check
-        if: ${{ !matrix.cross }}
-        continue-on-error: false
-
-      - name: Lints
-        run: ${{ env.PROGRAM }} clippy --target=${{ matrix.target }} -- --no-deps -D clippy::all
-        continue-on-error: false
-
       - name: Build
         run: ${{ env.PROGRAM }} build --target=${{ matrix.target }}
 
       - name: Test
         run: ${{ env.PROGRAM }} test --target=${{ matrix.target }}
-        if: ${{ !matrix.cross && !contains(matrix.target, 'aarch64') }}
+        if: ${{ matrix.test }}
 
       - name: Doctor
         run: ${{ env.PROGRAM }} run --target=${{ matrix.target }} -- --doctor
-        if: ${{ matrix.test }}
+        if: ${{ !matrix.cross && matrix.test }}
