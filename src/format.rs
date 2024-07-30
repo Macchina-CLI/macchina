@@ -134,7 +134,7 @@ pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, Readou
 
     for (i, (pm, count)) in packages.iter().enumerate() {
         let add_comma = if i + 1 < len { ", " } else { "" };
-        string.push_str(&format!("{} ({}){}", count, pm.to_string(), add_comma));
+        string.push_str(&format!("{} ({}){}", count, pm, add_comma));
     }
 
     Ok(string)
