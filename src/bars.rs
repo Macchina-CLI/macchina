@@ -5,7 +5,7 @@ in a bar.
 
 For example:
 - __CPU Usage__ ranges from 0 to 100%, this function can return a `usize`
-that tells the bar how many of its blocks should be represented as being used.
+  that tells the bar how many of its blocks should be represented as being used.
 
 The same goes for __battery percentage__, as it ranges from 0 to 100%.
 */
