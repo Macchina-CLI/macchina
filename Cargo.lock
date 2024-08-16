@@ -909,7 +909,6 @@ dependencies = [
  "color-to-tui",
  "colored",
  "dirs",
- "lazy_static",
  "libmacchina",
  "rand",
  "ratatui",

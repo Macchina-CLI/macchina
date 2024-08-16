@@ -17,9 +17,6 @@ use cli::{Opt, PKG_NAME};
 use error::Result;
 use ratatui::{backend::Backend, buffer::Buffer, layout::Rect};
 
-#[macro_use]
-extern crate lazy_static;
-
 fn main() -> Result<()> {
     let opt = Opt::get_options();
 
