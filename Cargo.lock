@@ -821,7 +821,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "7.3.0"
-source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#30abf25b2c3a032ca28cb0fcb065411c8ce428c6"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=main#e8d86566d4a504383a94f7e0ef4e586d8a201650"
 dependencies = [
  "cfg-if 1.0.0",
  "core-foundation 0.9.4",
