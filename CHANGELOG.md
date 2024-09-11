@@ -16,6 +16,19 @@ Adrian Groh:
 
 Matthias Baer:
 - Migrate from `tui-rs` to `ratatui` (#287)
+- Improve CI
+
+feefs:
+- Implement a dedicated spacing customization option for the palette
+
+Xiangkun Liu:
+- Fix some of the palette's color names
+
+Charlie Lin:
+- Fix build issues between ratatui and color-to-tui
+
+Thank you to everyone that has contributed to this release, your support
+is greatly appreciated.
 
 ## `6.1.8`
 
