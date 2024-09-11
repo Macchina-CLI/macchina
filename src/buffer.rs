@@ -4,7 +4,7 @@ use crate::widgets::readout::ReadoutList;
 use atty::Stream;
 use ratatui::backend::{Backend, CrosstermBackend};
 use ratatui::buffer::{Buffer, Cell};
-use ratatui::layout::{Margin, Rect};
+use ratatui::layout::{Margin, Position, Rect};
 use ratatui::text::Text;
 use ratatui::widgets::{Block, Borders, Paragraph, Widget};
 use std::io;
@@ -97,7 +97,10 @@ pub fn write_buffer_to_console(
     let mut cursor_y: u16 = 0;
 
     if atty::is(Stream::Stdout) {
-        cursor_y = backend.get_cursor().unwrap_or((0, 0)).1;
+        cursor_y = backend
+            .get_cursor()
+            .unwrap_or(Position { x: 0, y: 0 }.into())
+            .1;
     }
 
     // we need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
