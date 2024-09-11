@@ -26,25 +26,25 @@ physical_cores = true
 
 # Displays only the specified readouts.
 # Accepted values (case-sensitive):
-#   - Host
-#   - Machine
-#   - Kernel
-#   - Distribution
-#   - OperatingSystem
-#   - DesktopEnvironment
-#   - WindowManager
-#   - Resolution
-#   - Backlight
-#   - Packages
-#   - LocalIP
-#   - Terminal
-#   - Shell
-#   - Uptime
-#   - Processor
-#   - ProcessorLoad
-#   - Memory
-#   - Battery
-#   - GPU
-#   - DiskSpace
+#   - host
+#   - machine
+#   - kernel
+#   - distribution
+#   - operating-system
+#   - desktop-environment
+#   - window-manager
+#   - resolution
+#   - backlight
+#   - packages
+#   - local-ip
+#   - terminal
+#   - shell
+#   - uptime
+#   - processor
+#   - processor-load
+#   - memory
+#   - battery
+#   - gpu
+#   - disk-space
 # Example:
-#   show = ["Battery", "Memory", ...]
+#   show = ["battery", "memory", ...]
