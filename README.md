@@ -15,8 +15,8 @@ memory usage, processor load and much more. _macchina_ is basic by default and
 extensible by design.
 
 If you're interested in the library _macchina_ uses to fetch system
-information, have a look at [libmacchina]; fetching-related issues
-should be filed on that repository.
+information, have a look at [libmacchina][libmacchina]; fetching-related
+issues should be filed on that repository.
 
 ## Status
 
@@ -39,9 +39,10 @@ Check out the [benchmarks wiki page](https://github.com/Macchina-CLI/macchina/wi
 
 ### Themes
 
-_macchina_ has a theming system which you can use to customize pretty much any
-visual aspect of the program. Themes live **outside** the configuration file,
-so you can create a bunch of them and switch between them at any time.
+macchina has a theming system which you can use to customize pretty much
+any visual aspect of the program. Themes live *outside* the
+configuration file, so you can create a bunch of them and switch between
+them at any time.
 
 Why are they separate?
 
@@ -59,40 +60,46 @@ Learn how to [make your own](#customization).
 
 ### Doctor
 
-In the event of fetching failures, which can occur for various reasons, the
-`--doctor` flag that can tell you why that might be happening.
+In the event of fetching failures, which can occur for various reasons,
+the `--doctor` flag can tell you why that might be happening.
 
 ## Configuration
 
-See the [configuration wiki page](https://github.com/Macchina-CLI/macchina/wiki/Configuration).
+See the [configuration wiki page][configuration].
 
 ## Customization
 
-Have a look at the [customization wiki page](https://github.com/Macchina-CLI/macchina/wiki/Customization).
+Have a look at the [customization wiki page][customization].
 
 ## Installation
 
-Check out the [installation wiki page](https://github.com/Macchina-CLI/macchina/wiki/Installation). 
-We also provide [prebuilt binaries](https://github.com/grtcdr/macchina/releases) with every release.
+Check out the [installation wiki page][installation].  We also provide
+[prebuilt binaries][releases] with every release.
 
 ## Contributors
 
-_macchina_ like many other open source projects, would not be where it
-is right now without the help of its contributors. Whether you've
-helped drive it forward by contributing to the codebase, packaged it
-so we didn't have to, or recommended it to someone you know — we truly
+macchina like many other open source projects, would not be where it is
+right now without the help of its contributors. Whether you've helped
+drive it forward by contributing to the codebase, packaged it so we
+didn't have to, or recommended it to someone you know — we truly
 appreciate your support!
 
-The following is a list of awesome people that have truly shaped _macchina_:
+The following is a list of awesome people that have truly shaped macchina:
 - [pin](https://pkgsrc.se/bbmaint.php?maint=pin@NetBSD.org): Provided
   massive amounts of help, feedback and testing, and is currently
-  packaging _macchina_ on NetBSD.
-- [123marvin123](https://github.com/123marvin123): Co-author of _(lib)macchina_ and
+  packaging macchina on NetBSD.
+- [123marvin123](https://github.com/123marvin123): Co-author of (lib)macchina and
   author of countless high-quality contributions and primarily, support for
   macOS and Windows.
-- [uttarayan21](https://github.com/uttarayan21): Co-author of _(lib)macchina_ and
-  author of numerous shipshape contributions and primarily, support for Android and OpenWrt.
+- [uttarayan21](https://github.com/uttarayan21): Co-author of
+  (lib)macchina and author of numerous shipshape contributions and
+  primarily, support for Android and OpenWrt.
 
-Looking to help? [Read this first.](.github/CONTRIBUTING.md)
+Looking to help? [Read this first.][contributing]
 
 [libmacchina]: https://github.com/Macchina-CLI/libmacchina
+[releases]: https://github.com/Macchina-CLI/macchina/releases
+[installation]: https://github.com/Macchina-CLI/macchina/wiki/Installation
+[configuration]: https://github.com/Macchina-CLI/macchina/wiki/Configuration
+[customization]: https://github.com/Macchina-CLI/macchina/wiki/Customization
+[contributing]: .github/CONTRIBUTING.md
