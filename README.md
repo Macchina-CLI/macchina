@@ -21,9 +21,9 @@ issues should be filed on that repository.
 ## Status
 
 macchina is now in *maintenance mode*, the only form of contribution we
-will accept moving forward is bug fixes and bridging the support gap
-between operating systems. macchina is a perfectly good fetcher, it has
-achieved its intended purpose for me as well as others.
+will accept moving forward is bug fixes and documentation
+improvements. macchina is a perfectly good fetcher, it has achieved its
+intended purpose for me as well as others.
 
 ## Benchmarks
 

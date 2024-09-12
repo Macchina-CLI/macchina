@@ -10,14 +10,7 @@ to the project.
 
 ## Will my pull request get merged?
 
-It depends.
-
-Our highest priority is to maintain great performance throughout
-feature releases. If your PR includes a kind of feature which
-*inherently* hinders performance considerably, it will unfortunately
-be rejected.
-
-Other than that, all contributions are welcome.
+macchina is only accepting bug fixes and documentation improvements. 
 
 ## Should I follow any specific code styles?
 
