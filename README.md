@@ -20,16 +20,9 @@ issues should be filed on that repository.
 
 ## Status
 
-_macchina_ is currently in **maintenance mode**, meaning bug fixes and
-little optimizations are much more prioritized over the addition of
-new features. This is due to the fact that we (the authors) do not
-have the time to focus on moving the project forward, or expanding on
-what is currently offered while keeping up with the demanding nature
-of our lives. _macchina_ will at some point (although I can't say
-when) leave this stage and implement all the bells and whistles the
-community has been requesting.
-
-We hope you understand our situation and continue to support _macchina_.
+macchina is now in *maintenance mode*, the only form of contribution we
+will accept moving forward is bug fixes. macchina is a perfectly good
+fetcher, it has achieved its intended purpose, for me as well as others.
 
 ## Benchmarks
 
