@@ -19,7 +19,6 @@ atty= "0.2.14"
 colored = "2.0.4"
 rand = "0.8.5"
 unicode-width = "0.1.11"
-lazy_static = "1.4.0"
 ansi-to-tui = "4.0.1"
 dirs = "5.0.1"
 toml = { version = "0.8.8", features = ["parse"] }
