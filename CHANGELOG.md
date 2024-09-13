@@ -4,6 +4,9 @@
 
 - Fix ratatui dependency issue causing installations to fail
 
+pin:
+- Fix outdated `config.toml` documentation
+
 ## `6.2.0`
 
 - Add a new `--memory-percentage` flag to display used memory in percentage.
