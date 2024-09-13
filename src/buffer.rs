@@ -99,7 +99,7 @@ pub fn write_buffer_to_console(
     if atty::is(Stream::Stdout) {
         cursor_y = backend
             .get_cursor_position()
-            .unwrap_or(Position { x: 0, y: 0 }.into())
+            .unwrap_or(Position { x: 0, y: 0 })
             .y;
     }
 
