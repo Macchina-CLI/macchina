@@ -10,9 +10,9 @@ Linux • macOS • Windows • NetBSD • FreeBSD • OpenWrt • Android
 
 ## About
 
-macchina lets you view system information, like your kernel version, uptime,
-memory usage, processor load and much more. _macchina_ is basic by default and
-extensible by design.
+macchina lets you view system information, like your kernel version,
+uptime, memory usage, processor load and much more. _macchina_ is basic
+by default and customizable by design.
 
 If you're interested in the library _macchina_ uses to fetch system
 information, have a look at [libmacchina][libmacchina]; fetching-related
