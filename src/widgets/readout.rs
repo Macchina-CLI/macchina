@@ -65,7 +65,7 @@ impl<'a> Widget for ReadoutList<'a> {
         let list_area = match &self.block {
             Some(b) => {
                 let inner_area = b.inner(area);
-                inner_area.inner(&self.block_inner_margin)
+                inner_area.inner(self.block_inner_margin)
             }
             None => area,
         };

@@ -22,7 +22,7 @@ pub fn find_widest_cell(buf: &Buffer, last_y: u16) -> u16 {
 
     for y in 0..last_y {
         for x in (0..area.width).rev() {
-            let current_cell = buf.get(x, y);
+            let current_cell = &buf[(x, y)];
             if current_cell.ne(&empty_cell) && x > widest {
                 widest = x;
                 break;
@@ -98,9 +98,9 @@ pub fn write_buffer_to_console(
 
     if atty::is(Stream::Stdout) {
         cursor_y = backend
-            .get_cursor()
+            .get_cursor_position()
             .unwrap_or(Position { x: 0, y: 0 }.into())
-            .1;
+            .y;
     }
 
     // we need a checked subtraction here, because (cursor_y - last_y - 1) might underflow if the
