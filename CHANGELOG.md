@@ -49,11 +49,11 @@ is greatly appreciated.
 
 libmacchina has been bumped to `v6.3.1` which:
 - Fixes a bug that causes framerate to appear as nil on certain macOS systems
-  (Author: @123marvin123)
+  (Author: 123marvin123)
 
 ## `6.1.5`
 
-- Fixed `--version` not displaying the version (Author: @123marvin123)
+- Fixed `--version` not displaying the version (Author: 123marvin123)
 
 ## `6.1.4`
 
@@ -64,7 +64,7 @@ libmacchina has been bumped to `v6.3.1` which:
 ### Features
 
 libmacchina has been bumped to `v6.3.0` which includes a new feature:
-- Implement backlight readout for macOS (Author: @123marvin123)
+- Implement backlight readout for macOS (Author: 123marvin123)
 
 ## `6.1.3`
 
@@ -99,7 +99,7 @@ Bump libmacchina to v6.1.0:
   (https://github.com/Macchina-CLI/libmacchina/commit/608a1dde39def981d2750f4221c217151b80437e)
 
 Contributors:
-- @luckman212
+- luckman212
 
 ## `6.0.5`
 
