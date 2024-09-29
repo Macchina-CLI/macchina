@@ -17,6 +17,12 @@ current_shell = true
 # processor.
 physical_cores = true
 
+# Disks to show disk usage for. Defaults to `["/"]`.
+# disks = ["/", "/home/user"]
+
+# Show percentage next to disk usage
+# disk_usage = true
+
 # Themes need to be placed in "$XDG_CONFIG_DIR/macchina/themes" beforehand.
 # e.g.:
 #  if theme path is /home/foo/.config/macchina/themes/Sodium.toml

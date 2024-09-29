@@ -58,6 +58,9 @@ on performance.
 *-m, --memory-percentage*
 	Show memory usage in percentage
 
+*-D, --disks*
+	Specify the disks for which the usage percentage will be shown
+
 *-p, --disk-space-percentage*
 	Show disk space usage in percentage
 
