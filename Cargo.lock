@@ -830,6 +830,7 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "8.0.0"
+source = "git+https://github.com/Macchina-CLI/libmacchina?branch=8.0.0#4c7ffe10e2968ceadf3b27479b016fd9920d8a6e"
 dependencies = [
  "cfg-if 1.0.0",
  "core-foundation 0.9.4",
@@ -914,7 +915,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "6.2.1"
+version = "6.3.0"
 dependencies = [
  "ansi-to-tui",
  "atty",
