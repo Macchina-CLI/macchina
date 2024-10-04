@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.3.0
+
+- Add a new `--disks` flag, allowing users to specify multiple disks to show disk usage for.
+
 ## `6.2.1`
 
 - Fix ratatui dependency issue causing installations to fail

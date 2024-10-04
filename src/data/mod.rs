@@ -9,6 +9,7 @@ use ratatui::text::{Line, Span, Text};
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::fmt::Display;
+use std::path::PathBuf;
 
 /// This enum contains all the possible keys, e.g. _Host_, _Machine_, _Kernel_, etc.
 #[allow(clippy::upper_case_acronyms)]
@@ -518,18 +519,25 @@ fn handle_readout_disk_space(
 ) {
     use crate::format::disk_space as format_disk_space;
 
-    match general_readout.disk_space() {
-        Ok((used, total)) => {
-            if theme.get_bar().is_visible() {
-                let bar = create_bar(theme, crate::bars::usage(used, total));
-                readout_values.push(Readout::new(ReadoutKey::DiskSpace, bar))
-            } else {
-                readout_values.push(Readout::new(
-                    ReadoutKey::DiskSpace,
-                    format_disk_space(used, total, opt.disk_space_percentage),
-                ))
+    let Some(disks) = opt.disks.to_owned() else {
+        return;
+    };
+
+    for disk in disks {
+        let disk_path = PathBuf::from(disk);
+        match general_readout.disk_space(&disk_path) {
+            Ok((used, total)) => {
+                if theme.get_bar().is_visible() {
+                    let bar = create_bar(theme, crate::bars::usage(used, total));
+                    readout_values.push(Readout::new(ReadoutKey::DiskSpace, bar))
+                } else {
+                    readout_values.push(Readout::new(
+                        ReadoutKey::DiskSpace,
+                        format_disk_space(used, total, opt.disk_space_percentage),
+                    ))
+                }
             }
+            Err(e) => readout_values.push(Readout::new_err(ReadoutKey::DiskSpace, e)),
         }
-        Err(e) => readout_values.push(Readout::new_err(ReadoutKey::DiskSpace, e)),
     }
 }
