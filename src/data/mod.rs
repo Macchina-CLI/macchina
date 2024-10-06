@@ -359,6 +359,41 @@ fn handle_readout_processor(
     use crate::format::cpu as format_cpu;
     use crate::format::cpu_only as format_cpu_only;
 
+    let cpu_model = match general_readout.cpu_model_name() {
+        Ok(m) => {
+            if opt.shorter_cpu {
+                // Observed forms:
+                // - AMD A6-9220 RADEON R4
+                // - AMD Radeon R7 200
+                // - AMD Ryzen 5 PRO 4650U with Radeon Graphics
+                // - AMD Ryzen 7 5800X 8-Core Processor
+                // - Apple M1 Pro
+                // - Common KVM Processor
+                // - Intel(R) Core(TM) i5-6200 CPU @ 2.30GHz
+                // - Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz
+                // - Intel(R) Xeon(R) CPU E5-2660 0 @ 2.20GHz
+                // - Qualcomm Technologies, Inc SM8150
+                let mut split = m.split_whitespace();
+                let mut segments: Vec<&str> =
+                    split.by_ref().take(4).filter(|s| s != &"CPU").collect();
+
+                if matches!(segments.iter().last(), Some(&"PRO")) {
+                    if let Some(s) = split.next() {
+                        segments.push(s);
+                    }
+                }
+
+                segments.join(" ")
+            } else {
+                m
+            }
+        }
+        Err(e) => {
+            readout_values.push(Readout::new_err(ReadoutKey::Processor, e));
+            return;
+        }
+    };
+
     let cores = {
         if opt.physical_cores {
             general_readout.cpu_physical_cores()
@@ -367,12 +402,15 @@ fn handle_readout_processor(
         }
     };
 
-    match (general_readout.cpu_model_name(), cores) {
-        (Ok(m), Ok(c)) => {
-            readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu(&m, c)))
-        }
-        (Ok(m), _) => readout_values.push(Readout::new(ReadoutKey::Processor, format_cpu_only(&m))),
-        (Err(e), _) => readout_values.push(Readout::new_err(ReadoutKey::Processor, e)),
+    match cores {
+        Ok(c) => readout_values.push(Readout::new(
+            ReadoutKey::Processor,
+            format_cpu(&cpu_model, c),
+        )),
+        _ => readout_values.push(Readout::new(
+            ReadoutKey::Processor,
+            format_cpu_only(&cpu_model),
+        )),
     }
 }
 
