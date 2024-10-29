@@ -1,6 +1,6 @@
 # Changelog
 
-## 6.3.0
+## `6.3.0`
 
 grtcdr:
 - Vendor `ansi-to-tui` and `color-to-tui` as submodules
