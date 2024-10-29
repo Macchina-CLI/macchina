@@ -1,0 +1,6 @@
+[submodule "vendor/color-to-tui"]
+	path = vendor/color-to-tui
+	url = https://github.com/Macchina-CLI/color-to-tui
+[submodule "vendor/ansi-to-tui"]
+	path = vendor/ansi-to-tui
+	url = https://github.com/Macchina-CLI/ansi-to-tui
