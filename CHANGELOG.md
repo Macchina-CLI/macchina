@@ -1,13 +1,12 @@
 # Changelog
 
-## 6.3.1
+## 6.3.0
 
 grtcdr:
 - Vendor `ansi-to-tui` and `color-to-tui`
 - Trigger CI jobs only when source code is changed
 
-## 6.3.0
-
+Rolv Apneseth:
 - Add a new `--disks` flag, allowing users to specify multiple disks to show disk usage for.
 
 ## `6.2.1`
