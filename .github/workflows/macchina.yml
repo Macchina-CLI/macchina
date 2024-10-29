@@ -1,6 +1,16 @@
-on: [push, pull_request]
-
 name: CI
+
+on:
+  push:
+    - 'src/**'
+    - 'vendor/**'
+    - 'Cargo.toml'
+    - 'Cargo.lock'
+  pull_request:
+    - 'src/**'
+    - 'vendor/**'
+    - 'Cargo.toml'
+    - 'Cargo.lock'
 
 jobs:
   lint:
