@@ -13,8 +13,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Create Release
         uses: softprops/action-gh-release@v1
-        with:
-          body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish:
