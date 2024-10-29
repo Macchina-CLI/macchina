@@ -1,5 +1,12 @@
 # Changelog
 
+## `6.3.1`
+
+grtcdr:
+- Use fixed version for libmacchina;
+
+Many thanks to 0323pin for raising the build issue caused by the previous release.
+
 ## `6.3.0`
 
 grtcdr:
@@ -14,7 +21,7 @@ Rolv Apneseth:
 
 - Fix ratatui dependency issue causing installations to fail
 
-pin:
+0323pin:
 - Fix outdated `config.toml` documentation
 
 ## `6.2.0`
