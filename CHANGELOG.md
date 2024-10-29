@@ -5,6 +5,7 @@
 grtcdr:
 - Vendor `ansi-to-tui` and `color-to-tui`
 - Trigger CI jobs only when source code is changed
+- Show the disk path in the disk readout value
 
 Rolv Apneseth:
 - Add a new `--disks` flag, allowing users to specify multiple disks to show disk usage for.
