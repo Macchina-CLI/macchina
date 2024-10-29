@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.3.1
+
+grtcdr:
+- Vendor `ansi-to-tui` and `color-to-tui`
+
 ## 6.3.0
 
 - Add a new `--disks` flag, allowing users to specify multiple disks to show disk usage for.
