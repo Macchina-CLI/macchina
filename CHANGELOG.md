@@ -3,7 +3,7 @@
 ## `6.3.1`
 
 grtcdr:
-- Use fixed version for libmacchina;
+- Use fixed version for libmacchina
 
 Many thanks to 0323pin for raising the build issue caused by the previous release.
 
