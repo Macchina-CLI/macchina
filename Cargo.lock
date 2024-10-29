@@ -832,7 +832,8 @@ dependencies = [
 [[package]]
 name = "libmacchina"
 version = "8.0.0"
-source = "git+https://github.com/Macchina-CLI/libmacchina?branch=8.0.0#4c7ffe10e2968ceadf3b27479b016fd9920d8a6e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80a723e0a76ac2da702ac67c4a3f26306ba9229d1dc2571266e781648c30528e"
 dependencies = [
  "cfg-if 1.0.0",
  "core-foundation 0.9.4",
@@ -917,7 +918,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "6.3.0"
+version = "6.3.1"
 dependencies = [
  "ansi-to-tui",
  "atty",
