@@ -4,6 +4,7 @@
 
 grtcdr:
 - Vendor `ansi-to-tui` and `color-to-tui`
+- Trigger CI jobs only when source code is changed
 
 ## 6.3.0
 
