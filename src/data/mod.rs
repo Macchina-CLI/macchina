@@ -33,6 +33,7 @@ pub enum ReadoutKey {
     Processor,
     ProcessorLoad,
     Memory,
+    Swap,
     Battery,
     GPU,
     DiskSpace,
@@ -58,6 +59,7 @@ impl Display for ReadoutKey {
             Self::Processor => write!(f, "Processor"),
             Self::ProcessorLoad => write!(f, "ProcessorLoad"),
             Self::Memory => write!(f, "Memory"),
+            Self::Swap => write!(f, "Swap"),
             Self::Battery => write!(f, "Battery"),
             Self::GPU => write!(f, "GPU"),
             Self::DiskSpace => write!(f, "DiskSpace"),
@@ -188,6 +190,7 @@ pub fn get_all_readouts<'a>(
                 handle_readout_processor_load(&mut readout_values, &general_readout, theme)
             }
             ReadoutKey::Memory => handle_readout_memory(&mut readout_values, theme, opt),
+            ReadoutKey::Swap => handle_readout_swap(&mut readout_values, theme, opt),
             ReadoutKey::Battery => handle_readout_battery(&mut readout_values, theme),
             ReadoutKey::DesktopEnvironment => {
                 handle_readout_desktop_environment(&mut readout_values, &general_readout)
@@ -423,6 +426,30 @@ fn handle_readout_memory(readout_values: &mut Vec<Readout>, theme: &Theme, opt: 
             }
         }
         (Err(e), _) | (_, Err(e)) => readout_values.push(Readout::new_err(ReadoutKey::Memory, e)),
+    }
+}
+
+fn handle_readout_swap(readout_values: &mut Vec<Readout>, theme: &Theme, opt: &Opt) {
+    use crate::format::memory as format_mem;
+    use libmacchina::traits::MemoryReadout as _;
+
+    let memory_readout = MemoryReadout::new();
+    let total = memory_readout.swap_total();
+    let used = memory_readout.swap_used();
+
+    match (total, used) {
+        (Ok(total), Ok(used)) => {
+            if theme.get_bar().is_visible() {
+                let bar = create_bar(theme, crate::bars::usage(used, total));
+                readout_values.push(Readout::new(ReadoutKey::Swap, bar))
+            } else {
+                readout_values.push(Readout::new(
+                    ReadoutKey::Swap,
+                    format_mem(total, used, opt.memory_percentage),
+                ))
+            }
+        }
+        (Err(e), _) | (_, Err(e)) => readout_values.push(Readout::new_err(ReadoutKey::Swap, e)),
     }
 }
 

@@ -303,6 +303,7 @@ pub struct Keys {
     pub packages: Option<String>,
     pub uptime: Option<String>,
     pub memory: Option<String>,
+    pub swap: Option<String>,
     pub machine: Option<String>,
     pub local_ip: Option<String>,
     pub backlight: Option<String>,
@@ -328,6 +329,7 @@ impl Default for Keys {
             packages: Some(String::from("Packages")),
             uptime: Some(String::from("Uptime")),
             memory: Some(String::from("Memory")),
+            swap: Some(String::from("Swap")),
             machine: Some(String::from("Machine")),
             local_ip: Some(String::from("Local IP")),
             backlight: Some(String::from("Brightness")),
@@ -435,6 +437,14 @@ impl Keys {
         }
 
         "Memory"
+    }
+
+    pub fn get_swap(&self) -> &str {
+        if let Some(m) = &self.swap {
+            return m;
+        }
+
+        "Swap"
     }
 
     pub fn get_machine(&self) -> &str {
