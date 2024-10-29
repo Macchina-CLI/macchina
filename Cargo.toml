@@ -11,7 +11,7 @@ readme = "README.md"
 build = "build.rs"
 
 [dependencies]
-libmacchina = { git = "https://github.com/Macchina-CLI/libmacchina", branch = "8.0.0", features = ["version"] }
+libmacchina = { version = "8.0.0", features = ["version"] }
 bytesize = "1.3.0"
 shellexpand = "3.1.0"
 clap = { version = "4.4.6", features = ["derive"] }
