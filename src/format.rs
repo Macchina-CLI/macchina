@@ -1,5 +1,6 @@
 use bytesize::ByteSize;
 use libmacchina::traits::{BatteryState, PackageManager, ReadoutError};
+use std::path::PathBuf;
 
 /// This function should return a new `String` constructed from the value \
 /// returned by `traits::GeneralReadout::uptime()`
@@ -140,12 +141,13 @@ pub fn packages(packages: Vec<(PackageManager, usize)>) -> Result<String, Readou
     Ok(string)
 }
 
-pub fn disk_space(used: u64, total: u64, percentage: bool) -> String {
+pub fn disk_space(path: PathBuf, used: u64, total: u64, percentage: bool) -> String {
     let used_kb = ByteSize::b(used);
     let total_kb = ByteSize::b(total);
+    let path = path.display();
 
     let mut output = String::new();
-    output.push_str(&format!("{used_kb} / {total_kb}"));
+    output.push_str(&format!("{used_kb} / {total_kb} ({path})"));
 
     if percentage {
         let p = (used as f64 / total as f64 * 100f64).ceil() as usize;

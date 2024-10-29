@@ -533,7 +533,7 @@ fn handle_readout_disk_space(
                 } else {
                     readout_values.push(Readout::new(
                         ReadoutKey::DiskSpace,
-                        format_disk_space(used, total, opt.disk_space_percentage),
+                        format_disk_space(disk_path, used, total, opt.disk_space_percentage),
                     ))
                 }
             }
