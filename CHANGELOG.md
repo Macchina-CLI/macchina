@@ -3,7 +3,7 @@
 ## 6.3.0
 
 grtcdr:
-- Vendor `ansi-to-tui` and `color-to-tui`
+- Vendor `ansi-to-tui` and `color-to-tui` as submodules
 - Trigger CI jobs only when source code is changed
 - Show the disk path in the disk readout value
 
