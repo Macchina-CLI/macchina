@@ -916,7 +916,7 @@ dependencies = [
 
 [[package]]
 name = "macchina"
-version = "6.3.1"
+version = "6.4.0"
 dependencies = [
  "ansi-to-tui",
  "atty",

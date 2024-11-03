@@ -1,5 +1,14 @@
 # Changelog
 
+## `6.4.0`
+
+Orhun Parmaksız:
+- Bump `ansi-to-tui` to its latest version
+- Replace dependency on `color-to-tui` by enabling the `serde` feature from the `ratatui` crate
+- Revert the vendoring model introduced in version `6.3.0` (#334)
+
+Apologies to any package maintainer that has to undo their changes, the vendoring fix should've been addressed more appropriately in the first place.
+
 ## `6.3.1`
 
 grtcdr:
