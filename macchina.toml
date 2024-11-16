@@ -42,7 +42,7 @@ physical_cores = true
 #   - Resolution
 #   - Backlight
 #   - Packages
-#   - LocalIp
+#   - LocalIP
 #   - Terminal
 #   - Shell
 #   - Uptime
