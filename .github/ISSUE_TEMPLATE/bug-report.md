@@ -25,6 +25,12 @@ If applicable, add screenshots to help explain your problem.
 **`macchina --doctor` output**
 Add a screenshot or copy and paste the output of `--doctor` if an element you're supposed to be seeing isn't showing up.
 
+** `macchina.toml` contents
+If applicable, please include the contents of your `macchina.toml` configuration file in the following code block (remove any unnecessary comments):
+
+``` toml
+```
+
 **System Information**
 You don't have to provide this information if you're not comfortable doing so, but it'll help us solve the issue a lot faster.
  - Distribution: [e.g. Pop!_OS]
