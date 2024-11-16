@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 **`macchina --doctor` output**
 Add a screenshot or copy and paste the output of `--doctor` if an element you're supposed to be seeing isn't showing up.
 
-** `macchina.toml` contents
+**`macchina.toml` contents**
 If applicable, please include the contents of your `macchina.toml` configuration file in the following code block (remove any unnecessary comments):
 
 ``` toml
