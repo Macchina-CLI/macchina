@@ -232,7 +232,7 @@ Defines the text of the OperatingSystem readout, e.g.:
 ## machine
 Defines the text of the Machine readout, e.g.:
 
-	machine= "Machine"
+	machine = "Machine"
 
 ## de
 Defines the text of the DesktopEnvironment readout, e.g.:
