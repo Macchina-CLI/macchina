@@ -20,8 +20,11 @@ physical_cores = true
 # Disks to show disk usage for. Defaults to `["/"]`.
 # disks = ["/", "/home/user"]
 
-# Show percentage next to disk usage
+# Show percentage next to disk information
 # disk_space_percentage = true
+
+# Show percentage next to memory information
+# memory_percentage = true
 
 # Themes need to be placed in "$XDG_CONFIG_DIR/macchina/themes" beforehand.
 # e.g.:
