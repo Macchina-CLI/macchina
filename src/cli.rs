@@ -43,6 +43,13 @@ pub struct Opt {
     pub long_kernel: bool,
 
     #[clap(
+        short = 'G',
+        long = "shorter-cpu",
+        help = "Shorten the CPU's model name"
+    )]
+    pub shorter_cpu: bool,
+
+    #[clap(
         short = 'm',
         long = "memory-percentage",
         help = "Show memory usage in percentage"
@@ -158,6 +165,10 @@ impl Opt {
 
         if args.ascii_artists {
             self.ascii_artists = true;
+        }
+
+        if args.shorter_cpu {
+            self.shorter_cpu = args.shorter_cpu;
         }
 
         if args.config.is_some() {
