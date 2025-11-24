@@ -236,7 +236,7 @@ impl<'a> ReadoutList<'a> {
         *height += area.height + 1;
     }
 
-    fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text> {
+    fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text<'_>> {
         let style = Style::default().fg(theme.get_key_color());
 
         self.items
