@@ -92,6 +92,11 @@ Defines whether to show or hide the palette, e.g.:
 	
 	visible = true
 
+## spacing
+Defines the amount of spacing to leave between each glyph, e.g.:
+
+	spacing = 1
+
 # BAR SECTION
 
 This section, noted *[bar]*, replaces data that ranges from 0-100% with bars.
