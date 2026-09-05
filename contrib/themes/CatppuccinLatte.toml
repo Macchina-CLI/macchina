@@ -1,0 +1,33 @@
+# Catppuccin Latte
+#
+# Part of the Catppuccin family: Latte, Frappe, Macchiato, Mocha.
+# Palette: https://github.com/catppuccin/catppuccin
+#   Mauve #8839ef (keys) — Overlay 0 #9ca0b0 (separator) — Base #eff1f5
+
+spacing         = 1
+padding         = 0
+separator       = "›"
+key_color       = "#8839ef"
+separator_color = "#9ca0b0"
+
+[box]
+title           = "Catppuccin Latte"
+border          = "rounded"
+visible         = true
+
+[box.inner_margin]
+x               = 1
+y               = 0
+
+[palette]
+type            = "Full"
+glyph           = "● "
+spacing         = 2
+visible         = true
+
+[bar]
+glyph           = "■"
+symbol_open     = '['
+symbol_close    = ']'
+hide_delimiters = false
+visible         = true
