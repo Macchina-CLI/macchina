@@ -1,4 +1,4 @@
-use crate::data::{Readout, ReadoutKey};
+use crate::data::{DisplayItem, Readout, ReadoutKey};
 use crate::theme::components::{Palette, PaletteType};
 use crate::theme::Theme;
 use ratatui::buffer::Buffer;
@@ -7,11 +7,12 @@ use ratatui::style::{Color, Style};
 use ratatui::text::{Line, Span, Text};
 use ratatui::widgets::{Block, Paragraph, Widget};
 use std::collections::HashMap;
+use unicode_width::UnicodeWidthStr;
 
 pub struct ReadoutList<'a> {
     block: Option<Block<'a>>,
     style: Style,
-    items: Vec<Readout<'a>>,
+    items: Vec<DisplayItem<'a>>,
     theme: &'a Theme,
     block_inner_margin: Margin,
 }
@@ -19,7 +20,7 @@ pub struct ReadoutList<'a> {
 impl<'a> ReadoutList<'a> {
     pub fn new<T>(items: T, theme: &'a Theme) -> ReadoutList<'a>
     where
-        T: Into<Vec<Readout<'a>>>,
+        T: Into<Vec<DisplayItem<'a>>>,
     {
         ReadoutList {
             block: None,
@@ -39,7 +40,7 @@ impl<'a> ReadoutList<'a> {
     }
 
     pub fn add_item(mut self, item: Readout<'a>) -> ReadoutList<'a> {
-        self.items.push(item);
+        self.items.push(DisplayItem::Readout(item));
         self
     }
 
@@ -88,9 +89,32 @@ impl<'a> Widget for ReadoutList<'a> {
 
         let mut max_line_width: u16 = 0;
 
-        for item in self.items.iter().filter(|&f| f.1.is_ok()) {
-            //it's ok to unwrap, because we filtered out everything that is not a valid Option<T>.
-            let readout_data = item.1.as_ref().unwrap();
+        let mut pending_section = None;
+        for item in &self.items {
+            let item = match item {
+                DisplayItem::Section(title) => {
+                    pending_section = Some(title.as_str());
+                    continue;
+                }
+                DisplayItem::Readout(item) => item,
+            };
+            let Ok(readout_data) = &item.1 else {
+                continue;
+            };
+            if let Some(title) = pending_section.take() {
+                let padding = (self.theme.get_padding() as u16).min(list_area.width);
+                let width = title.width().min(usize::from(list_area.width - padding)) as u16;
+                height += u16::from(height > 0);
+                let style = Style::default().fg(self.theme.get_key_color());
+                let heading = Text::styled(format!("{title}\n{}", "-".repeat(width.into())), style);
+                Paragraph::new(heading).render(
+                    Rect::new(list_area.x + padding, list_area.y + height, width, 2)
+                        .intersection(list_area),
+                    buf,
+                );
+                height += 2;
+                max_line_width = max_line_width.max(padding + width);
+            }
             let readout_key = keys.get(&item.0).unwrap();
 
             let list_item_area = Rect {
@@ -236,17 +260,22 @@ impl<'a> ReadoutList<'a> {
         *height += area.height + 1;
     }
 
-    fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text> {
+    fn keys_to_text(&self, theme: &Theme) -> HashMap<ReadoutKey, Text<'static>> {
         let style = Style::default().fg(theme.get_key_color());
 
         self.items
             .iter()
-            .map(|i| (i.0, Text::styled(theme.key(&i.0).to_string(), style)))
+            .filter_map(|item| match item {
+                DisplayItem::Readout(item) => {
+                    Some((item.0, Text::styled(theme.key(&item.0).to_string(), style)))
+                }
+                DisplayItem::Section(_) => None,
+            })
             .collect()
     }
 
     fn get_max_key_width(keys: &HashMap<ReadoutKey, Text>) -> usize {
-        keys.iter().map(|i| i.1.width()).max().unwrap()
+        keys.iter().map(|i| i.1.width()).max().unwrap_or_default()
     }
 
     fn render_block(
@@ -324,5 +353,45 @@ impl<'a> ReadoutList<'a> {
         }
 
         layout
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use libmacchina::traits::ReadoutError;
+
+    #[test]
+    fn sections_skip_empty_groups_and_keep_all_readout_rows() {
+        let theme = Theme::default();
+        let area = Rect::new(0, 0, 80, 16);
+        let mut buffer = Buffer::empty(area);
+        let items = vec![
+            DisplayItem::Readout(Readout::new(ReadoutKey::Host, "test-host")),
+            DisplayItem::Section("Hidden".into()),
+            DisplayItem::Readout(Readout::new_err(
+                ReadoutKey::Battery,
+                ReadoutError::NotImplemented,
+            )),
+            DisplayItem::Section("Storage".into()),
+            DisplayItem::Readout(Readout::new(ReadoutKey::DiskSpace, "disk-one")),
+            DisplayItem::Readout(Readout::new(ReadoutKey::DiskSpace, "disk-two")),
+            DisplayItem::Section("Trailing".into()),
+        ];
+        ReadoutList::new(items, &theme).render(area, &mut buffer);
+        let rows: Vec<String> = buffer
+            .content
+            .chunks(80)
+            .map(|row| row.iter().map(|cell| cell.symbol()).collect())
+            .collect();
+        assert!(rows[0].contains("test-host"));
+        assert!(rows[1].trim().is_empty());
+        assert!(rows[2].contains("Storage"));
+        assert!(rows[3].contains("-------"));
+        assert!(rows[4].contains("disk-one"));
+        assert!(rows[5].contains("disk-two"));
+        assert!(rows
+            .iter()
+            .all(|row| !row.contains("Hidden") && !row.contains("Trailing")));
     }
 }

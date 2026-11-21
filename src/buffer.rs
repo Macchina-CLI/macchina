@@ -1,4 +1,4 @@
-use crate::data::Readout;
+use crate::data::DisplayItem;
 use crate::theme::Theme;
 use crate::widgets::readout::ReadoutList;
 use atty::Stream;
@@ -40,8 +40,7 @@ pub fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
         .content
         .iter()
         .enumerate()
-        .filter(|p| !(*(p.1)).eq(&empty_cell))
-        .last()
+        .rfind(|(_, cell)| **cell != empty_cell)
     {
         return Some(buf.pos_of(idx));
     }
@@ -61,7 +60,7 @@ pub fn draw_ascii(ascii: Text<'static>, tmp_buffer: &mut Buffer) -> Rect {
     ascii_rect
 }
 
-pub fn draw_readout_data(data: Vec<Readout>, theme: Theme, buf: &mut Buffer, area: Rect) {
+pub fn draw_readout_data(data: Vec<DisplayItem<'_>>, theme: Theme, buf: &mut Buffer, area: Rect) {
     let mut list = ReadoutList::new(data, &theme);
 
     if theme.get_block().is_visible() {

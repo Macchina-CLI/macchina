@@ -138,28 +138,72 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Line<'a> {
     Line::from(span_vector)
 }
 
-pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(shown) = opt.show.to_owned() {
-        return shown;
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ShowItem {
+    Readout(ReadoutKey),
+    Section {
+        #[serde(deserialize_with = "deserialize_section")]
+        section: String,
+    },
+}
+
+fn section_title(title: &str) -> Result<String, String> {
+    if title.trim().is_empty() || title.chars().any(char::is_control) {
+        return Err("section title must be nonempty and fit on one line".into());
     }
+    Ok(title.trim().to_owned())
+}
 
-    let keys: Vec<ReadoutKey> = ReadoutKey::value_variants()
-        .iter()
-        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap_or(*f))
-        .collect();
+fn deserialize_section<'de, D: serde::Deserializer<'de>>(input: D) -> Result<String, D::Error> {
+    section_title(&String::deserialize(input)?).map_err(serde::de::Error::custom)
+}
 
-    keys
+impl std::str::FromStr for ShowItem {
+    type Err = String;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        if let Some(title) = value.strip_prefix("section=") {
+            return Ok(Self::Section {
+                section: section_title(title)?,
+            });
+        }
+        ReadoutKey::from_str(value, false).map(Self::Readout)
+    }
+}
+
+pub enum DisplayItem<'a> {
+    Readout(Readout<'a>),
+    Section(String),
+}
+
+pub fn should_display(opt: &Opt) -> Vec<ShowItem> {
+    opt.show.clone().unwrap_or_else(|| {
+        ReadoutKey::value_variants()
+            .iter()
+            .copied()
+            .map(ShowItem::Readout)
+            .collect()
+    })
 }
 
 pub fn get_all_readouts<'a>(
     opt: &Opt,
     theme: &Theme,
-    should_display: &[ReadoutKey],
-) -> Vec<Readout<'a>> {
-    let mut readout_values = Vec::with_capacity(ReadoutKey::value_variants().len());
+    should_display: Vec<ShowItem>,
+) -> Vec<DisplayItem<'a>> {
+    let mut items = Vec::with_capacity(should_display.len());
+    let mut readout_values = Vec::new();
     let general_readout: GeneralReadout = GeneralReadout::new();
 
-    for readout_key in should_display {
+    for item in should_display {
+        let readout_key = match item {
+            ShowItem::Readout(key) => key,
+            ShowItem::Section { section } => {
+                items.push(DisplayItem::Section(section));
+                continue;
+            }
+        };
         match readout_key {
             ReadoutKey::Host => handle_readout_host(&mut readout_values, &general_readout),
             ReadoutKey::Machine => handle_readout_machine(&mut readout_values, &general_readout),
@@ -200,9 +244,10 @@ pub fn get_all_readouts<'a>(
                 handle_readout_disk_space(&mut readout_values, &general_readout, theme, opt)
             }
         };
+        items.extend(readout_values.drain(..).map(DisplayItem::Readout));
     }
 
-    readout_values
+    items
 }
 
 // READOUT HANDLERS
