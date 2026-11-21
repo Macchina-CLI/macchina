@@ -925,6 +925,7 @@ dependencies = [
  "colored",
  "dirs",
  "lazy_static",
+ "libc",
  "libmacchina",
  "rand",
  "ratatui",

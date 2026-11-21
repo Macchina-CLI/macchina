@@ -109,7 +109,7 @@ pub struct Opt {
     #[clap(
         long = "interface",
         short = 'i',
-        help = "Specify the network interface for the LocalIP readout"
+        help = "Specify the network interface for LocalIP or override it for IPv4Status"
     )]
     pub interface: Option<String>,
 }

@@ -40,8 +40,7 @@ pub fn find_last_buffer_cell_index(buf: &Buffer) -> Option<(u16, u16)> {
         .content
         .iter()
         .enumerate()
-        .filter(|p| !(*(p.1)).eq(&empty_cell))
-        .last()
+        .rfind(|(_, cell)| **cell != empty_cell)
     {
         return Some(buf.pos_of(idx));
     }

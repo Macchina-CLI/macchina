@@ -1,4 +1,5 @@
 # Specifies the network interface to use for the LocalIP readout
+# Also overrides the IPv4Status interface. Omit it to use the IPv4 default route.
 interface = "wlan0"
 
 # Lengthen uptime output
@@ -46,6 +47,7 @@ physical_cores = true
 #   - Backlight
 #   - Packages
 #   - LocalIP
+#   - IPv4Status (macOS)
 #   - Terminal
 #   - Shell
 #   - Uptime

@@ -1,3 +1,5 @@
+mod ipv4_status;
+
 use crate::cli::Opt;
 use crate::theme::Theme;
 use clap::{Parser, ValueEnum};
@@ -27,6 +29,8 @@ pub enum ReadoutKey {
     Shell,
     Terminal,
     LocalIP,
+    #[serde(rename = "IPv4Status")]
+    Ipv4Status,
     Backlight,
     Resolution,
     Uptime,
@@ -52,6 +56,7 @@ impl Display for ReadoutKey {
             Self::Shell => write!(f, "Shell"),
             Self::Terminal => write!(f, "Terminal"),
             Self::LocalIP => write!(f, "LocalIP"),
+            Self::Ipv4Status => write!(f, "IPv4Status"),
             Self::Backlight => write!(f, "Backlight"),
             Self::Resolution => write!(f, "Resolution"),
             Self::Uptime => write!(f, "Uptime"),
@@ -139,16 +144,15 @@ fn create_bar<'a>(theme: &Theme, blocks: usize) -> Line<'a> {
 }
 
 pub fn should_display(opt: &Opt) -> Vec<ReadoutKey> {
-    if let Some(shown) = opt.show.to_owned() {
-        return shown;
+    if let Some(shown) = &opt.show {
+        return shown.clone();
     }
 
-    let keys: Vec<ReadoutKey> = ReadoutKey::value_variants()
+    ReadoutKey::value_variants()
         .iter()
-        .map(|f| ReadoutKey::from_str(&f.to_string(), true).unwrap_or(*f))
-        .collect();
-
-    keys
+        .copied()
+        .filter(|&key| key != ReadoutKey::Ipv4Status)
+        .collect()
 }
 
 pub fn get_all_readouts<'a>(
@@ -172,6 +176,10 @@ pub fn get_all_readouts<'a>(
             }
             ReadoutKey::Packages => handle_readout_packages(&mut readout_values),
             ReadoutKey::LocalIP => handle_readout_local_ip(&mut readout_values, opt),
+            ReadoutKey::Ipv4Status => readout_values.push(Readout(
+                ReadoutKey::Ipv4Status,
+                ipv4_status::collect(theme, opt.interface.as_deref()),
+            )),
             ReadoutKey::Terminal => handle_readout_terminal(&mut readout_values, &general_readout),
             ReadoutKey::Shell => handle_readout_shell(&mut readout_values, &general_readout, opt),
             ReadoutKey::Uptime => handle_readout_uptime(&mut readout_values, &general_readout, opt),
