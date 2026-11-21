@@ -924,6 +924,7 @@ dependencies = [
  "clap",
  "colored",
  "dirs",
+ "if-addrs",
  "lazy_static",
  "libmacchina",
  "rand",

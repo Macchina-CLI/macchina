@@ -202,6 +202,7 @@ impl Theme {
             ReadoutKey::Machine => self.keys.get_machine(),
             ReadoutKey::Distribution => self.keys.get_distro(),
             ReadoutKey::LocalIP => self.keys.get_local_ip(),
+            ReadoutKey::Ipv4Status => "IPv4 status",
             ReadoutKey::Resolution => self.keys.get_resolution(),
             ReadoutKey::Shell => self.keys.get_shell(),
             ReadoutKey::Terminal => self.keys.get_terminal(),

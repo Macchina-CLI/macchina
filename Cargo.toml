@@ -28,6 +28,9 @@ thiserror = "1.0.49"
 ratatui = { version = "0.29", default-features = false, features = ["crossterm", "serde"] }
 serde = { version = "1.0.188", features = ["derive"] }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+if-addrs = "0.10.2"
+
 [build-dependencies.vergen]
 version = "8.2.6"
 default-features = false
