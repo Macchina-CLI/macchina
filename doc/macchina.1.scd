@@ -76,6 +76,9 @@ on performance.
 	Please note that the order these are listed in will be the order that they are
 	displayed in.
 
+	Use section=TITLE in the comma-separated list to start a section, for example:
+	macchina --show "host,section=Storage,disk-space"
+
 	Possible values are (case-sensitive):
 	- Host
 	- Machine

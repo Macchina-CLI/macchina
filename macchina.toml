@@ -56,4 +56,4 @@ physical_cores = true
 #   - GPU
 #   - DiskSpace
 # Example:
-#   show = ["Battery", "Memory", ...]
+#   show = ["Battery", { section = "System" }, "Memory"]

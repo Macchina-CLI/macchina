@@ -22,12 +22,12 @@ pub struct Opt {
     #[clap(
         short = 'o',
         long = "show",
-        help = "Displays only the specified readouts",
+        help = "Displays the specified readouts in order, with optional section=TITLE headings",
         hide_possible_values = true,
         use_value_delimiter = true,
         value_delimiter = ','
     )]
-    pub show: Option<Vec<data::ReadoutKey>>,
+    pub show: Option<Vec<data::ShowItem>>,
 
     #[clap(short = 'd', long = "doctor", help = "Checks the system for failures")]
     #[serde(skip_serializing, skip_deserializing)]
@@ -198,5 +198,20 @@ impl Opt {
                 args
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn show_sections_match_toml_order() {
+        let cli = Opt::try_parse_from(["macchina", "--show", "host,section=System details,memory"])
+            .unwrap();
+        let config: Opt =
+            toml::from_str(r#"show = ["Host", { section = "System details" }, "Memory"]"#).unwrap();
+        assert_eq!(cli.show, config.show);
+        assert!(Opt::try_parse_from(["macchina", "--show", "host,section="]).is_err());
     }
 }
